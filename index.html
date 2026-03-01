@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NapaServe — Civic AI for Napa County District 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --earth: #1E1208;
+  --wine: #6B2737;
+  --wine-light: #8B3347;
+  --gold: #C4953A;
+  --gold-light: #D4A94E;
+  --sage: #6B7D5E;
+  --sage-light: #8A9E7A;
+  --cream: #F2EBD9;
+  --cream-dark: #E8DEC8;
+  --mist: #F7F3EA;
+  --text: #1E1208;
+  --text-mid: #5A4A38;
+  --text-light: #8A7A68;
+  --white: #FDFAF4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--earth);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(107,39,55,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(196,149,58,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 100% 100% at 50% 100%, rgba(107,125,94,0.2) 0%, transparent 50%);
+  background-color: var(--earth);
+}
+
+/* Napa Valley topographic lines */
+.topo {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image:
+    repeating-linear-gradient(
+      -15deg,
+      transparent,
+      transparent 40px,
+      rgba(196,149,58,0.8) 40px,
+      rgba(196,149,58,0.8) 41px
+    );
+}
+
+.hero-nav {
+  position: relative;
+  z-index: 10;
+  padding: 2rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(196,149,58,0.2);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.nav-logo span {
+  color: var(--gold);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.nav-links a {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+.nav-cta {
+  background: var(--gold) !important;
+  color: var(--earth) !important;
+  padding: 0.5rem 1.25rem !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+}
+
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+  position: relative;
+  z-index: 5;
+}
+
+.hero-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.8s forwards;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--earth);
+  padding: 0.85rem 2rem;
+  border-radius: 4px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(196,149,58,0.3);
+}
+
+.btn-secondary {
+  color: rgba(255,255,255,0.6);
+  padding: 0.85rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  color: var(--white);
+  border-color: var(--white);
+}
+
+/* Pillar badges */
+.hero-pillars {
+  display: flex;
+  gap: 1rem;
+  margin-top: 4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1s forwards;
+}
+
+.pillar-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  backdrop-filter: blur(4px);
+  background: rgba(255,255,255,0.04);
+}
+
+.pillar-badge .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.dot-people { background: #E8A87C; }
+.dot-place { background: var(--sage-light); }
+.dot-prosperity { background: var(--gold); }
+.dot-innovation { background: #7EB8C9; }
+
+/* ── WHAT IS NAPASERVE ── */
+.section-what {
+  background: var(--cream);
+  color: var(--text);
+  padding: 8rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-what::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--wine), var(--gold), var(--sage));
+}
+
+.what-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.what-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wine);
+  margin-bottom: 1.5rem;
+}
+
+.what-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--earth);
+  margin-bottom: 1.5rem;
+}
+
+.what-title em {
+  font-style: italic;
+  color: var(--wine);
+}
+
+.what-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-mid);
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+}
+
+.what-body strong {
+  color: var(--earth);
+  font-weight: 500;
+}
+
+.what-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.stat {
+  border-left: 2px solid var(--gold);
+  padding-left: 1rem;
+}
+
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--earth);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-weight: 400;
+  margin-top: 0.25rem;
+  letter-spacing: 0.03em;
+}
+
+/* Agents grid */
+.what-agents {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.agent-card {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid var(--cream-dark);
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.agent-card:hover {
+  border-color: var(--gold);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.agent-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.icon-people { background: rgba(232,168,124,0.15); }
+.icon-place { background: rgba(107,125,94,0.15); }
+.icon-prosperity { background: rgba(196,149,58,0.15); }
+.icon-innovation { background: rgba(126,184,201,0.15); }
+
+.agent-info h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--earth);
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.02em;
+}
+
+.agent-info p {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+/* ── FOUR PILLARS ── */
+.section-pillars {
+  background: var(--earth);
+  padding: 8rem 4rem;
+  position: relative;
+}
+
+.section-pillars::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(107,39,55,0.3) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.pillars-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.section-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--white);
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.pillar-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pillar-card.people::before { background: #E8A87C; }
+.pillar-card.place::before { background: var(--sage-light); }
+.pillar-card.prosperity::before { background: var(--gold); }
+.pillar-card.innovation::before { background: #7EB8C9; }
+
+.pillar-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.15);
+  transform: translateY(-4px);
+}
+
+.pillar-card:hover::before { opacity: 1; }
+
+.pillar-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.08);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.pillar-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.people .pillar-name { color: #E8A87C; }
+.place .pillar-name { color: var(--sage-light); }
+.prosperity .pillar-name { color: var(--gold); }
+.innovation .pillar-name { color: #7EB8C9; }
+
+.pillar-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.pillar-desc {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.pillar-questions {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.pillar-q {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+  font-style: italic;
+  line-height: 1.5;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+}
+
+/* ── HOW IT WORKS ── */
+.section-how {
+  background: var(--mist);
+  color: var(--text);
+  padding: 8rem 4rem;
+}
+
+.how-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.how-inner .section-label { color: var(--wine); }
+.how-inner .section-title { color: var(--earth); }
+
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin-top: 4rem;
+}
+
+.step {
+  position: relative;
+}
+
+.step-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--cream-dark);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.step-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--earth);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.step-desc {
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.step::after {
+  content: '→';
+  position: absolute;
+  top: 1rem;
+  right: -1.5rem;
+  color: var(--gold);
+  font-size: 1.5rem;
+  opacity: 0.4;
+}
+
+.step:last-child::after { display: none; }
+
+/* ── EXAMPLE QUESTIONS ── */
+.section-examples {
+  background: var(--earth);
+  padding: 8rem 4rem;
+  position: relative;
+}
+
+.examples-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 4rem;
+}
+
+.example-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: block;
+}
+
+.example-card:hover {
+  background: rgba(196,149,58,0.08);
+  border-color: rgba(196,149,58,0.3);
+  transform: translateY(-2px);
+}
+
+.example-tag {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}
+
+.tag-people { background: rgba(232,168,124,0.15); color: #E8A87C; }
+.tag-place { background: rgba(107,125,94,0.15); color: var(--sage-light); }
+.tag-prosperity { background: rgba(196,149,58,0.15); color: var(--gold); }
+.tag-innovation { background: rgba(126,184,201,0.15); color: #7EB8C9; }
+
+.example-q {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.example-arrow {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--gold);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.example-card:hover .example-arrow { opacity: 1; }
+
+/* ── CTA ── */
+.section-cta {
+  background: var(--wine);
+  padding: 8rem 4rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(196,149,58,0.2) 0%, transparent 60%);
+}
+
+.cta-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cta-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--white);
+  margin-bottom: 1.25rem;
+}
+
+.cta-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.cta-sub {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.6);
+  font-weight: 300;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: var(--white);
+  color: var(--wine);
+  padding: 1rem 2.5rem;
+  border-radius: 4px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.cta-btn:hover {
+  background: var(--gold-light);
+  color: var(--earth);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--earth);
+  padding: 3rem 4rem;
+  border-top: 1px solid rgba(196,149,58,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.footer-logo span { color: var(--gold); }
+
+.footer-text {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+  font-weight: 300;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.3);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--gold); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero-nav { padding: 1.5rem 2rem; }
+  .nav-links { display: none; }
+  .what-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+  .how-steps { grid-template-columns: 1fr; }
+  .examples-grid { grid-template-columns: 1fr; }
+  .section-what, .section-pillars, .section-how, .section-examples, .section-cta { padding: 5rem 2rem; }
+  footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="topo"></div>
+
+  <nav class="hero-nav">
+    <a href="/" class="nav-logo">Napa<span>Serve</span></a>
+    <div class="nav-links">
+      <a href="#what">About</a>
+      <a href="#pillars">Framework</a>
+      <a href="#examples">Examples</a>
+      <a href="agent.html" class="nav-cta">Launch Agent →</a>
+    </div>
+  </nav>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Napa County District 1 · Civic AI Platform</div>
+    <h1 class="hero-title">
+      Community intelligence<br><em>for Napa's future</em>
+    </h1>
+    <p class="hero-subtitle">
+      NapaServe is a civic AI platform that helps leaders, planners, and community members make better decisions — grounded in local knowledge, guided by shared values.
+    </p>
+    <div class="hero-actions">
+      <a href="agent.html" class="btn-primary">Launch NapaServe →</a>
+      <a href="#what" class="btn-secondary">Learn more</a>
+    </div>
+    <div class="hero-pillars">
+      <div class="pillar-badge"><div class="dot dot-people"></div>People & Well-Being</div>
+      <div class="pillar-badge"><div class="dot dot-place"></div>Place & Environment</div>
+      <div class="pillar-badge"><div class="dot dot-prosperity"></div>Prosperity & Jobs</div>
+      <div class="pillar-badge"><div class="dot dot-innovation"></div>Innovation Lab</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IS NAPASERVE -->
+<section class="section-what" id="what">
+  <div class="what-inner">
+    <div>
+      <div class="what-label">What is NapaServe?</div>
+      <h2 class="what-title">A trusted advisor<br>for <em>every</em> decision</h2>
+      <p class="what-body">
+        NapaServe is a suite of specialized AI agents, each designed to assist a specific role in Napa County District 1. Every agent shares the same core framework — <strong>well-being, good jobs, environmental health, community cohesion, and innovation</strong>.
+      </p>
+      <p class="what-body">
+        Think of it as having a world-class policy advisor, environmental scientist, economic development expert, and innovation incubator available to every person doing important work in the community — anytime, for free.
+      </p>
+      <div class="what-stats">
+        <div class="stat">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Core pillars guiding every response</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">8+</div>
+          <div class="stat-label">Specialized agents planned</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">D1</div>
+          <div class="stat-label">Napa County District 1 focused</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Free</div>
+          <div class="stat-label">Open to the community</div>
+        </div>
+      </div>
+    </div>
+    <div class="what-agents">
+      <div class="agent-card">
+        <div class="agent-icon icon-people">👥</div>
+        <div class="agent-info">
+          <h4>NapaServe | Policy</h4>
+          <p>Evaluate legislation, proposals, and ordinances through the four pillars. Flag legal concerns, surface tradeoffs.</p>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon icon-prosperity">💼</div>
+        <div class="agent-info">
+          <h4>NapaServe | Economic Development</h4>
+          <p>Analyze projects by local job quality, wage levels, and economic diversification beyond tourism.</p>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon icon-place">🌿</div>
+        <div class="agent-info">
+          <h4>NapaServe | Environment</h4>
+          <p>Water security, wildfire resilience, land use, and sustainable agriculture analysis.</p>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon icon-innovation">⚡</div>
+        <div class="agent-info">
+          <h4>NapaServe | Innovation Lab</h4>
+          <p>Scout, evaluate, and incubate emerging ideas from wildfire tech to workforce innovation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUR PILLARS -->
+<section class="section-pillars" id="pillars">
+  <div class="pillars-inner">
+    <div class="section-header">
+      <div class="section-label">The Framework</div>
+      <h2 class="section-title">Four pillars.<br><em>One community.</em></h2>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar-card people">
+        <div class="pillar-num">01</div>
+        <div class="pillar-name">People</div>
+        <div class="pillar-title">Well-Being & Community Cohesion</div>
+        <div class="pillar-desc">Champion young families, protect older residents, and foster belonging across all communities in District 1.</div>
+        <div class="pillar-questions">
+          <div class="pillar-q">"Does this strengthen the fabric of our community? Who does this leave out?"</div>
+        </div>
+      </div>
+      <div class="pillar-card place">
+        <div class="pillar-num">02</div>
+        <div class="pillar-name">Place</div>
+        <div class="pillar-title">Environmental Realism & Resilience</div>
+        <div class="pillar-desc">Protect water, prepare for wildfire, and ensure healthy land and air — now and for future generations.</div>
+        <div class="pillar-questions">
+          <div class="pillar-q">"Does this protect the natural systems we depend on? Are we being honest about the risks?"</div>
+        </div>
+      </div>
+      <div class="pillar-card prosperity">
+        <div class="pillar-num">03</div>
+        <div class="pillar-name">Prosperity</div>
+        <div class="pillar-title">Good Jobs & Economic Diversity</div>
+        <div class="pillar-desc">Living wages, local hiring, career pathways. Diversify beyond wine and tourism to build lasting resilience.</div>
+        <div class="pillar-questions">
+          <div class="pillar-q">"How many well-paying jobs does this create for people who actually live here?"</div>
+        </div>
+      </div>
+      <div class="pillar-card innovation">
+        <div class="pillar-num">04</div>
+        <div class="pillar-name">Innovation</div>
+        <div class="pillar-title">Incubate, Accelerate, Realize</div>
+        <div class="pillar-desc">Scout emerging ideas, evaluate feasibility, and accelerate bold solutions from concept to community impact.</div>
+        <div class="pillar-questions">
+          <div class="pillar-q">"Is there a better way? Who is solving this elsewhere? How do we build it here?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-how">
+  <div class="how-inner">
+    <div class="section-header" style="text-align:left">
+      <div class="section-label" style="color:var(--wine)">How It Works</div>
+      <h2 class="section-title" style="color:var(--earth)">Ask anything.<br><em style="color:var(--wine)">Get real answers.</em></h2>
+    </div>
+    <div class="how-steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Ask your question</div>
+        <div class="step-desc">Type any policy question, project proposal, community challenge, or innovation idea into NapaServe.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">NapaServe analyzes</div>
+        <div class="step-desc">The agent evaluates your question through all four pillars, drawing on deep knowledge of Napa County's laws, land use, economy, and environment.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Get grounded insight</div>
+        <div class="step-desc">Receive honest, well-reasoned recommendations with tradeoffs surfaced clearly — and sharp follow-up questions to sharpen your thinking.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLE QUESTIONS -->
+<section class="section-examples" id="examples">
+  <div class="examples-inner">
+    <div class="section-header">
+      <div class="section-label">Example Questions</div>
+      <h2 class="section-title">What can you<br><em>ask NapaServe?</em></h2>
+    </div>
+    <div class="examples-grid">
+      <a href="agent.html" class="example-card">
+        <span class="example-tag tag-prosperity">Prosperity</span>
+        <div class="example-q">A new resort wants to open with 150 jobs. How many of those will pay a living wage to local residents — and what questions should we demand answers to?</div>
+        <span class="example-arrow">Ask NapaServe →</span>
+      </a>
+      <a href="agent.html" class="example-card">
+        <span class="example-tag tag-place">Place</span>
+        <div class="example-q">What are the biggest threats to water security in Napa County over the next 20 years, and what are other California counties doing about it?</div>
+        <span class="example-arrow">Ask NapaServe →</span>
+      </a>
+      <a href="agent.html" class="example-card">
+        <span class="example-tag tag-innovation">Innovation</span>
+        <div class="example-q">What cutting-edge wildfire detection and prevention technologies are being deployed in other high-risk California counties that Napa should know about?</div>
+        <span class="example-arrow">Ask NapaServe →</span>
+      </a>
+      <a href="agent.html" class="example-card">
+        <span class="example-tag tag-people">People</span>
+        <div class="example-q">What does AB 1220 mean for affordable housing in Napa County, and how does the Ag Preserve complicate our housing options?</div>
+        <span class="example-arrow">Ask NapaServe →</span>
+      </a>
+      <a href="agent.html" class="example-card">
+        <span class="example-tag tag-prosperity">Prosperity</span>
+        <div class="example-q">How can Napa diversify its economy beyond wine and tourism? What have other single-industry rural counties done successfully?</div>
+        <span class="example-arrow">Ask NapaServe →</span>
+      </a>
+      <a href="agent.html" class="example-card">
+        <span class="example-tag tag-place">Place</span>
+        <div class="example-q">How do Napa County's land use constraints and the Agricultural Preserve impact what we can and can't do in District 1?</div>
+        <span class="example-arrow">Ask NapaServe →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <div class="cta-inner">
+    <h2 class="cta-title">Ready to ask<br><em>the hard questions?</em></h2>
+    <p class="cta-sub">NapaServe is free, open, and built for the people of Napa County District 1. No login required.</p>
+    <a href="agent.html" class="cta-btn">Launch NapaServe →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Napa<span>Serve</span></div>
+  <div class="footer-text">Civic AI for Napa County District 1 · napaserve.org</div>
+  <div class="footer-links">
+    <a href="#what">About</a>
+    <a href="#pillars">Framework</a>
+    <a href="agent.html">Launch Agent</a>
+  </div>
+</footer>
+
+</body>
+</html>
