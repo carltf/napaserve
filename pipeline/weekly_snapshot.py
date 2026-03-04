@@ -290,16 +290,30 @@ def run():
     else:
         log.info("No prior snapshot found — this is the first run.")
 
-    # Fetch all sources
-    abc = fetch_abc_type02_counts()
-    fred = fetch_fred_data()
-    zillow = fetch_zillow_zhvi()
+    # Fetch all sources (continue on failure)
+    abc = {}
+    try:
+        abc = fetch_abc_type02_counts()
+    except Exception as e:
+        log.warning(f"ABC fetch failed (will skip): {e}")
+
+    fred = {}
+    try:
+        fred = fetch_fred_data()
+    except Exception as e:
+        log.warning(f"FRED fetch failed (will skip): {e}")
+
+    zillow = {}
+    try:
+        zillow = fetch_zillow_zhvi()
+    except Exception as e:
+        log.warning(f"Zillow fetch failed (will skip): {e}")
 
     # Build snapshot row
     snapshot = {
         "run_date": today,
-        "napa_type02_count": abc["napa_type02_count"],
-        "ca_type02_count": abc["ca_type02_count"],
+        "napa_type02_count": abc.get("napa_type02_count"),
+        "ca_type02_count": abc.get("ca_type02_count"),
         "unemployment_rate": fred.get("unemployment_rate"),
         "labor_force": fred.get("labor_force"),
         "food_services_employment": fred.get("food_services_employment"),
@@ -310,7 +324,7 @@ def run():
         "fred_labor_force_as_of": fred.get("labor_force_as_of"),
         "fred_food_services_as_of": fred.get("food_services_as_of"),
         "zillow_zhvi_as_of": zillow.get("zhvi_as_of"),
-        "fetch_status": "success",
+        "fetch_status": "partial" if not abc else "success",
     }
 
     # Compute WoW deltas
