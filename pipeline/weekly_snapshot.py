@@ -98,7 +98,8 @@ def fetch_abc_type02_counts() -> dict:
     Uses RECORD COUNT (not unique license dedup) per project decision.
     """
     log.info("Fetching ABC daily CSV export...")
-    resp = requests.get(ABC_CSV_ZIP_URL, timeout=120)
+    headers = {"User-Agent": "Mozilla/5.0 (NapaServe Economic Pulse Pipeline)"}
+    resp = requests.get(ABC_CSV_ZIP_URL, headers=headers, timeout=120)
     resp.raise_for_status()
 
     z = zipfile.ZipFile(io.BytesIO(resp.content))
