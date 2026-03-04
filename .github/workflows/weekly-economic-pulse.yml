@@ -1,0 +1,44 @@
+# .github/workflows/weekly-economic-pulse.yml
+#
+# Runs every Monday at 9:00 AM Pacific (16:00 UTC)
+# Fetches all economic indicators and writes a snapshot to Supabase.
+
+name: Weekly Economic Pulse Snapshot
+
+on:
+  schedule:
+    # 9 AM PT on Mondays (UTC 16:00, or 17:00 during PST)
+    - cron: "0 16 * * 1"
+
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Run weekly snapshot
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python pipeline/weekly_snapshot.py
+
+      - name: Report status
+        if: failure()
+        run: |
+          echo "::error::Weekly economic pulse snapshot failed."
+          echo "Check logs above for which source errored."
