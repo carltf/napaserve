@@ -75,7 +75,7 @@ def supabase_get_latest() -> Optional[dict]:
 
 def supabase_insert(row: dict) -> dict:
     """Insert or update a snapshot row."""
-    url = f"{SUPABASE_URL}/rest/v1/{SUPABASE_TABLE}"
+    url = f"{SUPABASE_URL}/rest/v1/{SUPABASE_TABLE}?on_conflict=run_date"
     headers = supabase_headers()
     headers["Prefer"] = "return=representation,resolution=merge-duplicates"
     r = requests.post(url, headers=headers, json=row)
