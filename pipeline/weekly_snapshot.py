@@ -73,11 +73,14 @@ def supabase_get_latest() -> Optional[dict]:
     rows = r.json()
     return rows[0] if rows else None
 
-
 def supabase_insert(row: dict) -> dict:
-    """Insert a new snapshot row."""
+    """Insert or update a snapshot row."""
     url = f"{SUPABASE_URL}/rest/v1/{SUPABASE_TABLE}"
-    r = requests.post(url, headers=supabase_headers(), json=row)
+    headers = supabase_headers()
+    headers["Prefer"] = "return=representation,resolution=merge-duplicates"
+    r = requests.post(url, headers=headers, json=row)
+    if not r.ok:
+        log.error(f"Supabase insert failed: {r.status_code} {r.text}")
     r.raise_for_status()
     return r.json()
 
