@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONFIG
@@ -122,7 +122,94 @@ function ChoiceGroup({ options, value, onChange, color = "#C4A050" }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MAIN COMPONENT
+// EVENT MAP — loads Leaflet dynamically
+// ═══════════════════════════════════════════════════════════════════════════
+
+function EventMap({ pins }) {
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
+
+  // Load Leaflet CSS and JS dynamically
+  useEffect(() => {
+    if (window.L) { setLeafletLoaded(true); return; }
+
+    // CSS
+    if (!document.querySelector('link[href*="leaflet"]')) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+    }
+
+    // JS
+    if (!document.querySelector('script[src*="leaflet"]')) {
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.onload = () => setLeafletLoaded(true);
+      document.head.appendChild(script);
+    }
+  }, []);
+
+  // Initialize or update map when pins change
+  useEffect(() => {
+    if (!leafletLoaded || !mapRef.current || !pins || pins.length === 0) return;
+    const L = window.L;
+
+    // Clean up old map
+    if (mapInstance.current) {
+      mapInstance.current.remove();
+      mapInstance.current = null;
+    }
+
+    const map = L.map(mapRef.current, { scrollWheelZoom: false });
+    mapInstance.current = map;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      maxZoom: 17,
+    }).addTo(map);
+
+    const markers = [];
+    pins.forEach(pin => {
+      if (pin.lat && pin.lon) {
+        const marker = L.marker([pin.lat, pin.lon]).addTo(map);
+        marker.bindPopup(`<strong style="font-size:13px">${pin.name}</strong>`);
+        markers.push(marker);
+      }
+    });
+
+    if (markers.length > 0) {
+      const group = L.featureGroup(markers);
+      map.fitBounds(group.getBounds().pad(0.15));
+    } else {
+      map.setView([38.3, -122.3], 11);
+    }
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [leafletLoaded, pins]);
+
+  if (!pins || pins.length === 0) return null;
+
+  return (
+    <div style={{
+      background: "rgba(255,255,255,0.02)", border: "1px solid rgba(139,105,20,0.15)",
+      borderRadius: 14, overflow: "hidden", marginTop: 20,
+    }}>
+      <div style={{ padding: "14px 20px 8px" }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B6914", textTransform: "uppercase" }}>Event Locations</span>
+        <span style={{ fontSize: 12, color: "#6B5B40", marginLeft: 10 }}>{pins.length} on map</span>
+      </div>
+      <div ref={mapRef} style={{ width: "100%", height: 340 }} />
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 
 export default function EventFinder() {
@@ -346,6 +433,9 @@ export default function EventFinder() {
                 }}>Know about an event? Add it here →</button>
               </div>
             )}
+
+            {/* Map */}
+            <EventMap pins={results.map || []} />
           </>)}
 
           {/* Nudge */}
