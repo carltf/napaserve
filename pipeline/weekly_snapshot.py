@@ -343,7 +343,11 @@ def run():
             curr = snapshot.get(key)
             prev = prior.get(key)
             if curr is not None and prev is not None:
-                snapshot[f"{key}_wow_delta"] = round(float(curr) - float(prev), 4)
+                delta = float(curr) - float(prev)
+                if key in ("napa_type02_count", "ca_type02_count"):
+                    snapshot[f"{key}_wow_delta"] = int(delta)
+                else:
+                    snapshot[f"{key}_wow_delta"] = round(delta, 4)
 
     # Generate narrative
     snapshot["summary"] = generate_summary(snapshot, prior)
