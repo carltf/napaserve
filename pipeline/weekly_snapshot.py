@@ -182,8 +182,11 @@ def fetch_fred_data() -> dict:
 
     log.info(f"FRED — Food services: {food}, Labor force: {labor}, Unemployment: {unemp}")
 
+# Food services is reported in thousands — multiply to get actual jobs
+    food_value = round(food["value"] * 1000) if food["value"] is not None else None
+
     return {
-        "food_services_employment": food["value"],
+        "food_services_employment": food_value,
         "food_services_as_of": food["date"],
         "labor_force": labor["value"],
         "labor_force_as_of": labor["date"],
