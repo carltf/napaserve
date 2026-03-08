@@ -1,5 +1,10 @@
 {
+  "buildCommand": "cd economic-pulse-app && npm install && npm run build",
+  "outputDirectory": "economic-pulse-app/dist",
+  "installCommand": "cd economic-pulse-app && npm install",
   "rewrites": [
-    { "source": "/api/claude", "destination": "/api/claude" }
+    { "source": "/agent.html", "destination": "/agent.html" },
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
