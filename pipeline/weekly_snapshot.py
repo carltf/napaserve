@@ -3,10 +3,9 @@ NapaServe Economic Pulse — Weekly Snapshot Pipeline
 Runs every Monday via GitHub Actions.
 
 Fetches:
-  1. ABC Type-02 winery license counts (Napa + statewide) from daily CSV export
+  1. ABC Type-02 winery license counts (Napa + statewide) from ad-hoc report pages
   2. FRED series: food services jobs + civilian labor force + unemployment
   3. Zillow home values (monthly CSV for durable series)
-  4. EDD Napa labor PDF (monthly; no-ops if month hasn't changed)
 
 Writes a new snapshot row to Supabase, computes WoW deltas,
 and generates the summary narrative.
@@ -19,12 +18,12 @@ Required environment variables:
 
 import os
 import io
+import re
 import csv
 import json
-import zipfile
 import logging
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 
 # ---------------------------------------------------------------------------
@@ -42,15 +41,12 @@ FRED_FOOD_SERVICES = "SMU06349007072200001SA"
 FRED_LABOR_FORCE   = "LAUCN060550000000006"   # Napa County civilian labor force
 FRED_UNEMPLOYMENT  = "LAUCN060550000000003"   # Napa County unemployment rate
 
-# ABC daily export
-ABC_CSV_ZIP_URL = "https://www.abc.ca.gov/wp-content/uploads/DailyExport/DailyExport-CSV.zip"
-NAPA_COUNTY_NAME = "NAPA"  # as it appears in the export
+# ABC ad-hoc report pages (same ones Tim uses manually)
+ABC_NAPA_URL = "https://www.abc.ca.gov/licensing/licensing-reports/adhoc-report/?LICENSETYPE=02&RPTTYPE=6&COUNTY=28"
+ABC_CA_URL   = "https://www.abc.ca.gov/licensing/licensing-reports/adhoc-report/?LICENSETYPE=02&RPTTYPE=6"
 
 # Zillow research data (ZHVI — all homes, smoothed, county level)
 ZILLOW_ZHVI_URL = "https://files.zillowstatic.com/research/public_csvs/zhvi/County_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv"
-
-# EDD PDF (stable URL, monthly updates)
-EDD_PDF_URL = "https://labormarketinfo.edd.ca.gov/file/lfmonth/napa$pds.pdf"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger(__name__)
@@ -87,54 +83,66 @@ def supabase_insert(row: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# 1. ABC Type-02 license counts
+# 1. ABC Type-02 license counts (from ad-hoc report pages)
 # ---------------------------------------------------------------------------
+
+def fetch_abc_page_count(url: str, label: str) -> Optional[int]:
+    """
+    Fetch an ABC ad-hoc report page and extract the record count.
+    Tries multiple parsing strategies since the page format may vary.
+    """
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+    log.info(f"Fetching ABC {label} page...")
+    resp = requests.get(url, headers=headers, timeout=60)
+    resp.raise_for_status()
+    html = resp.text
+
+    # Method 1 (primary): "Showing 1 to 10 of 1,854 entries"
+    # This is the paginated format confirmed on the live ABC site (Mar 2026)
+    match = re.search(r'Showing\s+\d+\s+to\s+\d+\s+of\s+([\d,]+)\s+entries', html)
+    if match:
+        count = int(match.group(1).replace(",", ""))
+        log.info(f"ABC {label}: {count} (from 'Showing X to Y of Z entries')")
+        return count
+
+    # Method 2: "{number} Results" — seen during ABC performance issues
+    match = re.search(r'([\d,]+)\s+Results', html)
+    if match:
+        count = int(match.group(1).replace(",", ""))
+        log.info(f"ABC {label}: {count} (from '{{N}} Results' pattern)")
+        return count
+
+    # Method 3: Count license entry patterns (LICENSE=NNNNNN in links)
+    license_links = re.findall(r'LICENSE=(\d{4,})', html)
+    if license_links:
+        count = len(set(license_links))  # dedupe
+        log.info(f"ABC {label}: {count} (from counting LICENSE= links)")
+        return count
+
+    # Method 4: Count table rows as last resort
+    tr_count = len(re.findall(r'<tr[^>]*>', html)) - 2
+    if tr_count > 100:  # sanity check
+        log.info(f"ABC {label}: {tr_count} (from counting table rows)")
+        return tr_count
+
+    log.warning(f"ABC {label}: Could not extract count from page")
+    return None
+
 
 def fetch_abc_type02_counts() -> dict:
     """
-    Download ABC daily CSV export, count Type-02 records.
-    Returns {"napa": int, "statewide": int, "as_of": str}
-
-    Uses RECORD COUNT (not unique license dedup) per project decision.
+    Fetch Type-02 counts from ABC ad-hoc report pages.
+    Returns {"napa_type02_count": int, "ca_type02_count": int, "abc_as_of": str}
     """
-    log.info("Fetching ABC daily CSV export...")
-    headers = {"User-Agent": "Mozilla/5.0 (NapaServe Economic Pulse Pipeline)"}
-    resp = requests.get(ABC_CSV_ZIP_URL, headers=headers, timeout=120)
-    resp.raise_for_status()
+    napa = fetch_abc_page_count(ABC_NAPA_URL, "Napa")
+    ca = fetch_abc_page_count(ABC_CA_URL, "CA Statewide")
 
-    z = zipfile.ZipFile(io.BytesIO(resp.content))
-    # The zip typically contains one CSV file
-    csv_names = [n for n in z.namelist() if n.lower().endswith(".csv")]
-    if not csv_names:
-        raise RuntimeError(f"No CSV found in ABC zip. Contents: {z.namelist()}")
-
-    csv_filename = csv_names[0]
-    log.info(f"Parsing {csv_filename}...")
-
-    napa_count = 0
-    statewide_count = 0
-
-    with z.open(csv_filename) as f:
-        reader = csv.DictReader(io.TextIOWrapper(f, encoding="utf-8-sig"))
-        # Normalize header names (ABC headers can have whitespace)
-        fieldnames = [fn.strip().upper() for fn in reader.fieldnames]
-        reader.fieldnames = fieldnames
-
-        for row in reader:
-            license_type = row.get("LICENSE TYPE", row.get("LICENSETYPE", "")).strip()
-            if license_type != "02":
-                continue
-
-            statewide_count += 1
-
-            county = row.get("PREMISE COUNTY", row.get("COUNTY", "")).strip().upper()
-            if county == NAPA_COUNTY_NAME:
-                napa_count += 1
-
-    log.info(f"ABC Type-02 counts — Napa: {napa_count}, Statewide: {statewide_count}")
     return {
-        "napa_type02_count": napa_count,
-        "ca_type02_count": statewide_count,
+        "napa_type02_count": napa,
+        "ca_type02_count": ca,
         "abc_as_of": datetime.now().strftime("%Y-%m-%d"),
     }
 
@@ -196,11 +204,9 @@ def fetch_zillow_zhvi() -> dict:
 
     reader = csv.DictReader(io.StringIO(resp.text))
     for row in reader:
-        # Napa County FIPS: 06055, or match by name
         region_name = row.get("RegionName", "")
         state = row.get("StateName", row.get("State", ""))
         if "Napa" in region_name and ("CA" in state or "California" in state):
-            # Date columns are the last ones, format: YYYY-MM-DD
             date_cols = [c for c in row.keys() if c[:4].isdigit()]
             if not date_cols:
                 break
@@ -233,9 +239,9 @@ def generate_summary(current: dict, prior: Optional[dict]) -> str:
     # Unemployment
     unemp = current.get("unemployment_rate")
     if unemp is not None:
-        as_of = current.get("unemployment_as_of", "")
+        as_of = current.get("fred_unemployment_as_of", "")
         if prior and prior.get("unemployment_rate") is not None:
-            prev = prior["unemployment_rate"]
+            prev = float(prior["unemployment_rate"])
             if abs(unemp - prev) < 0.15:
                 parts.append(f"Napa County unemployment held steady at {unemp:.1f}% (data through {as_of}).")
             elif unemp > prev:
@@ -248,7 +254,7 @@ def generate_summary(current: dict, prior: Optional[dict]) -> str:
     # Winery licenses
     napa_lic = current.get("napa_type02_count")
     if napa_lic is not None and prior and prior.get("napa_type02_count") is not None:
-        prev_lic = prior["napa_type02_count"]
+        prev_lic = int(prior["napa_type02_count"])
         diff = napa_lic - prev_lic
         if diff == 0:
             parts.append(f"Napa County winery licenses flat at {napa_lic:,}.")
@@ -262,7 +268,7 @@ def generate_summary(current: dict, prior: Optional[dict]) -> str:
     # Home values
     hv = current.get("home_value")
     if hv is not None and prior and prior.get("home_value") is not None:
-        prev_hv = prior["home_value"]
+        prev_hv = float(prior["home_value"])
         pct = ((hv - prev_hv) / prev_hv) * 100 if prev_hv else 0
         direction = "up" if pct > 0 else "down"
         parts.append(f"Average Napa home value is ${hv:,.0f}, {direction} {abs(pct):.1f}% from prior snapshot.")
@@ -334,7 +340,7 @@ def run():
             curr = snapshot.get(key)
             prev = prior.get(key)
             if curr is not None and prev is not None:
-                snapshot[f"{key}_wow_delta"] = round(curr - prev, 4)
+                snapshot[f"{key}_wow_delta"] = round(float(curr) - float(prev), 4)
 
     # Generate narrative
     snapshot["summary"] = generate_summary(snapshot, prior)
