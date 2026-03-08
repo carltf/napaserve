@@ -38,8 +38,8 @@ SUPABASE_TABLE = "economic_pulse_snapshots"
 
 # FRED series IDs
 FRED_FOOD_SERVICES = "SMU06349007072200001SA"
-FRED_LABOR_FORCE   = "LAUCN060550000000006"   # Napa County civilian labor force
-FRED_UNEMPLOYMENT  = "LAUCN060550000000003"   # Napa County unemployment rate
+FRED_LABOR_FORCE   = "NAPA906LFN"   # Napa County civilian labor force
+FRED_UNEMPLOYMENT  = "CANAPA0URN"   # Napa County unemployment rate
 
 # ABC ad-hoc report pages (same ones Tim uses manually)
 ABC_NAPA_URL = "https://www.abc.ca.gov/licensing/licensing-reports/adhoc-report/?LICENSETYPE=02&RPTTYPE=6&COUNTY=28"
