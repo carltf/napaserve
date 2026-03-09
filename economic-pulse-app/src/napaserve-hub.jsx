@@ -119,9 +119,9 @@ const TOOLS = [
     tagline: "Jobs · People · Place",
     description: "The innovation hub behind NapaServe. Valley Works builds long-term regional economic resilience for Napa County — diversifying beyond wine and hospitality through applied research, entrepreneur support, and practical solutions to workforce, healthcare, and land stewardship challenges. NapaServe is the prototype for community-scale civic AI.",
     status: "live",
-    href: "https://www.valleyworkscollaborative.org",
-    cta: "Visit Valley Works",
-    external: true,
+    href: "/valley-works",
+    cta: "Learn More",
+    external: false,
     icon: (
       <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
         <path d="M18 4L30 12V24L18 32L6 24V12L18 4Z" stroke="#C4A050" strokeWidth="1.5" fill="rgba(196,160,80,0.06)"/>

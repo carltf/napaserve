@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { path: "/events", label: "Events" },
   { path: "/news", label: "News" },
   { path: "/agent.html", label: "AI Agent", external: true },
+  { path: "/valley-works", label: "Valley Works" },
 ];
 
 export default function NavBar() {
