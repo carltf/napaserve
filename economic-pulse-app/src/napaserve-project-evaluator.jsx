@@ -276,6 +276,7 @@ export default function ProjectEvaluator() {
   const [report, setReport] = useState(null);
   const [reportError, setReportError] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const generateReport = async () => {
     setGenerating(true);
@@ -538,11 +539,12 @@ Write in a neutral, analytical tone. Short paragraphs. No promotional language. 
             <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(139,105,20,0.18)", borderRadius: 12, padding: 28, marginTop: 24 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B6914", textTransform: "uppercase" }}>Structural Assessment</div>
-                <button onClick={() => { navigator.clipboard.writeText(report); }} style={{
+                <button onClick={() => { navigator.clipboard.writeText(report); setCopied(true); setTimeout(() => setCopied(false), 2000); }} style={{
                   padding: "6px 14px", fontSize: 11, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(139,105,20,0.25)",
-                  color: "#C4A050", borderRadius: 6, cursor: "pointer",
-                }}>Copy Report</button>
+                  background: copied ? "rgba(91,138,90,0.2)" : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${copied ? "rgba(91,138,90,0.4)" : "rgba(139,105,20,0.25)"}`,
+                  color: copied ? "#5B8A5A" : "#C4A050", borderRadius: 6, cursor: "pointer", transition: "all 0.2s",
+                }}>{copied ? "✓ Copied" : "Copy Report"}</button>
               </div>
               <div style={{ fontFamily: "'Source Sans 3',sans-serif" }}>
                 {report.split("\n").map((line, i) => {
