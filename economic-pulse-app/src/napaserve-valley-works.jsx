@@ -167,11 +167,7 @@ export default function ValleyWorksPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <div style={{ borderTop: "1px solid rgba(139,105,20,0.12)", padding: "20px 0 0", marginTop: 32, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          <span style={{ fontSize: 11, color: "#5A4D38" }}>Valley Works Collaborative · Napa County Innovation Hub</span>
 
-        </div>
       </div>
     </div>
   );
