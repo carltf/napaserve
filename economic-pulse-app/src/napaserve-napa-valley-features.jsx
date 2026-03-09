@@ -59,10 +59,17 @@ function timeAgo(dateStr) {
 // NEWS TICKER
 // ═══════════════════════════════════════════════════════════════════════════
 
-function NewsTicker({ headlines }) {
-  if (!headlines || headlines.length === 0) return null;
-  const duration = Math.max(25, headlines.length * 7);
+const LOCAL_NEWS_LINKS = [
+  { name: "Calistoga Tribune", url: "https://calistogatribune.com", color: "#C4A050" },
+  { name: "Yountville Sun", url: "https://yountvillesun.com", color: "#7EB8A4" },
+  { name: "Napa County Times", url: "https://napacountytimes.com", color: "#9B8EC4" },
+  { name: "NV Register", url: "https://napavalleyregister.com", color: "#8B7355" },
+  { name: "Napa Patch", url: "https://patch.com/california/napa", color: "#B85C38" },
+  { name: "Press Democrat", url: "https://www.pressdemocrat.com", color: "#C8A96E" },
+  { name: "SF Chronicle", url: "https://www.sfchronicle.com/napa", color: "#7A6B50" },
+];
 
+function NewsSourceBar() {
   return (
     <div style={{
       background: "rgba(0,0,0,0.3)", borderBottom: "1px solid rgba(139,105,20,0.15)",
@@ -71,25 +78,17 @@ function NewsTicker({ headlines }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 1100, margin: "0 auto", padding: "0 24px" }}>
         <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#B85C38", textTransform: "uppercase", whiteSpace: "nowrap", flexShrink: 0 }}>Local News</span>
         <div style={{ width: 1, height: 16, background: "rgba(139,105,20,0.3)", flexShrink: 0 }} />
-        <div style={{ overflow: "hidden", flex: 1 }}>
-          <div style={{
-            display: "flex", gap: 36, whiteSpace: "nowrap",
-            animation: `ticker ${duration}s linear infinite`,
-          }}>
-            {[...headlines, ...headlines].map((h, i) => (
-              <a key={i} href={h.link} target="_blank" rel="noopener noreferrer" style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                fontSize: 12, textDecoration: "none", flexShrink: 0,
-              }}>
-                <span style={{ color: h.sourceColor || "#6B5B40", fontSize: 10, fontWeight: 700 }}>{h.source}</span>
-                <span style={{ color: "#C4B08A" }}>{h.title.length > 75 ? h.title.slice(0, 72) + "..." : h.title}</span>
-                <span style={{ color: "#5A4D38", fontSize: 10 }}>{timeAgo(h.pubDate)}</span>
-              </a>
-            ))}
-          </div>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1 }}>
+          {LOCAL_NEWS_LINKS.map((src, i) => (
+            <a key={i} href={src.url} target="_blank" rel="noopener noreferrer" style={{
+              fontSize: 11, fontWeight: 600, color: src.color, textDecoration: "none",
+              padding: "4px 10px", background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(139,105,20,0.1)", borderRadius: 20,
+              whiteSpace: "nowrap", transition: "all 0.15s",
+            }}>{src.name}</a>
+          ))}
         </div>
       </div>
-      <style>{`@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }`}</style>
     </div>
   );
 }
@@ -100,7 +99,6 @@ function NewsTicker({ headlines }) {
 
 export default function NapaValleyFeatures() {
   const [posts, setPosts] = useState([]);
-  const [headlines, setHeadlines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [category, setCategory] = useState("all");
@@ -159,8 +157,7 @@ export default function NapaValleyFeatures() {
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
       <div style={{ height: 3, background: "linear-gradient(90deg, transparent, #8B6914 20%, #C4A050 50%, #8B6914 80%, transparent)" }} />
 
-      {/* Ticker */}
-      <NewsTicker headlines={headlines} />
+      {/* Local news ticker — coming soon via Cloudflare Worker */}
 
       {/* Header */}
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px 0" }}>
