@@ -8,8 +8,13 @@ const SUBSTACK_API = "https://misty-bush-fc93.tfcarl.workers.dev/substack/archiv
 
 // RSS-to-JSON for ticker headlines
 const NEWS_SOURCES = [
-  { id: "nvng", name: "NV News Group", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://napavalleynewsgroup.com/feed&count=5", color: "#C4A050" },
-  { id: "patch", name: "Napa Patch", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://patch.com/california/napa/rss&count=5", color: "#7EB8A4" },
+  { id: "caltrib", name: "Calistoga Tribune", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://calistogatribune.com/feed&count=5", color: "#C4A050" },
+  { id: "ytsun", name: "Yountville Sun", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://yountvillesun.com/feed&count=5", color: "#7EB8A4" },
+  { id: "nctimes", name: "Napa County Times", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://napacountytimes.com/feed&count=5", color: "#9B8EC4" },
+  { id: "patch", name: "Napa Patch", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://patch.com/california/napa/rss&count=5", color: "#B85C38" },
+  { id: "register", name: "NV Register", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://napavalleyregister.com/search/?f=rss&t=article&l=10&s=start_time&sd=desc&count=5", color: "#8B7355" },
+  { id: "pressdem", name: "Press Democrat", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://www.pressdemocrat.com/recent/rss&count=5", color: "#C8A96E" },
+  { id: "sfchron", name: "SF Chronicle", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://www.sfchronicle.com/bayarea/feed/Bay-Area-News-702702.php&count=5", color: "#7A6B50" },
 ];
 
 const CATEGORIES = [
