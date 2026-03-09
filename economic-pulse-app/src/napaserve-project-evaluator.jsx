@@ -43,11 +43,12 @@ const QUESTIONS = {
       { value: "adjacent", label: "Adjacent \u2014 related but different (ag-tech, culinary innovation)" },
       { value: "same", label: "Same sector \u2014 more wine/hospitality" },
     ], key: "diversification" },
-    { id: "j5", label: "Can local residents realistically fill these jobs?", type: "select", options: [
-      { value: "yes", label: "Yes \u2014 skills match the local workforce" },
-      { value: "with_training", label: "With training \u2014 pipeline needed" },
-      { value: "unlikely", label: "Unlikely \u2014 would need outside recruitment" },
-    ], key: "local_capture" },
+    { id: "j5", label: "Does this project include a plan to develop local workforce skills?", type: "select", options: [
+      { value: "strong_plan", label: "Yes \u2014 training pipeline, apprenticeships, or upskilling programs included" },
+      { value: "some_plan", label: "Some commitment \u2014 partnerships with local schools or workforce agencies" },
+      { value: "existing_skills", label: "No plan needed \u2014 matches existing local hospitality/service skills" },
+      { value: "no_plan", label: "No plan \u2014 requires specialized skills with no local development path" },
+    ], key: "workforce_dev" },
   ],
   people: [
     { id: "p1", label: "Does this project increase or decrease housing costs nearby?", type: "select", options: [
@@ -137,8 +138,10 @@ function calculateScores(a) {
   let j0 = jobs >= 100 ? 9 : jobs >= 50 ? 8 : jobs >= 25 ? 7 : jobs >= 10 ? 5 : jobs >= 1 ? 3 : 1;
   if (a.durability === "seasonal") j0 -= 2;
   if (a.durability === "mostly") j0 -= 0.5;
-  if (a.local_capture === "yes") j0 += 1;
-  if (a.local_capture === "unlikely") j0 -= 1.5;
+  if (a.workforce_dev === "strong_plan") j0 += 1.5;
+  if (a.workforce_dev === "some_plan") j0 += 0.5;
+  if (a.workforce_dev === "existing_skills") j0 += 0; // neutral — not a bonus
+  if (a.workforce_dev === "no_plan") j0 -= 0.5;
   s[0] = Math.max(0, Math.min(10, j0));
   s[1] = { most: 9, half: 6, some: 3.5, few: 1.5 }[a.wage_share] ?? 5;
   s[2] = { yes: 9, adjacent: 6.5, same: 3 }[a.diversification] ?? 5;
