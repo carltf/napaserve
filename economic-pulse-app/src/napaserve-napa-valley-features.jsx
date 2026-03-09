@@ -169,7 +169,7 @@ export default function NapaValleyFeatures() {
           <div>
             <h1 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: "clamp(26px,4vw,38px)", fontWeight: 900, color: "#F5E6C8", margin: "0 0 4px" }}>Napa Valley Features</h1>
             <p style={{ fontSize: 15, color: "#9B8968", margin: "0 0 24px" }}>
-              Stories and analysis about the issues shaping Napa County — from Napa Valley Focus
+              Stories and analysis about the issues shaping Napa County — from Napa Valley Features
             </p>
           </div>
           <a href="https://napavalleyfocus.substack.com/account?utm_medium=web&utm_source=napaserve&utm_content=subscribe" target="_blank" rel="noopener noreferrer" style={{
@@ -283,7 +283,7 @@ export default function NapaValleyFeatures() {
 
         {/* Footer */}
         <div style={{ borderTop: "1px solid rgba(139,105,20,0.12)", padding: "20px 0 0", marginTop: 32, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          <span style={{ fontSize: 11, color: "#5A4D38" }}>Napa Valley Features · Stories from Napa Valley Focus</span>
+          <span style={{ fontSize: 11, color: "#5A4D38" }}>Napa Valley Features · Stories from Napa Valley Features</span>
           <div style={{ display: "flex", gap: 12 }}>
             <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B6914", textDecoration: "none" }}>Substack ↗</a>
             <a href="https://www.napavalleyfeatures.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B6914", textDecoration: "none" }}>napavalleyfeatures.com ↗</a>
