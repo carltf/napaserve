@@ -544,8 +544,49 @@ Write in a neutral, analytical tone. Short paragraphs. No promotional language. 
                   color: "#C4A050", borderRadius: 6, cursor: "pointer",
                 }}>Copy Report</button>
               </div>
-              <div style={{ fontSize: 15, color: "#D4C5B0", lineHeight: 1.8, whiteSpace: "pre-wrap", fontFamily: "'Source Sans 3',sans-serif" }}>
-                {report}
+              <div style={{ fontFamily: "'Source Sans 3',sans-serif" }}>
+                {report.split("\n").map((line, i) => {
+                  const trimmed = line.trim();
+                  if (!trimmed) return <div key={i} style={{ height: 12 }} />;
+
+                  // H1
+                  if (/^# /.test(trimmed)) return (
+                    <h2 key={i} style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 22, fontWeight: 900, color: "#F5E6C8", margin: "24px 0 8px", lineHeight: 1.2 }}>
+                      {trimmed.replace(/^# /, "")}
+                    </h2>
+                  );
+                  // H2
+                  if (/^## /.test(trimmed)) return (
+                    <h3 key={i} style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#C4A050", margin: "20px 0 6px", lineHeight: 1.3 }}>
+                      {trimmed.replace(/^## /, "")}
+                    </h3>
+                  );
+                  // H3
+                  if (/^### /.test(trimmed)) return (
+                    <h4 key={i} style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, color: "#8B6914", textTransform: "uppercase", margin: "20px 0 8px" }}>
+                      {trimmed.replace(/^### /, "")}
+                    </h4>
+                  );
+
+                  // Bold text within paragraphs
+                  const parts = trimmed.split(/(\*\*[^*]+\*\*)/g);
+                  return (
+                    <p key={i} style={{ fontSize: 14, color: "#C4B08A", lineHeight: 1.75, margin: "0 0 8px" }}>
+                      {parts.map((part, j) => {
+                        if (/^\*\*(.+)\*\*$/.test(part)) {
+                          const inner = part.replace(/^\*\*|\*\*$/g, "");
+                          // Alignment ratings get special colors
+                          if (/Strong/.test(inner)) return <span key={j} style={{ fontWeight: 700, color: "#5B8A5A" }}>{inner}</span>;
+                          if (/Moderate/.test(inner)) return <span key={j} style={{ fontWeight: 700, color: "#C8A96E" }}>{inner}</span>;
+                          if (/Weak/.test(inner)) return <span key={j} style={{ fontWeight: 700, color: "#B85C38" }}>{inner}</span>;
+                          if (/Misaligned/.test(inner)) return <span key={j} style={{ fontWeight: 700, color: "#8B3A3A" }}>{inner}</span>;
+                          return <span key={j} style={{ fontWeight: 700, color: "#F5E6C8" }}>{inner}</span>;
+                        }
+                        return <span key={j}>{part}</span>;
+                      })}
+                    </p>
+                  );
+                })}
               </div>
             </div>
           )}
