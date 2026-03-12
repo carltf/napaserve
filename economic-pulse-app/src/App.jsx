@@ -7,7 +7,7 @@ import Evaluator from "./napaserve-project-evaluator";
 import EventFinder from "./napaserve-event-finder";
 import News from "./napaserve-napa-valley-features";
 import ValleyWorks from "./napaserve-valley-works";
-
+import Archive from "./pages/Archive";
 export default function App() {
   return (
     <BrowserRouter>
@@ -27,6 +27,7 @@ export default function App() {
             <Route path="/events" element={<EventFinder />} />
             <Route path="/news" element={<News />} />
             <Route path="/valley-works" element={<ValleyWorks />} />
+            <Route path="/archive" element={<Archive />} />
           </Routes>
         </div>
         <Footer />
