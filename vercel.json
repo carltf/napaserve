@@ -1,10 +1,1 @@
-{
-  "buildCommand": "cd economic-pulse-app && npm install && npm run build",
-  "outputDirectory": "economic-pulse-app/dist",
-  "installCommand": "cd economic-pulse-app && npm install",
-  "rewrites": [
-    { "source": "/agent.html", "destination": "/agent.html" },
-    { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
+{"version":2,"headers":[{"source":"/agent.html","headers":[{"key":"Cache-Control","value":"no-cache"}]}]}
