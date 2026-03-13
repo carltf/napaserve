@@ -576,9 +576,10 @@ function formatMarkdown(text) {
   t = t.replace(/^## (.+)$/gm, '<h3 style="font-family:\'Playfair Display\',serif;margin:0.85rem 0 0.4rem;color:#2C1810;font-size:1.05rem">$1</h3>');
   t = t.replace(/^# (.+)$/gm, '<h2 style="font-family:\'Playfair Display\',serif;margin:1rem 0 0.5rem;color:#2C1810;font-size:1.2rem">$1</h2>');
   t = t.replace(/^---$/gm, '<hr>');
+  t = t.replace(/^\• (.+)$/gm, '<li>$1</li>');
   t = t.replace(/^\* (.+)$/gm, '<li>$1</li>');
   t = t.replace(/^- (.+)$/gm, '<li>$1</li>');
-  t = t.replace(/^[\*\-]\s*$/gm, ''); // remove empty bullet lines
+  t = t.replace(/^[\•\*\-]\s*$/gm, ''); // remove empty bullet lines
   t = t.replace(/(<li>.*<\/li>\n?)+/g, m => '<ul style="margin:0.4rem 0 0.4rem 1.25rem;padding:0">' + m + '</ul>');
   // Split into lines, wrap non-HTML lines in <p>, collapse blanks
   const lines = t.split('\n');
@@ -685,7 +686,7 @@ async function sendMessage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
+        max_tokens: 2500,
         system: systemWithContext,
         messages: conversationHistory
       })
