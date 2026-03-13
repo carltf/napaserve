@@ -527,7 +527,7 @@ function toggleNav() {
     document.getElementById('mobileNav').classList.contains('open') ? '✕' : '☰';
 }
 
-
+function clearChat() {
   conversationHistory = [];
   messagesEl.innerHTML = '';
   messagesEl.appendChild(welcome);
