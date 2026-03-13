@@ -42,7 +42,7 @@ export default function NavBar() {
 
       <nav style={{
         background: "rgba(15,10,6,0.95)",
-        borderBottom: "1px solid rgba(139,105,20,0.15)",
+        borderBottom: "1px solid rgba(196,160,80,0.4)",
         position: "sticky",
         top: 0,
         zIndex: 100,
