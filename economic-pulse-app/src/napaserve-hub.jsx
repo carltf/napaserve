@@ -1,4 +1,5 @@
 import { useState } from "react";
+import NavBar from "./NavBar";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // NapaServe Hub — Central Portal
@@ -265,7 +266,9 @@ function ToolCard({ tool }) {
 
 export default function NapaServeHub() {
   return (
-    <div style={{
+    <>
+      <NavBar />
+      <div style={{
       minHeight: "100vh",
       background: "linear-gradient(175deg, #1C120C 0%, #2A1A0E 25%, #1E1408 55%, #0F0A06 100%)",
       fontFamily: "'Source Sans 3', 'Source Sans Pro', -apple-system, sans-serif",
@@ -393,5 +396,6 @@ export default function NapaServeHub() {
         </div>
       </div>
     </div>
+    </>
   );
 }
