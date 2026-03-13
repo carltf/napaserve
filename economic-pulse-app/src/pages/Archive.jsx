@@ -316,9 +316,9 @@ function ChunkCard({ chunk }) {
       </div>
       {date && <div style={styles.chunkDate}>{date}</div>}
       <div style={styles.chunkExcerpt}>{excerpt}</div>
-      {chunk.post_url && (
+      {chunk.substack_url && (
         <a
-          href={chunk.post_url}
+          href={chunk.substack_url}
           target="_blank"
           rel="noopener noreferrer"
           style={styles.chunkLink}
@@ -326,7 +326,7 @@ function ChunkCard({ chunk }) {
           Read article →
         </a>
       )}
-      {!chunk.post_url && chunk.series && (
+      {!chunk.substack_url && chunk.series && (
         <span style={{ ...styles.chunkDate, marginTop: 8, display: "block" }}>
           {chunk.series}
         </span>
