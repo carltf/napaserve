@@ -95,7 +95,7 @@ export default function NavBar() {
                   <a key={item.path} href={item.path} style={{
                     padding: "6px 14px", fontSize: 13, fontWeight: 600,
                     fontFamily: "'Source Sans 3',sans-serif",
-                    color: "#7A6B50",
+                    color: "#B8A882",
                     textDecoration: "none",
                     borderRadius: 6,
                     transition: "all 0.15s",
@@ -195,7 +195,7 @@ export default function NavBar() {
                     fontSize: 15,
                     fontWeight: 600,
                     fontFamily: "'Source Sans 3',sans-serif",
-                    color: "#7A6B50",
+                    color: "#B8A882",
                     textDecoration: "none",
                   }}
                 >{item.label}</a>
