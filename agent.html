@@ -33,56 +33,64 @@
   header {
     background: var(--earth);
     padding: 0 2rem;
-    height: 64px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    border-bottom: 3px solid var(--gold);
+    border-bottom: 2px solid var(--gold);
   }
+
+  .main-nav { display: flex; align-items: center; gap: 0.25rem; }
+  .nav-link {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 0.35rem 0.65rem;
+    border-radius: 4px;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .nav-link:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+  .nav-active { color: var(--gold) !important; }
+
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .mobile-nav {
+    display: none;
+    flex-direction: column;
+    background: var(--earth);
+    border-bottom: 2px solid var(--gold);
+    padding: 0.5rem 1rem;
+  }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav-link {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.6rem 0.5rem;
+    border-left: 3px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mobile-nav-link:hover { color: var(--white); border-left-color: var(--gold); }
 
   .logo { display: flex; align-items: baseline; gap: 0.5rem; }
   .logo-main { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--white); letter-spacing: 0.02em; }
   .logo-sub { font-size: 0.75rem; color: var(--gold); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
 
-  .pillars { display: flex; gap: 1.5rem; }
-  .pillar { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 0.35rem; }
-  .pillar-dot { width: 6px; height: 6px; border-radius: 50%; }
-  .pillar.people .pillar-dot { background: #E8A87C; }
-  .pillar.place .pillar-dot { background: var(--sage); }
-  .pillar.prosperity .pillar-dot { background: var(--gold); }
-  .pillar.innovation .pillar-dot { background: #7EB8C9; }
-
-  .api-section { display: flex; align-items: center; gap: 0.75rem; }
-
-  .back-link {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-    text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 0.35rem 0.75rem 0.35rem 0.5rem;
-    border-radius: 20px;
-    transition: all 0.2s;
-  }
-
-  .back-link svg {
-    width: 12px;
-    height: 12px;
-  }
-
-  .back-link:hover {
-    color: var(--gold);
-    border-color: rgba(201,168,76,0.4);
-    background: rgba(201,168,76,0.06);
-  }
-
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #6BCB6B; }
+  .pillar-tag { display: inline-block; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.15rem 0.4rem; border-radius: 3px; margin-bottom: 0.25rem; }
 
   .main { flex: 1; display: flex; overflow: hidden; }
 
@@ -110,9 +118,10 @@
 
   .chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-  .messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  .messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start; }
   .messages::-webkit-scrollbar { width: 4px; }
   .messages::-webkit-scrollbar-thumb { background: var(--mist); border-radius: 2px; }
+  .messages-inner { width: 100%; max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
 
   .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; padding: 3rem; animation: fadeIn 0.6s ease; }
   .welcome-icon { width: 72px; height: 72px; background: var(--earth); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; border: 3px solid var(--gold); }
@@ -135,7 +144,7 @@
   .message.user .avatar { background: var(--wine); color: var(--white); }
   .message.assistant .avatar { background: var(--earth); color: var(--gold); border: 2px solid var(--gold); font-family: 'Playfair Display', serif; font-size: 0.85rem; }
 
-  .bubble { padding: 1rem 1.25rem; border-radius: 12px; line-height: 1.65; font-size: 0.92rem; max-width: 600px; }
+  .bubble { padding: 1rem 1.25rem; border-radius: 12px; line-height: 1.65; font-size: 0.92rem; max-width: 680px; }
   .message.user .bubble { background: var(--wine); color: var(--white); border-bottom-right-radius: 3px; }
   .message.assistant .bubble { background: var(--white); color: var(--text); border-bottom-left-radius: 3px; border: 1px solid var(--mist); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 
@@ -215,8 +224,9 @@
 
   @media (max-width: 768px) {
     header { padding: 0.75rem 1rem; }
-    .pillars { display: none; }
-    .logo-main { font-size: 1.2rem; }
+    .main-nav { display: none; }
+    .hamburger { display: block; }
+    .logo-sub { display: none; }
     .main { flex-direction: column; }
     .sidebar {
       width: 100%;
@@ -258,23 +268,32 @@
 
 <header>
   <div class="logo">
-    <span class="logo-main">NapaServe</span>
-    <span class="logo-sub">Civic AI · Napa County</span>
-  </div>
-  <div class="pillars">
-    <div class="pillar people"><div class="pillar-dot"></div>People</div>
-    <div class="pillar place"><div class="pillar-dot"></div>Place</div>
-    <div class="pillar prosperity"><div class="pillar-dot"></div>Prosperity</div>
-    <div class="pillar innovation"><div class="pillar-dot"></div>Innovation</div>
-  </div>
-  <div class="api-section">
-    <a href="index.html" class="back-link">
-      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      About
+    <a href="/" style="text-decoration:none;display:flex;align-items:baseline;gap:0.5rem">
+      <span class="logo-main">NapaServe</span>
     </a>
-    <div class="status-dot" id="statusDot" title="NapaServe Active"></div>
   </div>
+  <nav class="main-nav" id="mainNav">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/evaluator" class="nav-link">Evaluator</a>
+    <a href="/events" class="nav-link">Events</a>
+    <a href="/news" class="nav-link">News</a>
+    <a href="/archive" class="nav-link">Archive</a>
+    <a href="/agent.html" class="nav-link nav-active">AI Agent</a>
+    <a href="/valley-works" class="nav-link">Valley Works</a>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">&#9776;</button>
 </header>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/" class="mobile-nav-link">Home</a>
+  <a href="/dashboard" class="mobile-nav-link">Dashboard</a>
+  <a href="/evaluator" class="mobile-nav-link">Evaluator</a>
+  <a href="/events" class="mobile-nav-link">Events</a>
+  <a href="/news" class="mobile-nav-link">News</a>
+  <a href="/archive" class="mobile-nav-link">Archive</a>
+  <a href="/agent.html" class="mobile-nav-link nav-active">AI Agent</a>
+  <a href="/valley-works" class="mobile-nav-link">Valley Works</a>
+</nav>
 
 <div class="main">
   <div class="sidebar">
@@ -502,7 +521,13 @@ function useStarter(btn) {
   messageInput.focus();
 }
 
-function clearChat() {
+function toggleNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+  document.getElementById('hamburger').textContent =
+    document.getElementById('mobileNav').classList.contains('open') ? '✕' : '☰';
+}
+
+
   conversationHistory = [];
   messagesEl.innerHTML = '';
   messagesEl.appendChild(welcome);
