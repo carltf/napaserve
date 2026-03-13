@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NapaServe — Civic AI for District 1</title>
+<title>NapaServe — Civic AI for Napa County</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -24,7 +24,7 @@
     font-family: 'Source Sans 3', sans-serif;
     background: var(--cream);
     color: var(--text);
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -149,10 +149,49 @@
   .bubble a:hover { color: var(--earth); }
   .bubble hr { border: none; border-top: 1px solid var(--mist); margin: 0.75rem 0; }
 
+  /* Sources block */
+  .sources-block {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--mist);
+  }
+  .sources-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 0.4rem;
+  }
+  .source-item {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-bottom: 0.2rem;
+    line-height: 1.4;
+  }
+  .source-item a {
+    color: var(--wine);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .source-item a:hover { text-decoration: underline; }
+  .source-date {
+    font-size: 0.7rem;
+    color: #9A8878;
+    margin-left: 0.3rem;
+  }
+
   .typing { display: flex; gap: 4px; padding: 0.75rem 1rem; align-items: center; }
   .typing span { width: 7px; height: 7px; background: var(--text-light); border-radius: 50%; animation: bounce 1.2s infinite; }
   .typing span:nth-child(2) { animation-delay: 0.2s; }
   .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  .typing-note {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    font-style: italic;
+    padding: 0.25rem 0 0 0.25rem;
+  }
 
   .input-area { padding: 1.25rem 2rem; background: var(--white); border-top: 1px solid var(--mist); flex-shrink: 0; }
   .input-row { display: flex; gap: 0.75rem; align-items: flex-end; max-width: 800px; }
@@ -178,24 +217,40 @@
     header { padding: 0.75rem 1rem; }
     .pillars { display: none; }
     .logo-main { font-size: 1.2rem; }
-    .back-link { font-size: 0.65rem; padding: 0.3rem 0.6rem 0.3rem 0.45rem; }
     .main { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; max-height: 190px; flex-direction: row; overflow-x: auto; overflow-y: hidden; flex-shrink: 0; display: flex; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .sidebar-section { border-bottom: none; border-right: 1px solid rgba(255,255,255,0.08); padding: 0.75rem 1rem; min-width: 155px; flex-shrink: 0; }
+    .sidebar {
+      width: 100%;
+      height: 160px;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-shrink: 0;
+      display: flex;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-section {
+      border-bottom: none;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      padding: 0.75rem 1rem;
+      min-width: 160px;
+      flex-shrink: 0;
+    }
     .sidebar-label { font-size: 0.58rem; margin-bottom: 0.4rem; }
-    .starter-q { padding: 0.45rem 0.6rem; font-size: 0.73rem; }
-    .chat-area { flex: 1; min-height: 0; }
-    .messages { padding: 1rem; gap: 1rem; }
+    .starter-btn { font-size: 0.73rem; padding: 0.45rem 0.6rem; margin-bottom: 0.35rem; }
+    .clear-btn { display: none; }
+    .chat-area { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+    .messages { padding: 1rem; gap: 1rem; overflow-y: auto; -webkit-overflow-scrolling: touch; }
     .message { max-width: 100%; }
-    .bubble { font-size: 0.875rem; padding: 0.75rem 1rem; }
-    .input-area { padding: 0.75rem 1rem; }
+    .bubble { font-size: 0.875rem; padding: 0.75rem 1rem; max-width: 100%; }
+    .input-area { padding: 0.75rem 1rem; flex-shrink: 0; }
     .input-row { max-width: 100%; }
     .welcome { padding: 1.25rem 1rem; }
     .welcome-icon { width: 52px; height: 52px; }
-    .welcome-title { font-size: 1.4rem; }
-    .welcome-sub { font-size: 0.83rem; }
+    .welcome-icon svg { width: 26px; height: 26px; }
+    .welcome h2 { font-size: 1.4rem; }
+    .welcome p { font-size: 0.85rem; }
     .pillar-pills { gap: 0.3rem; }
-    .pillar-pill { font-size: 0.68rem; padding: 0.25rem 0.55rem; }
+    .pill { font-size: 0.68rem; padding:0.25rem 0.55rem; }
   }
 </style>
 </head>
@@ -204,7 +259,7 @@
 <header>
   <div class="logo">
     <span class="logo-main">NapaServe</span>
-    <span class="logo-sub">Civic AI · District 1</span>
+    <span class="logo-sub">Civic AI · Napa County</span>
   </div>
   <div class="pillars">
     <div class="pillar people"><div class="pillar-dot"></div>People</div>
@@ -231,7 +286,7 @@
       </button>
       <button class="starter-btn" onclick="useStarter(this)">
         <div class="pillar-tag tag-people">People</div><br>
-        What services are most critical for older residents in Napa County District 1?
+        What services are most critical for older residents in Napa County?
       </button>
     </div>
     <div class="sidebar-section">
@@ -277,7 +332,7 @@
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
         </div>
         <h2>Welcome to NapaServe</h2>
-        <p>Your trusted civic AI advisor for Napa County District 1. Ask about policy, environment, jobs, housing, or community well-being.</p>
+        <p>Your trusted civic AI advisor for Napa County. Ask about policy, environment, jobs, housing, or community well-being.</p>
         <div class="pillar-pills">
           <span class="pill pill-people">People & Well-Being</span>
           <span class="pill pill-place">Place & Environment</span>
@@ -300,7 +355,9 @@
 </div>
 
 <script>
-const SYSTEM_PROMPT = `You are NapaServe, a trusted AI advisor and innovation partner supporting Napa County District 1. You bring deep expertise across economics, environmental science, public health, land use, housing, workforce development, community planning, and emerging technology. You are objective, grounded, and values-driven — always anchored to a clear framework for what makes a community truly thrive.
+const WORKER_URL = 'https://misty-bush-fc93.tfcarl.workers.dev';
+
+const SYSTEM_PROMPT = `You are NapaServe, a trusted AI advisor and innovation partner supporting Napa County. You bring deep expertise across economics, environmental science, public health, land use, housing, workforce development, community planning, and emerging technology. You are objective, grounded, and values-driven — always anchored to a clear framework for what makes a community truly thrive.
 
 You are the kind of advisor people trust because you give honest, sound recommendations, ask the right questions, never lose sight of who you are serving, and actively seek better ways forward.
 
@@ -346,7 +403,7 @@ HOW YOU OPERATE:
 - Identify the 3-5 most important issues, then ask if they want to explore further
 - Make sound, well-reasoned recommendations grounded in evidence
 - Flag legal or compliance concerns and recommend expert counsel when needed
-- Always serve the long-term public interest of Napa County District 1
+- Always serve the long-term public interest of Napa County
 - End every response with: "Want me to explore any of these areas deeper?"
 
 NAPA COUNTY KNOWLEDGE BASE:
@@ -400,7 +457,7 @@ KEY LEGISLATION TO KNOW:
 - Williamson Act: Agricultural land contracts — affects ability to convert farmland
 - AB 1825/SB 1: Various housing accountability bills — limits cities' ability to deny compliant housing projects
 
-COMMUNITY DEMOGRAPHICS (District 1 - City of Napa core):
+COMMUNITY DEMOGRAPHICS (Napa County - City of Napa core):
 - Population: ~80,000 in city of Napa
 - ~30% Latino/Hispanic — many in essential hospitality, agriculture, and service jobs
 - Significant senior population — elder services and aging in place are priority issues
@@ -417,6 +474,8 @@ FORMATTING RULES:
 Legal Grounding: Ensure all recommendations align with Napa County ordinances, California state law, and applicable federal regulations.
 
 Tone: Trustworthy, clear, expert, curious, and deeply committed to the community.`;
+
+const WORKER_RAG_URL = `${WORKER_URL}/api/rag-search`;
 
 let conversationHistory = [];
 let isLoading = false;
@@ -450,7 +509,7 @@ function clearChat() {
   welcome.style.display = 'flex';
 }
 
-function addMessage(role, content) {
+function addMessage(role, content, sources = []) {
   if (welcome) welcome.style.display = 'none';
   const msg = document.createElement('div');
   msg.className = `message ${role}`;
@@ -460,6 +519,43 @@ function addMessage(role, content) {
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   bubble.innerHTML = role === 'assistant' ? formatMarkdown(content) : escapeHtml(content);
+
+  // Append sources block for assistant messages
+  if (role === 'assistant' && sources.length > 0) {
+    const sourcesBlock = document.createElement('div');
+    sourcesBlock.className = 'sources-block';
+    const sourcesLabel = document.createElement('div');
+    sourcesLabel.className = 'sources-label';
+    sourcesLabel.textContent = 'NVF Archive Sources';
+    sourcesBlock.appendChild(sourcesLabel);
+
+    // Deduplicate by post_id, show top 3
+    const seen = new Set();
+    const unique = sources.filter(s => {
+      if (seen.has(s.post_id)) return false;
+      seen.add(s.post_id);
+      return true;
+    }).slice(0, 3);
+
+    unique.forEach(s => {
+      const item = document.createElement('div');
+      item.className = 'source-item';
+      const date = s.published_at
+        ? new Date(s.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
+        : '';
+      const title = s.title || 'Untitled';
+      const url = s.substack_url || s.post_url || null;
+      if (url) {
+        item.innerHTML = `<a href="${url}" target="_blank" rel="noopener">${title}</a><span class="source-date">${date}</span>`;
+      } else {
+        item.innerHTML = `<span>${title}</span><span class="source-date">${date}</span>`;
+      }
+      sourcesBlock.appendChild(item);
+    });
+
+    bubble.appendChild(sourcesBlock);
+  }
+
   msg.appendChild(avatar);
   msg.appendChild(bubble);
   messagesEl.appendChild(msg);
@@ -471,30 +567,35 @@ function escapeHtml(text) {
 }
 
 function formatMarkdown(text) {
-  // Escape HTML first
   let t = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  // Links before other formatting
   t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-  // Bold and italic
   t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   t = t.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  // Headers
+  t = t.replace(/^#### (.+)$/gm, '<h5 style="font-family:\'Playfair Display\',serif;margin:0.6rem 0 0.25rem;color:#2C1810;font-size:0.9rem">$1</h5>');
   t = t.replace(/^### (.+)$/gm, '<h4 style="font-family:\'Playfair Display\',serif;margin:0.75rem 0 0.3rem;color:#2C1810;font-size:0.95rem">$1</h4>');
   t = t.replace(/^## (.+)$/gm, '<h3 style="font-family:\'Playfair Display\',serif;margin:0.85rem 0 0.4rem;color:#2C1810;font-size:1.05rem">$1</h3>');
-  // HR
+  t = t.replace(/^# (.+)$/gm, '<h2 style="font-family:\'Playfair Display\',serif;margin:1rem 0 0.5rem;color:#2C1810;font-size:1.2rem">$1</h2>');
   t = t.replace(/^---$/gm, '<hr>');
-  // List items — collect consecutive ones into ul
+  t = t.replace(/^\* (.+)$/gm, '<li>$1</li>');
   t = t.replace(/^- (.+)$/gm, '<li>$1</li>');
-  t = t.replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>' + m + '</ul>');
-  // Paragraphs
-  t = t.replace(/\n\n/g, '</p><p>');
-  t = t.replace(/\n/g, '<br>');
-  t = t.replace(/^(?!<)(.+)/gm, '<p>$1</p>');
-  t = t.replace(/<p><\/p>/g, '');
-  return t;
+  t = t.replace(/^[\*\-]\s*$/gm, ''); // remove empty bullet lines
+  t = t.replace(/(<li>.*<\/li>\n?)+/g, m => '<ul style="margin:0.4rem 0 0.4rem 1.25rem;padding:0">' + m + '</ul>');
+  // Split into lines, wrap non-HTML lines in <p>, collapse blanks
+  const lines = t.split('\n');
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue; // skip blank lines entirely
+    if (line.startsWith('<')) {
+      out.push(line); // already HTML
+    } else {
+      out.push('<p style="margin:0.25rem 0">' + line + '</p>');
+    }
+  }
+  return out.join('\n');
 }
 
-function showTyping() {
+function showTyping(note = 'Searching archive…') {
   const msg = document.createElement('div');
   msg.className = 'message assistant';
   msg.id = 'typing-indicator';
@@ -502,21 +603,46 @@ function showTyping() {
   avatar.className = 'avatar';
   avatar.textContent = 'NS';
   const bubble = document.createElement('div');
-  bubble.className = 'bubble typing';
-  bubble.innerHTML = '<span></span><span></span><span></span>';
-  const searchNote = document.createElement('div');
-  searchNote.style.cssText = 'font-size:0.7rem;color:var(--text-light);margin-top:0.5rem;font-style:italic;';
-  searchNote.textContent = 'Searching current sources...';
-  msg.appendChild(searchNote);
+  bubble.className = 'bubble';
+  const typing = document.createElement('div');
+  typing.className = 'typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  const noteEl = document.createElement('div');
+  noteEl.className = 'typing-note';
+  noteEl.id = 'typing-note';
+  noteEl.textContent = note;
+  bubble.appendChild(typing);
+  bubble.appendChild(noteEl);
   msg.appendChild(avatar);
   msg.appendChild(bubble);
   messagesEl.appendChild(msg);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
+function updateTypingNote(note) {
+  const el = document.getElementById('typing-note');
+  if (el) el.textContent = note;
+}
+
 function removeTyping() {
   const t = document.getElementById('typing-indicator');
   if (t) t.remove();
+}
+
+// Fetch relevant NVF chunks for a query
+async function fetchArchiveContext(query) {
+  try {
+    const res = await fetch(WORKER_RAG_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, matchCount: 5 }),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.results || [];
+  } catch {
+    return [];
+  }
 }
 
 async function sendMessage() {
@@ -530,16 +656,37 @@ async function sendMessage() {
 
   addMessage('user', text);
   conversationHistory.push({ role: 'user', content: text });
-  showTyping();
+  showTyping('Searching Napa Valley Features archive…');
+
+  let archiveChunks = [];
+  let ragContext = '';
 
   try {
+    // Step 1: RAG search
+    archiveChunks = await fetchArchiveContext(text);
+    console.log('RAG chunks:', archiveChunks.length, archiveChunks[0] ? JSON.stringify({title: archiveChunks[0].title, substack_url: archiveChunks[0].substack_url, post_url: archiveChunks[0].post_url}) : 'none');
+
+    if (archiveChunks.length > 0) {
+      updateTypingNote('Generating response with local context…');
+      ragContext = '\n\nNAPA VALLEY FEATURES ARCHIVE CONTEXT (use this local reporting to ground your response):\n\n' +
+        archiveChunks.map((c, i) =>
+          `[${i + 1}] "${c.title}" (${c.published_at ? new Date(c.published_at).toLocaleDateString('en-US', {year:'numeric',month:'short'}) : 'n/d'})\n${c.chunk_text}`
+        ).join('\n\n---\n\n') +
+        '\n\nWhen relevant, reference these articles by title and date in your response. Do not fabricate quotes.';
+    } else {
+      updateTypingNote('Generating response…');
+    }
+
+    // Step 2: Claude call with injected archive context
+    const systemWithContext = ragContext ? SYSTEM_PROMPT + ragContext : SYSTEM_PROMPT;
+
     const response = await fetch('/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 1500,
-        system: SYSTEM_PROMPT,
+        system: systemWithContext,
         messages: conversationHistory
       })
     });
@@ -554,7 +701,7 @@ async function sendMessage() {
     const data = await response.json();
     const reply = data.content[0].text;
     conversationHistory.push({ role: 'assistant', content: reply });
-    addMessage('assistant', reply);
+    addMessage('assistant', reply, archiveChunks);
 
   } catch (err) {
     removeTyping();
