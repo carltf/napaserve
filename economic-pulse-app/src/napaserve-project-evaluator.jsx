@@ -591,10 +591,10 @@ export default function ProjectEvaluator() {
                   </button>
                 </div>
                 <div dangerouslySetInnerHTML={{ __html: reportHtml }} />
-                {reportSources.length > 0 && (
+                {nvfSources.length > 0 && (
                   <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--rule)" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 10, fontFamily: "'Source Sans 3',sans-serif" }}>NVF Archive Sources</div>
-                    {reportSources.map((s, i) => {
+                    {nvfSources.map((s, i) => {
                       const date = s.published_at ? new Date(s.published_at).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : "";
                       const url = s.substack_url || null;
                       return (
