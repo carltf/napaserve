@@ -314,6 +314,22 @@ export default function EventFinder() {
     })();
   }, []);
 
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const today = todayStr();
+        const twoWeeks = plusDays(today, 14);
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/community_events?status=eq.approved&event_date=gte.${today}&event_date=lte.${twoWeeks}&order=event_date.asc&limit=6`,
+          { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+        );
+        if (res.ok) { const data = await res.json(); setUpcomingEvents(data); }
+      } catch {}
+    })();
+  }, []);
+
   const Nav = () => (
     <div style={{ position: "relative" }}>
       <nav style={{ background: "#F5F0E8", borderBottom: "1px solid rgba(44,24,16,0.12)", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 20 }}>
@@ -401,6 +417,29 @@ export default function EventFinder() {
               </div>
             </div>
           )}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#A89880" }}>Upcoming Community Events</div>
+              <button onClick={() => setTab("submit")} style={{ fontSize: 11, fontWeight: 600, color: "#8B5E3C", background: "none", border: "none", cursor: "pointer", fontFamily: "'Source Sans 3',sans-serif" }}>Submit an Event →</button>
+            </div>
+            {upcomingEvents.length > 0 ? (
+              <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
+                {upcomingEvents.map((ev, i) => (
+                  <div key={ev.id || i} style={{ minWidth: 200, maxWidth: 240, flex: "0 0 auto", background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "14px 16px" }}>
+                    <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#C4A050", marginBottom: 4 }}>{ev.event_date ? new Date(ev.event_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 6 }}>{ev.title}</div>
+                    {ev.town && <div style={{ fontSize: 11, color: "#7A6A50", marginBottom: 4, textTransform: "capitalize" }}>{ev.town.replace(/-/g, " ")}</div>}
+                    {ev.category && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#A89880", border: "1px solid rgba(44,24,16,0.12)", padding: "2px 7px" }}>{ev.category.replace(/_/g, " ")}</span>}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "20px 24px", textAlign: "center" }}>
+                <p style={{ fontSize: 14, color: "#7A6A50", margin: "0 0 10px" }}>No events yet — be the first to submit one!</p>
+                <button onClick={() => setTab("submit")} style={{ fontSize: 12, fontWeight: 600, color: "#F5F0E8", background: "#2C1810", border: "none", padding: "8px 18px", borderRadius: 6, cursor: "pointer", fontFamily: "'Source Sans 3',sans-serif" }}>Add an Event</button>
+              </div>
+            )}
+          </div>
           <div style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.18)", padding: 24, marginBottom: 24 }}>
             <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
               {QUICK_DATES.map((qd, i) => (
