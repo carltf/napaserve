@@ -18,9 +18,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { prompt } = req.body;
-    if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
+    const { model, max_tokens, messages } = req.body;
+    if (!messages) {
+      return res.status(400).json({ error: "Missing messages" });
     }
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -31,9 +31,9 @@ export default async function handler(req, res) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 2000,
-        messages: [{ role: "user", content: prompt }],
+        model: model || "claude-sonnet-4-20250514",
+        max_tokens: max_tokens || 2000,
+        messages,
       }),
     });
 
@@ -43,12 +43,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: data.error.message || "API error" });
     }
 
-    const text = data.content
-      ?.map((c) => (c.type === "text" ? c.text : ""))
-      .filter(Boolean)
-      .join("\n");
-
-    return res.status(200).json({ text });
+    return res.status(200).json(data);
   } catch (err) {
     return res.status(500).json({ error: err.message || "Unknown error" });
   }
