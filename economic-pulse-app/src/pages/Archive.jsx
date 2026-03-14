@@ -3,14 +3,15 @@
 // RAG-powered search into 997 posts / 10,033 chunks via Cloudflare Worker
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 
 const WORKER_URL = "https://misty-bush-fc93.tfcarl.workers.dev";
 
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "#0F0A06",
-    color: "#F5E6C8",
+    background: "#F5F0E8",
+    color: "#2C1810",
     fontFamily: "'Source Sans 3', 'Source Sans Pro', sans-serif",
   },
   hero: {
@@ -20,25 +21,25 @@ const styles = {
     textAlign: "center",
   },
   eyebrow: {
-    fontFamily: "'Playfair Display', Georgia, serif",
+    fontFamily: "'Libre Baskerville', Georgia, serif",
     fontSize: "0.75rem",
     letterSpacing: "0.2em",
     textTransform: "uppercase",
-    color: "#C4A050",
+    color: "#8B5E3C",
     marginBottom: 16,
     opacity: 0.9,
   },
   headline: {
-    fontFamily: "'Playfair Display', Georgia, serif",
+    fontFamily: "'Libre Baskerville', Georgia, serif",
     fontSize: "clamp(2rem, 5vw, 3.2rem)",
     fontWeight: 700,
     lineHeight: 1.15,
-    color: "#F5E6C8",
+    color: "#2C1810",
     margin: "0 0 16px",
   },
   subhead: {
     fontSize: "1.05rem",
-    color: "#B89A6A",
+    color: "#7A6A50",
     lineHeight: 1.6,
     maxWidth: 580,
     margin: "0 auto 40px",
@@ -55,19 +56,19 @@ const styles = {
   },
   input: {
     flex: 1,
-    background: "rgba(196,160,80,0.08)",
+    background: "rgba(44,24,16,0.05)",
     border: "1px solid rgba(196,160,80,0.3)",
     borderRadius: 8,
     padding: "14px 18px",
     fontSize: "1rem",
-    color: "#F5E6C8",
+    color: "#2C1810",
     outline: "none",
     fontFamily: "'Source Sans 3', sans-serif",
     transition: "border-color 0.2s",
   },
   btnAsk: {
-    background: "#C4A050",
-    color: "#0F0A06",
+    background: "#2C1810",
+    color: "#F5F0E8",
     border: "none",
     borderRadius: 8,
     padding: "14px 22px",
@@ -81,7 +82,7 @@ const styles = {
   },
   btnSearch: {
     background: "transparent",
-    color: "#C4A050",
+    color: "#8B5E3C",
     border: "1px solid rgba(196,160,80,0.4)",
     borderRadius: 8,
     padding: "14px 18px",
@@ -103,7 +104,7 @@ const styles = {
     padding: "4px 12px",
     borderRadius: 20,
     border: "1px solid rgba(196,160,80,0.25)",
-    color: "#B89A6A",
+    color: "#7A6A50",
     cursor: "pointer",
     background: "transparent",
     fontFamily: "'Source Sans 3', sans-serif",
@@ -112,11 +113,11 @@ const styles = {
   modeChipActive: {
     background: "rgba(196,160,80,0.15)",
     borderColor: "#C4A050",
-    color: "#C4A050",
+    color: "#8B5E3C",
   },
   divider: {
     height: 1,
-    background: "rgba(196,160,80,0.1)",
+    background: "rgba(44,24,16,0.1)",
     margin: "0 24px",
   },
   results: {
@@ -125,19 +126,19 @@ const styles = {
     padding: "40px 24px 80px",
   },
   answerCard: {
-    background: "rgba(196,160,80,0.06)",
-    border: "1px solid rgba(196,160,80,0.2)",
-    borderRadius: 12,
+    background: "#EDE8DE",
+    border: "1px solid rgba(44,24,16,0.12)",
+    borderLeft: "3px solid #8B5E3C",
     padding: "28px 32px",
     marginBottom: 40,
     position: "relative",
   },
   answerLabel: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Libre Baskerville', serif",
     fontSize: "0.7rem",
     letterSpacing: "0.2em",
     textTransform: "uppercase",
-    color: "#C4A050",
+    color: "#8B5E3C",
     marginBottom: 14,
     display: "flex",
     alignItems: "center",
@@ -146,15 +147,15 @@ const styles = {
   answerText: {
     fontSize: "1rem",
     lineHeight: 1.75,
-    color: "#E8D4A8",
+    color: "#2C1810",
     whiteSpace: "pre-wrap",
   },
   sourcesLabel: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Libre Baskerville', serif",
     fontSize: "0.7rem",
     letterSpacing: "0.18em",
     textTransform: "uppercase",
-    color: "#8A7045",
+    color: "#8B5E3C",
     marginBottom: 16,
     marginTop: 40,
   },
@@ -164,9 +165,8 @@ const styles = {
     gap: 16,
   },
   chunkCard: {
-    background: "rgba(15,10,6,0.6)",
-    border: "1px solid rgba(196,160,80,0.12)",
-    borderRadius: 10,
+    background: "#F5F0E8",
+    border: "1px solid rgba(44,24,16,0.12)",
     padding: "18px 20px",
     transition: "border-color 0.2s",
     cursor: "default",
@@ -179,17 +179,17 @@ const styles = {
     gap: 8,
   },
   chunkTitle: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Libre Baskerville', serif",
     fontSize: "0.88rem",
     fontWeight: 600,
-    color: "#F5E6C8",
+    color: "#2C1810",
     lineHeight: 1.35,
     flex: 1,
   },
   chunkScore: {
     fontSize: "0.7rem",
-    color: "#C4A050",
-    background: "rgba(196,160,80,0.1)",
+    color: "#8B5E3C",
+    background: "rgba(44,24,16,0.1)",
     padding: "2px 7px",
     borderRadius: 4,
     whiteSpace: "nowrap",
@@ -197,12 +197,12 @@ const styles = {
   },
   chunkDate: {
     fontSize: "0.75rem",
-    color: "#7A6535",
+    color: "#A89880",
     marginBottom: 10,
   },
   chunkExcerpt: {
     fontSize: "0.83rem",
-    color: "#A08060",
+    color: "#7A6A50",
     lineHeight: 1.55,
   },
   chunkLink: {
@@ -211,14 +211,15 @@ const styles = {
     gap: 4,
     marginTop: 12,
     fontSize: "0.78rem",
-    color: "#C4A050",
+    color: "#8B5E3C",
     textDecoration: "none",
     letterSpacing: "0.03em",
+    fontWeight: 600,
   },
   loading: {
     textAlign: "center",
     padding: "60px 0",
-    color: "#8A7045",
+    color: "#8B5E3C",
     fontSize: "0.9rem",
     letterSpacing: "0.08em",
   },
@@ -226,8 +227,8 @@ const styles = {
     display: "inline-block",
     width: 20,
     height: 20,
-    border: "2px solid rgba(196,160,80,0.2)",
-    borderTopColor: "#C4A050",
+    border: "2px solid rgba(44,24,16,0.12)",
+    borderTopColor: "#8B5E3C",
     borderRadius: "50%",
     animation: "spin 0.8s linear infinite",
     marginBottom: 12,
@@ -235,7 +236,7 @@ const styles = {
   empty: {
     textAlign: "center",
     padding: "60px 0",
-    color: "#5A4A2A",
+    color: "#A89880",
     fontSize: "0.95rem",
     lineHeight: 1.6,
   },
@@ -244,32 +245,32 @@ const styles = {
     justifyContent: "center",
     gap: 32,
     padding: "24px 0 0",
-    borderTop: "1px solid rgba(196,160,80,0.08)",
+    borderTop: "1px solid rgba(44,24,16,0.1)",
     marginTop: 48,
   },
   stat: {
     textAlign: "center",
   },
   statNum: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Libre Baskerville', serif",
     fontSize: "1.6rem",
-    color: "#C4A050",
+    color: "#8B5E3C",
     display: "block",
     lineHeight: 1,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: "0.72rem",
-    color: "#5A4A2A",
+    color: "#A89880",
     letterSpacing: "0.12em",
     textTransform: "uppercase",
   },
   errorBox: {
-    background: "rgba(180,60,40,0.08)",
-    border: "1px solid rgba(180,60,40,0.25)",
+    background: "rgba(138,58,42,0.06)",
+    border: "1px solid rgba(138,58,42,0.2)",
     borderRadius: 8,
     padding: "16px 20px",
-    color: "#E8A898",
+    color: "#8A3A2A",
     fontSize: "0.88rem",
     lineHeight: 1.55,
   },
@@ -288,29 +289,29 @@ function ChunkCard({ chunk }) {
   const score = chunk.similarity
     ? `${Math.round(chunk.similarity * 100)}%`
     : null;
-  const date = chunk.published_at
-    ? new Date(chunk.published_at).toLocaleDateString("en-US", {
+  const date = chunk.published_date
+    ? new Date(chunk.published_date).toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
       })
     : null;
   const excerpt =
     chunk.excerpt ||
-    (chunk.chunk_text ? chunk.chunk_text.slice(0, 240) + "…" : "");
+    (chunk.content ? chunk.content.slice(0, 240) + "…" : "");
 
   return (
     <div
       style={styles.chunkCard}
       onMouseEnter={(e) =>
-        (e.currentTarget.style.borderColor = "rgba(196,160,80,0.3)")
+        (e.currentTarget.style.borderColor = "rgba(44,24,16,0.15)")
       }
       onMouseLeave={(e) =>
-        (e.currentTarget.style.borderColor = "rgba(196,160,80,0.12)")
+        (e.currentTarget.style.borderColor = "rgba(44,24,16,0.12)")
       }
     >
       <div style={styles.chunkMeta}>
         <div style={styles.chunkTitle}>
-          {chunk.title || "Untitled Article"}
+          {chunk.post_title || chunk.title || "Untitled Article"}
         </div>
         {score && <span style={styles.chunkScore}>{score}</span>}
       </div>
@@ -322,20 +323,18 @@ function ChunkCard({ chunk }) {
           target="_blank"
           rel="noopener noreferrer"
           style={styles.chunkLink}
+          onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+          onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
         >
           Read article →
         </a>
-      )}
-      {!chunk.substack_url && chunk.series && (
-        <span style={{ ...styles.chunkDate, marginTop: 8, display: "block" }}>
-          {chunk.series}
-        </span>
       )}
     </div>
   );
 }
 
 export default function Archive() {
+  const [navOpen, setNavOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState("answer"); // "answer" | "chunks"
   const [loading, setLoading] = useState(false);
@@ -400,8 +399,41 @@ export default function Archive() {
   const hasResults =
     answer || sources.length > 0 || chunks.length > 0;
 
+
+  const Nav = () => (
+    <div style={{ position: "relative" }}>
+      <nav style={{ background: "#F5F0E8", borderBottom: "1px solid rgba(44,24,16,0.12)", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 20 }}>
+        <a href="/" style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 19, fontWeight: 700, color: "#2C1810", textDecoration: "none" }}>NapaServe</a>
+        <button onClick={() => setNavOpen(o => !o)} style={{ background: "none", border: "1px solid rgba(44,24,16,0.12)", cursor: "pointer", padding: "7px 10px", display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", transform: navOpen ? "translateY(5.5px) rotate(45deg)" : "", transition: "transform .2s" }} />
+          <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", opacity: navOpen ? 0 : 1, transition: "opacity .2s" }} />
+          <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", transform: navOpen ? "translateY(-5.5px) rotate(-45deg)" : "", transition: "transform .2s" }} />
+        </button>
+      </nav>
+      {navOpen && <>
+        <div onClick={() => setNavOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 19 }} />
+        <div style={{ position: "fixed", top: 52, right: 0, width: 240, background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.12)", borderTop: "none", boxShadow: "0 8px 24px rgba(44,24,16,0.1)", zIndex: 20, fontFamily: "'Source Sans 3',sans-serif" }}>
+          {[
+            { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "AI Policy Agent", h: "/agent.html" }] },
+            { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive", cur: true }] },
+            { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }] },
+            { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
+          ].map((g, gi) => (
+            <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", padding: "4px 20px 6px" }}>{g.label}</div>
+              {g.links.map((l, li) => (
+                <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
+              ))}
+            </div>
+          ))}
+        </div>
+      </>}
+    </div>
+  );
+
   return (
     <div style={styles.page}>
+      <Nav />
       <div style={styles.hero}>
         <div style={styles.eyebrow}>Napa Valley Features</div>
         <h1 style={styles.headline}>
@@ -423,10 +455,10 @@ export default function Archive() {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               onFocus={(e) =>
-                (e.target.style.borderColor = "rgba(196,160,80,0.7)")
+                (e.target.style.borderColor = "rgba(139,94,60,0.6)")
               }
               onBlur={(e) =>
-                (e.target.style.borderColor = "rgba(196,160,80,0.3)")
+                (e.target.style.borderColor = "rgba(44,24,16,0.15)")
               }
             />
             {mode === "answer" ? (
@@ -445,7 +477,7 @@ export default function Archive() {
                 onClick={() => runSearch()}
                 disabled={loading}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "rgba(196,160,80,0.08)")
+                  (e.currentTarget.style.background = "rgba(44,24,16,0.05)")
                 }
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.background = "transparent")
@@ -487,24 +519,22 @@ export default function Archive() {
                   key={s}
                   style={{
                     background: "transparent",
-                    border: "1px solid rgba(196,160,80,0.18)",
+                    border: "1px solid rgba(44,24,16,0.12)",
                     borderRadius: 20,
                     padding: "5px 14px",
                     fontSize: "0.78rem",
-                    color: "#7A6535",
+                    color: "#A89880",
                     cursor: "pointer",
                     fontFamily: "'Source Sans 3', sans-serif",
                     transition: "all 0.15s",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#C4A050";
-                    e.currentTarget.style.borderColor =
-                      "rgba(196,160,80,0.4)";
+                    e.currentTarget.style.color = "#8B5E3C";
+                    e.currentTarget.style.borderColor = "rgba(139,94,60,0.35)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#7A6535";
-                    e.currentTarget.style.borderColor =
-                      "rgba(196,160,80,0.18)";
+                    e.currentTarget.style.color = "#A89880";
+                    e.currentTarget.style.borderColor = "rgba(44,24,16,0.12)";
                   }}
                   onClick={() => {
                     setQuery(s);
@@ -590,7 +620,7 @@ export default function Archive() {
           <div style={styles.empty}>
             No passages found for "{query}"
             <br />
-            <span style={{ fontSize: "0.85rem", color: "#3A2A10" }}>
+            <span style={{ fontSize: "0.85rem", color: "#A89880" }}>
               Try broader terms or different keywords
             </span>
           </div>
