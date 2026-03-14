@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { buildRagContext } from "./hooks/useRag";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FRAMEWORK
@@ -565,6 +566,20 @@ export default function ProjectEvaluator() {
                     <div style={{ fontSize: 10, color: "var(--dim)", textAlign: "right", marginTop: 4, fontStyle: "italic" }}>pillar avg: {avg}</div>
                     {pi < PILLARS.length - 1 && <hr style={{ border: "none", borderTop: "1px solid var(--rule)", margin: "14px 0" }} />}
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Pillar tabs (duplicate above generate button) */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+              {PILLARS.map(p => {
+                const pr = pillarProgress(p.id);
+                const active = activePillar === p.id;
+                return (
+                  <button key={p.id} onClick={() => setActivePillar(p.id)} style={{ flex: 1, padding: "10px 8px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif", background: active ? p.color + "18" : "var(--bg2)", border: `1px solid ${active ? p.color + "55" : "var(--rule)"}`, color: active ? p.color : "var(--dim)", cursor: "pointer", textAlign: "center" }}>
+                    {p.label}
+                    <span style={{ display: "block", fontSize: 10, marginTop: 2, opacity: .6, fontWeight: 400 }}>{pr.done} of {pr.all} answered</span>
+                  </button>
                 );
               })}
             </div>
