@@ -350,7 +350,7 @@ export default function EconomicPulseDashboard(){
             <span style={{...lbl,display:"inline"}}>Data Sources </span>
             <span style={{fontSize:11,color:T.muted}}>ABC Licensing · FRED (BLS) · Zillow Research · CA EDD · Freddie Mac · U Michigan · {wineryData.length} snapshots</span>
           </div>
-        </>}'
+        </>}
 
 
         {section==="winery"&&<>
