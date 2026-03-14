@@ -152,47 +152,7 @@ export default function NapaServeHub() {
           <span className="hub-tools-lbl">7 live tools</span>
         </div>
         <div className="hub-grid">
-          <a href="/agent.html" className="hub-card">
-            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="3 2.2"/><circle cx="20" cy="20" r="10" stroke="#8B5E3C" strokeWidth="1"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="2" x2="20" y2="8" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="20" y1="32" x2="20" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="2" y1="20" x2="8" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="32" y1="20" x2="38" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
-            </div>
-            <div className="hub-c-cat">AI · Civic</div>
-            <div className="hub-c-name">AI Policy Agent</div>
-            <div className="hub-c-desc">Ask hard questions. Grounded in the NVF archive, live web search, and local economic data. For policy, projects, and anything you&apos;d otherwise spend hours researching.</div>
-            <div className="hub-arrow">Open →</div>
-          </a>
-          <Link to="/dashboard" className="hub-card">
-            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
-            </div>
-            <div className="hub-c-cat">Economy</div>
-            <div className="hub-c-name">Economic Dashboard</div>
-            <div className="hub-c-desc">Winery licenses, unemployment, home values, food services jobs. Interactive charts with full weekly history. Updated every Monday via GitHub Actions.</div>
-            <div className="hub-arrow">Open →</div>
-          </Link>
-          <Link to="/evaluator" className="hub-card">
-            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><polygon points="20,3 37,12 37,28 20,37 3,28 3,12" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><polygon points="20,10 30,15.5 30,24.5 20,30 10,24.5 10,15.5" stroke="#8B5E3C" strokeWidth="1" fill="none" opacity=".5"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="3" x2="20" y2="10" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="30" y1="15.5" x2="37" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="10" y1="15.5" x2="3" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/></svg>
-            </div>
-            <div className="hub-c-cat">Civic · Analysis</div>
-            <div className="hub-c-name">Project Evaluator</div>
-            <div className="hub-c-desc">Structural Compass — 11-axis scoring of any proposed project against the Jobs / People / Place framework. For civic leaders and stakeholders.</div>
-            <div className="hub-arrow">Open →</div>
-          </Link>
-          <Link to="/archive" className="hub-card">
-            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><circle cx="17" cy="17" r="11" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="25" y1="25" x2="37" y2="37" stroke="#8B5E3C" strokeWidth="2" strokeLinecap="round"/><line x1="11" y1="17" x2="23" y2="17" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/><line x1="17" y1="11" x2="17" y2="23" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/></svg>
-            </div>
-            <div className="hub-c-cat">Archive · Journalism</div>
-            <div className="hub-c-name">NVF Archive Search</div>
-            <div className="hub-c-desc">1,000+ original articles from Napa Valley Features, AI-searchable with semantic similarity. A decade of local reporting on economics, land use, policy, and community.</div>
-            <div className="hub-arrow">Open →</div>
-          </Link>
-          <Link to="/news" className="hub-card">
+<Link to="/news" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
               <svg viewBox="0 0 40 40" fill="none"><rect x="4" y="5" width="32" height="30" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="10" y1="13" x2="30" y2="13" stroke="#8B5E3C" strokeWidth="1.5" strokeLinecap="round"/><line x1="10" y1="19" x2="30" y2="19" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".6"/><line x1="10" y1="24" x2="24" y2="24" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="10" y1="29" x2="20" y2="29" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".3"/></svg>
@@ -212,8 +172,47 @@ export default function NapaServeHub() {
             <div className="hub-c-desc">Community events across Napa County. Discover, filter by category, and submit your own event.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
-        </div>
-
+<Link to="/dashboard" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
+            </div>
+            <div className="hub-c-cat">Economy</div>
+            <div className="hub-c-name">Economic Dashboard</div>
+            <div className="hub-c-desc">Winery licenses, unemployment, home values, food services jobs. Interactive charts with full weekly history. Updated every Monday via GitHub Actions.</div>
+            <div className="hub-arrow">Open →</div>
+          </Link>
+          <Link to="/archive" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="17" cy="17" r="11" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="25" y1="25" x2="37" y2="37" stroke="#8B5E3C" strokeWidth="2" strokeLinecap="round"/><line x1="11" y1="17" x2="23" y2="17" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/><line x1="17" y1="11" x2="17" y2="23" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/></svg>
+            </div>
+            <div className="hub-c-cat">Archive · Journalism</div>
+            <div className="hub-c-name">NVF Archive Search</div>
+            <div className="hub-c-desc">1,000+ original articles from Napa Valley Features, AI-searchable with semantic similarity. A decade of local reporting on economics, land use, policy, and community.</div>
+            <div className="hub-arrow">Open →</div>
+          </Link>
+          <a href="/agent.html" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="3 2.2"/><circle cx="20" cy="20" r="10" stroke="#8B5E3C" strokeWidth="1"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="2" x2="20" y2="8" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="20" y1="32" x2="20" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="2" y1="20" x2="8" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="32" y1="20" x2="38" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            </div>
+            <div className="hub-c-cat">AI · Civic</div>
+            <div className="hub-c-name">AI Policy Agent</div>
+            <div className="hub-c-desc">Ask hard questions. Grounded in the NVF archive, live web search, and local economic data. For policy, projects, and anything you&apos;d otherwise spend hours researching.</div>
+            <div className="hub-arrow">Open →</div>
+          </a>
+          <Link to="/evaluator" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg viewBox="0 0 40 40" fill="none"><polygon points="20,3 37,12 37,28 20,37 3,28 3,12" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><polygon points="20,10 30,15.5 30,24.5 20,30 10,24.5 10,15.5" stroke="#8B5E3C" strokeWidth="1" fill="none" opacity=".5"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="3" x2="20" y2="10" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="30" y1="15.5" x2="37" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="10" y1="15.5" x2="3" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/></svg>
+            </div>
+            <div className="hub-c-cat">Civic · Analysis</div>
+            <div className="hub-c-name">Project Evaluator</div>
+            <div className="hub-c-desc">Structural Compass — 11-axis scoring of any proposed project against the Jobs / People / Place framework. For civic leaders and stakeholders.</div>
+            <div className="hub-arrow">Open →</div>
+          </Link>
+          
         {/* Valley Works */}
         <Link to="/valley-works" className="hub-vw">
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
