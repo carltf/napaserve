@@ -5,12 +5,14 @@
  *   GET  /api/health             — health check
  *   POST /api/rag-search         — embed query → nvf_search() → return chunks
  *   POST /api/rag-answer         — embed → retrieve → Claude answer + sources
+ *   GET  /api/fred               — FRED API proxy → macro indicators
  *
  * Env vars (Bindings):
  *   SUPABASE_URL       (plaintext)
  *   SUPABASE_ANON_KEY  (secret)
  *   VOYAGE_API_KEY     (secret)
  *   ANTHROPIC_API_KEY  (secret)
+ *   FRED_API_KEY       (secret)
  */
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
@@ -186,7 +188,7 @@ Answer in 2–4 focused paragraphs. Be specific: cite article titles or dates wh
       id: c.id,
       post_id: c.post_id,
       title: c.title,
-      substack_url: c.substack_url,   // ← fixed from c.post_url
+      substack_url: c.substack_url,
       series: c.series,
       published_at: c.published_at,
       similarity: c.similarity,
@@ -197,6 +199,47 @@ Answer in 2–4 focused paragraphs. Be specific: cite article titles or dates wh
   } catch (e) {
     console.error("RAG answer failed:", e);
     return err(`Answer generation failed: ${e.message}`, 502, request);
+  }
+}
+
+// ─── FRED API handler ─────────────────────────────────────────────────────────
+
+const FRED_SERIES = {
+  UNRATE:       { label: "US Unemployment",     unit: "%", source: "BLS · Monthly" },
+  CAUR:         { label: "CA Unemployment",     unit: "%", source: "BLS · Monthly" },
+  CPIAUCSL:     { label: "CPI (US)",            unit: "%", source: "BLS · Monthly" },
+  PPIACO:       { label: "PPI (US)",            unit: "%", source: "BLS · Monthly" },
+  FEDFUNDS:     { label: "Fed Funds Rate",      unit: "%", source: "Target range" },
+  MORTGAGE30US: { label: "30yr Mortgage",       unit: "%", source: "Freddie Mac · Weekly" },
+  UMCSENT:      { label: "Consumer Confidence", unit: "",  source: "U Michigan · Monthly" },
+};
+
+async function handleFred(request, env) {
+  try {
+    const results = await Promise.all(
+      Object.keys(FRED_SERIES).map(async (id) => {
+        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${id}&api_key=${env.FRED_API_KEY}&file_type=json&sort_order=desc&limit=2`;
+        const res = await fetch(fredUrl);
+        if (!res.ok) {
+          return { id, ...FRED_SERIES[id], value: null, date: null, prior: null };
+        }
+        const data = await res.json();
+        const obs = data.observations || [];
+        const latest = obs.find(o => o.value !== ".") || obs[0];
+        const prior  = obs.slice(1).find(o => o.value !== ".") || null;
+        return {
+          id,
+          ...FRED_SERIES[id],
+          value: latest?.value ?? null,
+          date:  latest?.date  ?? null,
+          prior: prior?.value  ?? null,
+        };
+      })
+    );
+    return json({ results, ts: Date.now() }, 200, request);
+  } catch (e) {
+    console.error("FRED fetch failed:", e);
+    return err(`FRED fetch failed: ${e.message}`, 502, request);
   }
 }
 
@@ -241,7 +284,7 @@ export default {
       return new Response(body, { status: upstream.status, headers });
     }
 
-    // ── New RAG + utility routes ───────────────────────────────────────────
+    // ── API routes ─────────────────────────────────────────────────────────
     if (url.pathname === "/api/health") {
       return json({ status: "ok", service: "napaserve-worker", ts: Date.now() }, 200, request);
     }
@@ -252,6 +295,10 @@ export default {
 
     if (url.pathname === "/api/rag-answer" && request.method === "POST") {
       return handleRagAnswer(request, env);
+    }
+
+    if (url.pathname === "/api/fred" && request.method === "GET") {
+      return handleFred(request, env);
     }
 
     return new Response("Not found", { status: 404 });

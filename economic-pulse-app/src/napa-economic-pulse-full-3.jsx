@@ -133,6 +133,26 @@ export default function EconomicPulseDashboard(){
     return()=>{cancelled=true;};
   },[]);
 
+  const [macroData, setMacroData] = useState([]);
+  const [macroLoading, setMacroLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("https://misty-bush-fc93.tfcarl.workers.dev/api/fred");
+        if (!res.ok) throw new Error("FRED fetch failed");
+        const data = await res.json();
+        if (!cancelled) setMacroData(data.results || []);
+      } catch (e) {
+        console.error("Macro fetch failed:", e);
+      } finally {
+        if (!cancelled) setMacroLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   const allNapa=useMemo(()=>wineryData.filter(d=>d.napa!=null),[wineryData]);
 
   const wineryFiltered=useMemo(()=>{
@@ -259,10 +279,10 @@ export default function EconomicPulseDashboard(){
 
         {section==="overview"&&<>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-            {latestW&&<KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<Delta c={latestW.napa} p={allNapa[allNapa.length-2]?.napa}/>}/>}
-            {latestE?.unemp!=null&&<KPI label="Unemployment" value={latestE.unemp+"%"} delta={<Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/>}/>}
-            {latestE?.labor!=null&&<KPI label="Labor Force" value={fN(latestE.labor)} delta={<Delta c={latestE.labor} p={priorE?.labor}/>}/>}
-            {latestE?.home!=null&&<KPI label="Avg Home Value" value={f$(latestE.home)} delta={<Delta c={latestE.home} p={priorE?.home}/>}/>}
+            {latestW&&<KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<><Delta c={latestW.napa} p={allNapa[allNapa.length-2]?.napa}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>WoW</span></>}/>}
+            {latestE?.unemp!=null&&<KPI label="Unemployment" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
+            {latestE?.labor!=null&&<KPI label="Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
+            {latestE?.home!=null&&<KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
           </div>
           {latestE?.summary&&<div style={ctx}><div style={lbl}>Weekly Summary</div><p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:0}}>{latestE.summary}</p></div>}
           {overviewWinery.length>=2&&(
@@ -280,11 +300,58 @@ export default function EconomicPulseDashboard(){
               </ResponsiveContainer>
             </div>
           )}
-          <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"12px 18px"}}>
-            <span style={{...lbl,display:"inline"}}>Data Sources </span>
-            <span style={{fontSize:11,color:T.muted}}>ABC Licensing · FRED (BLS) · Zillow Research · CA EDD · {wineryData.length} snapshots</span>
+
+          {/* ── MACRO INDICATORS ── */}
+          <div style={{marginTop:32,paddingTop:24,borderTop:`1px solid ${T.rule}`}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:12,marginBottom:4}}>
+              <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:20,fontWeight:700,color:T.ink2,margin:0}}>US &amp; California Indicators</h2>
+            </div>
+            <p style={{fontSize:12,color:T.dim,margin:"0 0 6px",fontFamily:"'Source Sans 3',sans-serif"}}>Federal Reserve / BLS / Freddie Mac — live via FRED API</p>
+            {lastUpdated&&<p style={{fontSize:11,color:T.dim,margin:"0 0 16px",fontFamily:"'Source Sans 3',sans-serif"}}>Data as of latest available · Fetched live</p>}
+            {macroLoading ? (
+              <div style={{fontSize:13,color:T.dim,padding:"16px 0"}}>Loading indicators...</div>
+            ) : (
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+                {macroData.map((m,i) => {
+                  const val = m.value ? parseFloat(m.value) : null;
+                  const prior = m.prior ? parseFloat(m.prior) : null;
+                  const isCpiPpi = m.id === "CPIAUCSL" || m.id === "PPIACO";
+                  const isIndex = isCpiPpi;
+                  const displayVal = val === null ? "—"
+                    : isIndex ? val.toFixed(1)
+                    : val % 1 === 0 ? val.toFixed(0)
+                    : val.toFixed(1);
+                  const unit = isIndex ? "" : m.unit;
+                  let delta = null, deltaPos = null;
+                  if (val !== null && prior !== null) {
+                    const diff = val - prior;
+                    if (Math.abs(diff) > 0.001) {
+                      deltaPos = m.id === "UNRATE" || m.id === "CAUR" || m.id === "CPIAUCSL" || m.id === "PPIACO" || m.id === "MORTGAGE30US"
+                        ? diff < 0 : diff > 0;
+                      delta = `${diff > 0 ? "▲" : "▼"} ${Math.abs(diff) < 1 ? Math.abs(diff).toFixed(2) : Math.abs(diff).toFixed(1)}`;
+                    }
+                  }
+                  return (
+                    <div key={i} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px"}}>
+                      <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{m.label}</div>
+                      <div style={{fontSize:22,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{displayVal}{unit}</div>
+                      <div style={{marginTop:4,display:"flex",alignItems:"center",gap:6}}>
+                        {delta && <span style={{fontSize:10,fontWeight:600,color:deltaPos?T.pos:T.neg,fontFamily:"monospace"}}>{delta}</span>}
+                        <span style={{fontSize:10,color:T.dim,fontFamily:"'Source Sans 3',sans-serif"}}>{isIndex?"Index · "+m.source:m.source}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        </>}
+
+          <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"12px 18px",marginTop:24}}>
+            <span style={{...lbl,display:"inline"}}>Data Sources </span>
+            <span style={{fontSize:11,color:T.muted}}>ABC Licensing · FRED (BLS) · Zillow Research · CA EDD · Freddie Mac · U Michigan · {wineryData.length} snapshots</span>
+          </div>
+        </>}'
+
 
         {section==="winery"&&<>
           <div style={{marginBottom:20}}>
@@ -335,9 +402,9 @@ export default function EconomicPulseDashboard(){
             <p style={{fontSize:13,color:T.muted,margin:0}}>FRED / BLS data for Napa County — Monthly series, updated weekly</p>
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-            {latestE?.unemp!=null&&<KPI label="Unemployment Rate" value={latestE.unemp+"%"} delta={<Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/>}/>}
-            {latestE?.labor!=null&&<KPI label="Civilian Labor Force" value={fN(latestE.labor)} delta={<Delta c={latestE.labor} p={priorE?.labor}/>}/>}
-            {latestE?.food!=null&&<KPI label="Food Services" value={fN(latestE.food)+" jobs"} delta={<Delta c={latestE.food} p={priorE?.food}/>}/>}
+            {latestE?.unemp!=null&&<KPI label="Unemployment Rate" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
+            {latestE?.labor!=null&&<KPI label="Civilian Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
+            {latestE?.food!=null&&<KPI label="Food Services" value={fN(latestE.food)+" jobs"} delta={<><Delta c={latestE.food} p={priorE?.food}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
           </div>
           {econData.filter(d=>d.unemp!=null).length>=2&&(
             <div style={chrt}>
@@ -366,7 +433,7 @@ export default function EconomicPulseDashboard(){
             <p style={{fontSize:13,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-            {latestE?.home!=null&&<KPI label="Avg Home Value" value={f$(latestE.home)} delta={<Delta c={latestE.home} p={priorE?.home}/>}/>}
+            {latestE?.home!=null&&<KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
             {(priorE?.yoy??latestE?.yoy)!=null&&<KPI label="Year-over-Year" value={(priorE?.yoy??latestE?.yoy)+"%"} delta={<span style={{fontSize:11,color:T.dim}}>home value change</span>}/>}
             {(priorE?.pending??latestE?.pending)!=null&&<KPI label="Days to Pending" value={(priorE?.pending??latestE?.pending)+" days"} delta={<span style={{fontSize:11,color:T.dim}}>median listing</span>}/>}
           </div>
