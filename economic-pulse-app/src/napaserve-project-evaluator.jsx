@@ -114,108 +114,112 @@ function polar(angle,r,cx,cy){
   return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};
 }
 
-function drawCompass(canvas,scores){
-  const ctx=canvas.getContext("2d");
-  const size=380,cx=size/2,cy=size/2;
-  const oR=size/2-62,cR=20;
-  const n=ALL_AXES.length,step=360/n;
-  const rr=v=>cR+(v/10)*(oR-cR);
-  ctx.clearRect(0,0,size,size);
+function drawCompassBase(canvas, scores) {
+  const ctx = canvas.getContext("2d");
+  const size = 380, cx = size / 2, cy = size / 2;
+  const oR = size / 2 - 62, cR = 20;
+  const n = ALL_AXES.length, step = 360 / n;
+  ctx.clearRect(0, 0, size, size);
 
-  const bgGrad=ctx.createRadialGradient(cx,cy,0,cx,cy,oR+40);
-  bgGrad.addColorStop(0,"#EDE8DE");bgGrad.addColorStop(1,"#E6E0D4");
-  ctx.beginPath();ctx.arc(cx,cy,oR+42,0,Math.PI*2);
-  ctx.fillStyle=bgGrad;ctx.fill();
-  ctx.strokeStyle="rgba(44,24,16,0.15)";ctx.lineWidth=1;ctx.stroke();
+  const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, oR + 40);
+  bgGrad.addColorStop(0, "#EDE8DE"); bgGrad.addColorStop(1, "#E6E0D4");
+  ctx.beginPath(); ctx.arc(cx, cy, oR + 42, 0, Math.PI * 2);
+  ctx.fillStyle = bgGrad; ctx.fill();
+  ctx.strokeStyle = "rgba(44,24,16,0.15)"; ctx.lineWidth = 1; ctx.stroke();
 
-  [2,4,6,8,10].forEach(v=>{
-    ctx.beginPath();ctx.arc(cx,cy,rr(v),0,Math.PI*2);
-    ctx.strokeStyle=v===10?"rgba(44,24,16,0.2)":"rgba(44,24,16,0.08)";
-    ctx.lineWidth=v===10?0.8:0.5;
-    if(v!==10){ctx.setLineDash([3,3]);}else{ctx.setLineDash([]);}
-    ctx.stroke();ctx.setLineDash([]);
+  const rr = v => cR + (v / 10) * (oR - cR);
+  [2, 4, 6, 8, 10].forEach(v => {
+    ctx.beginPath(); ctx.arc(cx, cy, rr(v), 0, Math.PI * 2);
+    ctx.strokeStyle = v === 10 ? "rgba(44,24,16,0.2)" : "rgba(44,24,16,0.08)";
+    ctx.lineWidth = v === 10 ? 0.8 : 0.5;
+    if (v !== 10) { ctx.setLineDash([3, 3]); } else { ctx.setLineDash([]); }
+    ctx.stroke(); ctx.setLineDash([]);
   });
 
-  ALL_AXES.forEach((_,i)=>{
-    const o=polar(i*step,oR,cx,cy),ni=polar(i*step,cR,cx,cy);
-    ctx.beginPath();ctx.moveTo(ni.x,ni.y);ctx.lineTo(o.x,o.y);
-    ctx.strokeStyle="rgba(44,24,16,0.1)";ctx.lineWidth=0.6;ctx.stroke();
+  ALL_AXES.forEach((_, i) => {
+    const o = polar(i * step, oR, cx, cy), ni = polar(i * step, cR, cx, cy);
+    ctx.beginPath(); ctx.moveTo(ni.x, ni.y); ctx.lineTo(o.x, o.y);
+    ctx.strokeStyle = "rgba(44,24,16,0.1)"; ctx.lineWidth = 0.6; ctx.stroke();
   });
 
-  let axIdx=0;
-  PILLARS.forEach(p=>{
-    const s=axIdx,e=axIdx+p.axes.length-1;
-    const sa=(s*step-step/2-90)*Math.PI/180;
-    const ea=(e*step+step/2-90)*Math.PI/180;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,oR,sa,ea);ctx.closePath();
-    ctx.fillStyle=p.color+"0A";ctx.fill();
-    axIdx+=p.axes.length;
+  let axIdx = 0;
+  PILLARS.forEach(p => {
+    const s = axIdx, e = axIdx + p.axes.length - 1;
+    const sa = (s * step - step / 2 - 90) * Math.PI / 180;
+    const ea = (e * step + step / 2 - 90) * Math.PI / 180;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, oR, sa, ea); ctx.closePath();
+    ctx.fillStyle = p.color + "0A"; ctx.fill();
+    axIdx += p.axes.length;
   });
 
   ctx.beginPath();
-  ALL_AXES.forEach((_,i)=>{
-    const p=polar(i*step,rr(5),cx,cy);
-    i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);
+  ALL_AXES.forEach((_, i) => {
+    const p = polar(i * step, rr(5), cx, cy);
+    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
   });
   ctx.closePath();
-  ctx.strokeStyle="rgba(141,167,190,0.5)";ctx.lineWidth=1;
-  ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle="rgba(141,167,190,0.06)";ctx.fill();
+  ctx.strokeStyle = "rgba(141,167,190,0.5)"; ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = "rgba(141,167,190,0.06)"; ctx.fill();
+
+  ctx.beginPath(); ctx.arc(cx, cy, cR, 0, Math.PI * 2);
+  ctx.fillStyle = "#EDE8DE"; ctx.fill();
+  ctx.strokeStyle = "rgba(139,94,60,0.3)"; ctx.lineWidth = 0.8; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fillStyle = "#8B5E3C"; ctx.fill();
+
+  [0, 90, 180, 270].map(d => ({ d, i: polar(d, oR + 20, cx, cy), o: polar(d, oR + 28, cx, cy), l: polar(d, oR + 38, cx, cy) })).forEach(({ d, i, o, l }) => {
+    ctx.beginPath(); ctx.moveTo(i.x, i.y); ctx.lineTo(o.x, o.y);
+    ctx.strokeStyle = "rgba(139,94,60,0.5)"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = "rgba(139,94,60,0.6)"; ctx.font = "bold 8px monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText({ 0: "N", 90: "E", 180: "S", 270: "W" }[d], l.x, l.y);
+  });
+
+  ctx.beginPath(); ctx.arc(cx, cy, oR + 28, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(139,94,60,0.2)"; ctx.lineWidth = 0.5; ctx.stroke();
+
+  ALL_AXES.forEach((ax, i) => {
+    const angle = i * step, lp = polar(angle, oR + 32, cx, cy);
+    let anc = "center";
+    if (angle > 20 && angle < 160) anc = "left";
+    if (angle > 200 && angle < 340) anc = "right";
+    ctx.fillStyle = "rgba(44,24,16,0.6)"; ctx.font = "600 10px 'Source Sans 3',sans-serif"; ctx.textAlign = anc; ctx.textBaseline = "middle";
+    ctx.fillText(ax.label, lp.x, lp.y);
+  });
+
+  axIdx = 0;
+  PILLARS.forEach(p => {
+    const mid = axIdx + Math.floor(p.axes.length / 2);
+    const mp = polar(mid * step, oR - 18, cx, cy);
+    ctx.fillStyle = p.color + "55"; ctx.font = "bold 7px monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(p.label.toUpperCase(), mp.x, mp.y);
+    axIdx += p.axes.length;
+  });
+}
+
+function drawCompassScores(canvas, scores, t) {
+  const ctx = canvas.getContext("2d");
+  const size = 380, cx = size / 2, cy = size / 2;
+  const oR = size / 2 - 62, cR = 20;
+  const step = 360 / ALL_AXES.length;
+  const rr = v => cR + (v / 10) * (oR - cR);
+  const ease = 1 - Math.pow(1 - t, 3);
 
   ctx.beginPath();
-  scores.forEach((v,i)=>{
-    const p=polar(i*step,rr(v),cx,cy);
-    i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);
+  scores.forEach((v, i) => {
+    const p = polar(i * step, rr(v * ease), cx, cy);
+    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
   });
   ctx.closePath();
-  ctx.fillStyle="rgba(139,94,60,0.14)";ctx.fill();
-  ctx.strokeStyle="#8B5E3C";ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle = "rgba(139,94,60,0.14)"; ctx.fill();
+  ctx.strokeStyle = "#8B5E3C"; ctx.lineWidth = 2; ctx.stroke();
 
-  scores.forEach((v,i)=>{
-    const p=polar(i*step,rr(v),cx,cy);
-    ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,Math.PI*2);
-    ctx.fillStyle="#8B5E3C";ctx.fill();
-    ctx.strokeStyle="#EDE8DE";ctx.lineWidth=1.5;ctx.stroke();
-  });
-
-  ctx.beginPath();ctx.arc(cx,cy,cR,0,Math.PI*2);
-  ctx.fillStyle="#EDE8DE";ctx.fill();
-  ctx.strokeStyle="rgba(139,94,60,0.3)";ctx.lineWidth=0.8;ctx.stroke();
-  ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);
-  ctx.fillStyle="#8B5E3C";ctx.fill();
-
-  [0,90,180,270].map(d=>({d,i:polar(d,oR+20,cx,cy),o:polar(d,oR+28,cx,cy),l:polar(d,oR+38,cx,cy)})).forEach(({d,i,o,l})=>{
-    ctx.beginPath();ctx.moveTo(i.x,i.y);ctx.lineTo(o.x,o.y);
-    ctx.strokeStyle="rgba(139,94,60,0.5)";ctx.lineWidth=1.5;ctx.stroke();
-    ctx.fillStyle="rgba(139,94,60,0.6)";ctx.font="bold 8px monospace";ctx.textAlign="center";ctx.textBaseline="middle";
-    ctx.fillText({0:"N",90:"E",180:"S",270:"W"}[d],l.x,l.y);
-  });
-
-  ctx.beginPath();ctx.arc(cx,cy,oR+28,0,Math.PI*2);
-  ctx.strokeStyle="rgba(139,94,60,0.2)";ctx.lineWidth=0.5;ctx.stroke();
-
-  ALL_AXES.forEach((ax,i)=>{
-    const angle=i*step,lp=polar(angle,oR+20,cx,cy);
-    let anc="center";
-    if(angle>20&&angle<160)anc="left";
-    if(angle>200&&angle<340)anc="right";
-    const words=ax.label.split(" ");
-    const half=Math.ceil(words.length/2);
-    const l1=words.slice(0,half).join(" ");
-    const l2=words.length>1?words.slice(half).join(" "):null;
-    ctx.fillStyle="rgba(44,24,16,0.55)";ctx.font="7px monospace";ctx.textAlign=anc;ctx.textBaseline="middle";
-    ctx.fillText(l1,lp.x,lp.y-(l2?5:0));
-    if(l2)ctx.fillText(l2,lp.x,lp.y+6);
-  });
-
-  axIdx=0;
-  PILLARS.forEach(p=>{
-    const mid=axIdx+Math.floor(p.axes.length/2);
-    const mp=polar(mid*step,oR-18,cx,cy);
-    ctx.fillStyle=p.color+"55";ctx.font="bold 7px monospace";
-    ctx.textAlign="center";ctx.textBaseline="middle";
-    ctx.fillText(p.label.toUpperCase(),mp.x,mp.y);
-    axIdx+=p.axes.length;
+  scores.forEach((v, i) => {
+    const p = polar(i * step, rr(v * ease), cx, cy);
+    ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = "#8B5E3C"; ctx.fill();
+    ctx.strokeStyle = "#EDE8DE"; ctx.lineWidth = 1.5; ctx.stroke();
   });
 }
 
@@ -271,7 +275,18 @@ export default function ProjectEvaluator() {
   const pct = Math.round((answered / TOTAL_QS) * 100);
 
   useEffect(() => {
-    if (canvasRef.current) drawCompass(canvasRef.current, scores);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    let start = null, raf = null;
+    const animate = (ts) => {
+      if (!start) start = ts;
+      const t = Math.min((ts - start) / 600, 1);
+      drawCompassBase(canvas, scores);
+      drawCompassScores(canvas, scores, t);
+      if (t < 1) raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => { if (raf) cancelAnimationFrame(raf); };
   }, [answers]);
 
   const update = (key, val) => setAnswers(a => ({ ...a, [key]: val }));
