@@ -298,14 +298,14 @@ export default function NapaServeHub() {
           <div className="hub-four" style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid var(--rule)", alignItems: "start" }}>
             <div>
               <div className="hub-col-lbl">Follow</div>
-              <button className="hub-sbtn">
+              <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8C10.8 8.4 7.8 4.2 5.4 2.4 3.6 1.2 2.4 2.4 2.4 4.2c0 1.2.6 5.4.9 6.6.9 3.3 4.2 4.2 7.2 3.6-3 .6-6 1.8-6.6 5.4-.3 1.8.6 3.6 2.4 3.6 3 0 5.7-3.6 5.7-3.6s2.7 3.6 5.7 3.6c1.8 0 2.7-1.8 2.4-3.6-.6-3.6-3.6-4.8-6.6-5.4 3 .6 6.3-.3 7.2-3.6.3-1.2.9-5.4.9-6.6 0-1.8-1.2-3-3-1.8C16.2 4.2 13.2 8.4 12 10.8z"/></svg>
-                Bluesky
-              </button>
-              <button className="hub-sbtn">
+                Bluesky ↗
+              </a>
+              <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.5H2V8h20V5.5zM2 10.5V21l10-5.5 10 5.5V10.5H2zM22 2H2v2h20V2z"/></svg>
-                Substack
-              </button>
+                Substack ↗
+              </a>
             </div>
             <div style={{ gridColumn: "span 3" }}>
               <div className="hub-col-lbl">Newsletter</div>
