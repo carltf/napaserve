@@ -199,6 +199,20 @@ export default function ValleyWorksPage() {
           </div>
         </div>
 
+        {/* VW Labs */}
+        <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", borderLeft: "3px solid #C4A050", padding: "28px 32px", marginTop: 24 }}>
+          <h2 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 22, fontWeight: 700, color: "#2C1810", margin: "0 0 4px" }}>ValleyWorks Labs</h2>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#C4A050", marginBottom: 14 }}>Incubating Durable Regional Companies</div>
+          <p style={{ fontSize: 14, color: "#7A6A50", lineHeight: 1.75, margin: "0 0 16px" }}>
+            VW Labs supports early-stage ventures that strengthen Napa County's economic future — focused on practical implementation, measurable outcomes, and well-paying local employment.
+          </p>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>
+            {["Environmental Resilience", "Healthcare & Aging", "Applied AI", "Workforce Systems"].map(t => (
+              <span key={t} style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#C4A050", border: "1px solid rgba(196,160,80,0.3)", background: "rgba(196,160,80,0.06)", padding: "5px 10px" }}>{t}</span>
+            ))}
+          </div>
+          <a href="https://www.valleyworkscollaborative.org/faq" target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontSize: 12, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", background: "linear-gradient(135deg,#8B6914,#C4A050)", color: "#1C120C", padding: "10px 20px", textDecoration: "none", border: "none" }}>Learn More ↗</a>
+        </div>
 
       </div>
     </div>
