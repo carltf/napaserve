@@ -20,7 +20,8 @@ const NEWS_SOURCES = [
 const CATEGORIES = [
   { key: "all", label: "All Stories" },
   { key: "policy", label: "Policy & Government" },
-  { key: "wine", label: "Wine & Ag" },
+  { key: "wine", label: "Wine" },
+  { key: "agriculture", label: "Agriculture" },
   { key: "housing", label: "Housing" },
   { key: "environment", label: "Environment" },
   { key: "community", label: "Community" },
@@ -29,13 +30,21 @@ const CATEGORIES = [
 
 function categorize(title, subtitle) {
   const t = `${title || ""} ${subtitle || ""}`.toLowerCase();
-  if (/council|supervisor|board|ordinance|ballot|election|legislation|planning|zoning|permit|county|city hall|governor|regulation|vote|policy|political/i.test(t)) return "policy";
-  if (/wine|winery|vineyard|grape|harvest|vintage|viticulture|tasting room|appellation|ag preserve|agriculture|farming|mustard/i.test(t)) return "wine";
-  if (/housing|apartment|affordable|rent|home price|mortgage|development|residential|unhoused|homeless|shelter/i.test(t)) return "housing";
-  if (/wildfire|fire|water|drought|climate|environment|flood|habitat|conservation|wildlife|pollution|air quality|biodiversity/i.test(t)) return "environment";
-  if (/business|economy|job|employ|restaurant|hotel|tourism|startup|retail|commercial|tax revenue|budget|economic/i.test(t)) return "business";
-  if (/school|community|nonprofit|volunteer|library|museum|arts|festival|charity|health|hospital/i.test(t)) return "community";
-  return "all";
+  const cats = new Set();
+  // Series name matching first
+  if (/green wednesday/i.test(t)) { cats.add("environment"); cats.add("agriculture"); }
+  if (/under the hood/i.test(t)) cats.add("business");
+  if (/wine chronicles/i.test(t)) cats.add("wine");
+  if (/harvest|vintage/i.test(t)) { cats.add("wine"); cats.add("agriculture"); }
+  // Keyword matching
+  if (/council|supervisor|board|ordinance|ballot|election|legislation|planning|zoning|permit|county|city hall|governor|regulation|vote|policy|political/i.test(t)) cats.add("policy");
+  if (/wine|winery|tasting room|appellation|viticulture/i.test(t)) cats.add("wine");
+  if (/housing|apartment|affordable|rent|home price|mortgage|development|residential|unhoused|homeless|shelter/i.test(t)) cats.add("housing");
+  if (/wildfire|fire|water|drought|climate|environment|flood|habitat|conservation|wildlife|pollution|air quality|biodiversity/i.test(t)) cats.add("environment");
+  if (/business|economy|job|employ|restaurant|hotel|tourism|startup|retail|commercial|tax revenue|budget|economic/i.test(t)) cats.add("business");
+  if (/school|community|nonprofit|volunteer|library|museum|arts|festival|charity|health|hospital/i.test(t)) cats.add("community");
+  if (/farm|vineyard|grape|ag preserve|mustard|orchard|crop|agriculture|farming/i.test(t)) cats.add("agriculture");
+  return cats.size > 0 ? [...cats] : ["all"];
 }
 
 function fmtDate(iso) {
@@ -153,7 +162,7 @@ export default function NapaValleyFeatures() {
           link: item.canonical_url || "#",
           pubDate: item.post_date,
           image: item.cover_image || null,
-          category: categorize(item.title, item.subtitle),
+          categories: categorize(item.title, item.subtitle),
         })));
       } catch (err) {
         setError("Unable to load stories: " + err.message);
@@ -183,7 +192,7 @@ export default function NapaValleyFeatures() {
     })();
   }, []);
 
-  const filtered = category === "all" ? posts : posts.filter(p => p.category === category);
+  const filtered = category === "all" ? posts : posts.filter(p => p.categories.includes(category));
 
   return (
     <div style={{ minHeight: "100vh", background: "#F5F0E8", fontFamily: "'Source Sans 3',sans-serif", color: "#2C1810" }}>
@@ -277,7 +286,7 @@ export default function NapaValleyFeatures() {
                   <div style={{ padding: "14px 16px 18px", flex: 1, display: "flex", flexDirection: "column" }}>
                     <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
                       <span style={{ fontSize: 10, fontWeight: 600, color: "#8B5E3C", textTransform: "uppercase", letterSpacing: 1 }}>
-                        {CATEGORIES.find(c => c.key === post.category)?.label || "Feature"}
+                        {CATEGORIES.find(c => c.key === post.categories[0])?.label || "Feature"}
                       </span>
                     </div>
                     <h3 style={{
