@@ -312,10 +312,10 @@ export default function EconomicPulseDashboard(){
               <div style={{fontSize:13,color:T.dim,padding:"16px 0"}}>Loading indicators...</div>
             ) : (()=>{
               const INVERT = new Set(["UNRATE","CAUR","CPIAUCSL","PPIACO","MORTGAGE30US"]);
-              const INDEX = new Set(["CPIAUCSL","PPIACO","CAHPI","INDPRO"]);
+              const INDEX = new Set(["CPIAUCSL","PPIACO","CASTHPI","INDPRO"]);
               const rows = [
-                {label:"Labor",ids:["UNRATE","CAUR","CANEMPLOY","JTSJOR"]},
-                {label:"Inflation & Housing",ids:["CPIAUCSL","PPIACO","MORTGAGE30US","CAHPI"]},
+                {label:"Labor",ids:["UNRATE","CAUR","CANA","JTSJOR"]},
+                {label:"Inflation & Housing",ids:["CPIAUCSL","PPIACO","MORTGAGE30US","CASTHPI"]},
                 {label:"Growth & Financial",ids:["RSAFS","INDPRO","HOUST","T10Y2Y"]},
               ];
               const byId = {};
