@@ -313,6 +313,8 @@ export default function EconomicPulseDashboard(){
             ) : (()=>{
               const INVERT = new Set(["UNRATE","CAUR","CPIAUCSL","PPIACO","MORTGAGE30US"]);
               const INDEX = new Set(["CPIAUCSL","PPIACO","CASTHPI","INDPRO"]);
+              const BILLIONS = new Set(["RSAFS"]);
+              const THOUSANDS = new Set(["HOUST","CANA"]);
               const rows = [
                 {label:"Labor",ids:["UNRATE","CAUR","CANA","JTSJOR"]},
                 {label:"Inflation & Housing",ids:["CPIAUCSL","PPIACO","MORTGAGE30US","CASTHPI"]},
@@ -330,7 +332,7 @@ export default function EconomicPulseDashboard(){
                       const val = m.value ? parseFloat(m.value) : null;
                       const prior = m.prior ? parseFloat(m.prior) : null;
                       const isIndex = INDEX.has(id);
-                      const displayVal = val===null?"—":isIndex?val.toFixed(1):val>=1000?fN(Math.round(val)):val%1===0?val.toFixed(0):val.toFixed(1);
+                      const displayVal = val===null?"—":BILLIONS.has(id)?"$"+(val/1000).toFixed(0)+"B":THOUSANDS.has(id)?fN(Math.round(val))+"K":isIndex?val.toFixed(1):val>=1000?fN(Math.round(val)):val%1===0?val.toFixed(0):val.toFixed(1);
                       const unit = isIndex?"":m.unit;
                       let delta=null,deltaPos=null;
                       if(val!==null&&prior!==null){
