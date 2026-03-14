@@ -141,7 +141,7 @@ export default function NapaServeHub() {
           <span className="hub-pillar">Innovation</span>
         </div>
         <h1 className="hub-hed">The source for <em>what&apos;s happening</em><br />in Napa County.</h1>
-        <p className="hub-dek">Weekly economic data. Original local journalism published multiple times a week — from land use and labor markets to wine, food, profiles, and the valley&apos;s stories — all AI-searchable. Civic project analysis grounded in the Jobs&nbsp;/&nbsp;People&nbsp;/&nbsp;Place framework. For supervisors, developers, journalists, and residents who need real answers.</p>
+        <p className="hub-dek">Weekly economic data. Original local journalism published multiple times a week — from land use and labor markets to wine, food, profiles, and the valley&apos;s stories — all AI-searchable. Civic project analysis grounded in the Jobs · People · Place framework. For supervisors, developers, journalists, and residents who need real answers.</p>
       </div>
 
       {/* TOOLS */}
@@ -213,6 +213,7 @@ export default function NapaServeHub() {
             <div className="hub-arrow">Open →</div>
           </Link>
           
+        </div>
         {/* Valley Works */}
         <Link to="/valley-works" className="hub-vw">
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
@@ -323,8 +324,5 @@ export default function NapaServeHub() {
         </div>
       </footer>
     </div>
-    </div>
-    </div>
-  </div>
   );
 }
