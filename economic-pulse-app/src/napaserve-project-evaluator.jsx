@@ -618,32 +618,6 @@ export default function ProjectEvaluator() {
               <div style={{ background: "rgba(138,58,42,0.08)", border: "1px solid rgba(138,58,42,0.25)", padding: "14px 16px", marginTop: 8, fontSize: 13, color: "var(--neg)" }}>{reportErr}</div>
             )}
 
-            {nvfSources.length > 0 && (
-              <div style={{ marginTop: 12, background: "var(--bg2)", border: "1px solid var(--rule)", padding: "14px 18px" }}>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 10, fontFamily: "'Source Sans 3',sans-serif" }}>NVF Archive Sources</div>
-                {(() => {
-                  const seen = new Set();
-                  return nvfSources.filter(s => {
-                    if (seen.has(s.post_id)) return false;
-                    seen.add(s.post_id);
-                    return true;
-                  }).slice(0, 3).map((s, i) => {
-                    const date = s.published_at
-                      ? new Date(s.published_at).toLocaleDateString("en-US", { year: "numeric", month: "short" })
-                      : "";
-                    return (
-                      <div key={i} style={{ fontSize: 12, color: "var(--muted)", marginBottom: 4, lineHeight: 1.4 }}>
-                        {s.substack_url
-                          ? <a href={s.substack_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>{s.title || "Untitled"}</a>
-                          : <span style={{ fontWeight: 600 }}>{s.title || "Untitled"}</span>
-                        }
-                        {date && <span style={{ color: "var(--dim)", marginLeft: 6, fontSize: 11 }}>{date}</span>}
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-            )}
             <div style={{ marginTop: 16, background: "var(--bg2)", border: "1px solid var(--rule)", borderLeft: "3px solid var(--dim)", padding: "12px 16px" }}>
               <p style={{ fontSize: 11, color: "var(--dim)", lineHeight: 1.7 }}>This report is AI-generated using the Jobs · People · Place framework and is intended as a discussion document — not a final determination or official recommendation. NapaServe and the Valley Works Collaborative are not liable for decisions made based on this output.</p>
             </div>
