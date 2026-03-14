@@ -424,14 +424,21 @@ export default function EventFinder() {
             </div>
             {upcomingEvents.length > 0 ? (
               <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
-                {upcomingEvents.map((ev, i) => (
-                  <div key={ev.id || i} style={{ minWidth: 200, maxWidth: 240, flex: "0 0 auto", background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "14px 16px" }}>
-                    <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#C4A050", marginBottom: 4 }}>{ev.event_date ? new Date(ev.event_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 6 }}>{ev.title}</div>
-                    {ev.town && <div style={{ fontSize: 11, color: "#7A6A50", marginBottom: 4, textTransform: "capitalize" }}>{ev.town.replace(/-/g, " ")}</div>}
-                    {ev.category && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#A89880", border: "1px solid rgba(44,24,16,0.12)", padding: "2px 7px" }}>{ev.category.replace(/_/g, " ")}</span>}
-                  </div>
-                ))}
+                {upcomingEvents.map((ev, i) => {
+                  const url = ev.ticket_url || ev.website_url;
+                  const card = (
+                    <div style={{ minWidth: 200, maxWidth: 240, flex: "0 0 auto", background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "14px 16px" }}>
+                      <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#C4A050", marginBottom: 4 }}>{ev.event_date ? new Date(ev.event_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 6 }}>{ev.title}</div>
+                      {ev.town && <div style={{ fontSize: 11, color: "#7A6A50", marginBottom: 4, textTransform: "capitalize" }}>{ev.town.replace(/-/g, " ")}</div>}
+                      {ev.category && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#A89880", border: "1px solid rgba(44,24,16,0.12)", padding: "2px 7px" }}>{ev.category.replace(/_/g, " ")}</span>}
+                      {!url && <div style={{ fontSize: 10, color: "#A89880", marginTop: 6 }}>No link available</div>}
+                    </div>
+                  );
+                  return url
+                    ? <a key={ev.id || i} href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", display: "block" }}>{card}</a>
+                    : <div key={ev.id || i}>{card}</div>;
+                })}
               </div>
             ) : (
               <div style={{ background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "20px 24px", textAlign: "center" }}>
