@@ -343,7 +343,8 @@ export default function EconomicPulseDashboard(){
                         }
                       }
                       return(
-                        <div key={id} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90,boxSizing:"border-box",overflow:"hidden"}}>
+                        <a key={id} href={`https://fred.stlouisfed.org/series/${id}`} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",color:"inherit"}}>
+                        <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90,boxSizing:"border-box",overflow:"hidden"}}>
                           <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.label}</div>
                           <div style={{fontSize:22,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{displayVal}{unit}</div>
                           <div style={{marginTop:4,display:"flex",alignItems:"center",gap:6}}>
@@ -351,6 +352,7 @@ export default function EconomicPulseDashboard(){
                             <span style={{fontSize:10,color:T.dim,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{isIndex?"Index · "+m.source:m.source}</span>
                           </div>
                         </div>
+                        </a>
                       );
                     })}
                   </div>
@@ -402,6 +404,7 @@ export default function EconomicPulseDashboard(){
               </ResponsiveContainer>
             </div>
           )}
+          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>ABC Licensing ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>The Story in the Data</div>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>Napa County's winery license count has followed a <span style={{color:T.accent,fontWeight:600}}>sawtooth pattern</span> since weekly tracking began in February 2024. Three major drops: <span style={{color:T.neg}}>October 2024</span> (−41), <span style={{color:T.neg}}>July 2025</span> (−30), and <span style={{color:T.neg}}>October 2025</span> (−68).</p>
@@ -433,6 +436,7 @@ export default function EconomicPulseDashboard(){
               </ResponsiveContainer>
             </div>
           )}
+          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.bls.gov/regions/west/california.htm" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>BLS Data ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>Labor Market Context</div>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>Napa County's labor market remains stable with unemployment at <span style={{color:T.accent,fontWeight:600}}>{latestE?.unemp||"—"}%</span>, compared to California's statewide rate of ~5.1% and the national average of ~4.1%.</p>
@@ -467,6 +471,7 @@ export default function EconomicPulseDashboard(){
               </ResponsiveContainer>
             </div>
           )}
+          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>Zillow Research ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>Housing Context</div>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>The average Napa County home is valued at <span style={{color:T.accent,fontWeight:600}}>{latestE?.home?f$(latestE.home):"—"}</span>.</p>
