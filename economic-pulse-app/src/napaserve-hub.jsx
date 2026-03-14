@@ -321,10 +321,10 @@ export default function NapaServeHub() {
             <div style={{ fontSize: 10, color: "var(--muted)" }}>napaserve@gmail.com</div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
       </footer>
     </div>
+    </div>
+    </div>
+  </div>
   );
 }
