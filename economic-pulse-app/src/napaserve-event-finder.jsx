@@ -300,6 +300,19 @@ export default function EventFinder() {
   const applyQuick = (qd, i) => { const { s, e } = qd.get(); setStartDate(s); setEndDate(e); setActiveQuick(i); };
 
   const [navOpen, setNavOpen] = useState(false);
+  const [featuredEvents, setFeaturedEvents] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/community_events?featured=eq.true&status=eq.approved&order=event_date.asc&limit=5`,
+          { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+        );
+        if (res.ok) { const data = await res.json(); setFeaturedEvents(data); }
+      } catch {}
+    })();
+  }, []);
 
   const Nav = () => (
     <div style={{ position: "relative" }}>
@@ -365,6 +378,29 @@ export default function EventFinder() {
 
         {/* ═══════════ SEARCH TAB ═══════════ */}
         {tab === "search" && (<>
+          {featuredEvents.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#A89880", marginBottom: 10 }}>Featured Events</div>
+              <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
+                {featuredEvents.map((ev, i) => (
+                  <div key={ev.id || i} style={{ minWidth: 240, maxWidth: 280, flex: "0 0 auto", background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", borderLeft: "3px solid #C4A050", padding: "16px 18px" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#C4A050", marginBottom: 6 }}>Featured</div>
+                    <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 8 }}>{ev.title}</div>
+                    <div style={{ fontSize: 12, color: "#7A6A50", marginBottom: 4 }}>
+                      {ev.event_date && fmtDateNice(ev.event_date)}
+                      {ev.town && <span style={{ marginLeft: 8, color: "#A89880" }}>{ev.town}</span>}
+                    </div>
+                    {ev.category && <div style={{ fontSize: 10, color: "#A89880", textTransform: "capitalize", marginBottom: 8 }}>{ev.category.replace(/_/g, " ")}</div>}
+                    {(ev.website_url || ev.ticket_url) && (
+                      <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontSize: 11, fontWeight: 600, color: "#8B5E3C", textDecoration: "none", border: "1px solid rgba(139,105,20,0.25)", padding: "5px 12px", borderRadius: 4 }}>
+                        {ev.ticket_url ? "Get Tickets ↗" : "More Info ↗"}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.18)", padding: 24, marginBottom: 24 }}>
             <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
               {QUICK_DATES.map((qd, i) => (
