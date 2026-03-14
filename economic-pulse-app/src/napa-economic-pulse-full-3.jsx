@@ -434,6 +434,8 @@ export default function EconomicPulseDashboard(){
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
             {latestE?.home!=null&&<KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/>}
+            {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const peak=Math.max(...homes.map(d=>d.home));const diff=latestE.home-peak;return diff!==0?<StatCard label="From Peak" value={f$(diff)} detail={`peak ${f$(peak)}`} accent={diff<0?T.neg:T.pos}/>:null;})()}
+            {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const idx=homes.findIndex(d=>d===latestE);const ago=homes[idx-12]||homes[0];if(!ago||ago===latestE)return null;const diff=latestE.home-ago.home;const pct=((diff/ago.home)*100).toFixed(1);return<StatCard label="YoY Change" value={f$(diff)} detail={`${diff>=0?"+":""}${pct}% from ${fMo(ago.date)}`} accent={diff>=0?T.pos:T.neg}/>;})()}
             {(priorE?.yoy??latestE?.yoy)!=null&&<KPI label="Year-over-Year" value={(priorE?.yoy??latestE?.yoy)+"%"} delta={<span style={{fontSize:11,color:T.dim}}>home value change</span>}/>}
             {(priorE?.pending??latestE?.pending)!=null&&<KPI label="Days to Pending" value={(priorE?.pending??latestE?.pending)+" days"} delta={<span style={{fontSize:11,color:T.dim}}>median listing</span>}/>}
           </div>
