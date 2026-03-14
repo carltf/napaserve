@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NapaServe — Civic AI for Napa County</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --earth: #2C1810;
-    --wine: #8B5E3C;
-    --gold: #8B5E3C;
+    --wine: #722F37;
+    --gold: #C9A84C;
     --sage: #7A8C6E;
     --cream: #F5F0E8;
-    --mist: rgba(44,24,16,0.12);
+    --mist: #E8E4DC;
     --text: #1C1410;
-    --text-light: #7A6A50;
-    --white: #F5F0E8;
+    --text-light: #6B5D54;
+    --white: #FDFAF5;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,104 +31,102 @@
   }
 
   header {
-    background: var(--cream);
-    padding: 0 24px;
-    height: 52px;
+    background: var(--earth);
+    padding: 0 2rem;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    border-bottom: 1px solid rgba(44,24,16,0.12);
-    position: sticky;
-    top: 0;
-    z-index: 20;
+    border-bottom: 2px solid var(--gold);
   }
 
-  .main-nav { display: none; }
-  .nav-link { display: none; }
-  .nav-active {}
+  .main-nav { display: flex; align-items: center; gap: 0.25rem; }
+  .nav-link {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 0.35rem 0.65rem;
+    border-radius: 4px;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .nav-link:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+  .nav-active { color: var(--gold) !important; }
 
   .hamburger {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: none;
     background: none;
-    border: 1px solid rgba(44,24,16,0.12);
+    border: none;
+    color: var(--white);
+    font-size: 1.4rem;
     cursor: pointer;
-    padding: 7px 10px;
+    padding: 0.25rem 0.5rem;
   }
-  .hbar { display: block; width: 18px; height: 1.5px; background: #7A6A50; transition: transform .2s, opacity .2s; }
 
   .mobile-nav {
     display: none;
     flex-direction: column;
-    position: fixed;
-    top: 52px;
-    right: 0;
-    width: 240px;
-    background: var(--cream);
-    border: 1px solid rgba(44,24,16,0.12);
-    border-top: none;
-    box-shadow: 0 8px 24px rgba(44,24,16,0.1);
-    z-index: 100;
+    background: var(--earth);
+    border-bottom: 2px solid var(--gold);
+    padding: 0.5rem 1rem;
   }
   .mobile-nav.open { display: flex; }
-  .nav-group { padding: 10px 0; border-bottom: 1px solid rgba(44,24,16,0.12); }
-  .nav-group:last-child { border-bottom: none; }
-  .nav-group-label { font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #A89880; padding: 4px 20px 6px; }
   .mobile-nav-link {
-    display: block;
-    color: #7A6A50;
+    color: rgba(255,255,255,0.75);
     text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px 20px;
-    transition: color .15s, background .15s;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.6rem 0.5rem;
+    border-left: 3px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
-  .mobile-nav-link:hover { color: #8B5E3C; background: #EDE8DE; }
-  .mobile-nav-link.nav-active { color: #8B5E3C; background: #EDE8DE; }
+  .mobile-nav-link:hover { color: var(--white); border-left-color: var(--gold); }
 
   .logo { display: flex; align-items: baseline; gap: 0.5rem; }
-  .logo-main { font-family: 'Libre Baskerville', serif; font-size: 1.2rem; font-weight: 700; color: var(--earth); letter-spacing: 0.02em; }
-  .logo-sub { font-size: 0.75rem; color: #A89880; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+  .logo-main { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--white); letter-spacing: 0.02em; }
+  .logo-sub { font-size: 0.75rem; color: var(--gold); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
 
   .pillar-tag { display: inline-block; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.15rem 0.4rem; border-radius: 3px; margin-bottom: 0.25rem; }
 
-  .main { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+  .main { flex: 1; display: flex; overflow: hidden; }
 
-  .sidebar { width: 260px; background: #EDE8DE; border-right: 1px solid rgba(44,24,16,0.12); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
-  .sidebar-section { padding: 1.25rem 1.25rem 0.75rem; border-bottom: 1px solid rgba(44,24,16,0.1); }
-  .sidebar-label { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8B5E3C; margin-bottom: 0.75rem; font-family: 'Source Sans 3', sans-serif; }
+  .sidebar { width: 260px; background: var(--earth); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
+  .sidebar-section { padding: 1.25rem 1.25rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
 
   .starter-btn {
     display: block; width: 100%; text-align: left;
-    background: transparent; border: 1px solid rgba(44,24,16,0.12);
-    padding: 0.6rem 0.75rem; color: #7A6A50;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 0.6rem 0.75rem; color: rgba(255,255,255,0.75);
     font-family: 'Source Sans 3', sans-serif; font-size: 0.78rem;
     cursor: pointer; margin-bottom: 0.5rem; line-height: 1.4; transition: all 0.2s;
   }
-  .starter-btn:hover { background: #F5F0E8; border-color: #8B5E3C; color: #2C1810; }
+  .starter-btn:hover { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.4); color: var(--white); }
 
   .pillar-tag { display: inline-block; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.15rem 0.4rem; border-radius: 3px; margin-bottom: 0.25rem; }
-  .tag-people { background: rgba(200,169,110,0.15); color: #8B6030; }
-  .tag-place { background: rgba(74,122,90,0.15); color: #3A6A50; }
-  .tag-prosperity { background: rgba(139,94,60,0.1); color: #8B5E3C; }
-  .tag-innovation { background: rgba(58,136,160,0.1); color: #3A88A0; }
+  .tag-people { background: rgba(232,168,124,0.2); color: #E8A87C; }
+  .tag-place { background: rgba(122,140,110,0.2); color: #A8C49A; }
+  .tag-prosperity { background: rgba(201,168,76,0.2); color: var(--gold); }
+  .tag-innovation { background: rgba(126,184,201,0.2); color: #7EB8C9; }
 
-  .clear-btn { display: block; width: calc(100% - 2.5rem); margin: 1rem 1.25rem; background: transparent; border: 1px solid rgba(44,24,16,0.12); padding: 0.5rem; color: #A89880; font-family: 'Source Sans 3', sans-serif; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em; }
-  .clear-btn:hover { border-color: #8B5E3C; color: #8B5E3C; }
+  .clear-btn { display: block; width: calc(100% - 2.5rem); margin: 1rem 1.25rem; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 0.5rem; color: rgba(255,255,255,0.4); font-family: 'Source Sans 3', sans-serif; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em; }
+  .clear-btn:hover { border-color: var(--wine); color: rgba(255,255,255,0.7); }
 
-  .chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+  .chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-  .messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start; min-height: 0; height: 0; }
+  .messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start; }
   .messages::-webkit-scrollbar { width: 4px; }
   .messages::-webkit-scrollbar-thumb { background: var(--mist); border-radius: 2px; }
-  .messages-inner { width: 100%; max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; flex-shrink: 0; }
+  .messages-inner { width: 100%; max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
 
-  .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem; animation: fadeIn 0.6s ease; flex-shrink: 0; }
-  .welcome-icon { width: 72px; height: 72px; background: transparent; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; border: 2px solid rgba(44,24,16,0.15); }
-  .welcome-icon svg { width: 36px; height: 36px; fill: #8B5E3C; }
-  .welcome h2 { font-family: 'Libre Baskerville', serif; font-size: 1.75rem; font-weight: 700; color: #2C1810; margin-bottom: 0.75rem; }
+  .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; padding: 3rem; animation: fadeIn 0.6s ease; }
+  .welcome-icon { width: 72px; height: 72px; background: var(--earth); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; border: 3px solid var(--gold); }
+  .welcome-icon svg { width: 36px; height: 36px; fill: var(--gold); }
+  .welcome h2 { font-family: 'Playfair Display', serif; font-size: 1.75rem; color: var(--earth); margin-bottom: 0.75rem; }
   .welcome p { color: var(--text-light); font-size: 1rem; max-width: 440px; line-height: 1.6; font-weight: 300; }
 
   .pillar-pills { display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; }
@@ -143,11 +141,11 @@
   .message.assistant { align-self: flex-start; }
 
   .avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
-  .message.user .avatar { background: #2C1810; color: #F5F0E8; }
-  .message.assistant .avatar { background: #EDE8DE; color: #8B5E3C; border: 1px solid rgba(44,24,16,0.15); font-family: 'Libre Baskerville', serif; font-size: 0.85rem; }
+  .message.user .avatar { background: var(--wine); color: var(--white); }
+  .message.assistant .avatar { background: var(--earth); color: var(--gold); border: 2px solid var(--gold); font-family: 'Playfair Display', serif; font-size: 0.85rem; }
 
   .bubble { padding: 1rem 1.25rem; border-radius: 12px; line-height: 1.65; font-size: 0.92rem; max-width: 680px; }
-  .message.user .bubble { background: #2C1810; color: #F5F0E8; border-bottom-right-radius: 3px; }
+  .message.user .bubble { background: var(--wine); color: var(--white); border-bottom-right-radius: 3px; }
   .message.assistant .bubble { background: var(--white); color: var(--text); border-bottom-left-radius: 3px; border: 1px solid var(--mist); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 
   .bubble p { margin-bottom: 0.75rem; }
@@ -204,16 +202,16 @@
     padding: 0.25rem 0 0 0.25rem;
   }
 
-  .input-area { padding: 1.25rem 2rem; background: #F5F0E8; border-top: 1px solid rgba(44,24,16,0.12); flex-shrink: 0; }
+  .input-area { padding: 1.25rem 2rem; background: var(--white); border-top: 1px solid var(--mist); flex-shrink: 0; }
   .input-row { display: flex; gap: 0.75rem; align-items: flex-end; max-width: 800px; }
 
   #messageInput { flex: 1; border: 1.5px solid var(--mist); border-radius: 10px; padding: 0.75rem 1rem; font-family: 'Source Sans 3', sans-serif; font-size: 0.92rem; color: var(--text); background: var(--cream); outline: none; resize: none; min-height: 48px; max-height: 140px; line-height: 1.5; transition: border-color 0.2s; }
   #messageInput::placeholder { color: var(--text-light); }
   #messageInput:focus { border-color: var(--gold); background: var(--white); }
 
-  #sendBtn { width: 48px; height: 48px; background: #2C1810; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-  #sendBtn:hover { background: #8B5E3C; transform: translateY(-1px); }
-  #sendBtn:disabled { background: rgba(44,24,16,0.12); cursor: not-allowed; transform: none; }
+  #sendBtn { width: 48px; height: 48px; background: var(--earth); border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+  #sendBtn:hover { background: var(--wine); transform: translateY(-1px); }
+  #sendBtn:disabled { background: var(--mist); cursor: not-allowed; transform: none; }
   #sendBtn svg { width: 20px; height: 20px; fill: var(--white); }
 
   .input-hint { font-size: 0.7rem; color: var(--text-light); margin-top: 0.5rem; padding-left: 0.25rem; }
@@ -224,24 +222,25 @@
   @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
 
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     header { padding: 0.75rem 1rem; }
+    .main-nav { display: none; }
+    .hamburger { display: block; }
     .logo-sub { display: none; }
     .main { flex-direction: column; }
     .sidebar {
       width: 100%;
-      height: 140px;
+      height: 160px;
       flex-direction: row;
       overflow-x: auto;
       overflow-y: hidden;
       flex-shrink: 0;
       display: flex;
-      border-bottom: 1px solid rgba(44,24,16,0.10);
-      border-right: none;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .sidebar-section {
       border-bottom: none;
-      border-right: 1px solid rgba(44,24,16,0.10);
+      border-right: 1px solid rgba(255,255,255,0.08);
       padding: 0.75rem 1rem;
       min-width: 160px;
       flex-shrink: 0;
@@ -283,35 +282,17 @@
     <a href="/agent.html" class="nav-link nav-active">AI Agent</a>
     <a href="/valley-works" class="nav-link">Valley Works</a>
   </nav>
-  <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
-    <span class="hbar" id="hb1"></span>
-    <span class="hbar" id="hb2"></span>
-    <span class="hbar" id="hb3"></span>
-  </button>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">&#9776;</button>
 </header>
-<div id="navBackdrop" onclick="closeNav()" style="display:none;position:fixed;inset:0;z-index:99;"></div>
 <nav class="mobile-nav" id="mobileNav">
-  <div class="nav-group">
-    <div class="nav-group-label">Intelligence</div>
-    <a href="/dashboard" class="mobile-nav-link">Economic Dashboard</a>
-    <a href="/evaluator" class="mobile-nav-link">Project Evaluator</a>
-    <a href="/agent.html" class="mobile-nav-link nav-active">AI Policy Agent</a>
-  </div>
-  <div class="nav-group">
-    <div class="nav-group-label">Journalism</div>
-    <a href="/news" class="mobile-nav-link">Napa Valley Features</a>
-    <a href="/archive" class="mobile-nav-link">NVF Archive Search</a>
-  </div>
-  <div class="nav-group">
-    <div class="nav-group-label">Community</div>
-    <a href="/events" class="mobile-nav-link">Event Finder</a>
-    <a href="/valley-works" class="mobile-nav-link">Valley Works</a>
-  </div>
-  <div class="nav-group">
-    <div class="nav-group-label">Platform</div>
-    <a href="/about" class="mobile-nav-link">About NapaServe</a>
-    <a href="mailto:napaserve@gmail.com" class="mobile-nav-link">Contact</a>
-  </div>
+  <a href="/" class="mobile-nav-link">Home</a>
+  <a href="/dashboard" class="mobile-nav-link">Dashboard</a>
+  <a href="/evaluator" class="mobile-nav-link">Evaluator</a>
+  <a href="/events" class="mobile-nav-link">Events</a>
+  <a href="/news" class="mobile-nav-link">News</a>
+  <a href="/archive" class="mobile-nav-link">Archive</a>
+  <a href="/agent.html" class="mobile-nav-link nav-active">AI Agent</a>
+  <a href="/valley-works" class="mobile-nav-link">Valley Works</a>
 </nav>
 
 <div class="main">
@@ -364,15 +345,6 @@
   </div>
 
   <div class="chat-area">
-  <!-- HOW TO USE EXPLAINER -->
-  <div id="explainer" style="background:#EDE8DE;border-bottom:1px solid rgba(44,24,16,0.12);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0;">
-    <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#8B5E3C;white-space:nowrap;font-family:'Source Sans 3',sans-serif;">How to use</div>
-      <p style="font-size:12px;color:#7A6A50;margin:0;line-height:1.5;font-family:'Source Sans 3',sans-serif;">Ask any question about Napa County policy, land use, housing, water, or economic development. The agent searches the NVF archive and the live web before responding — and cites its sources. Try a starter question on the left, or type your own.</p>
-    </div>
-    <button onclick="document.getElementById('explainer').style.display='none'" style="background:none;border:none;cursor:pointer;color:#A89880;font-size:16px;flex-shrink:0;padding:4px;">✕</button>
-  </div>
-
     <div class="messages" id="messages">
       <div class="welcome" id="welcome">
         <div class="welcome-icon">
@@ -550,20 +522,9 @@ function useStarter(btn) {
 }
 
 function toggleNav() {
-  const nav = document.getElementById('mobileNav');
-  const backdrop = document.getElementById('navBackdrop');
-  const open = nav.classList.toggle('open');
-  backdrop.style.display = open ? 'block' : 'none';
-  const h1=document.getElementById('hb1'),h2=document.getElementById('hb2'),h3=document.getElementById('hb3');
-  h1.style.transform = open ? 'translateY(5.5px) rotate(45deg)' : '';
-  h2.style.opacity = open ? '0' : '1';
-  h3.style.transform = open ? 'translateY(-5.5px) rotate(-45deg)' : '';
-}
-function closeNav() {
-  document.getElementById('mobileNav').classList.remove('open');
-  document.getElementById('navBackdrop').style.display = 'none';
-  const h1=document.getElementById('hb1'),h2=document.getElementById('hb2'),h3=document.getElementById('hb3');
-  h1.style.transform=''; h2.style.opacity='1'; h3.style.transform='';
+  document.getElementById('mobileNav').classList.toggle('open');
+  document.getElementById('hamburger').textContent =
+    document.getElementById('mobileNav').classList.contains('open') ? '✕' : '☰';
 }
 
 function clearChat() {
@@ -635,10 +596,10 @@ function formatMarkdown(text) {
   t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
   t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   t = t.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  t = t.replace(/^#### (.+)$/gm, '<h5 style="font-family:\'Libre Baskerville\',serif;margin:0.6rem 0 0.25rem;color:#2C1810;font-size:0.9rem">$1</h5>');
-  t = t.replace(/^### (.+)$/gm, '<h4 style="font-family:\'Libre Baskerville\',serif;margin:0.75rem 0 0.3rem;color:#2C1810;font-size:0.95rem">$1</h4>');
-  t = t.replace(/^## (.+)$/gm, '<h3 style="font-family:\'Libre Baskerville\',serif;margin:0.85rem 0 0.4rem;color:#2C1810;font-size:1.05rem">$1</h3>');
-  t = t.replace(/^# (.+)$/gm, '<h2 style="font-family:\'Libre Baskerville\',serif;margin:1rem 0 0.5rem;color:#2C1810;font-size:1.2rem">$1</h2>');
+  t = t.replace(/^#### (.+)$/gm, '<h5 style="font-family:\'Playfair Display\',serif;margin:0.6rem 0 0.25rem;color:#2C1810;font-size:0.9rem">$1</h5>');
+  t = t.replace(/^### (.+)$/gm, '<h4 style="font-family:\'Playfair Display\',serif;margin:0.75rem 0 0.3rem;color:#2C1810;font-size:0.95rem">$1</h4>');
+  t = t.replace(/^## (.+)$/gm, '<h3 style="font-family:\'Playfair Display\',serif;margin:0.85rem 0 0.4rem;color:#2C1810;font-size:1.05rem">$1</h3>');
+  t = t.replace(/^# (.+)$/gm, '<h2 style="font-family:\'Playfair Display\',serif;margin:1rem 0 0.5rem;color:#2C1810;font-size:1.2rem">$1</h2>');
   t = t.replace(/^---$/gm, '<hr>');
   t = t.replace(/^\• (.+)$/gm, '<li>$1</li>');
   t = t.replace(/^\* (.+)$/gm, '<li>$1</li>');

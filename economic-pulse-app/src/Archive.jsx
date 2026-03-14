@@ -342,8 +342,8 @@ export default function Archive() {
   const [chunks, setChunks] = useState([]);
   const inputRef = useRef(null);
 
+  // Inject spin keyframe
   useEffect(() => {
-    // inject spin keyframe
     const id = "nvf-spin";
     if (!document.getElementById(id)) {
       const s = document.createElement("style");
@@ -351,6 +351,18 @@ export default function Archive() {
       s.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
       document.head.appendChild(s);
     }
+  }, []);
+
+  // Read ?q= URL param on mount and auto-run search
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (q && q.trim()) {
+      setQuery(q.trim());
+      // Small delay so state settles before search fires
+      setTimeout(() => runSearch(q.trim()), 100);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const runSearch = useCallback(async (q = query) => {

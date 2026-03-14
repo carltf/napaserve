@@ -235,7 +235,6 @@ const EXAMPLES = {
 export default function ProjectEvaluator() {
   const [answers, setAnswers] = useState({});
   const [activePillar, setActivePillar] = useState("jobs");
-  const [navOpen, setNavOpen] = useState(false);
   const [projName, setProjName] = useState("");
   const [projDesc, setProjDesc] = useState("");
   const [generating, setGenerating] = useState(false);
@@ -337,42 +336,6 @@ export default function ProjectEvaluator() {
     });
   };
 
-
-  // ─── INLINE NAV ─────────────────────────────────────────────────────────────
-  const Nav = () => (
-    <div style={{ position: "relative" }}>
-      <nav style={{ background: "#F5F0E8", borderBottom: "1px solid rgba(44,24,16,0.12)", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 20 }}>
-        <a href="/" style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 19, fontWeight: 700, color: "#2C1810", textDecoration: "none" }}>NapaServe</a>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button onClick={resetProject} style={{ fontSize: 11, fontWeight: 700, color: "#8B5E3C", border: "1px solid rgba(139,94,60,0.3)", padding: "7px 12px", cursor: "pointer", background: "transparent", fontFamily: "'Source Sans 3',sans-serif", whiteSpace: "nowrap" }}>+ New Project</button>
-          <button onClick={() => setNavOpen(o => !o)} style={{ background: "none", border: "1px solid rgba(44,24,16,0.12)", cursor: "pointer", padding: "7px 10px", display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", transform: navOpen ? "translateY(5.5px) rotate(45deg)" : "", transition: "transform .2s" }} />
-            <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", opacity: navOpen ? 0 : 1, transition: "opacity .2s" }} />
-            <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", transform: navOpen ? "translateY(-5.5px) rotate(-45deg)" : "", transition: "transform .2s" }} />
-          </button>
-        </div>
-      </nav>
-      {navOpen && <>
-        <div onClick={() => setNavOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 19 }} />
-        <div style={{ position: "fixed", top: 52, right: 0, width: 240, background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.12)", borderTop: "none", boxShadow: "0 8px 24px rgba(44,24,16,0.1)", zIndex: 20, fontFamily: "'Source Sans 3',sans-serif" }}>
-          {[
-            { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator", cur: true }, { t: "AI Policy Agent", h: "/agent.html" }] },
-            { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }] },
-            { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }] },
-            { label: "Platform", links: [{ t: "About NapaServe", h: "#" }, { t: "Contact", h: "#" }] },
-          ].map((g, gi) => (
-            <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", padding: "4px 20px 6px" }}>{g.label}</div>
-              {g.links.map((l, li) => (
-                <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
-              ))}
-            </div>
-          ))}
-        </div>
-      </>}
-    </div>
-  );
-
   return (
     <div style={{ background: "#F5F0E8", minHeight: "100vh", fontFamily: "'Source Sans 3', sans-serif", color: "#2C1810" }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
@@ -380,11 +343,26 @@ export default function ProjectEvaluator() {
         :root{--bg:#F5F0E8;--bg2:#EDE8DE;--bg3:#E6E0D4;--bg4:#DDD7CB;--ink:#1A0E08;--ink2:#2C1810;--accent:#8B5E3C;--gold:#C4A050;--muted:#7A6A50;--dim:#A89880;--rule:rgba(44,24,16,0.12);--live:#4A7A5A;--neg:#8A3A2A;--pos:#3A6A4A;}
         .ev-opt{text-align:left;padding:10px 14px;font-size:13px;font-family:'Source Sans 3',sans-serif;line-height:1.4;background:var(--bg);border:1px solid var(--rule);color:var(--muted);cursor:pointer;transition:all .15s;width:100%;margin-bottom:5px;}
         .ev-opt:hover{background:var(--bg3);color:var(--ink2);}
-        @media(max-width:800px){.ev-grid{grid-template-columns:1fr!important;} .ev-right{order:-1;} canvas#compass{max-width:100%;height:auto!important;} .ev-grid .ev-right canvas{width:100%!important;}}
+        @media(max-width:800px){.ev-grid{grid-template-columns:1fr!important;}}
       `}</style>
 
       {/* NAV */}
-      <Nav />
+      <nav style={{ background: "var(--bg)", borderBottom: "1px solid var(--rule)", padding: "0 24px", height: 50, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 20 }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+          <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "var(--ink2)" }}>NapaServe</div>
+          <span style={{ fontSize: 10, color: "var(--dim)" }}>Civic intelligence · Napa County</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Link to="/dashboard" style={{ fontSize: 11, fontWeight: 600, color: "var(--dim)", padding: "5px 10px", textDecoration: "none" }}>Dashboard</Link>
+          <Link to="/evaluator" style={{ fontSize: 11, fontWeight: 600, color: "var(--ink2)", padding: "5px 10px", background: "var(--bg2)", textDecoration: "none" }}>Evaluator</Link>
+          <Link to="/events" style={{ fontSize: 11, fontWeight: 600, color: "var(--dim)", padding: "5px 10px", textDecoration: "none" }}>Events</Link>
+          <Link to="/news" style={{ fontSize: 11, fontWeight: 600, color: "var(--dim)", padding: "5px 10px", textDecoration: "none" }}>News</Link>
+          <Link to="/archive" style={{ fontSize: 11, fontWeight: 600, color: "var(--dim)", padding: "5px 10px", textDecoration: "none" }}>Archive</Link>
+          <a href="/agent.html" style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", padding: "5px 10px", textDecoration: "none" }}>AI Agent</a>
+          <Link to="/valley-works" style={{ fontSize: 11, fontWeight: 600, color: "var(--dim)", padding: "5px 10px", textDecoration: "none" }}>Valley Works</Link>
+          <button onClick={resetProject} style={{ fontSize: 11, fontWeight: 700, color: "var(--accent)", border: "1px solid rgba(139,94,60,0.3)", padding: "7px 14px", cursor: "pointer", background: "transparent", marginLeft: 8, fontFamily: "'Source Sans 3',sans-serif" }}>+ New Project</button>
+        </div>
+      </nav>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px 60px" }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
@@ -470,7 +448,7 @@ export default function ProjectEvaluator() {
           </div>
 
           {/* RIGHT */}
-          <div className="ev-right">
+          <div>
             {answered >= 5 && (
               <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", borderLeft: `3px solid ${rating.color}`, padding: "18px 20px", marginBottom: 14, textAlign: "center" }}>
                 <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 6 }}>Alignment Rating</div>

@@ -88,7 +88,7 @@ export default function NapaServeHub() {
           .hub-nav-tag{display:none;}
         }
         @media(max-width:450px){
-          .hub-grid{grid-template-columns:1fr!important;}
+          .hub-grid{grid-template-columns:1fr;}
           .hub-four{grid-template-columns:1fr;}
         }
       `}</style>
@@ -125,8 +125,8 @@ export default function NapaServeHub() {
           </div>
           <div className="hub-dg">
             <div className="hub-dlabel">Platform</div>
-            <Link to="/about" className="hub-dlink" onClick={() => setDrawerOpen(false)}>About NapaServe</Link>
-            <a href="mailto:napaserve@gmail.com" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Contact</a>
+            <span className="hub-dlink">About NapaServe</span>
+            <span className="hub-dlink">Contact</span>
           </div>
         </div>
       </div>
@@ -276,8 +276,8 @@ export default function NapaServeHub() {
               <Link to="/news" className="hub-sm-link">Napa Valley Features</Link>
               <Link to="/archive" className="hub-sm-link">NVF Archive Search</Link>
               <Link to="/archive" className="hub-sm-link">Series index</Link>
-              <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link">Sonoma Co. Features ↗</a>
-              <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link">Lake Co. Features ↗</a>
+              <span className="hub-sm-link">Sonoma Co. Features</span>
+              <span className="hub-sm-link">Lake Co. Features</span>
             </div>
             <div>
               <div className="hub-sm-head">Community</div>
@@ -288,10 +288,10 @@ export default function NapaServeHub() {
             </div>
             <div>
               <div className="hub-sm-head">Platform</div>
-              <Link to="/about" className="hub-sm-link">About NapaServe</Link>
-              <Link to="/about#how-to-use" className="hub-sm-link">How to use this site</Link>
-              <Link to="/about#disclaimer" className="hub-sm-link">Disclaimer</Link>
-              <a href="mailto:napaserve@gmail.com" className="hub-sm-link">Contact us</a>
+              <span className="hub-sm-link">About NapaServe</span>
+              <span className="hub-sm-link">How to use this site</span>
+              <span className="hub-sm-link">Disclaimer</span>
+              <span className="hub-sm-link">Contact us</span>
             </div>
           </div>
           <div className="hub-four" style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid var(--rule)", alignItems: "start" }}>

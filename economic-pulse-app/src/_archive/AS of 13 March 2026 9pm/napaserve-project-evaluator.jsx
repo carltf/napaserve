@@ -239,9 +239,28 @@ export default function ProjectEvaluator() {
   const [projName, setProjName] = useState("");
   const [projDesc, setProjDesc] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [generatingStatus, setGeneratingStatus] = useState("");
   const [reportText, setReportText] = useState(null);
   const [reportHtml, setReportHtml] = useState(null);
   const [reportErr, setReportErr] = useState(null);
+  const [nvfSources, setNvfSources] = useState([]);
+
+  const WORKER_RAG_URL = "https://misty-bush-fc93.tfcarl.workers.dev/api/rag-search";
+
+  const fetchArchiveContext = async (query) => {
+    try {
+      const res = await fetch(WORKER_RAG_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, matchCount: 5 }),
+      });
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.results || [];
+    } catch {
+      return [];
+    }
+  };
   const [copied, setCopied] = useState(false);
   const canvasRef = useRef(null);
 
@@ -278,7 +297,8 @@ export default function ProjectEvaluator() {
 
   const generateReport = async () => {
     if (answered < 8) return;
-    setGenerating(true); setReportText(null); setReportHtml(null); setReportErr(null);
+    setGenerating(true); setGeneratingStatus("Searching NVF archive...");
+    setReportText(null); setReportHtml(null); setReportErr(null); setNvfSources([]);
     const pillarAvgs = [0,1,2].map(i => (scores.slice(i===2?6:i*3,i===2?11:i*3+3).reduce((a,b)=>a+b,0)/(i===2?5:3)).toFixed(1));
     const answerSummary = Object.entries(QUESTIONS).map(([pillar,qs]) => {
       const pl = PILLARS.find(p=>p.id===pillar)?.label||pillar;
@@ -289,10 +309,31 @@ export default function ProjectEvaluator() {
     const prompt = `You are the Valley Works Collaborative Evaluator, a structural economic analyst for Napa County. Assess the following project using the Jobs-People-Place framework.\n\nPROJECT: ${projName||"Unnamed Project"}\nDESCRIPTION: ${projDesc||"No description provided."}\n\nQUESTIONNAIRE RESPONSES:\n${answerSummary}\n\nCALCULATED COMPASS SCORES (0-10 scale):\n${scoresSummary}\n\nALIGNMENT RATING: ${rating.label} — ${rating.desc}\n\nGenerate a structured assessment report with these sections:\n\n1. SITUATION — 2-3 sentences on the current regional context this project operates within.\n\n2. STRUCTURAL CONFLICT — The underlying tension or constraint this project addresses or worsens.\n\n3. EVALUATION\n   Jobs: Assess durable employment, wage quality relative to Napa's ~$52/hr median, sector diversification, and local workforce capture.\n   People: Assess impact on young families, current residents (displacement, services), and seniors.\n   Place: Assess land use efficiency, net fiscal contribution, infrastructure needs, and environmental fit.\n\n4. KEY RISKS — Top 3-4 risks, each with a trigger condition and what to watch for.\n\n5. MODIFICATION PATHWAYS — If alignment is less than Strong, provide 2-3 specific design changes that would improve the weakest pillar scores. Be concrete.\n\n6. CONCLUSION — One-sentence counterfactual (strongest argument in favor), the alignment rating, and 2-3 conditions that would change the rating.\n\nWrite in a neutral, analytical tone. Short paragraphs. No promotional language. Reference Napa County specifics where relevant.`;
 
     try {
+      // Step 1: RAG search — pull relevant NVF coverage
+      const ragQuery = `${projName || ""} ${projDesc || ""} ${Object.values(answers).join(" ")}`.trim();
+      const archiveChunks = await fetchArchiveContext(ragQuery);
+      setNvfSources(archiveChunks);
+      setGeneratingStatus("Generating report...");
+
+      // Step 2: Inject archive context into prompt
+      let fullPrompt = prompt;
+      if (archiveChunks.length > 0) {
+        const ragContext = "\n\nNAPA VALLEY FEATURES ARCHIVE — RELEVANT LOCAL COVERAGE:\n\n" +
+          archiveChunks.map((chunk, i) => {
+            const date = chunk.published_at
+              ? new Date(chunk.published_at).toLocaleDateString("en-US", { year: "numeric", month: "short" })
+              : "";
+            return `[${i + 1}] "${chunk.title}" (${date})\n${chunk.chunk_text}`;
+          }).join("\n\n---\n\n") +
+          "\n\nWhere relevant, reference these articles by title and date in the report. Do not fabricate quotes.";
+        fullPrompt = prompt + ragContext;
+      }
+
+      // Step 3: Generate report
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: prompt }] }),
+        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: fullPrompt }] }),
       });
       const data = await res.json();
       const text = data.content?.[0]?.text || "No response generated.";
@@ -301,7 +342,7 @@ export default function ProjectEvaluator() {
     } catch (err) {
       setReportErr("Failed to connect: " + err.message);
     }
-    setGenerating(false);
+    setGenerating(false); setGeneratingStatus("");
   };
 
   const renderReportToHtml = (text) => {
@@ -538,7 +579,7 @@ export default function ProjectEvaluator() {
                 color: answered >= 8 ? "#1C120C" : "var(--dim)",
               }}
             >
-              {generating ? "Generating Report..." : answered >= 8 ? "Generate Full Report" : `Answer ${8 - answered} more questions to generate report`}
+              {generating ? (generatingStatus || "Generating Report...") : answered >= 8 ? "Generate Full Report" : `Answer ${8 - answered} more questions to generate report`}
             </button>
 
             {reportHtml && (
@@ -550,12 +591,59 @@ export default function ProjectEvaluator() {
                   </button>
                 </div>
                 <div dangerouslySetInnerHTML={{ __html: reportHtml }} />
+                {reportSources.length > 0 && (
+                  <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--rule)" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 10, fontFamily: "'Source Sans 3',sans-serif" }}>NVF Archive Sources</div>
+                    {reportSources.map((s, i) => {
+                      const date = s.published_at ? new Date(s.published_at).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : "";
+                      const url = s.substack_url || null;
+                      return (
+                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline", marginBottom: 6 }}>
+                          <div style={{ width: 3, height: 3, background: "var(--accent)", borderRadius: "50%", flexShrink: 0, marginTop: 7 }} />
+                          <div style={{ fontSize: 12, lineHeight: 1.5, fontFamily: "'Source Sans 3',sans-serif" }}>
+                            {url
+                              ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>{s.title}</a>
+                              : <span style={{ color: "var(--ink2)", fontWeight: 600 }}>{s.title}</span>
+                            }
+                            {date && <span style={{ color: "var(--dim)", marginLeft: 6, fontSize: 11 }}>{date}</span>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
             {reportErr && (
               <div style={{ background: "rgba(138,58,42,0.08)", border: "1px solid rgba(138,58,42,0.25)", padding: "14px 16px", marginTop: 8, fontSize: 13, color: "var(--neg)" }}>{reportErr}</div>
             )}
 
+            {nvfSources.length > 0 && (
+              <div style={{ marginTop: 12, background: "var(--bg2)", border: "1px solid var(--rule)", padding: "14px 18px" }}>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 10, fontFamily: "'Source Sans 3',sans-serif" }}>NVF Archive Sources</div>
+                {(() => {
+                  const seen = new Set();
+                  return nvfSources.filter(s => {
+                    if (seen.has(s.post_id)) return false;
+                    seen.add(s.post_id);
+                    return true;
+                  }).slice(0, 3).map((s, i) => {
+                    const date = s.published_at
+                      ? new Date(s.published_at).toLocaleDateString("en-US", { year: "numeric", month: "short" })
+                      : "";
+                    return (
+                      <div key={i} style={{ fontSize: 12, color: "var(--muted)", marginBottom: 4, lineHeight: 1.4 }}>
+                        {s.substack_url
+                          ? <a href={s.substack_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>{s.title || "Untitled"}</a>
+                          : <span style={{ fontWeight: 600 }}>{s.title || "Untitled"}</span>
+                        }
+                        {date && <span style={{ color: "var(--dim)", marginLeft: 6, fontSize: 11 }}>{date}</span>}
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            )}
             <div style={{ marginTop: 16, background: "var(--bg2)", border: "1px solid var(--rule)", borderLeft: "3px solid var(--dim)", padding: "12px 16px" }}>
               <p style={{ fontSize: 11, color: "var(--dim)", lineHeight: 1.7 }}>This report is AI-generated using the Jobs · People · Place framework and is intended as a discussion document — not a final determination or official recommendation. NapaServe and the Valley Works Collaborative are not liable for decisions made based on this output.</p>
             </div>

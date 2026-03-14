@@ -6,7 +6,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 
 const SEARCH_API = "https://napa-event-finder.vercel.app";
 const SUPABASE_URL = "https://csenpchwxxepdvjebsrt.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE";
 
 const TOWNS = [
   { value: "all", label: "All Napa Valley" },
@@ -89,20 +89,20 @@ function linkLabel(url) {
 }
 const inputBase = {
   width: "100%", padding: "10px 12px", fontSize: 14, fontFamily: "'Source Sans 3',sans-serif",
-  background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.25)", color: "#2C1810",
+  background: "#1C120C", border: "1px solid rgba(139,105,20,0.25)", color: "#F5E6C8",
   borderRadius: 8, outline: "none", boxSizing: "border-box",
 };
-const labelBase = { display: "block", fontSize: 13, fontWeight: 600, color: "#7A6A50", marginBottom: 6 };
-const required = <span style={{ color: "#8A3A2A", marginLeft: 2 }}>*</span>;
+const labelBase = { display: "block", fontSize: 13, fontWeight: 600, color: "#C4B08A", marginBottom: 6 };
+const required = <span style={{ color: "#B85C38", marginLeft: 2 }}>*</span>;
 const sectionHeader = (text) => (
-  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B5E3C", textTransform: "uppercase", marginBottom: 14, marginTop: 28, paddingTop: 20, borderTop: "1px solid rgba(139,105,20,0.1)" }}>{text}</div>
+  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B6914", textTransform: "uppercase", marginBottom: 14, marginTop: 28, paddingTop: 20, borderTop: "1px solid rgba(139,105,20,0.1)" }}>{text}</div>
 );
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CHOICE BUTTONS (reusable for age, indoor/outdoor, etc.)
 // ═══════════════════════════════════════════════════════════════════════════
 
-function ChoiceGroup({ options, value, onChange, color = "#8B5E3C" }) {
+function ChoiceGroup({ options, value, onChange, color = "#C4A050" }) {
   return (
     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
       {options.map(opt => {
@@ -110,9 +110,9 @@ function ChoiceGroup({ options, value, onChange, color = "#8B5E3C" }) {
         return (
           <button key={opt.value} onClick={() => onChange(opt.value)} style={{
             padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-            background: sel ? `${color}20` : "#EDE8DE",
-            border: `1px solid ${sel ? color + "55" : "rgba(44,24,16,0.12)"}`,
-            color: sel ? color : "#7A6A50",
+            background: sel ? `${color}20` : "rgba(255,255,255,0.02)",
+            border: `1px solid ${sel ? color + "55" : "rgba(139,105,20,0.15)"}`,
+            color: sel ? color : "#7A6B50",
             borderRadius: 6, cursor: "pointer", transition: "all 0.15s",
           }}>{opt.label}</button>
         );
@@ -198,12 +198,12 @@ function EventMap({ pins }) {
 
   return (
     <div style={{
-      background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)",
-      overflow: "hidden", marginTop: 20,
+      background: "rgba(255,255,255,0.02)", border: "1px solid rgba(139,105,20,0.15)",
+      borderRadius: 14, overflow: "hidden", marginTop: 20,
     }}>
       <div style={{ padding: "14px 20px 8px" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B5E3C", textTransform: "uppercase" }}>Event Locations</span>
-        <span style={{ fontSize: 12, color: "#A89880", marginLeft: 10 }}>{pins.length} on map</span>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B6914", textTransform: "uppercase" }}>Event Locations</span>
+        <span style={{ fontSize: 12, color: "#6B5B40", marginLeft: 10 }}>{pins.length} on map</span>
       </div>
       <div ref={mapRef} style={{ width: "100%", height: 340 }} />
     </div>
@@ -299,52 +299,19 @@ export default function EventFinder() {
   const resetForm = () => { setForm(emptyForm); setSubmitted(false); setSubmitError(null); };
   const applyQuick = (qd, i) => { const { s, e } = qd.get(); setStartDate(s); setEndDate(e); setActiveQuick(i); };
 
-  const [navOpen, setNavOpen] = useState(false);
-
-  const Nav = () => (
-    <div style={{ position: "relative" }}>
-      <nav style={{ background: "#F5F0E8", borderBottom: "1px solid rgba(44,24,16,0.12)", padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 20 }}>
-        <a href="/" style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 19, fontWeight: 700, color: "#2C1810", textDecoration: "none" }}>NapaServe</a>
-        <button onClick={() => setNavOpen(o => !o)} style={{ background: "none", border: "1px solid rgba(44,24,16,0.12)", cursor: "pointer", padding: "7px 10px", display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", transform: navOpen ? "translateY(5.5px) rotate(45deg)" : "", transition: "transform .2s" }} />
-          <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", opacity: navOpen ? 0 : 1, transition: "opacity .2s" }} />
-          <span style={{ display: "block", width: 18, height: 1.5, background: "#7A6A50", transform: navOpen ? "translateY(-5.5px) rotate(-45deg)" : "", transition: "transform .2s" }} />
-        </button>
-      </nav>
-      {navOpen && <>
-        <div onClick={() => setNavOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 19 }} />
-        <div style={{ position: "fixed", top: 52, right: 0, width: 240, background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.12)", borderTop: "none", boxShadow: "0 8px 24px rgba(44,24,16,0.1)", zIndex: 20, fontFamily: "'Source Sans 3',sans-serif" }}>
-          {[
-            { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "AI Policy Agent", h: "/agent.html" }] },
-            { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }] },
-            { label: "Community", links: [{ t: "Event Finder", h: "/events", cur: true }, { t: "Valley Works", h: "/valley-works" }] },
-            { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
-          ].map((g, gi) => (
-            <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", padding: "4px 20px 6px" }}>{g.label}</div>
-              {g.links.map((l, li) => (
-                <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
-              ))}
-            </div>
-          ))}
-        </div>
-      </>}
-    </div>
-  );
-
   return (
-    <div style={{ minHeight: "100vh", background: "#F5F0E8", fontFamily: "'Source Sans 3',sans-serif", color: "#2C1810" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
-      <Nav />
+    <div style={{ minHeight: "100vh", background: "linear-gradient(175deg, #1C120C 0%, #2A1A0E 30%, #1E1408 60%, #0F0A06 100%)", fontFamily: "'Source Sans 3','Source Sans Pro',-apple-system,sans-serif", color: "#F5E6C8" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+      <div style={{ height: 3, background: "linear-gradient(90deg, transparent, #8B6914 20%, #C4A050 50%, #8B6914 80%, transparent)" }} />
 
       {/* Header */}
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px 0" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-          <div style={{ width: 6, height: 6, background: "#8B5E3C", borderRadius: "50%" }} />
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: "#8B5E3C", textTransform: "uppercase" }}>NapaServe</span>
+          <div style={{ width: 6, height: 6, background: "#C4A050", borderRadius: "50%" }} />
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: "#8B6914", textTransform: "uppercase" }}>NapaServe</span>
         </div>
-        <h1 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: "clamp(26px,4vw,38px)", fontWeight: 700, color: "#2C1810", margin: "0 0 4px" }}>Event Finder</h1>
-        <p style={{ fontSize: 15, color: "#A89880", margin: "0 0 24px" }}>
+        <h1 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: "clamp(26px,4vw,38px)", fontWeight: 900, color: "#F5E6C8", margin: "0 0 4px" }}>Event Finder</h1>
+        <p style={{ fontSize: 15, color: "#9B8968", margin: "0 0 24px" }}>
           The most complete listing of what's happening across Napa Valley. Can't find your event? Add it — it takes a minute.
         </p>
 
@@ -353,7 +320,7 @@ export default function EventFinder() {
           {[{ key: "search", label: "Find Events" }, { key: "submit", label: "Add an Event" }].map(t => (
             <button key={t.key} onClick={() => setTab(t.key)} style={{
               padding: "10px 24px", fontSize: 14, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-              background: "none", color: tab === t.key ? "#8B5E3C" : "#7A6A50",
+              background: "none", color: tab === t.key ? "#C4A050" : "#7A6B50",
               border: "none", borderBottom: tab === t.key ? "2px solid #C4A050" : "2px solid transparent",
               cursor: "pointer", transition: "all 0.2s", marginBottom: -1,
             }}>{t.label}</button>
@@ -365,13 +332,13 @@ export default function EventFinder() {
 
         {/* ═══════════ SEARCH TAB ═══════════ */}
         {tab === "search" && (<>
-          <div style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.18)", padding: 24, marginBottom: 24 }}>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(139,105,20,0.18)", borderRadius: 14, padding: 24, marginBottom: 24 }}>
             <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
               {QUICK_DATES.map((qd, i) => (
                 <button key={i} onClick={() => applyQuick(qd, i)} style={{
                   padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                  background: activeQuick === i ? "#2C1810" : "transparent",
-                  color: activeQuick === i ? "#F5F0E8" : "#A89880",
+                  background: activeQuick === i ? "linear-gradient(135deg, #8B6914, #C4A050)" : "rgba(255,255,255,0.04)",
+                  color: activeQuick === i ? "#1C120C" : "#9B8968",
                   border: activeQuick === i ? "none" : "1px solid rgba(139,105,20,0.2)",
                   borderRadius: 6, cursor: "pointer", transition: "all 0.2s",
                 }}>{qd.label}</button>
@@ -403,51 +370,51 @@ export default function EventFinder() {
 
             <button onClick={search} disabled={loading} style={{
               width: "100%", padding: "14px", fontSize: 15, fontWeight: 700, fontFamily: "'Source Sans 3',sans-serif",
-              background: loading ? "rgba(44,24,16,0.08)" : "#2C1810",
-              color: loading ? "#A89880" : "#F5F0E8",
+              background: loading ? "rgba(139,105,20,0.3)" : "linear-gradient(135deg, #8B6914, #C4A050)",
+              color: loading ? "#9B8968" : "#1C120C",
               border: "none", borderRadius: 10, cursor: loading ? "wait" : "pointer", transition: "all 0.3s",
             }}>{loading ? "Searching..." : "Search Events"}</button>
 
-            <div style={{ fontSize: 12, color: "#A89880", marginTop: 10, textAlign: "center" }}>
+            <div style={{ fontSize: 12, color: "#6B5B40", marginTop: 10, textAlign: "center" }}>
               {fmtDateNice(startDate)} — {fmtDateNice(endDate)}
             </div>
           </div>
 
           {error && (
             <div style={{ background: "rgba(184,92,56,0.1)", border: "1px solid rgba(184,92,56,0.3)", borderRadius: 10, padding: "16px 20px", marginBottom: 20 }}>
-              <p style={{ fontSize: 14, color: "#8A3A2A", margin: 0 }}>{error}</p>
-              <p style={{ fontSize: 12, color: "#7A6A50", margin: "8px 0 0" }}>Try expanding the date range or selecting a different town.</p>
+              <p style={{ fontSize: 14, color: "#B85C38", margin: 0 }}>{error}</p>
+              <p style={{ fontSize: 12, color: "#7A6B50", margin: "8px 0 0" }}>Try expanding the date range or selecting a different town.</p>
             </div>
           )}
 
           {results && (<>
-            <div style={{ fontSize: 14, color: "#A89880", marginBottom: 16 }}>
+            <div style={{ fontSize: 14, color: "#9B8968", marginBottom: 16 }}>
               {results.results?.length === 0 ? "No events found for this search." : `${results.results?.length} event${results.results?.length !== 1 ? "s" : ""} found`}
-              {results.timeout && <span style={{ color: "#8A3A2A", marginLeft: 8 }}>(some sources were slow)</span>}
+              {results.timeout && <span style={{ color: "#B85C38", marginLeft: 8 }}>(some sources were slow)</span>}
             </div>
 
             {results.results?.map((event, i) => {
               const { text, urls } = parseEventBody(event.body);
               return (
-                <div key={i} style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", padding: "20px 24px", marginBottom: 12 }}>
-                  <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#2C1810", margin: "0 0 8px", lineHeight: 1.3 }}>{event.header}</h3>
-                  <p style={{ fontSize: 14, color: "#7A6A50", lineHeight: 1.65, margin: 0 }}>{text}</p>
+                <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(139,105,20,0.15)", borderRadius: 12, padding: "20px 24px", marginBottom: 12 }}>
+                  <h3 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#F5E6C8", margin: "0 0 8px", lineHeight: 1.3 }}>{event.header}</h3>
+                  <p style={{ fontSize: 14, color: "#C4B08A", lineHeight: 1.65, margin: 0 }}>{text}</p>
                   {urls.length > 0 && (
                     <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
                       {urls.map((url, j) => (
                         <a key={j} href={url} target="_blank" rel="noopener noreferrer" style={{
                           display: "inline-flex", alignItems: "center", gap: 6,
                           padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                          background: j === 0 ? "#2C1810" : "transparent",
-                          color: j === 0 ? "#F5F0E8" : "#8B5E3C",
+                          background: j === 0 ? "linear-gradient(135deg, #8B6914, #C4A050)" : "rgba(255,255,255,0.04)",
+                          color: j === 0 ? "#1C120C" : "#C4A050",
                           border: j === 0 ? "none" : "1px solid rgba(139,105,20,0.25)",
                           borderRadius: 6, textDecoration: "none", transition: "all 0.2s",
                         }}>
                           {linkLabel(url)}
                           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                            <path d="M4 1.5H1.5V10.5H10.5V8" stroke={j === 0 ? "#F5F0E8" : "#8B5E3C"} strokeWidth="1.2" strokeLinecap="round"/>
-                            <path d="M7 1.5H10.5V5" stroke={j === 0 ? "#F5F0E8" : "#8B5E3C"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M10.5 1.5L5.5 6.5" stroke={j === 0 ? "#F5F0E8" : "#8B5E3C"} strokeWidth="1.2" strokeLinecap="round"/>
+                            <path d="M4 1.5H1.5V10.5H10.5V8" stroke={j === 0 ? "#1C120C" : "#C4A050"} strokeWidth="1.2" strokeLinecap="round"/>
+                            <path d="M7 1.5H10.5V5" stroke={j === 0 ? "#1C120C" : "#C4A050"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M10.5 1.5L5.5 6.5" stroke={j === 0 ? "#1C120C" : "#C4A050"} strokeWidth="1.2" strokeLinecap="round"/>
                           </svg>
                         </a>
                       ))}
@@ -461,8 +428,8 @@ export default function EventFinder() {
               <div style={{ textAlign: "center", padding: "20px 0" }}>
                 <button onClick={() => setTab("submit")} style={{
                   padding: "12px 28px", fontSize: 14, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                  background: "transparent", border: "1px solid rgba(139,105,20,0.25)",
-                  color: "#8B5E3C", borderRadius: 8, cursor: "pointer",
+                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(139,105,20,0.25)",
+                  color: "#C4A050", borderRadius: 8, cursor: "pointer",
                 }}>Know about an event? Add it here →</button>
               </div>
             )}
@@ -474,12 +441,12 @@ export default function EventFinder() {
           {/* Nudge */}
           <div style={{ background: "rgba(139,105,20,0.06)", border: "1px solid rgba(139,105,20,0.1)", borderRadius: 10, padding: "18px 22px", marginTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#7A6A50", marginBottom: 2 }}>Know about an event we're missing?</div>
-              <div style={{ fontSize: 12, color: "#A89880" }}>Add it to NapaServe. The more people contribute, the more useful this gets.</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#C4B08A", marginBottom: 2 }}>Know about an event we're missing?</div>
+              <div style={{ fontSize: 12, color: "#6B5B40" }}>Add it to NapaServe. The more people contribute, the more useful this gets.</div>
             </div>
             <button onClick={() => setTab("submit")} style={{
               padding: "10px 20px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-              background: "#2C1810", color: "#F5F0E8",
+              background: "linear-gradient(135deg, #8B6914, #C4A050)", color: "#1C120C",
               border: "none", borderRadius: 8, cursor: "pointer",
             }}>Add an Event</button>
           </div>
@@ -488,38 +455,38 @@ export default function EventFinder() {
         {/* ═══════════ SUBMIT TAB ═══════════ */}
         {tab === "submit" && (<>
           {submitted ? (
-            <div style={{ background: "rgba(91,138,90,0.1)", border: "1px solid rgba(91,138,90,0.3)", padding: "40px 28px", textAlign: "center" }}>
+            <div style={{ background: "rgba(91,138,90,0.1)", border: "1px solid rgba(91,138,90,0.3)", borderRadius: 14, padding: "40px 28px", textAlign: "center" }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>✓</div>
-              <h2 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 24, fontWeight: 700, color: "#4A7A5A", margin: "0 0 8px" }}>Event Submitted</h2>
-              <p style={{ fontSize: 15, color: "#7A6A50", margin: "0 0 20px", lineHeight: 1.5 }}>
+              <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 24, fontWeight: 700, color: "#5B8A5A", margin: "0 0 8px" }}>Event Submitted</h2>
+              <p style={{ fontSize: 15, color: "#C4B08A", margin: "0 0 20px", lineHeight: 1.5 }}>
                 Thanks for adding to NapaServe. Your event will appear after a quick review — usually within 24 hours.
               </p>
               <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
                 <button onClick={resetForm} style={{
                   padding: "10px 24px", fontSize: 14, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                  background: "#2C1810", color: "#F5F0E8",
+                  background: "linear-gradient(135deg, #8B6914, #C4A050)", color: "#1C120C",
                   border: "none", borderRadius: 8, cursor: "pointer",
                 }}>Add Another</button>
                 <button onClick={() => setTab("search")} style={{
                   padding: "10px 24px", fontSize: 14, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                  background: "transparent", border: "1px solid rgba(139,105,20,0.25)",
-                  color: "#8B5E3C", borderRadius: 8, cursor: "pointer",
+                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(139,105,20,0.25)",
+                  color: "#C4A050", borderRadius: 8, cursor: "pointer",
                 }}>Back to Search</button>
               </div>
             </div>
           ) : (
-            <div style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.18)", padding: 28 }}>
-              <p style={{ fontSize: 14, color: "#A89880", margin: "0 0 20px", lineHeight: 1.6 }}>
-                Add your event to the NapaServe community calendar. Fields marked with <span style={{ color: "#8A3A2A" }}>*</span> are required — everything else is optional but helps people find and decide on your event.
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(139,105,20,0.18)", borderRadius: 14, padding: 28 }}>
+              <p style={{ fontSize: 14, color: "#9B8968", margin: "0 0 20px", lineHeight: 1.6 }}>
+                Add your event to the NapaServe community calendar. Fields marked with <span style={{ color: "#B85C38" }}>*</span> are required — everything else is optional but helps people find and decide on your event.
               </p>
 
               {/* ── THE BASICS ── */}
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B5E3C", textTransform: "uppercase", marginBottom: 14 }}>The Basics</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B6914", textTransform: "uppercase", marginBottom: 14 }}>The Basics</div>
 
               <div style={{ marginBottom: 16 }}>
                 <label style={labelBase}>Event Name {required}</label>
                 <input value={form.title} onChange={e => uf("title", e.target.value)} placeholder="What's the event called?"
-                  style={{ ...inputBase, fontSize: 18, fontFamily: "'Libre Baskerville',Georgia,serif" }} />
+                  style={{ ...inputBase, fontSize: 18, fontFamily: "'Playfair Display',Georgia,serif" }} />
               </div>
 
               <div style={{ marginBottom: 16 }}>
@@ -554,7 +521,7 @@ export default function EventFinder() {
                     style={{ ...inputBase, fontFamily: "'JetBrains Mono',monospace" }} />
                 </div>
                 <div>
-                  <label style={labelBase}>End Date <span style={{ fontSize: 11, color: "#A89880" }}>(if multi-day)</span></label>
+                  <label style={labelBase}>End Date <span style={{ fontSize: 11, color: "#6B5B40" }}>(if multi-day)</span></label>
                   <input type="date" value={form.end_date} onChange={e => uf("end_date", e.target.value)}
                     style={{ ...inputBase, fontFamily: "'JetBrains Mono',monospace" }} />
                 </div>
@@ -620,9 +587,9 @@ export default function EventFinder() {
                     <button onClick={() => { uf("is_free", !form.is_free); if (!form.is_free) uf("price_info", "Free"); else uf("price_info", ""); }}
                       style={{
                         padding: "10px 16px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                        background: form.is_free ? "rgba(74,122,90,0.15)" : "transparent",
+                        background: form.is_free ? "rgba(91,138,90,0.2)" : "rgba(255,255,255,0.04)",
                         border: `1px solid ${form.is_free ? "rgba(91,138,90,0.4)" : "rgba(139,105,20,0.2)"}`,
-                        color: form.is_free ? "#4A7A5A" : "#7A6A50",
+                        color: form.is_free ? "#5B8A5A" : "#7A6B50",
                         borderRadius: 8, cursor: "pointer", whiteSpace: "nowrap",
                       }}>Free</button>
                   </div>
@@ -631,7 +598,7 @@ export default function EventFinder() {
                   <label style={labelBase}>Age Restriction</label>
                   <ChoiceGroup
                     options={[{ value: "all_ages", label: "All Ages" }, { value: "21_plus", label: "21+" }, { value: "18_plus", label: "18+" }]}
-                    value={form.age_restriction} onChange={v => uf("age_restriction", v)} color="#8A3A2A"
+                    value={form.age_restriction} onChange={v => uf("age_restriction", v)} color="#B85C38"
                   />
                 </div>
               </div>
@@ -676,15 +643,15 @@ export default function EventFinder() {
               {/* Error */}
               {submitError && (
                 <div style={{ background: "rgba(184,92,56,0.1)", border: "1px solid rgba(184,92,56,0.3)", borderRadius: 8, padding: "12px 16px", marginBottom: 16 }}>
-                  <p style={{ fontSize: 13, color: "#8A3A2A", margin: 0 }}>{submitError}</p>
+                  <p style={{ fontSize: 13, color: "#B85C38", margin: 0 }}>{submitError}</p>
                 </div>
               )}
 
               {/* Submit */}
               <button onClick={submitEvent} disabled={submitting} style={{
                 width: "100%", padding: "14px", fontSize: 15, fontWeight: 700, fontFamily: "'Source Sans 3',sans-serif",
-                background: submitting ? "rgba(44,24,16,0.08)" : "#2C1810",
-                color: submitting ? "#A89880" : "#F5F0E8",
+                background: submitting ? "rgba(139,105,20,0.3)" : "linear-gradient(135deg, #8B6914, #C4A050)",
+                color: submitting ? "#9B8968" : "#1C120C",
                 border: "none", borderRadius: 10, cursor: submitting ? "wait" : "pointer", transition: "all 0.3s",
               }}>{submitting ? "Submitting..." : "Submit Event"}</button>
 
