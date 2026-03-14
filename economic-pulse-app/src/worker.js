@@ -205,13 +205,18 @@ Answer in 2–4 focused paragraphs. Be specific: cite article titles or dates wh
 // ─── FRED API handler ─────────────────────────────────────────────────────────
 
 const FRED_SERIES = {
-  UNRATE:       { label: "US Unemployment",     unit: "%", source: "BLS · Monthly" },
-  CAUR:         { label: "CA Unemployment",     unit: "%", source: "BLS · Monthly" },
-  CPIAUCSL:     { label: "CPI (US)",            unit: "%", source: "BLS · Monthly" },
-  PPIACO:       { label: "PPI (US)",            unit: "%", source: "BLS · Monthly" },
-  FEDFUNDS:     { label: "Fed Funds Rate",      unit: "%", source: "Target range" },
-  MORTGAGE30US: { label: "30yr Mortgage",       unit: "%", source: "Freddie Mac · Weekly" },
-  UMCSENT:      { label: "Consumer Confidence", unit: "",  source: "U Michigan · Monthly" },
+  UNRATE:       { label: "US Unemployment",      unit: "%", source: "BLS · Monthly",        row: "labor" },
+  CAUR:         { label: "CA Unemployment",      unit: "%", source: "BLS · Monthly",        row: "labor" },
+  CANEMPLOY:    { label: "CA Employment",        unit: "",  source: "BLS · Monthly",        row: "labor" },
+  JTSJOR:       { label: "Job Openings",         unit: "%", source: "BLS · Monthly",        row: "labor" },
+  CPIAUCSL:     { label: "CPI (US)",             unit: "%", source: "BLS · Monthly",        row: "inflation" },
+  PPIACO:       { label: "PPI (US)",             unit: "%", source: "BLS · Monthly",        row: "inflation" },
+  MORTGAGE30US: { label: "30yr Mortgage",        unit: "%", source: "Freddie Mac · Weekly", row: "inflation" },
+  CAHPI:        { label: "CA Home Price Index",  unit: "",  source: "FHFA · Quarterly",     row: "inflation" },
+  RSAFS:        { label: "Retail Sales",         unit: "",  source: "Census · Monthly",     row: "growth" },
+  INDPRO:       { label: "Industrial Output",    unit: "",  source: "Fed · Monthly",        row: "growth" },
+  HOUST:        { label: "Housing Starts",       unit: "",  source: "Census · Monthly",     row: "growth" },
+  T10Y2Y:       { label: "Yield Curve",          unit: "%", source: "Treasury · Daily",     row: "growth" },
 };
 
 async function handleFred(request, env) {

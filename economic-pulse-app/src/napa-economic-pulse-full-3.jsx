@@ -310,40 +310,51 @@ export default function EconomicPulseDashboard(){
             {lastUpdated&&<p style={{fontSize:11,color:T.dim,margin:"0 0 16px",fontFamily:"'Source Sans 3',sans-serif"}}>Data as of latest available · Fetched live</p>}
             {macroLoading ? (
               <div style={{fontSize:13,color:T.dim,padding:"16px 0"}}>Loading indicators...</div>
-            ) : (
-              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
-                {macroData.map((m,i) => {
-                  const val = m.value ? parseFloat(m.value) : null;
-                  const prior = m.prior ? parseFloat(m.prior) : null;
-                  const isCpiPpi = m.id === "CPIAUCSL" || m.id === "PPIACO";
-                  const isIndex = isCpiPpi;
-                  const displayVal = val === null ? "—"
-                    : isIndex ? val.toFixed(1)
-                    : val % 1 === 0 ? val.toFixed(0)
-                    : val.toFixed(1);
-                  const unit = isIndex ? "" : m.unit;
-                  let delta = null, deltaPos = null;
-                  if (val !== null && prior !== null) {
-                    const diff = val - prior;
-                    if (Math.abs(diff) > 0.001) {
-                      deltaPos = m.id === "UNRATE" || m.id === "CAUR" || m.id === "CPIAUCSL" || m.id === "PPIACO" || m.id === "MORTGAGE30US"
-                        ? diff < 0 : diff > 0;
-                      delta = `${diff > 0 ? "▲" : "▼"} ${Math.abs(diff) < 1 ? Math.abs(diff).toFixed(2) : Math.abs(diff).toFixed(1)}`;
-                    }
-                  }
-                  return (
-                    <div key={i} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px"}}>
-                      <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{m.label}</div>
-                      <div style={{fontSize:22,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{displayVal}{unit}</div>
-                      <div style={{marginTop:4,display:"flex",alignItems:"center",gap:6}}>
-                        {delta && <span style={{fontSize:10,fontWeight:600,color:deltaPos?T.pos:T.neg,fontFamily:"monospace"}}>{delta}</span>}
-                        <span style={{fontSize:10,color:T.dim,fontFamily:"'Source Sans 3',sans-serif"}}>{isIndex?"Index · "+m.source:m.source}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            ) : (()=>{
+              const INVERT = new Set(["UNRATE","CAUR","CPIAUCSL","PPIACO","MORTGAGE30US"]);
+              const INDEX = new Set(["CPIAUCSL","PPIACO","CAHPI","INDPRO"]);
+              const rows = [
+                {label:"Labor",ids:["UNRATE","CAUR","CANEMPLOY","JTSJOR"]},
+                {label:"Inflation & Housing",ids:["CPIAUCSL","PPIACO","MORTGAGE30US","CAHPI"]},
+                {label:"Growth & Financial",ids:["RSAFS","INDPRO","HOUST","T10Y2Y"]},
+              ];
+              const byId = {};
+              macroData.forEach(m=>{byId[m.id]=m;});
+              return rows.map((row,ri)=>(
+                <div key={ri} style={{marginBottom:ri<2?16:0}}>
+                  <div style={{fontSize:9,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{row.label}</div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+                    {row.ids.map(id=>{
+                      const m = byId[id];
+                      if(!m) return <div key={id} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90}} />;
+                      const val = m.value ? parseFloat(m.value) : null;
+                      const prior = m.prior ? parseFloat(m.prior) : null;
+                      const isIndex = INDEX.has(id);
+                      const displayVal = val===null?"—":isIndex?val.toFixed(1):val>=1000?fN(Math.round(val)):val%1===0?val.toFixed(0):val.toFixed(1);
+                      const unit = isIndex?"":m.unit;
+                      let delta=null,deltaPos=null;
+                      if(val!==null&&prior!==null){
+                        const diff=val-prior;
+                        if(Math.abs(diff)>0.001){
+                          deltaPos=INVERT.has(id)?diff<0:diff>0;
+                          delta=`${diff>0?"▲":"▼"} ${Math.abs(diff)<1?Math.abs(diff).toFixed(2):Math.abs(diff).toFixed(1)}`;
+                        }
+                      }
+                      return(
+                        <div key={id} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90,boxSizing:"border-box",overflow:"hidden"}}>
+                          <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.label}</div>
+                          <div style={{fontSize:22,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{displayVal}{unit}</div>
+                          <div style={{marginTop:4,display:"flex",alignItems:"center",gap:6}}>
+                            {delta&&<span style={{fontSize:10,fontWeight:600,color:deltaPos?T.pos:T.neg,fontFamily:"monospace"}}>{delta}</span>}
+                            <span style={{fontSize:10,color:T.dim,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{isIndex?"Index · "+m.source:m.source}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ));
+            })()}
           </div>
 
           <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"12px 18px",marginTop:24}}>
