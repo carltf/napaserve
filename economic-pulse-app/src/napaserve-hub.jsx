@@ -108,12 +108,6 @@ export default function NapaServeHub() {
         </nav>
         <div className={`hub-drawer${drawerOpen ? " open" : ""}`}>
           <div className="hub-dg">
-            <div className="hub-dlabel">Intelligence</div>
-            <Link to="/dashboard" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Economic Dashboard</Link>
-            <Link to="/evaluator" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Project Evaluator</Link>
-            <a href="/agent.html" className="hub-dlink" onClick={() => setDrawerOpen(false)}>AI Policy Agent</a>
-          </div>
-          <div className="hub-dg">
             <div className="hub-dlabel">Journalism</div>
             <Link to="/news" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Napa Valley Features</Link>
             <Link to="/archive" className="hub-dlink" onClick={() => setDrawerOpen(false)}>NVF Archive Search</Link>
@@ -122,6 +116,13 @@ export default function NapaServeHub() {
             <div className="hub-dlabel">Community</div>
             <Link to="/events" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Event Finder</Link>
             <Link to="/valley-works" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Valley Works</Link>
+            <Link to="/valley-works" className="hub-dlink" onClick={() => setDrawerOpen(false)}>VW Labs</Link>
+          </div>
+          <div className="hub-dg">
+            <div className="hub-dlabel">Intelligence</div>
+            <Link to="/dashboard" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Economic Dashboard</Link>
+            <Link to="/evaluator" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Project Evaluator</Link>
+            <a href="/agent.html" className="hub-dlink" onClick={() => setDrawerOpen(false)}>AI Policy Agent</a>
           </div>
           <div className="hub-dg">
             <div className="hub-dlabel">Platform</div>
