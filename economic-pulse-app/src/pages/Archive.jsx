@@ -1,6 +1,6 @@
 // src/pages/Archive.jsx
 // NapaServe — Napa Valley Features Archive Search
-// RAG-powered search into 997 posts / 10,033 chunks via Cloudflare Worker
+// RAG-powered search into 1,000+ posts / 10,033 chunks via Cloudflare Worker
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
@@ -629,7 +629,7 @@ export default function Archive() {
         {/* Stats footer */}
         <div style={styles.statsBar}>
           {[
-            ["997", "Articles"],
+            ["1,000+", "Articles"],
             ["10,033", "Passages"],
             ["10+ yrs", "Coverage"],
           ].map(([n, l]) => (

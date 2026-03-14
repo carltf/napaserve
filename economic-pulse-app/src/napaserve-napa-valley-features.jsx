@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 // CONFIG
 // ═══════════════════════════════════════════════════════════════════════════
 
-const SUBSTACK_API = "https://misty-bush-fc93.tfcarl.workers.dev/substack/archive?sort=new&offset=0&limit=12";
+const SUBSTACK_API = "https://misty-bush-fc93.tfcarl.workers.dev/substack/archive?sort=new&offset=0&limit=50";
 
 // RSS-to-JSON for ticker headlines
 const NEWS_SOURCES = [
