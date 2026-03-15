@@ -138,7 +138,7 @@ export default function NapaServeHub() {
 
       {/* LEAD */}
       <div className="hub-lead">
-        <img src="/napaserve-icon.jpg" alt="" style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:"60%", opacity:0.08, zIndex:0, pointerEvents:"none" }} />
+        <img src="/favicon.jpg" alt="" style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:"60%", opacity:0.08, zIndex:0, pointerEvents:"none" }} />
         <div style={{ position:"relative", zIndex:1 }}>
         <p className="hub-kicker">Community Intelligence for Napa&apos;s Future</p>
         <div className="hub-pillars">
