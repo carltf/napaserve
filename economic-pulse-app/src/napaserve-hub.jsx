@@ -326,8 +326,8 @@ export default function NapaServeHub() {
                   } catch { setSubStatus("error"); }
                 }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
               </div>
-              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Request sent. Check your inbox or spam folder — or confirm your subscription at <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#2E7D32" }}>napavalleyfeatures.substack.com</a></div>}
-              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Try subscribing at <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#C62828" }}>napavalleyfeatures.substack.com</a></div>}
+              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Request sent. Check your inbox or spam folder — or confirm your subscription at <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#2E7D32" }}>napavalleyfocus.substack.com</a></div>}
+              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Try subscribing at <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#C62828" }}>napavalleyfocus.substack.com</a></div>}
               <div className="hub-sub-note">Delivered via Napa Valley Features on Substack. Unsubscribe anytime.</div>
             </div>
           </div>
