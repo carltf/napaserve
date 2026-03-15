@@ -326,7 +326,7 @@ export default function NapaServeHub() {
                   } catch { setSubStatus("error"); }
                 }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
               </div>
-              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>You're subscribed! Check your inbox.</div>}
+              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Request sent. Check your inbox or spam folder — or confirm your subscription at <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#2E7D32" }}>napavalleyfeatures.substack.com</a></div>}
               {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Try subscribing at <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#C62828" }}>napavalleyfeatures.substack.com</a></div>}
               <div className="hub-sub-note">Delivered via Napa Valley Features on Substack. Unsubscribe anytime.</div>
             </div>
