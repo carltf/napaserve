@@ -326,9 +326,9 @@ export default function NapaServeHub() {
                   } catch { setSubStatus("error"); }
                 }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
               </div>
-              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Request sent. Check your inbox or spam folder — or confirm your subscription at <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#2E7D32" }}>napavalleyfocus.substack.com</a></div>}
-              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Try subscribing at <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#C62828" }}>napavalleyfocus.substack.com</a></div>}
-              <div className="hub-sub-note">Delivered via Napa Valley Features on Substack. Unsubscribe anytime.</div>
+              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Request sent. Check your inbox or spam folder — or confirm your subscription at <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#2E7D32" }}>Napa Valley Features</a></div>}
+              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Try to <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#C62828" }}>subscribe directly at Napa Valley Features</a></div>}
+              <div className="hub-sub-note">You'll receive Napa Valley Features — original local journalism from Napa County. Delivered via Substack. Unsubscribe anytime.</div>
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
