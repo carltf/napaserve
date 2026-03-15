@@ -20,6 +20,9 @@ const FOCUS = [
   { title: "Applied AI", desc: "Practical AI tools for civic decision-making, local journalism, and small business operations." },
   { title: "Workforce Systems", desc: "Training pipelines, credential programs, and employment platforms for skilled local jobs." },
   { title: "Small Business Innovation", desc: "Tools and programs that help independent businesses compete, adapt, and grow locally." },
+  { title: "Ag Tech", desc: "Precision agriculture, irrigation technology, and data-driven farm management for Napa's agricultural economy." },
+  { title: "Food Systems", desc: "Regional food production, distribution, and supply chain resilience from farm to table." },
+  { title: "Creative Economy", desc: "Media, journalism, design, and cultural enterprises that build local identity and economic diversity." },
 ];
 
 export default function VWLabsPage() {
@@ -109,7 +112,7 @@ export default function VWLabsPage() {
         {/* Focus Areas */}
         <div style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Focus Areas</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
             {FOCUS.map(f => (
               <div key={f.title} style={{ background: T.bg2, border: `1px solid ${T.rule}`, borderLeft: `3px solid ${T.gold}`, padding: "20px 22px" }}>
                 <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.ink2, margin: "0 0 8px" }}>{f.title}</h3>
