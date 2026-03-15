@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function NapaServeHub() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [subStatus, setSubStatus] = useState("idle");
   const navigate = useNavigate();
 
   const toggleDrawer = () => setDrawerOpen(o => !o);
@@ -313,9 +315,19 @@ export default function NapaServeHub() {
               <div className="hub-sub-hed">Stay informed on Napa County.</div>
               <div className="hub-sub-dek">Original reporting, economic updates, and civic intelligence from Napa Valley Features — delivered when it matters.</div>
               <div className="hub-sub-fields">
-                <input className="hub-sub-in" type="email" placeholder="Your email address" />
-                <button className="hub-sub-btn">Subscribe</button>
+                <input className="hub-sub-in" type="email" placeholder="Your email address" value={email} onChange={e => setEmail(e.target.value)} />
+                <button className="hub-sub-btn" disabled={subStatus === "loading"} onClick={async () => {
+                  setSubStatus("loading");
+                  try {
+                    const body = new URLSearchParams({ email, first_url: window.location.href, first_referrer: "" });
+                    await fetch("https://napavalleyfocus.substack.com/api/v1/free?nojs=true", { method: "POST", body, mode: "no-cors" });
+                    setSubStatus("success");
+                    setEmail("");
+                  } catch { setSubStatus("error"); }
+                }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
               </div>
+              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>You're subscribed! Check your inbox.</div>}
+              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Try subscribing at <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#C62828" }}>napavalleyfeatures.substack.com</a></div>}
               <div className="hub-sub-note">Delivered via Napa Valley Features on Substack. Unsubscribe anytime.</div>
             </div>
           </div>
