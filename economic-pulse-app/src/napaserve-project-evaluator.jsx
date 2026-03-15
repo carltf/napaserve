@@ -412,10 +412,11 @@ export default function ProjectEvaluator() {
       {navOpen && <>
         <div onClick={() => setNavOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 19 }} />
         <div style={{ position: "fixed", top: 52, right: 0, width: 240, background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.12)", borderTop: "none", boxShadow: "0 8px 24px rgba(44,24,16,0.1)", zIndex: 20, fontFamily: "'Source Sans 3',sans-serif" }}>
+          <a href="/" onClick={() => setNavOpen(false)} style={{ display: "block", padding: "14px 20px", fontSize: 13, fontWeight: 700, color: "#8B5E3C", borderBottom: "1px solid rgba(44,24,16,0.12)", textDecoration: "none" }}>← NapaServe Home</a>
           {[
             { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }] },
             { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }, { t: "VW Labs", h: "/valley-works" }] },
-            { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator", cur: true }, { t: "AI Policy Agent", h: "/agent.html" }] },
+            { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator", cur: true }, { t: "Research Agent", h: "/agent.html" }] },
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
@@ -452,7 +453,7 @@ export default function ProjectEvaluator() {
         <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.6, marginBottom: 16 }}>Structural resilience analysis across the Jobs · People · Place framework.</p>
 
         <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", borderLeft: "3px solid var(--accent)", padding: "14px 18px", marginBottom: 18 }}>
-          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.75 }}>Explore the costs and benefits of everything from <strong style={{ color: "var(--accent)" }}>existing development proposals</strong> to <strong style={{ color: "var(--accent)" }}>bold new ideas</strong> — a 75-room resort, a workforce housing project, an ag-tech incubator. Think of it as your own team of experts helping you <strong style={{ color: "var(--accent)" }}>make better decisions and ask better questions.</strong></p>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.75 }}>Explore the costs and benefits of any idea — a new business, a development proposal, a policy change, a community project. Think of it as your own team of analysts helping you ask better questions and see the full picture.</p>
         </div>
 
         <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 8 }}>Try an example project</div>

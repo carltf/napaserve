@@ -107,6 +107,7 @@ export default function NapaServeHub() {
           </button>
         </nav>
         <div className={`hub-drawer${drawerOpen ? " open" : ""}`}>
+          <Link to="/" onClick={() => setDrawerOpen(false)} style={{ display: "block", padding: "14px 20px", fontSize: 13, fontWeight: 700, color: "var(--accent)", borderBottom: "1px solid var(--rule)", textDecoration: "none" }}>← NapaServe Home</Link>
           <div className="hub-dg">
             <div className="hub-dlabel">Journalism</div>
             <Link to="/news" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Napa Valley Features</Link>
@@ -122,7 +123,7 @@ export default function NapaServeHub() {
             <div className="hub-dlabel">Intelligence</div>
             <Link to="/dashboard" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Economic Dashboard</Link>
             <Link to="/evaluator" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Project Evaluator</Link>
-            <a href="/agent.html" className="hub-dlink" onClick={() => setDrawerOpen(false)}>AI Policy Agent</a>
+            <a href="/agent.html" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Research Agent</a>
           </div>
           <div className="hub-dg">
             <div className="hub-dlabel">Platform</div>
@@ -199,7 +200,7 @@ export default function NapaServeHub() {
               <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="3 2.2"/><circle cx="20" cy="20" r="10" stroke="#8B5E3C" strokeWidth="1"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="2" x2="20" y2="8" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="20" y1="32" x2="20" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="2" y1="20" x2="8" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="32" y1="20" x2="38" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
             </div>
             <div className="hub-c-cat">AI · Civic</div>
-            <div className="hub-c-name">AI Policy Agent</div>
+            <div className="hub-c-name">Research Agent</div>
             <div className="hub-c-desc">Ask hard questions. Grounded in the NVF archive, live web search, and local economic data. For policy, projects, and anything you&apos;d otherwise spend hours researching.</div>
             <div className="hub-arrow">Open →</div>
           </a>
@@ -269,7 +270,7 @@ export default function NapaServeHub() {
               <div className="hub-sm-head">Intelligence</div>
               <Link to="/dashboard" className="hub-sm-link">Economic Dashboard</Link>
               <Link to="/evaluator" className="hub-sm-link">Project Evaluator</Link>
-              <a href="/agent.html" className="hub-sm-link">AI Policy Agent</a>
+              <a href="/agent.html" className="hub-sm-link">Research Agent</a>
               <Link to="/evaluator" className="hub-sm-link">Structural Compass</Link>
             </div>
             <div>
