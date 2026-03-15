@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function NapaServeHub() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [subName, setSubName] = useState("");
   const [email, setEmail] = useState("");
   const [subStatus, setSubStatus] = useState("idle");
   const navigate = useNavigate();
@@ -315,20 +316,30 @@ export default function NapaServeHub() {
               <div className="hub-sub-hed">Stay informed on Napa County.</div>
               <div className="hub-sub-dek">Original reporting, economic updates, and civic intelligence from Napa Valley Features — delivered when it matters.</div>
               <div className="hub-sub-fields">
+                <input className="hub-sub-in" type="text" placeholder="Your name" value={subName} onChange={e => setSubName(e.target.value)} style={{ marginBottom: 6 }} />
                 <input className="hub-sub-in" type="email" placeholder="Your email address" value={email} onChange={e => setEmail(e.target.value)} />
                 <button className="hub-sub-btn" disabled={subStatus === "loading"} onClick={async () => {
                   setSubStatus("loading");
                   try {
-                    const body = new URLSearchParams({ email, first_url: window.location.href, first_referrer: "" });
-                    await fetch("https://napavalleyfocus.substack.com/api/v1/free?nojs=true", { method: "POST", body, mode: "no-cors" });
+                    const res = await fetch("https://csenpchwxxepdvjebsrt.supabase.co/rest/v1/napaserve_subscribers", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzZW5wY2h3eHhlcGR2amVic3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE2NDIzNTksImV4cCI6MjA1NzIxODM1OX0.VIxFkHopvWZpNVjBXytYHBp6JiDRXqzesevPiRkJBlI",
+                        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzZW5wY2h3eHhlcGR2amVic3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE2NDIzNTksImV4cCI6MjA1NzIxODM1OX0.VIxFkHopvWZpNVjBXytYHBp6JiDRXqzesevPiRkJBlI",
+                      },
+                      body: JSON.stringify({ name: subName, email, subscribed_at: new Date().toISOString(), source: "hub" }),
+                    });
+                    if (!res.ok) throw new Error("insert failed");
                     setSubStatus("success");
+                    setSubName("");
                     setEmail("");
                   } catch { setSubStatus("error"); }
                 }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
               </div>
-              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Request sent. Check your inbox or spam folder — or confirm your subscription at <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#2E7D32" }}>Napa Valley Features</a></div>}
-              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Try to <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: "#C62828" }}>subscribe directly at Napa Valley Features</a></div>}
-              <div className="hub-sub-note">You'll receive Napa Valley Features — original local journalism from Napa County. Delivered via Substack. Unsubscribe anytime.</div>
+              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Welcome to NapaServe. We'll be in touch.</div>}
+              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Email us at napaserve@gmail.com</div>}
+              <div className="hub-sub-note">Join the NapaServe community. No spam, unsubscribe anytime.</div>
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
