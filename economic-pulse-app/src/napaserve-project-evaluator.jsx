@@ -614,7 +614,9 @@ export default function ProjectEvaluator() {
             </button>
 
             {reportHtml && (
-              <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", padding: 24, marginTop: 4 }}>
+              <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", padding: 24, marginTop: 4, position: "relative", overflow: "hidden" }}>
+                <img src="/favicon.jpg" alt="" style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:200, opacity:0.06, zIndex:0, pointerEvents:"none" }} />
+                <div style={{ position:"relative", zIndex:1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)" }}>Structural Assessment</div>
                   <button onClick={copyReport} style={{ fontSize: 11, fontWeight: 600, padding: "5px 12px", cursor: "pointer", border: `1px solid ${copied ? "rgba(58,106,74,0.35)" : "rgba(139,94,60,0.25)"}`, background: copied ? "rgba(58,106,74,0.12)" : "transparent", color: copied ? "var(--pos)" : "var(--accent)", fontFamily: "'Source Sans 3',sans-serif" }}>
@@ -643,6 +645,7 @@ export default function ProjectEvaluator() {
                     })}
                   </div>
                 )}
+                </div>
               </div>
             )}
             {reportErr && (

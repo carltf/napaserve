@@ -31,7 +31,7 @@ export default function NapaServeHub() {
         .hub-dlabel{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding:4px 20px 6px;font-family:'Source Sans 3',sans-serif;}
         .hub-dlink{display:block;font-size:13px;font-weight:600;color:var(--muted);padding:7px 20px;cursor:pointer;transition:color .15s,background .15s;text-decoration:none;}
         .hub-dlink:hover{color:var(--accent);background:var(--bg2);}
-        .hub-lead{max-width:1160px;margin:0 auto;padding:56px 28px 0;}
+        .hub-lead{max-width:1160px;margin:0 auto;padding:56px 28px 0;position:relative;overflow:hidden;}
         .hub-kicker{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
         .hub-pillars{display:flex;align-items:center;flex-wrap:wrap;margin-bottom:22px;}
         .hub-pillar{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
@@ -138,6 +138,8 @@ export default function NapaServeHub() {
 
       {/* LEAD */}
       <div className="hub-lead">
+        <img src="/napaserve-icon.jpg" alt="" style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:"60%", opacity:0.08, zIndex:0, pointerEvents:"none" }} />
+        <div style={{ position:"relative", zIndex:1 }}>
         <p className="hub-kicker">Community Intelligence for Napa&apos;s Future</p>
         <div className="hub-pillars">
           <span className="hub-pillar">People &amp; Well-Being</span><span className="hub-pdot">·</span>
@@ -147,6 +149,7 @@ export default function NapaServeHub() {
         </div>
         <h1 className="hub-hed">The source for <em>what&apos;s happening</em><br />in Napa County.</h1>
         <p className="hub-dek">Weekly economic data. Original local journalism published multiple times a week — from land use and labor markets to wine, food, profiles, and the valley&apos;s stories — all AI-searchable. Civic project analysis grounded in the Jobs · People · Place framework. For supervisors, developers, journalists, and residents who need real answers.</p>
+        </div>
       </div>
 
       {/* TOOLS */}
