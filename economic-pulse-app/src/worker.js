@@ -248,6 +248,43 @@ async function handleFred(request, env) {
   }
 }
 
+// ─── Subscribe handler ───────────────────────────────────────────────────────
+
+async function handleSubscribe(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return err("Invalid JSON body", 400, request);
+  }
+
+  const { name, email } = body;
+  if (!email || typeof email !== "string" || !email.includes("@")) {
+    return err("Valid email is required", 400, request);
+  }
+
+  try {
+    const res = await fetch(`${env.SUPABASE_URL}/rest/v1/napaserve_subscribers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+        apikey: env.SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ name: name || null, email, subscribed_at: new Date().toISOString(), source: "hub" }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Supabase insert error ${res.status}: ${text}`);
+    }
+    return json({ success: true }, 200, request);
+  } catch (e) {
+    console.error("Subscribe failed:", e);
+    return err(`Subscribe failed: ${e.message}`, 502, request);
+  }
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
@@ -304,6 +341,10 @@ export default {
 
     if (url.pathname === "/api/fred" && request.method === "GET") {
       return handleFred(request, env);
+    }
+
+    if (url.pathname === "/api/subscribe" && request.method === "POST") {
+      return handleSubscribe(request, env);
     }
 
     return new Response("Not found", { status: 404 });

@@ -321,16 +321,10 @@ export default function NapaServeHub() {
                 <button className="hub-sub-btn" disabled={subStatus === "loading"} onClick={async () => {
                   setSubStatus("loading");
                   try {
-                    const res = await fetch("https://csenpchwxxepdvjebsrt.supabase.co/rest/v1/napaserve_subscribers", {
+                    const res = await fetch("https://misty-bush-fc93.tfcarl.workers.dev/api/subscribe", {
                       method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                        Prefer: "return=minimal",
-                        "Content-Profile": "public",
-                        apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzZW5wY2h3eHhlcGR2amVic3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE2NDIzNTksImV4cCI6MjA1NzIxODM1OX0.VIxFkHopvWZpNVjBXytYHBp6JiDRXqzesevPiRkJBlI",
-                        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzZW5wY2h3eHhlcGR2amVic3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE2NDIzNTksImV4cCI6MjA1NzIxODM1OX0.VIxFkHopvWZpNVjBXytYHBp6JiDRXqzesevPiRkJBlI",
-                      },
-                      body: JSON.stringify({ name: subName, email, subscribed_at: new Date().toISOString(), source: "hub" }),
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ name: subName, email }),
                     });
                     if (!res.ok) throw new Error("insert failed");
                     setSubStatus("success");
