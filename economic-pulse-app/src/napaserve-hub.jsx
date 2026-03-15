@@ -120,7 +120,7 @@ export default function NapaServeHub() {
             <div className="hub-dlabel">Community</div>
             <Link to="/events" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Event Finder</Link>
             <Link to="/valley-works" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Valley Works</Link>
-            <Link to="/valley-works" className="hub-dlink" onClick={() => setDrawerOpen(false)}>VW Labs</Link>
+            <Link to="/vw-labs" className="hub-dlink" onClick={() => setDrawerOpen(false)}>VW Labs</Link>
           </div>
           <div className="hub-dg">
             <div className="hub-dlabel">Intelligence</div>
@@ -289,7 +289,7 @@ export default function NapaServeHub() {
               <Link to="/events" className="hub-sm-link">Event Finder</Link>
               <Link to="/events" className="hub-sm-link">Submit an event</Link>
               <Link to="/valley-works" className="hub-sm-link">Valley Works</Link>
-              <Link to="/valley-works" className="hub-sm-link">VW Labs</Link>
+              <Link to="/vw-labs" className="hub-sm-link">VW Labs</Link>
             </div>
             <div>
               <div className="hub-sm-head">Platform</div>

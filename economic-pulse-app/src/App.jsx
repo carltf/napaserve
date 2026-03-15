@@ -7,6 +7,7 @@ import News from "./napaserve-napa-valley-features";
 import ValleyWorks from "./napaserve-valley-works";
 import Archive from "./pages/Archive";
 import About from "./napaserve-about";
+import VWLabs from "./napaserve-vw-labs";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/events" element={<EventFinder />} />
         <Route path="/news" element={<News />} />
         <Route path="/valley-works" element={<ValleyWorks />} />
+        <Route path="/vw-labs" element={<VWLabs />} />
         <Route path="/archive" element={<Archive />} />
         <Route path="/about" element={<About />} />
       </Routes>

@@ -415,7 +415,7 @@ export default function ProjectEvaluator() {
           <a href="/" onClick={() => setNavOpen(false)} style={{ display: "block", padding: "14px 20px", fontSize: 13, fontWeight: 700, color: "#8B5E3C", borderBottom: "1px solid rgba(44,24,16,0.12)", textDecoration: "none" }}>← NapaServe Home</a>
           {[
             { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }] },
-            { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }, { t: "VW Labs", h: "/valley-works" }] },
+            { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }, { t: "VW Labs", h: "/vw-labs" }] },
             { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator", cur: true }, { t: "Research Agent", h: "/agent.html" }] },
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
