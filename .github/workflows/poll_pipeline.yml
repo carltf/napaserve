@@ -68,18 +68,31 @@ jobs:
         if: failure() && steps.extract.outputs.cookie_expired == 'true'
         run: |
           read -r -d '' MSG << 'EOMSG'
-          ⚠️ NVF poll pipeline: substack.sid cookie expired. To fix:
-          1) Open Safari → napavalleyfocus.substack.com (make sure you're logged in)
-          2) Cmd+Option+I → Storage → Cookies → copy the Value for substack.sid
-          3) In terminal run: gh secret set SUBSTACK_SID --repo carltf/napaserve and paste the new value.
-          Pipeline will resume next Monday automatically.
+          ⚠️ NVF poll pipeline: Substack cookie expired. To fix:
+          1. Open Safari → go to napavalleyfocus.substack.com (must be logged in as publisher)
+          2. Right-click anywhere → Inspect Element
+          3. Click Storage tab → Cookies → napavalleyfocus.substack.com
+          4. Find row named substack.sid → click it → copy the full Value
+          5. Open Terminal
+          6. Run: gh secret set SUBSTACK_SID --repo carltf/napaserve
+          7. Paste the value when prompted → press Enter
+          8. Pipeline will resume automatically next Monday
           EOMSG
           if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
             read -r -d '' REMINDER << 'EOREMINDER'
 
-          🔔 Monthly reminder:
-          1) Go to Substack → Settings → Export → download fresh export → replace posts folder at ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
-          2) Refresh substack.sid cookie using steps above.
+          🔔 Monthly maintenance reminder:
+          STEP 1 — Refresh Substack export:
+          1. Go to napavalleyfocus.substack.com → click your profile → Settings → Exports
+          2. Click Request new export → wait for email → download the zip
+          3. Unzip and replace the posts folder at: ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
+
+          STEP 2 — Refresh cookie (if needed):
+          1. Open Safari → napavalleyfocus.substack.com (logged in as publisher)
+          2. Right-click → Inspect Element → Storage → Cookies → napavalleyfocus.substack.com
+          3. Find substack.sid → copy the Value
+          4. Terminal: gh secret set SUBSTACK_SID --repo carltf/napaserve
+          5. Paste value → Enter
           EOREMINDER
             MSG="$MSG$REMINDER"
           fi
@@ -95,9 +108,18 @@ jobs:
           if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
             read -r -d '' REMINDER << 'EOREMINDER'
 
-          🔔 Monthly reminder:
-          1) Go to Substack → Settings → Export → download fresh export → replace posts folder at ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
-          2) Refresh substack.sid cookie using steps above.
+          🔔 Monthly maintenance reminder:
+          STEP 1 — Refresh Substack export:
+          1. Go to napavalleyfocus.substack.com → click your profile → Settings → Exports
+          2. Click Request new export → wait for email → download the zip
+          3. Unzip and replace the posts folder at: ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
+
+          STEP 2 — Refresh cookie (if needed):
+          1. Open Safari → napavalleyfocus.substack.com (logged in as publisher)
+          2. Right-click → Inspect Element → Storage → Cookies → napavalleyfocus.substack.com
+          3. Find substack.sid → copy the Value
+          4. Terminal: gh secret set SUBSTACK_SID --repo carltf/napaserve
+          5. Paste value → Enter
           EOREMINDER
             MSG="$MSG$REMINDER"
           fi
