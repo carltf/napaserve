@@ -292,7 +292,7 @@ export default function EconomicPulseDashboard(){
       <div style={{textAlign:"center"}}>
         <div style={{width:36,height:36,border:`2px solid ${T.rule}`,borderTopColor:T.accent,borderRadius:"50%",animation:"spin 1s linear infinite",margin:"0 auto 16px"}}/>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;}`}</style>
-        <p style={{fontFamily:"'Libre Baskerville',Georgia,serif",color:T.muted,fontSize:16}}>Loading Economic Pulse...</p>
+        <p style={{fontFamily:"'Libre Baskerville',Georgia,serif",color:T.muted,fontSize:16}}>Loading Community Pulse...</p>
       </div>
     </div>
   );
@@ -323,7 +323,7 @@ export default function EconomicPulseDashboard(){
           <span style={{fontSize:10,fontWeight:700,letterSpacing:3,color:T.dim,textTransform:"uppercase"}}>NapaServe</span>
           <span style={{fontSize:10,color:T.dim}}>· Napa County</span>
         </div>
-        <h1 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(28px,4vw,42px)",fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Economic Pulse</h1>
+        <h1 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(28px,4vw,42px)",fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Community Pulse</h1>
         <p style={{fontSize:13,color:T.dim,margin:"0 0 24px"}}>
           Weekly snapshot — {lastUpdated?fD(lastUpdated):"Loading..."} <span style={{color:T.rule}}>|</span> Live from Supabase
           <span style={{color:T.live,fontSize:11,marginLeft:8,fontWeight:600}}>● Connected</span>
