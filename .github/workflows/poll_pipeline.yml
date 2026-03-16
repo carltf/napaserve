@@ -128,25 +128,24 @@ jobs:
               "Content-Type": "application/json",
           }
 
-          # Total subscriber count
-          r = requests.get(
-              f"{SUPABASE_URL}/rest/v1/napaserve_subscribers?select=id",
-              headers={**headers, "Prefer": "count=exact"},
-          )
-          r.raise_for_status()
-          total = int(r.headers.get("content-range", "*/0").split("/")[-1])
-
-          # New signups in the last 7 days
-          week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+          # Fetch all subscribers ordered by most recent first
           r = requests.get(
               f"{SUPABASE_URL}/rest/v1/napaserve_subscribers"
               f"?select=name,email,subscribed_at"
-              f"&subscribed_at=gte.{week_ago}"
               f"&order=subscribed_at.desc",
               headers=headers,
           )
           r.raise_for_status()
-          new_subs = r.json()
+          all_subs = r.json()
+          total = len(all_subs)
+
+          # Filter to last 7 days in Python
+          week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+          new_subs = [
+              s for s in all_subs
+              if s.get("subscribed_at") and
+              datetime.fromisoformat(s["subscribed_at"].replace("Z", "+00:00")) >= week_ago
+          ]
 
           today = datetime.now(timezone.utc).strftime("%B %d, %Y")
 
