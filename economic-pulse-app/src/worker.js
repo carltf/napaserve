@@ -7,6 +7,7 @@
  *   POST /api/rag-answer         — embed → retrieve → Claude answer + sources
  *   POST /api/poll-search         — embed query → nvf_poll_search() → matching polls
  *   GET  /api/fred               — FRED API proxy → macro indicators
+ *   POST /api/submit-event       — community event submission → community_events
  *
  * Env vars (Bindings):
  *   SUPABASE_URL       (plaintext)
@@ -18,10 +19,28 @@
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 
+const ALLOWED_ORIGINS = [
+  "https://napavalleyfeatures.com",
+  "https://www.napavalleyfeatures.com",
+];
+
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.squarespace\.com$/.test(origin)) return true;
+  return false;
+}
+
+function resolveOrigin(request) {
+  const origin = request.headers.get("Origin");
+  if (!origin) return "*";
+  if (isAllowedOrigin(origin)) return origin;
+  return origin; // keep existing permissive behavior for NapaServe app
+}
+
 function corsHeaders(request) {
-  const origin = request.headers.get("Origin") || "*";
   return {
-    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Origin": resolveOrigin(request),
     "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400",
@@ -30,8 +49,7 @@ function corsHeaders(request) {
 }
 
 function applyCors(headers, request) {
-  const origin = request.headers.get("Origin") || "*";
-  headers.set("Access-Control-Allow-Origin", origin);
+  headers.set("Access-Control-Allow-Origin", resolveOrigin(request));
   headers.set("Access-Control-Allow-Methods", "GET,HEAD,POST,OPTIONS");
   headers.set("Access-Control-Allow-Headers", "Content-Type");
   headers.set("Vary", "Origin");
@@ -330,6 +348,94 @@ async function handleSubscribe(request, env) {
   }
 }
 
+// ─── Submit event handler ────────────────────────────────────────────────────
+
+const VALID_CATEGORIES = [
+  "community", "arts", "food_wine", "music", "sports", "education",
+  "charity", "business", "government", "health", "family", "outdoor",
+];
+
+const VALID_TOWNS = [
+  "Napa", "Yountville", "St. Helena", "Calistoga", "American Canyon",
+  "Angwin", "Deer Park", "Oakville", "Rutherford", "Pope Valley",
+  "Lake Berryessa", "Silverado", "Other",
+];
+
+async function handleSubmitEvent(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return err("Invalid JSON body", 400, request);
+  }
+
+  const { title, description, event_date, town, category } = body;
+
+  // Validate required fields
+  if (!title || typeof title !== "string" || title.trim().length < 3) {
+    return err("Title is required (min 3 characters)", 400, request);
+  }
+  if (!description || typeof description !== "string" || description.trim().length < 10) {
+    return err("Description is required (min 10 characters)", 400, request);
+  }
+  if (!event_date || !/^\d{4}-\d{2}-\d{2}$/.test(event_date)) {
+    return err("Event date is required (YYYY-MM-DD)", 400, request);
+  }
+  if (!town || !VALID_TOWNS.includes(town)) {
+    return err(`Town is required. Valid: ${VALID_TOWNS.join(", ")}`, 400, request);
+  }
+  if (!category || !VALID_CATEGORIES.includes(category)) {
+    return err(`Category is required. Valid: ${VALID_CATEGORIES.join(", ")}`, 400, request);
+  }
+
+  // Build row — only include non-empty optional fields
+  const row = {
+    title: title.trim(),
+    description: description.trim(),
+    event_date,
+    town,
+    category,
+    status: "pending",
+    source: "community",
+    submitted_at: new Date().toISOString(),
+  };
+
+  const optionalText = [
+    "end_date", "start_time", "end_time", "venue_name", "address",
+    "price_info", "age_restriction", "indoor_outdoor", "recurrence_desc",
+    "website_url", "ticket_url", "organizer_contact", "accessibility_info",
+    "submitted_by",
+  ];
+  for (const key of optionalText) {
+    if (body[key] && typeof body[key] === "string" && body[key].trim()) {
+      row[key] = body[key].trim();
+    }
+  }
+  if (typeof body.is_free === "boolean") row.is_free = body.is_free;
+  if (typeof body.is_recurring === "boolean") row.is_recurring = body.is_recurring;
+
+  try {
+    const res = await fetch(`${env.SUPABASE_URL}/rest/v1/community_events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+        apikey: env.SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify(row),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Supabase insert error ${res.status}: ${text}`);
+    }
+    return json({ success: true, message: "Event submitted for review" }, 200, request);
+  } catch (e) {
+    console.error("Submit event failed:", e);
+    return err(`Event submission failed: ${e.message}`, 502, request);
+  }
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
@@ -394,6 +500,10 @@ export default {
 
     if (url.pathname === "/api/subscribe" && request.method === "POST") {
       return handleSubscribe(request, env);
+    }
+
+    if (url.pathname === "/api/submit-event" && request.method === "POST") {
+      return handleSubmitEvent(request, env);
     }
 
     return new Response("Not found", { status: 404 });

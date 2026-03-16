@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit a Community Event — NapaServe</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: #F5F0E8;
+    color: #2C1810;
+    line-height: 1.6;
+    padding: 24px 16px;
+  }
+
+  .container {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .header h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2C1810;
+    margin-bottom: 6px;
+  }
+
+  .header p {
+    font-size: 14px;
+    color: #8B7355;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+
+  .form-card {
+    background: #EDE8DE;
+    border: 1px solid rgba(44, 24, 16, 0.12);
+    border-radius: 8px;
+    padding: 28px 24px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8B5E3C;
+    margin-bottom: 14px;
+    margin-top: 24px;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .section-label:first-child {
+    margin-top: 0;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2C1810;
+    margin-bottom: 4px;
+  }
+
+  label .required {
+    color: #8B5E3C;
+  }
+
+  input[type="text"],
+  input[type="url"],
+  input[type="email"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 15px;
+    color: #2C1810;
+    background: #F5F0E8;
+    border: 1.5px solid rgba(44, 24, 16, 0.18);
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: #C4A050;
+    background: #FFFDF8;
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .checkbox-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #8B5E3C;
+  }
+
+  .checkbox-row label {
+    margin-bottom: 0;
+    font-weight: 500;
+  }
+
+  .submit-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #2C1810;
+    color: #F5F0E8;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 24px;
+  }
+
+  .submit-btn:hover { background: #8B5E3C; transform: translateY(-1px); }
+  .submit-btn:disabled { background: rgba(44, 24, 16, 0.25); cursor: not-allowed; transform: none; }
+
+  .error-msg {
+    background: rgba(114, 47, 55, 0.08);
+    border: 1px solid rgba(114, 47, 55, 0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #8B5E3C;
+    font-size: 14px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .success-msg {
+    text-align: center;
+    padding: 48px 24px;
+    display: none;
+  }
+
+  .success-msg .check {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid #C4A050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .success-msg .check svg {
+    width: 32px;
+    height: 32px;
+    fill: #C4A050;
+  }
+
+  .success-msg h2 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.3rem;
+    color: #2C1810;
+    margin-bottom: 8px;
+  }
+
+  .success-msg p {
+    font-size: 15px;
+    color: #8B7355;
+    max-width: 400px;
+    margin: 0 auto 20px;
+  }
+
+  .success-msg button {
+    background: none;
+    border: 1px solid rgba(44, 24, 16, 0.18);
+    padding: 10px 24px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8B5E3C;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .success-msg button:hover {
+    border-color: #8B5E3C;
+    background: #EDE8DE;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: #8B7355;
+    margin-top: 3px;
+  }
+
+  .powered-by {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #8B7355;
+  }
+
+  .powered-by a {
+    color: #8B5E3C;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .powered-by a:hover { text-decoration: underline; }
+
+  @media (max-width: 500px) {
+    body { padding: 16px 12px; }
+    .form-card { padding: 20px 16px; }
+    .row, .row-3 { grid-template-columns: 1fr; }
+    .header h1 { font-size: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Submit a Community Event</h1>
+    <p>Share an upcoming event in Napa Valley. Submissions are reviewed before publishing.</p>
+  </div>
+
+  <div class="form-card" id="formCard">
+    <form id="eventForm" novalidate>
+      <div class="section-label">Event Details</div>
+
+      <div class="field">
+        <label for="title">Event Name <span class="required">*</span></label>
+        <input type="text" id="title" name="title" required placeholder="e.g. Downtown Napa Farmers Market" aria-label="Event name">
+      </div>
+
+      <div class="field">
+        <label for="description">Description <span class="required">*</span></label>
+        <textarea id="description" name="description" required rows="3" placeholder="What is this event about? Include key details attendees should know." aria-label="Event description"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="category">Category <span class="required">*</span></label>
+        <select id="category" name="category" required aria-label="Event category">
+          <option value="">Select a category</option>
+          <option value="community">Community</option>
+          <option value="arts">Arts</option>
+          <option value="food_wine">Food and Wine</option>
+          <option value="music">Music</option>
+          <option value="sports">Sports</option>
+          <option value="education">Education</option>
+          <option value="charity">Charity</option>
+          <option value="business">Business</option>
+          <option value="government">Government</option>
+          <option value="health">Health</option>
+          <option value="family">Family</option>
+          <option value="outdoor">Outdoor</option>
+        </select>
+      </div>
+
+      <div class="section-label">Date and Time</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="event_date">Start Date <span class="required">*</span></label>
+          <input type="date" id="event_date" name="event_date" required aria-label="Event start date">
+        </div>
+        <div class="field">
+          <label for="end_date">End Date</label>
+          <input type="date" id="end_date" name="end_date" aria-label="Event end date">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="start_time">Start Time</label>
+          <input type="time" id="start_time" name="start_time" aria-label="Start time">
+        </div>
+        <div class="field">
+          <label for="end_time">End Time</label>
+          <input type="time" id="end_time" name="end_time" aria-label="End time">
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="is_recurring" name="is_recurring" aria-label="This is a recurring event">
+        <label for="is_recurring">This is a recurring event</label>
+      </div>
+
+      <div class="field" id="recurrenceField" style="display:none;">
+        <label for="recurrence_desc">Recurrence</label>
+        <input type="text" id="recurrence_desc" name="recurrence_desc" placeholder="e.g. Every Tuesday, First Saturday of the month" aria-label="Recurrence description">
+      </div>
+
+      <div class="section-label">Location</div>
+
+      <div class="field">
+        <label for="town">Town <span class="required">*</span></label>
+        <select id="town" name="town" required aria-label="Town">
+          <option value="">Select a town</option>
+          <option value="Napa">Napa</option>
+          <option value="Yountville">Yountville</option>
+          <option value="St. Helena">St. Helena</option>
+          <option value="Calistoga">Calistoga</option>
+          <option value="American Canyon">American Canyon</option>
+          <option value="Angwin">Angwin</option>
+          <option value="Deer Park">Deer Park</option>
+          <option value="Oakville">Oakville</option>
+          <option value="Rutherford">Rutherford</option>
+          <option value="Pope Valley">Pope Valley</option>
+          <option value="Lake Berryessa">Lake Berryessa</option>
+          <option value="Silverado">Silverado</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="venue_name">Venue Name</label>
+        <input type="text" id="venue_name" name="venue_name" placeholder="e.g. Oxbow Public Market" aria-label="Venue name">
+      </div>
+
+      <div class="field">
+        <label for="address">Address</label>
+        <input type="text" id="address" name="address" placeholder="e.g. 610 1st St, Napa, CA 94559" aria-label="Address">
+      </div>
+
+      <div class="field">
+        <label for="indoor_outdoor">Setting</label>
+        <select id="indoor_outdoor" name="indoor_outdoor" aria-label="Indoor or outdoor">
+          <option value="indoor">Indoor</option>
+          <option value="outdoor">Outdoor</option>
+          <option value="both">Both</option>
+        </select>
+      </div>
+
+      <div class="section-label">Additional Details</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="price_info">Price</label>
+          <input type="text" id="price_info" name="price_info" placeholder="e.g. $25, Free, Sliding scale" aria-label="Price info">
+        </div>
+        <div class="field">
+          <label for="age_restriction">Ages</label>
+          <select id="age_restriction" name="age_restriction" aria-label="Age restriction">
+            <option value="all_ages">All Ages</option>
+            <option value="21_plus">21+</option>
+            <option value="18_plus">18+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="is_free" name="is_free" aria-label="This event is free">
+        <label for="is_free">This event is free</label>
+      </div>
+
+      <div class="field">
+        <label for="website_url">Website</label>
+        <input type="url" id="website_url" name="website_url" placeholder="https://" aria-label="Event website">
+      </div>
+
+      <div class="field">
+        <label for="ticket_url">Ticket Link</label>
+        <input type="url" id="ticket_url" name="ticket_url" placeholder="https://" aria-label="Ticket link">
+      </div>
+
+      <div class="field">
+        <label for="accessibility_info">Accessibility Info</label>
+        <input type="text" id="accessibility_info" name="accessibility_info" placeholder="e.g. Wheelchair accessible, ASL interpreter" aria-label="Accessibility info">
+      </div>
+
+      <div class="section-label">Your Info</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="submitted_by">Your Name</label>
+          <input type="text" id="submitted_by" name="submitted_by" placeholder="Optional" aria-label="Your name">
+        </div>
+        <div class="field">
+          <label for="organizer_contact">Contact Email</label>
+          <input type="email" id="organizer_contact" name="organizer_contact" placeholder="Optional" aria-label="Contact email">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Event</button>
+
+      <div class="error-msg" id="errorMsg"></div>
+    </form>
+  </div>
+
+  <div class="success-msg" id="successMsg">
+    <div class="check">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    </div>
+    <h2>Event Submitted</h2>
+    <p>Thank you for sharing your event with the Napa Valley community. Our team will review it shortly.</p>
+    <button onclick="resetForm()">Submit Another Event</button>
+  </div>
+
+  <div class="powered-by">
+    Powered by <a href="https://napaserve.com" target="_blank" aria-label="NapaServe, opens in new tab">NapaServe</a>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://misty-bush-fc93.tfcarl.workers.dev/api/submit-event';
+
+document.getElementById('is_recurring').addEventListener('change', function() {
+  document.getElementById('recurrenceField').style.display = this.checked ? 'block' : 'none';
+});
+
+document.getElementById('eventForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+  const errEl = document.getElementById('errorMsg');
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Submitting\u2026';
+
+  const form = e.target;
+  const data = {
+    title: form.title.value.trim(),
+    description: form.description.value.trim(),
+    event_date: form.event_date.value,
+    town: form.town.value,
+    category: form.category.value,
+    is_free: form.is_free.checked,
+    is_recurring: form.is_recurring.checked,
+  };
+
+  // Optional text fields
+  const optional = [
+    'end_date', 'start_time', 'end_time', 'venue_name', 'address',
+    'price_info', 'age_restriction', 'indoor_outdoor', 'recurrence_desc',
+    'website_url', 'ticket_url', 'organizer_contact', 'accessibility_info',
+    'submitted_by',
+  ];
+
+  for (const key of optional) {
+    const el = form.elements[key];
+    if (el && el.value && el.value.trim()) {
+      data[key] = el.value.trim();
+    }
+  }
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.error || 'Submission failed');
+    }
+
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+  } catch (error) {
+    errEl.textContent = error.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit Event';
+  }
+});
+
+function resetForm() {
+  document.getElementById('eventForm').reset();
+  document.getElementById('recurrenceField').style.display = 'none';
+  document.getElementById('formCard').style.display = 'block';
+  document.getElementById('successMsg').style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

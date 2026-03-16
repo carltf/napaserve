@@ -1,14 +1,21 @@
 {
   "version": 2,
-  "buildCommand": "cd economic-pulse-app && npm install && npm run build && cp ../agent.html dist/agent.html",
+  "buildCommand": "cd economic-pulse-app && npm install && npm run build && cp ../agent.html dist/agent.html && cp ../embed-events.html dist/embed-events.html",
   "outputDirectory": "economic-pulse-app/dist",
   "headers": [
     {
       "source": "/agent.html",
       "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/embed-events.html",
+      "headers": [
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
     }
   ],
   "rewrites": [
-    { "source": "/((?!agent.html).*)", "destination": "/index.html" }
+    { "source": "/((?!agent\\.html|embed-events\\.html).*)", "destination": "/index.html" }
   ]
 }
