@@ -170,6 +170,7 @@ export default function EconomicPulseDashboard(){
         );
         if (!res.ok) throw new Error("Poll fetch failed");
         const data = await res.json();
+        console.log("Poll data sample (first 3):", data.slice(0, 3).map(p => ({ poll_id: p.poll_id, post_title: p.post_title, substack_url: p.substack_url, theme: p.theme })));
         if (!cancelled) setPollData(data);
       } catch (e) { console.error("Poll fetch failed:", e); }
       finally { if (!cancelled) setPollLoading(false); }
@@ -454,7 +455,9 @@ export default function EconomicPulseDashboard(){
                               <span style={{fontSize:11,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label || winner.text}</span>
                             </div>
                           )}
-                          <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{poll.substack_url ? <a href={poll.substack_url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                          {(()=>{const url=poll.substack_url&&poll.substack_url.trim();return(
+                          <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                          );})()}
                         </div>
                         <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>
                       </div>
