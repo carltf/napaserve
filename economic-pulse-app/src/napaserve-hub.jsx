@@ -138,7 +138,7 @@ export default function NapaServeHub() {
 
       {/* LEAD */}
       <div className="hub-lead">
-        <p className="hub-kicker">Community Intelligence for Napa&apos;s Future</p>
+        <p className="hub-kicker">Community Intelligence for Napa Valley</p>
         <div className="hub-pillars">
           <span className="hub-pillar">People &amp; Well-Being</span><span className="hub-pdot">·</span>
           <span className="hub-pillar">Place &amp; Environment</span><span className="hub-pdot">·</span>
@@ -146,7 +146,8 @@ export default function NapaServeHub() {
           <span className="hub-pillar">Innovation</span>
         </div>
         <h1 className="hub-hed">The source for <em>what&apos;s happening</em><br />in Napa County.</h1>
-        <p className="hub-dek">Weekly economic data. Original local journalism published multiple times a week — from land use and labor markets to wine, food, profiles, and the valley&apos;s stories — all AI-searchable. Civic project analysis grounded in the Jobs · People · Place framework. For supervisors, developers, journalists, and residents who need real answers.</p>
+        <p className="hub-dek">Reporting, archives, data and tools to understand the valley, explore ideas, model what comes next and help shape the future.</p>
+        <p className="hub-dek" style={{ marginTop: 14 }}>Community intelligence brings together local reporting, data, archives and public input to build a shared understanding of how Napa Valley works and where it is headed. Artificial intelligence is one tool within that system — helping people search, analyze, model scenarios and explore the knowledge this community has created.</p>
       </div>
 
       {/* TOOLS */}
