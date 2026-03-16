@@ -198,7 +198,6 @@ export default function NapaValleyFeatures() {
 
   // Fetch Reader Demographics polls
   const [readerPolls, setReaderPolls] = useState([]);
-  const [openPoll, setOpenPoll] = useState(null);
   useEffect(() => {
     (async () => {
       try {
@@ -353,55 +352,34 @@ export default function NapaValleyFeatures() {
             <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 28px 24px", margin: "32px -24px", marginLeft: 0, marginRight: 0 }}>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2.5, color: "#A89880", textTransform: "uppercase", marginBottom: 4, fontFamily: "'Source Sans 3',sans-serif" }}>Who Are Our Readers</div>
               <p style={{ fontSize: 14, color: "#7A6A50", margin: "0 0 20px", fontFamily: "'Source Sans 3',sans-serif" }}>What Napa Valley Features subscribers told us about themselves</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 {readerPolls.map(poll => {
                   const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : (poll.options_json || []);
                   const opts = (Array.isArray(rawOpts) ? rawOpts : []).filter(o => o && (o.label || o.text));
-                  const winner = opts.length > 0 ? opts.reduce((a, b) => (Number(b.votes) || 0) > (Number(a.votes) || 0) ? b : a, opts[0]) : null;
-                  const winPct = winner && poll.total_votes > 0 ? Math.round(((Number(winner.votes) || 0) / poll.total_votes) * 100) : 0;
                   const maxVotes = Math.max(...opts.map(o => Number(o.votes) || 0), 1);
-                  const isOpen = openPoll === poll.poll_id;
                   const url = poll.substack_url && poll.substack_url.trim();
                   return (
-                    <div key={poll.poll_id} style={{ background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)", overflow: "hidden" }}>
-                      <div onClick={() => setOpenPoll(isOpen ? null : poll.poll_id)} style={{ padding: "14px 18px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 14, fontWeight: 700, color: "#2C1810", lineHeight: 1.4, marginBottom: 4 }}>{poll.question}</div>
-                          {!isOpen && winner && (
-                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                              <div style={{ flex: 1, height: 6, background: "rgba(44,24,16,0.08)", borderRadius: 3, overflow: "hidden" }}>
-                                <div style={{ height: "100%", width: `${winPct}%`, background: "#C4A050", borderRadius: 3 }} />
-                              </div>
-                              <span style={{ fontSize: 12, fontWeight: 600, color: "#C4A050", whiteSpace: "nowrap", fontFamily: "'Source Sans 3',sans-serif" }}>{winPct}%</span>
-                              <span style={{ fontSize: 11, color: "#7A6A50", fontFamily: "'Source Sans 3',sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 200 }}>{winner.label || winner.text}</span>
+                    <div key={poll.poll_id} style={{ background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)", padding: "18px 20px" }}>
+                      <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.4, marginBottom: 12 }}>{poll.question}</div>
+                      {opts.map((opt, oi) => {
+                        const votes = Number(opt.votes) || 0;
+                        const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
+                        const isWinner = votes === maxVotes && votes > 0;
+                        return (
+                          <div key={oi} style={{ marginBottom: oi < opts.length - 1 ? 8 : 0 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                              <span style={{ fontSize: 13, fontWeight: isWinner ? 700 : 400, color: isWinner ? "#2C1810" : "#7A6A50", fontFamily: "'Source Sans 3',sans-serif" }}>{opt.text || opt.label}</span>
+                              <span style={{ fontSize: 12, fontWeight: 600, color: isWinner ? "#C4A050" : "#A89880", fontFamily: "monospace", whiteSpace: "nowrap", marginLeft: 8 }}>{pct.toFixed(1)}% ({votes})</span>
                             </div>
-                          )}
-                          <div style={{ fontSize: 11, color: "#A89880", marginTop: 4, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
-                            {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+                            <div style={{ height: 18, background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.06)", overflow: "hidden" }}>
+                              <div style={{ height: "100%", width: `${pct}%`, background: isWinner ? "#C4A050" : "#A89880", opacity: isWinner ? 0.7 : 0.25, transition: "width .3s ease" }} />
+                            </div>
                           </div>
-                        </div>
-                        <span style={{ fontSize: 16, color: "#A89880", marginLeft: 12, transform: isOpen ? "rotate(180deg)" : "", transition: "transform .2s" }}>▾</span>
+                        );
+                      })}
+                      <div style={{ fontSize: 11, color: "#A89880", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
+                        {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                       </div>
-                      {isOpen && (
-                        <div style={{ padding: "0 18px 16px", borderTop: "1px solid rgba(44,24,16,0.08)" }}>
-                          {opts.map((opt, oi) => {
-                            const votes = Number(opt.votes) || 0;
-                            const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
-                            const isWinner = votes === maxVotes && votes > 0;
-                            return (
-                              <div key={oi} style={{ marginTop: oi === 0 ? 14 : 10 }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                                  <span style={{ fontSize: 13, fontWeight: isWinner ? 700 : 400, color: isWinner ? "#2C1810" : "#7A6A50", fontFamily: "'Source Sans 3',sans-serif" }}>{opt.text || opt.label}</span>
-                                  <span style={{ fontSize: 12, fontWeight: 600, color: isWinner ? "#C4A050" : "#A89880", fontFamily: "monospace", whiteSpace: "nowrap", marginLeft: 8 }}>{pct.toFixed(1)}% ({votes})</span>
-                                </div>
-                                <div style={{ height: 18, background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.06)", overflow: "hidden" }}>
-                                  <div style={{ height: "100%", width: `${pct}%`, background: isWinner ? "#C4A050" : "#A89880", opacity: isWinner ? 0.7 : 0.25, transition: "width .3s ease" }} />
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
                     </div>
                   );
                 })}
