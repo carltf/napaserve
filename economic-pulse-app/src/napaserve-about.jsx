@@ -136,6 +136,27 @@ export default function AboutNapaServe() {
           </P>
         </Section>
 
+        {/* ── COMMUNITY INTELLIGENCE ──────────────────────────────────────── */}
+        <Section id="community-intelligence" label="Philosophy">
+
+          <H>What is Community Intelligence?</H>
+          <P>
+            Community intelligence combines local reporting, data, archives and public input to build a shared understanding of how a place works and where it is headed. It is distinct from artificial intelligence, which refers to computational capability — models that analyze text, generate responses or process data.
+          </P>
+          <P>
+            The distinction matters. AI is a tool. Community intelligence is a body of knowledge. It is built from local journalism that documents events and decisions, public data that shows economic and demographic change, polling and surveys that capture sentiment and priorities, archives that preserve institutional memory, and the practical knowledge of residents, businesses and civic leaders.
+          </P>
+          <P>
+            When those inputs are organized and accessible, they form something AI alone cannot produce: a real understanding of how a community actually works.
+          </P>
+          <P>
+            AI accelerates access to that knowledge. It helps search archives, analyze data, summarize reporting and assist in evaluating ideas. But the intelligence does not originate with the algorithm. It originates with the community — its history, its people, its economy and its institutions. The AI layer makes that knowledge easier to navigate and apply.
+          </P>
+          <P>
+            NapaServe is built on that hierarchy. Community intelligence is the foundation. Artificial intelligence is one tool within it — helping people search, analyze, model scenarios and explore the knowledge this community has already created.
+          </P>
+        </Section>
+
         {/* ── HOW TO USE ───────────────────────────────────────────────────── */}
         <Section id="how-to-use" label="How to Use This Site">
 
@@ -207,6 +228,7 @@ export default function AboutNapaServe() {
         {/* SECTION NAV */}
         <div style={{ marginTop: 60, paddingTop: 32, borderTop: `1px solid ${T.rule}`, display: "flex", gap: 24, flexWrap: "wrap" }}>
           <a href="#about" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>About NapaServe</a>
+          <a href="#community-intelligence" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Community Intelligence</a>
           <a href="#how-to-use" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>How to use this site</a>
           <a href="#disclaimer" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Disclaimer</a>
           <a href="mailto:napaserve@gmail.com" style={{ fontSize: 12, fontWeight: 600, color: T.accent, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Contact us →</a>
