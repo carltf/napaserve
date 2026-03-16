@@ -165,7 +165,7 @@ export default function NapaServeHub() {
             </div>
             <div className="hub-c-cat">News</div>
             <div className="hub-c-name">Napa Valley Features</div>
-            <div className="hub-c-desc">The flagship publication. Original reporting on Napa County economy, agriculture, civic affairs, and community life.</div>
+            <div className="hub-c-desc">The flagship publication. Original reporting on Napa County economy, agriculture, civic affairs and community life.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
           <Link to="/events" className="hub-card">
@@ -175,7 +175,7 @@ export default function NapaServeHub() {
             </div>
             <div className="hub-c-cat">Community</div>
             <div className="hub-c-name">Event Finder</div>
-            <div className="hub-c-desc">Community events across Napa County. Discover, filter by category, and submit your own event.</div>
+            <div className="hub-c-desc">Community events across Napa County. Discover, filter by category and submit your own event.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
 <Link to="/dashboard" className="hub-card">
@@ -195,7 +195,7 @@ export default function NapaServeHub() {
             </div>
             <div className="hub-c-cat">Archive · Journalism</div>
             <div className="hub-c-name">NVF Archive Search</div>
-            <div className="hub-c-desc">1,000+ original articles from Napa Valley Features, AI-searchable with semantic similarity. A decade of local reporting on economics, land use, policy, and community.</div>
+            <div className="hub-c-desc">1,000+ original articles from Napa Valley Features, AI-searchable with semantic similarity. A decade of local reporting on economics, land use, policy and community.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
           <a href="/agent.html" className="hub-card">
@@ -205,7 +205,7 @@ export default function NapaServeHub() {
             </div>
             <div className="hub-c-cat">AI · Civic</div>
             <div className="hub-c-name">Research Agent</div>
-            <div className="hub-c-desc">Ask hard questions. Grounded in the NVF archive, live web search, and local economic data. For policy, projects, and anything you&apos;d otherwise spend hours researching.</div>
+            <div className="hub-c-desc">Ask hard questions. Grounded in the NVF archive, live web search and local economic data. For policy, projects and anything you&apos;d otherwise spend hours researching.</div>
             <div className="hub-arrow">Open →</div>
           </a>
           <Link to="/evaluator" className="hub-card">
@@ -229,7 +229,7 @@ export default function NapaServeHub() {
             <div>
               <div className="hub-c-cat">Innovation · Workforce</div>
               <div className="hub-c-name">Valley Works Collaborative</div>
-              <div className="hub-c-desc" style={{ marginBottom: 0, maxWidth: 600 }}>The regional innovation hub diversifying Napa County&apos;s economy beyond wine and hospitality. Training pipelines, emerging industries, and the VWC mission.</div>
+              <div className="hub-c-desc" style={{ marginBottom: 0, maxWidth: 600 }}>The regional innovation hub diversifying Napa County&apos;s economy beyond wine and hospitality. Training pipelines, emerging industries and the VWC mission.</div>
             </div>
           </div>
           <div className="hub-arrow" style={{ flexShrink: 0 }}>Open →</div>
@@ -315,7 +315,7 @@ export default function NapaServeHub() {
             <div style={{ gridColumn: "span 3" }}>
               <div className="hub-col-lbl">Newsletter</div>
               <div className="hub-sub-hed">Stay informed on Napa County.</div>
-              <div className="hub-sub-dek">Original reporting, economic updates, and civic intelligence from Napa Valley Features — delivered when it matters.</div>
+              <div className="hub-sub-dek">Original reporting, economic updates and civic intelligence from Napa Valley Features — delivered when it matters.</div>
               <div className="hub-sub-fields">
                 <input className="hub-sub-in" type="text" placeholder="Your name" value={subName} onChange={e => setSubName(e.target.value)} style={{ marginBottom: 6 }} />
                 <input className="hub-sub-in" type="email" placeholder="Your email address" value={email} onChange={e => setEmail(e.target.value)} />

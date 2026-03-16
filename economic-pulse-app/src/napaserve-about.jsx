@@ -90,7 +90,7 @@ export default function AboutNapaServe() {
             Built in Napa,<br /><em style={{ fontStyle: "italic", color: T.accent }}>for Napa.</em>
           </h1>
           <p style={{ fontSize: 18, lineHeight: 1.75, color: T.muted, maxWidth: 620, margin: 0, fontFamily: "'Source Sans 3',sans-serif" }}>
-            NapaServe is an open civic intelligence platform — data, journalism, and AI tools built to help residents, leaders, and organizations make better decisions about Napa County's future.
+            NapaServe is an open civic intelligence platform — data, journalism and AI tools built to help residents, leaders and organizations make better decisions about Napa County's future.
           </p>
         </div>
 
@@ -102,7 +102,7 @@ export default function AboutNapaServe() {
             NapaServe is a project of the <strong style={{ color: T.ink2 }}>Valley Works Collaborative</strong>, a regional organization focused on expanding Napa County's economic base beyond wine and hospitality. It's built on the belief that good decisions require good information — and that most communities don't have enough of either in one place.
           </P>
           <P>
-            The platform combines three things: weekly economic data pulled directly from federal and state sources, nearly three years of original local journalism from <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa Valley Features</a>, and AI tools that help you work with all of it. The data pipeline runs every Monday. The journalism archive is searchable by semantic similarity — meaning you can ask it a question, not just a keyword.
+            The platform combines three things: weekly economic data pulled directly from federal and state sources, nearly three years of original local journalism from <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa Valley Features</a> and AI tools that help you work with all of it. The data pipeline runs every Monday. The journalism archive is searchable by semantic similarity — meaning you can ask it a question, not just a keyword.
           </P>
           <P>
             This is not a government website. It is not affiliated with Napa County, the City of Napa, or any public agency. It is a community project, maintained by a small team, built with the tools available to us.
@@ -122,14 +122,14 @@ export default function AboutNapaServe() {
             <Tool name="Project Evaluator" route="/evaluator" desc="Submit any proposed project — a resort, a housing development, an innovation hub — and get a structural analysis across the Jobs · People · Place framework. AI-generated, intended as a discussion document." />
             <Tool name="NVF Archive Search" route="/archive" desc="Nearly 1,000 original articles from Napa Valley Features, searchable by meaning. Ask a question about lodging supply, water rights, the ag preserve, or any local topic — and find the coverage." />
             <Tool name="AI Policy Agent" route="/agent.html" isExternal desc="A research assistant grounded in the NVF archive and live web search. Ask hard questions about local policy, economy, or development. It cites its sources." />
-            <Tool name="Event Finder" route="/events" desc="Community events across Napa County. Discover what's happening, filter by category, and submit your own event." />
-            <Tool name="Napa Valley Features" route="/news" desc="The flagship publication — original reporting on Napa County economy, agriculture, land use, civic affairs, and community life." />
-            <Tool name="Valley Works Collaborative" route="/valley-works" desc="The regional partnership network working to diversify Napa County's economy. Training pipelines, emerging industries, and the VWC mission." />
+            <Tool name="Event Finder" route="/events" desc="Community events across Napa County. Discover what's happening, filter by category and submit your own event." />
+            <Tool name="Napa Valley Features" route="/news" desc="The flagship publication — original reporting on Napa County economy, agriculture, land use, civic affairs and community life." />
+            <Tool name="Valley Works Collaborative" route="/valley-works" desc="The regional partnership network working to diversify Napa County's economy. Training pipelines, emerging industries and the VWC mission." />
           </div>
 
           <H>About the data</H>
           <P>
-            Economic data comes from the California Department of Alcoholic Beverage Control (ABC), the Federal Reserve Economic Data (FRED) system via the Bureau of Labor Statistics, the California Employment Development Department, and Zillow Research. It is pulled weekly via an automated pipeline and stored in Supabase. It is as accurate as those sources, with the caveats those sources carry.
+            Economic data comes from the California Department of Alcoholic Beverage Control (ABC), the Federal Reserve Economic Data (FRED) system via the Bureau of Labor Statistics, the California Employment Development Department and Zillow Research. It is pulled weekly via an automated pipeline and stored in Supabase. It is as accurate as those sources, with the caveats those sources carry.
           </P>
           <P>
             The journalism archive contains articles published on Napa Valley Features from May 2023 through the present. It is updated periodically. Older coverage predating May 2023 exists but is not yet in the search index.
@@ -144,7 +144,7 @@ export default function AboutNapaServe() {
             Community intelligence combines local reporting, data, archives and public input to build a shared understanding of how a place works and where it is headed. It is distinct from artificial intelligence, which refers to computational capability — models that analyze text, generate responses or process data.
           </P>
           <P>
-            The distinction matters. AI is a tool. Community intelligence is a body of knowledge. It is built from local journalism that documents events and decisions, public data that shows economic and demographic change, polling and surveys that capture sentiment and priorities, archives that preserve institutional memory, and the practical knowledge of residents, businesses and civic leaders.
+            The distinction matters. AI is a tool. Community intelligence is a body of knowledge. It is built from local journalism that documents events and decisions, public data that shows economic and demographic change, polling and surveys that capture sentiment and priorities, archives that preserve institutional memory and the practical knowledge of residents, businesses and civic leaders.
           </P>
           <P>
             When those inputs are organized and accessible, they form something AI alone cannot produce: a real understanding of how a community actually works.
@@ -197,15 +197,15 @@ export default function AboutNapaServe() {
 
           <H>What NapaServe is not</H>
           <P>
-            NapaServe is not a government agency, not affiliated with Napa County or any city government, and has no official authority over land use, policy, or any other governmental function. Nothing on this platform constitutes legal advice, financial advice, or official government guidance.
+            NapaServe is not a government agency, not affiliated with Napa County or any city government and has no official authority over land use, policy, or any other governmental function. Nothing on this platform constitutes legal advice, financial advice or official government guidance.
           </P>
 
           <H>AI-generated content</H>
           <P>
-            The Project Evaluator, AI Policy Agent, and NVF Archive Search all use AI to generate or retrieve information. AI-generated content can be wrong. It can misread data, miss context, or confuse similar topics. Every AI-generated report on this platform is labeled as such and is intended as a discussion document — a tool for thinking, not a final determination.
+            The Project Evaluator, AI Policy Agent and NVF Archive Search all use AI to generate or retrieve information. AI-generated content can be wrong. It can misread data, miss context, or confuse similar topics. Every AI-generated report on this platform is labeled as such and is intended as a discussion document — a tool for thinking, not a final determination.
           </P>
           <P>
-            NapaServe, Valley Works Collaborative, and VW Labs are not liable for decisions made based on AI-generated content from this platform. If you are making a significant decision — legal, financial, governmental, or otherwise — consult the relevant professionals and primary sources.
+            NapaServe, Valley Works Collaborative and VW Labs are not liable for decisions made based on AI-generated content from this platform. If you are making a significant decision — legal, financial, governmental, or otherwise — consult the relevant professionals and primary sources.
           </P>
 
           <H>Data accuracy</H>
