@@ -199,6 +199,14 @@ export default function EconomicPulseDashboard(){
     votes: pollData.reduce((s, p) => s + (p.total_votes || 0), 0),
   }), [pollData]);
 
+  const EXCLUDED_THEMES = new Set(["Reader Demographics", "Words, Puzzles & Trivia"]);
+  const topCivicPolls = useMemo(() =>
+    pollData
+      .filter(p => !EXCLUDED_THEMES.has(p.theme) && p.total_votes > 0)
+      .sort((a, b) => b.total_votes - a.total_votes)
+      .slice(0, 3)
+  , [pollData]);
+
   const allNapa=useMemo(()=>wineryData.filter(d=>d.napa!=null),[wineryData]);
 
   const wineryFiltered=useMemo(()=>{
@@ -412,6 +420,42 @@ export default function EconomicPulseDashboard(){
             <span style={{...lbl,display:"inline"}}>Data Sources </span>
             <span style={{fontSize:11,color:T.muted}}>ABC Licensing · FRED (BLS) · Zillow Research · CA EDD · Freddie Mac · U Michigan · {wineryData.length} snapshots</span>
           </div>
+
+          {/* ── COMMUNITY SENTIMENT ── */}
+          {!pollLoading && topCivicPolls.length > 0 && (
+            <div style={{marginTop:32,paddingTop:24,borderTop:`1px solid ${T.rule}`}}>
+              <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:16}}>
+                <div>
+                  <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:20,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Community Sentiment</h2>
+                  <p style={{fontSize:12,color:T.dim,margin:0,fontFamily:"'Source Sans 3',sans-serif"}}>{fN(pollTotals.count)} polls · {fN(pollTotals.votes)} total votes from NVF readers</p>
+                </div>
+                <button onClick={()=>setSection("pulse")} style={{fontSize:10,fontWeight:700,letterSpacing:".1em",textTransform:"uppercase",color:T.accent,background:"none",border:"none",cursor:"pointer",fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap"}}>View all →</button>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                {topCivicPolls.map(poll => {
+                  const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : (poll.options_json || []);
+                  const opts = rawOpts.filter(o => o && o.label);
+                  const winner = opts.length > 0 ? opts.reduce((a, b) => (b.votes || 0) > (a.votes || 0) ? b : a, opts[0]) : null;
+                  const winPct = winner && poll.total_votes > 0 ? Math.round((winner.votes / poll.total_votes) * 100) : 0;
+                  return (
+                    <div key={poll.poll_id} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 18px"}}>
+                      <div style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:14,fontWeight:700,color:T.ink2,lineHeight:1.4,marginBottom:6}}>{poll.question}</div>
+                      {winner && (
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <div style={{flex:1,height:6,background:T.rule,borderRadius:3,overflow:"hidden"}}>
+                            <div style={{height:"100%",width:`${winPct}%`,background:T.accent,borderRadius:3}} />
+                          </div>
+                          <span style={{fontSize:12,fontWeight:600,color:T.accent,whiteSpace:"nowrap",fontFamily:"'Source Sans 3',sans-serif"}}>{winPct}%</span>
+                          <span style={{fontSize:11,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label}</span>
+                        </div>
+                      )}
+                      <div style={{fontSize:10,color:T.dim,marginTop:6,fontFamily:"'Source Sans 3',sans-serif"}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </>}
 
 
