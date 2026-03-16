@@ -420,7 +420,7 @@ export default function ProjectEvaluator() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -453,7 +453,7 @@ export default function ProjectEvaluator() {
         <p style={{ fontSize: 15, fontWeight: 600, color: "var(--accent)", lineHeight: 1.5, marginBottom: 14, letterSpacing: ".01em" }}>Civic analysis grounded in community knowledge</p>
         <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8, marginBottom: 18, maxWidth: 720 }}>Submit a proposed project — a resort, housing development, winery expansion, land use change or any initiative affecting Napa Valley — and this tool will evaluate it against the valley's own data, reporting and stated priorities. Analysis is structured around the Jobs · People · Place framework and draws on three years of local journalism, regional economic data and community polling. AI is one tool in that process — the knowledge comes from the community.</p>
 
-        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 8 }}>Try an example project</div>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 8 }}>Try an example project</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 22 }}>
           {Object.entries(EXAMPLES).map(([key, ex]) => (
             <button key={key} onClick={() => loadExample(key)} style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", background: "rgba(139,94,60,0.07)", border: "1px solid rgba(139,94,60,0.18)", padding: "6px 12px", cursor: "pointer", fontFamily: "'Source Sans 3',sans-serif" }}>
@@ -467,7 +467,7 @@ export default function ProjectEvaluator() {
           {/* LEFT */}
           <div>
             <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", padding: 20, marginBottom: 14 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 12 }}>Project Details</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 12 }}>Project Details</div>
               <input value={projName} onChange={e => setProjName(e.target.value)} placeholder="Project name..." style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid var(--rule)", color: "var(--ink2)", fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 19, padding: "6px 0", outline: "none", marginBottom: 12, boxSizing: "border-box" }} />
               <textarea value={projDesc} onChange={e => setProjDesc(e.target.value)} placeholder="Brief description of the project or proposal..." style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink2)", fontFamily: "'Source Sans 3',sans-serif", fontSize: 13, padding: "10px 12px", outline: "none", resize: "vertical", minHeight: 72, lineHeight: 1.6, boxSizing: "border-box" }} />
             </div>
@@ -542,9 +542,9 @@ export default function ProjectEvaluator() {
           <div className="ev-right">
             {answered >= 5 && (
               <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", borderLeft: `3px solid ${rating.color}`, padding: "18px 20px", marginBottom: 14, textAlign: "center" }}>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 6 }}>Alignment Rating</div>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 6 }}>Alignment Rating</div>
                 <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 26, fontWeight: 700, color: rating.color, marginBottom: 4 }}>{rating.label}</div>
-                <div style={{ fontSize: 13, color: "var(--muted)" }}>{rating.desc}</div>
+                <div style={{ fontSize: 17, color: "var(--muted)" }}>{rating.desc}</div>
               </div>
             )}
 
@@ -565,7 +565,7 @@ export default function ProjectEvaluator() {
 
             {/* Axis scores */}
             <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", padding: 20, marginBottom: 14 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 14 }}>Axis Scores</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 14 }}>Axis Scores</div>
               {PILLARS.map((p, pi) => {
                 const pScores = p.axes.map((_, ai) => scores[pi === 2 ? 6 + ai : pi * 3 + ai]);
                 const avg = (pScores.reduce((a, b) => a + b, 0) / pScores.length).toFixed(1);
@@ -615,7 +615,7 @@ export default function ProjectEvaluator() {
                 <img src="/favicon.jpg" alt="" style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:200, opacity:0.06, zIndex:0, pointerEvents:"none" }} />
                 <div style={{ position:"relative", zIndex:1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)" }}>Structural Assessment</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)" }}>Structural Assessment</div>
                   <button onClick={copyReport} style={{ fontSize: 11, fontWeight: 600, padding: "5px 12px", cursor: "pointer", border: `1px solid ${copied ? "rgba(58,106,74,0.35)" : "rgba(139,94,60,0.25)"}`, background: copied ? "rgba(58,106,74,0.12)" : "transparent", color: copied ? "var(--pos)" : "var(--accent)", fontFamily: "'Source Sans 3',sans-serif" }}>
                     {copied ? "✓ Copied" : "Copy Report"}
                   </button>
@@ -623,7 +623,7 @@ export default function ProjectEvaluator() {
                 <div dangerouslySetInnerHTML={{ __html: reportHtml }} />
                 {nvfSources.length > 0 && (
                   <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--rule)" }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 10, fontFamily: "'Source Sans 3',sans-serif" }}>NVF Archive Sources</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 10, fontFamily: "'Source Sans 3',sans-serif" }}>NVF Archive Sources</div>
                     {nvfSources.map((s, i) => {
                       const date = s.published_at ? new Date(s.published_at).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : "";
                       const url = s.substack_url || null;

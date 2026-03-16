@@ -66,7 +66,7 @@ export default function ValleyWorksPage() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -111,20 +111,20 @@ export default function ValleyWorksPage() {
 
         {/* Why This Matters */}
         <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 32px", marginBottom: 32 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Why This Matters</div>
-          <p style={{ fontSize: 16, color: "#7A6A50", lineHeight: 1.75, margin: "0 0 12px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Why This Matters</div>
+          <p style={{ fontSize: 17, color: "#7A6A50", lineHeight: 1.75, margin: "0 0 12px" }}>
             Napa County has built a remarkable economy around wine and hospitality. That foundation will always matter. But long-term resilience requires more than one engine.
           </p>
           <p style={{ fontSize: 16, color: "#7A6A50", lineHeight: 1.75, margin: "0 0 12px" }}>
             Employment and wage growth has flattened. Costs continue to rise. Many essential workers cannot afford to live where they work. The question is not whether wine remains part of the future. It is whether the region builds the next layer of its economy with intention.
           </p>
-          <p style={{ fontSize: 16, color: "#2C1810", lineHeight: 1.75, margin: 0, fontWeight: 600 }}>
+          <p style={{ fontSize: 17, color: "#2C1810", lineHeight: 1.75, margin: 0, fontWeight: 600 }}>
             Valley Works Collaborative exists to help build that next layer.
           </p>
         </div>
 
         {/* Three Pillars */}
-        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Our Priorities</div>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Our Priorities</div>
 
         <div className="vw-pillars" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18, marginBottom: 32 }}>
           {PILLARS.map(p => (
@@ -134,22 +134,22 @@ export default function ValleyWorksPage() {
               padding: "24px 22px", cursor: "pointer", transition: "all 0.25s",
             }}>
               <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 24, fontWeight: 700, color: p.color, margin: "0 0 10px" }}>{p.label}</h3>
-              <p style={{ fontSize: 14, color: "#7A6A50", lineHeight: 1.65, margin: "0 0 14px" }}>{p.tagline}</p>
+              <p style={{ fontSize: 17, color: "#7A6A50", lineHeight: 1.65, margin: "0 0 14px" }}>{p.tagline}</p>
 
               {activePillar === p.id && (
                 <div style={{ borderTop: `1px solid ${p.color}33`, paddingTop: 14, marginTop: 4 }}>
                   {p.points.map((pt, i) => (
                     <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
                       <div style={{ width: 5, height: 5, background: p.color, borderRadius: "50%", marginTop: 7, flexShrink: 0 }} />
-                      <span style={{ fontSize: 13, color: "#8B7355", lineHeight: 1.5 }}>{pt}</span>
+                      <span style={{ fontSize: 14, color: "#8B7355", lineHeight: 1.5 }}>{pt}</span>
                     </div>
                   ))}
-                  <p style={{ fontSize: 13, color: p.color, fontWeight: 600, margin: "12px 0 0", lineHeight: 1.5 }}>{p.footer}</p>
+                  <p style={{ fontSize: 14, color: p.color, fontWeight: 600, margin: "12px 0 0", lineHeight: 1.5 }}>{p.footer}</p>
                 </div>
               )}
 
               {activePillar !== p.id && (
-                <span style={{ fontSize: 12, color: "#8B7355", fontFamily: "'Source Sans 3',sans-serif" }}>Click to expand →</span>
+                <span style={{ fontSize: 14, color: "#8B7355", fontFamily: "'Source Sans 3',sans-serif" }}>Click to expand →</span>
               )}
             </div>
           ))}
@@ -160,15 +160,15 @@ export default function ValleyWorksPage() {
           <p style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 20, fontWeight: 400, color: "#2C1810", lineHeight: 1.6, margin: "0 0 16px", fontStyle: "italic" }}>
             Build practical solutions that expand well-paying employment, strengthen local communities, and protect the environment that sustains the region.
           </p>
-          <p style={{ fontSize: 14, color: "#7A6A50", margin: 0 }}>
+          <p style={{ fontSize: 17, color: "#7A6A50", margin: 0 }}>
             Valley Works Collaborative is a regional initiative focused on applied innovation. We bring together entrepreneurs, researchers, local institutions, and investors to build practical solutions to real challenges.
           </p>
         </div>
 
         {/* NapaServe Connection */}
         <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 32px", marginBottom: 32 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>NapaServe</div>
-          <p style={{ fontSize: 15, color: "#7A6A50", lineHeight: 1.7, margin: "0 0 16px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>NapaServe</div>
+          <p style={{ fontSize: 17, color: "#7A6A50", lineHeight: 1.7, margin: "0 0 16px" }}>
             NapaServe is Valley Works' prototype for community-scale civic AI — accurate information and AI-powered tools for everyone invested in Napa County's future. Policy analysis, economic tracking, project evaluation, event discovery, and local news, all in one place.
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
@@ -181,8 +181,8 @@ export default function ValleyWorksPage() {
 
         {/* Get Involved */}
         <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 32px" }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Get Involved</div>
-          <p style={{ fontSize: 15, color: "#7A6A50", lineHeight: 1.7, margin: "0 0 20px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Get Involved</div>
+          <p style={{ fontSize: 17, color: "#7A6A50", lineHeight: 1.7, margin: "0 0 20px" }}>
             Have an idea, a partnership opportunity, or a project that could benefit from the Lab? Start a conversation.
           </p>
 
@@ -190,7 +190,7 @@ export default function ValleyWorksPage() {
             <div>
               <div style={{ fontSize: 12, fontWeight: 600, color: "#8B5E3C", marginBottom: 4 }}>Contact</div>
               <a href="mailto:valleyworkscollaborative@gmail.com" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>valleyworkscollaborative@gmail.com</a>
-              <div style={{ fontSize: 13, color: "#7A6A50", marginTop: 2 }}>(707) 661-9465</div>
+              <div style={{ fontSize: 14, color: "#7A6A50", marginTop: 2 }}>(707) 661-9465</div>
             </div>
             <div>
               <div style={{ fontSize: 12, fontWeight: 600, color: "#8B5E3C", marginBottom: 4 }}>Follow</div>
@@ -206,7 +206,7 @@ export default function ValleyWorksPage() {
         <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", borderLeft: "3px solid #C4A050", padding: "28px 32px", marginTop: 24 }}>
           <h2 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 22, fontWeight: 700, color: "#2C1810", margin: "0 0 4px" }}>ValleyWorks Labs</h2>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#C4A050", marginBottom: 14 }}>Incubating Durable Regional Companies</div>
-          <p style={{ fontSize: 14, color: "#7A6A50", lineHeight: 1.75, margin: "0 0 16px" }}>
+          <p style={{ fontSize: 17, color: "#7A6A50", lineHeight: 1.75, margin: "0 0 16px" }}>
             VW Labs supports early-stage ventures that strengthen Napa County's economic future — focused on practical implementation, measurable outcomes, and well-paying local employment.
           </p>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>

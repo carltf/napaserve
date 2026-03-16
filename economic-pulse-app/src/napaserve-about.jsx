@@ -34,7 +34,7 @@ export default function AboutNapaServe() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about", cur: true }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? `1px solid ${T.rule}` : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.dim, padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.dim, padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? T.accent : T.muted, background: l.cur ? T.bg2 : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -47,13 +47,13 @@ export default function AboutNapaServe() {
 
   const Section = ({ id, label, children }) => (
     <div id={id} style={{ borderTop: `1px solid ${T.rule}`, paddingTop: 48, marginTop: 48 }}>
-      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, marginBottom: 12, fontFamily: "'Source Sans 3',sans-serif" }}>{label}</div>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, marginBottom: 12, fontFamily: "'Source Sans 3',sans-serif" }}>{label}</div>
       {children}
     </div>
   );
 
   const P = ({ children, style = {} }) => (
-    <p style={{ fontSize: 16, lineHeight: 1.85, color: T.muted, fontFamily: "'Source Sans 3',sans-serif", margin: "0 0 20px", maxWidth: 680, ...style }}>{children}</p>
+    <p style={{ fontSize: 17, lineHeight: 1.85, color: T.muted, fontFamily: "'Source Sans 3',sans-serif", margin: "0 0 20px", maxWidth: 680, ...style }}>{children}</p>
   );
 
   const H = ({ children }) => (
@@ -68,7 +68,7 @@ export default function AboutNapaServe() {
           ? <a href={route} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.accent, textDecoration: "none" }}>{name} ↗</a>
           : <Link to={route} style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.accent, textDecoration: "none" }}>{name}</Link>
         }
-        <p style={{ fontSize: 13, color: T.muted, margin: "4px 0 0", lineHeight: 1.6, fontFamily: "'Source Sans 3',sans-serif" }}>{desc}</p>
+        <p style={{ fontSize: 14, color: T.muted, margin: "4px 0 0", lineHeight: 1.6, fontFamily: "'Source Sans 3',sans-serif" }}>{desc}</p>
       </div>
     </div>
   );
@@ -83,7 +83,7 @@ export default function AboutNapaServe() {
 
         {/* PAGE HEADER */}
         <div style={{ marginBottom: 0 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.dim, marginBottom: 16, fontFamily: "'Source Sans 3',sans-serif" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.dim, marginBottom: 16, fontFamily: "'Source Sans 3',sans-serif" }}>
             <Link to="/" style={{ color: T.dim, textDecoration: "none" }}>NapaServe</Link> · About
           </div>
           <h1 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: "clamp(32px,5vw,52px)", fontWeight: 700, color: T.ink2, margin: "0 0 20px", lineHeight: 1.05, letterSpacing: "-.015em" }}>
@@ -220,18 +220,18 @@ export default function AboutNapaServe() {
           <P>
             Questions, corrections, or feedback: <a href="mailto:napaserve@gmail.com" style={{ color: T.accent }}>napaserve@gmail.com</a>
           </P>
-          <P style={{ fontSize: 13, color: T.dim }}>
+          <P style={{ fontSize: 14, color: T.dim }}>
             NapaServe · A Valley Works Collaborative · VW Labs project · Napa County, CA · Not affiliated with Napa County government.
           </P>
         </Section>
 
         {/* SECTION NAV */}
         <div style={{ marginTop: 60, paddingTop: 32, borderTop: `1px solid ${T.rule}`, display: "flex", gap: 24, flexWrap: "wrap" }}>
-          <a href="#about" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>About NapaServe</a>
-          <a href="#community-intelligence" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Community Intelligence</a>
-          <a href="#how-to-use" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>How to use this site</a>
-          <a href="#disclaimer" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Disclaimer</a>
-          <a href="mailto:napaserve@gmail.com" style={{ fontSize: 12, fontWeight: 600, color: T.accent, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Contact us →</a>
+          <a href="#about" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>About NapaServe</a>
+          <a href="#community-intelligence" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Community Intelligence</a>
+          <a href="#how-to-use" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>How to use this site</a>
+          <a href="#disclaimer" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Disclaimer</a>
+          <a href="mailto:napaserve@gmail.com" style={{ fontSize: 14, fontWeight: 600, color: T.accent, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Contact us →</a>
         </div>
 
       </div>

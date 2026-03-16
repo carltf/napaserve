@@ -203,7 +203,7 @@ function EventMap({ pins }) {
     }}>
       <div style={{ padding: "14px 20px 8px" }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#8B5E3C", textTransform: "uppercase" }}>Event Locations</span>
-        <span style={{ fontSize: 12, color: "#8B7355", marginLeft: 10 }}>{pins.length} on map</span>
+        <span style={{ fontSize: 14, color: "#8B7355", marginLeft: 10 }}>{pins.length} on map</span>
       </div>
       <div ref={mapRef} style={{ width: "100%", height: 340 }} />
     </div>
@@ -351,7 +351,7 @@ export default function EventFinder() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -374,7 +374,7 @@ export default function EventFinder() {
           <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: "#8B5E3C", textTransform: "uppercase" }}>NapaServe</span>
         </div>
         <h1 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: "clamp(26px,4vw,38px)", fontWeight: 700, color: "#2C1810", margin: "0 0 4px" }}>Event Finder</h1>
-        <p style={{ fontSize: 15, color: "#8B7355", margin: "0 0 24px" }}>
+        <p style={{ fontSize: 17, color: "#8B7355", margin: "0 0 24px" }}>
           The most complete listing of what's happening across Napa Valley. Can't find your event? Add it — it takes a minute.
         </p>
 
@@ -397,17 +397,17 @@ export default function EventFinder() {
         {tab === "search" && (<>
           {featuredEvents.length > 0 && (
             <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#8B7355", marginBottom: 10 }}>Featured Events</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#8B7355", marginBottom: 10 }}>Featured Events</div>
               <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
                 {featuredEvents.map((ev, i) => (
                   <div key={ev.id || i} style={{ minWidth: 240, maxWidth: 280, flex: "0 0 auto", background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", borderLeft: "3px solid #C4A050", padding: "16px 18px" }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#C4A050", marginBottom: 6 }}>Featured</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#C4A050", marginBottom: 6 }}>Featured</div>
                     <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 8 }}>{ev.title}</div>
-                    <div style={{ fontSize: 12, color: "#7A6A50", marginBottom: 4 }}>
+                    <div style={{ fontSize: 14, color: "#7A6A50", marginBottom: 4 }}>
                       {ev.event_date && fmtDateNice(ev.event_date)}
                       {ev.town && <span style={{ marginLeft: 8, color: "#8B7355" }}>{ev.town}</span>}
                     </div>
-                    {ev.category && <div style={{ fontSize: 10, color: "#8B7355", textTransform: "capitalize", marginBottom: 8 }}>{ev.category.replace(/_/g, " ")}</div>}
+                    {ev.category && <div style={{ fontSize: 14, color: "#8B7355", textTransform: "capitalize", marginBottom: 8 }}>{ev.category.replace(/_/g, " ")}</div>}
                     {(ev.website_url || ev.ticket_url) && (
                       <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontSize: 11, fontWeight: 600, color: "#8B5E3C", textDecoration: "none", border: "1px solid rgba(139,105,20,0.25)", padding: "5px 12px", borderRadius: 4 }}>
                         {ev.ticket_url ? "Get Tickets ↗" : "More Info ↗"}
@@ -420,7 +420,7 @@ export default function EventFinder() {
           )}
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#8B7355" }}>Upcoming Community Events</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#8B7355" }}>Upcoming Community Events</div>
               <button onClick={() => setTab("submit")} style={{ fontSize: 11, fontWeight: 600, color: "#8B5E3C", background: "none", border: "none", cursor: "pointer", fontFamily: "'Source Sans 3',sans-serif" }}>Submit an Event →</button>
             </div>
             {upcomingEvents.length > 0 ? (
@@ -431,9 +431,9 @@ export default function EventFinder() {
                     <div style={{ minWidth: 200, maxWidth: 240, flex: "0 0 auto", background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "14px 16px" }}>
                       <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#C4A050", marginBottom: 4 }}>{ev.event_date ? new Date(ev.event_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 6 }}>{ev.title}</div>
-                      {ev.town && <div style={{ fontSize: 11, color: "#7A6A50", marginBottom: 4, textTransform: "capitalize" }}>{ev.town.replace(/-/g, " ")}</div>}
-                      {ev.category && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#8B7355", border: "1px solid rgba(44,24,16,0.12)", padding: "2px 7px" }}>{ev.category.replace(/_/g, " ")}</span>}
-                      {!url && <div style={{ fontSize: 10, color: "#8B7355", marginTop: 6 }}>No link available</div>}
+                      {ev.town && <div style={{ fontSize: 14, color: "#7A6A50", marginBottom: 4, textTransform: "capitalize" }}>{ev.town.replace(/-/g, " ")}</div>}
+                      {ev.category && <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#8B7355", border: "1px solid rgba(44,24,16,0.12)", padding: "2px 7px" }}>{ev.category.replace(/_/g, " ")}</span>}
+                      {!url && <div style={{ fontSize: 14, color: "#8B7355", marginTop: 6 }}>No link available</div>}
                     </div>
                   );
                   return url
@@ -491,7 +491,7 @@ export default function EventFinder() {
               border: "none", borderRadius: 10, cursor: loading ? "wait" : "pointer", transition: "all 0.3s",
             }}>{loading ? "Searching..." : "Search Events"}</button>
 
-            <div style={{ fontSize: 12, color: "#8B7355", marginTop: 10, textAlign: "center" }}>
+            <div style={{ fontSize: 14, color: "#8B7355", marginTop: 10, textAlign: "center" }}>
               {fmtDateNice(startDate)} — {fmtDateNice(endDate)}
             </div>
           </div>
@@ -499,12 +499,12 @@ export default function EventFinder() {
           {error && (
             <div style={{ background: "rgba(184,92,56,0.1)", border: "1px solid rgba(184,92,56,0.3)", borderRadius: 10, padding: "16px 20px", marginBottom: 20 }}>
               <p style={{ fontSize: 14, color: "#8A3A2A", margin: 0 }}>{error}</p>
-              <p style={{ fontSize: 12, color: "#7A6A50", margin: "8px 0 0" }}>Try expanding the date range or selecting a different town.</p>
+              <p style={{ fontSize: 14, color: "#7A6A50", margin: "8px 0 0" }}>Try expanding the date range or selecting a different town.</p>
             </div>
           )}
 
           {results && (<>
-            <div style={{ fontSize: 14, color: "#8B7355", marginBottom: 16 }}>
+            <div style={{ fontSize: 17, color: "#8B7355", marginBottom: 16 }}>
               {results.results?.length === 0 ? "No events found for this search." : `${results.results?.length} event${results.results?.length !== 1 ? "s" : ""} found`}
               {results.timeout && <span style={{ color: "#8A3A2A", marginLeft: 8 }}>(some sources were slow)</span>}
             </div>
@@ -558,7 +558,7 @@ export default function EventFinder() {
           <div style={{ background: "rgba(139,105,20,0.06)", border: "1px solid rgba(139,105,20,0.1)", borderRadius: 10, padding: "18px 22px", marginTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: "#7A6A50", marginBottom: 2 }}>Know about an event we're missing?</div>
-              <div style={{ fontSize: 12, color: "#8B7355" }}>Add it to NapaServe. The more people contribute, the more useful this gets.</div>
+              <div style={{ fontSize: 14, color: "#8B7355" }}>Add it to NapaServe. The more people contribute, the more useful this gets.</div>
             </div>
             <button onClick={() => setTab("submit")} style={{
               padding: "10px 20px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
@@ -592,7 +592,7 @@ export default function EventFinder() {
             </div>
           ) : (
             <div style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.18)", padding: 28 }}>
-              <p style={{ fontSize: 14, color: "#8B7355", margin: "0 0 20px", lineHeight: 1.6 }}>
+              <p style={{ fontSize: 17, color: "#8B7355", margin: "0 0 20px", lineHeight: 1.6 }}>
                 Add your event to the NapaServe community calendar. Fields marked with <span style={{ color: "#8A3A2A" }}>*</span> are required — everything else is optional but helps people find and decide on your event.
               </p>
 

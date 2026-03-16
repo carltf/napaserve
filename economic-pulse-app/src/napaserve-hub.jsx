@@ -32,13 +32,13 @@ export default function NapaServeHub() {
         .hub-dlink{display:block;font-size:13px;font-weight:600;color:var(--muted);padding:7px 20px;cursor:pointer;transition:color .15s,background .15s;text-decoration:none;}
         .hub-dlink:hover{color:var(--accent);background:var(--bg2);}
         .hub-lead{max-width:1160px;margin:0 auto;padding:56px 28px 0;}
-        .hub-kicker{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
+        .hub-kicker{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
         .hub-pillars{display:flex;align-items:center;flex-wrap:wrap;margin-bottom:22px;}
         .hub-pillar{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
         .hub-pdot{margin:0 12px;color:#C4B09A;}
         .hub-hed{font-family:'Libre Baskerville',Georgia,serif;font-size:clamp(30px,4.5vw,50px);font-weight:700;line-height:1.08;color:var(--ink2);letter-spacing:-.015em;margin-bottom:18px;}
         .hub-hed em{font-style:italic;color:var(--accent);}
-        .hub-dek{font-size:14px;line-height:1.8;color:var(--muted);}
+        .hub-dek{font-size:17px;line-height:1.8;color:var(--muted);}
         .hub-section-rule{border-top:1px solid var(--rule);margin:52px 0 0;}
         .hub-tools-wrap{max-width:1160px;margin:0 auto;padding:32px 28px 0;}
         .hub-tools-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
@@ -51,39 +51,39 @@ export default function NapaServeHub() {
         .hub-ldot{width:5px;height:5px;border-radius:50%;background:var(--live);}
         .hub-c-cat{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:7px;}
         .hub-c-name{font-family:'Libre Baskerville',Georgia,serif;font-size:16px;font-weight:700;color:var(--ink2);margin-bottom:6px;line-height:1.2;}
-        .hub-c-desc{font-size:12px;line-height:1.7;color:var(--muted);margin-bottom:14px;}
-        .hub-arrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);transition:color .15s;}
+        .hub-c-desc{font-size:14px;line-height:1.7;color:var(--muted);margin-bottom:14px;}
+        .hub-arrow{font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);transition:color .15s;}
         .hub-vw{border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:24px;cursor:pointer;transition:background .15s;text-decoration:none;color:inherit;}
         .hub-vw:hover{background:var(--bg2);}
         .hub-vw:hover .hub-arrow{color:var(--accent);}
         .hub-archive{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--bg2);margin:48px 0 0;}
         .hub-arch-inner{max-width:1160px;margin:0 auto;padding:32px 28px;display:grid;grid-template-columns:180px 1fr;gap:48px;align-items:start;}
         .hub-arch-big{font-family:'Libre Baskerville',Georgia,serif;font-size:48px;font-weight:700;color:var(--accent);line-height:1;}
-        .hub-arch-sub{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;}
+        .hub-arch-sub{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.6;}
         .hub-arch-btn{display:inline-block;margin-top:16px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--ink2);color:var(--bg);padding:9px 18px;border:none;cursor:pointer;text-decoration:none;}
-        .hub-chips-label{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+        .hub-chips-label{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
         .hub-chips{display:flex;flex-wrap:wrap;gap:5px;}
         .hub-chip{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule);padding:4px 9px;cursor:pointer;text-decoration:none;}
         .hub-chip.s{color:var(--accent);border-color:rgba(139,94,60,0.25);background:rgba(139,94,60,0.05);}
         .hub-footer{padding:48px 28px 28px;background:var(--bg);}
         .hub-f-inner{max-width:1160px;margin:0 auto;}
         .hub-f-wm{font-family:'Libre Baskerville',Georgia,serif;font-size:20px;font-weight:700;color:var(--ink2);margin-bottom:4px;}
-        .hub-f-tag{font-size:11px;color:var(--dim);}
+        .hub-f-tag{font-size:14px;color:var(--dim);}
         .hub-four{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
         .hub-sm-head{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:12px;}
-        .hub-sm-link{display:block;font-size:12px;color:var(--muted);padding:3px 0;cursor:pointer;text-decoration:none;transition:color .15s;}
+        .hub-sm-link{display:block;font-size:14px;color:var(--muted);padding:3px 0;cursor:pointer;text-decoration:none;transition:color .15s;}
         .hub-sm-link:hover{color:var(--accent);}
-        .hub-col-lbl{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
+        .hub-col-lbl{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
         .hub-sbtn{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--rule);padding:7px 12px;cursor:pointer;background:none;width:100%;margin-bottom:7px;transition:color .15s,border-color .15s;}
         .hub-sbtn:hover{color:var(--accent);border-color:var(--accent);}
         .hub-sub-hed{font-family:'Libre Baskerville',Georgia,serif;font-size:15px;font-weight:700;color:var(--ink2);margin-bottom:4px;}
-        .hub-sub-dek{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+        .hub-sub-dek{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
         .hub-sub-fields{display:flex;gap:8px;max-width:440px;}
         .hub-sub-in{flex:1;background:transparent;border:none;border-bottom:1px solid var(--rule);padding:8px 0;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--ink);outline:none;min-width:0;}
         .hub-sub-in:focus{border-color:var(--accent);}
         .hub-sub-in::placeholder{color:var(--dim);}
         .hub-sub-btn{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--ink2);color:var(--bg);border:none;padding:10px 18px;cursor:pointer;white-space:nowrap;}
-        .hub-sub-note{font-size:10px;color:var(--dim);margin-top:7px;}
+        .hub-sub-note{font-size:14px;color:var(--dim);margin-top:7px;}
         @media(max-width:700px){
           .hub-grid{grid-template-columns:1fr 1fr;}
           .hub-arch-inner{grid-template-columns:1fr;gap:20px;}
@@ -334,14 +334,14 @@ export default function NapaServeHub() {
                   } catch { setSubStatus("error"); }
                 }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
               </div>
-              {subStatus === "success" && <div style={{ fontSize: 12, color: "#2E7D32", marginTop: 6 }}>Welcome to NapaServe. We'll be in touch.</div>}
-              {subStatus === "error" && <div style={{ fontSize: 12, color: "#C62828", marginTop: 6 }}>Something went wrong. Email us at napaserve@gmail.com</div>}
+              {subStatus === "success" && <div style={{ fontSize: 14, color: "#2E7D32", marginTop: 6 }}>Welcome to NapaServe. We'll be in touch.</div>}
+              {subStatus === "error" && <div style={{ fontSize: 14, color: "#C62828", marginTop: 6 }}>Something went wrong. Email us at napaserve@gmail.com</div>}
               <div className="hub-sub-note">Join the NapaServe community. No spam, unsubscribe anytime.</div>
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-            <div style={{ fontSize: 10, color: "var(--dim)" }}>© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</div>
-            <div style={{ fontSize: 10, color: "var(--muted)" }}>napaserve@gmail.com</div>
+            <div style={{ fontSize: 14, color: "var(--dim)" }}>© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</div>
+            <div style={{ fontSize: 14, color: "var(--muted)" }}>napaserve@gmail.com</div>
           </div>
         </div>
       </footer>

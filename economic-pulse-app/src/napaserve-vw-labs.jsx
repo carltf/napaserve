@@ -49,7 +49,7 @@ export default function VWLabsPage() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? `1px solid ${T.rule}` : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.dim, padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.dim, padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? T.accent : T.muted, background: l.cur ? T.bg2 : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -90,21 +90,21 @@ export default function VWLabsPage() {
 
         {/* Innovation Philosophy */}
         <div style={{ background: T.bg2, border: `1px solid ${T.rule}`, padding: "28px 32px", marginBottom: 32 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Innovation Philosophy</div>
-          <p style={{ fontSize: 16, color: T.muted, lineHeight: 1.75, margin: 0 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Innovation Philosophy</div>
+          <p style={{ fontSize: 17, color: T.muted, lineHeight: 1.75, margin: 0 }}>
             We believe in deliberate building — prioritizing durability over speed, local value retention over rapid extraction, and practical outcomes over speculative scale. Growth detached from place is not innovation. Real innovation strengthens the community it comes from.
           </p>
         </div>
 
         {/* Incubation Program */}
         <div style={{ marginBottom: 32 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Incubation Program</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Incubation Program</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
             {STEPS.map(s => (
               <div key={s.n} style={{ background: T.bg2, border: `1px solid ${T.rule}`, padding: "24px 22px" }}>
                 <div style={{ fontSize: 32, fontWeight: 700, color: T.gold, fontFamily: "'Libre Baskerville',Georgia,serif", lineHeight: 1, marginBottom: 10 }}>{s.n}</div>
                 <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 17, fontWeight: 700, color: T.ink2, margin: "0 0 8px" }}>{s.title}</h3>
-                <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.65, margin: 0 }}>{s.desc}</p>
+                <p style={{ fontSize: 17, color: T.muted, lineHeight: 1.65, margin: 0 }}>{s.desc}</p>
               </div>
             ))}
           </div>
@@ -112,12 +112,12 @@ export default function VWLabsPage() {
 
         {/* Focus Areas */}
         <div style={{ marginBottom: 32 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Focus Areas</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Focus Areas</div>
           <div className="vwl-focus" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
             {FOCUS.map(f => (
               <div key={f.title} style={{ background: T.bg2, border: `1px solid ${T.rule}`, borderLeft: `3px solid ${T.gold}`, padding: "20px 22px" }}>
                 <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.ink2, margin: "0 0 8px" }}>{f.title}</h3>
-                <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
+                <p style={{ fontSize: 17, color: T.muted, lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -125,7 +125,7 @@ export default function VWLabsPage() {
 
         {/* Current Ventures */}
         <div style={{ background: T.bg2, border: `1px solid ${T.rule}`, padding: "28px 32px", marginBottom: 32, textAlign: "center" }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Current Ventures</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>Current Ventures</div>
           <p style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 400, fontStyle: "italic", color: T.muted, lineHeight: 1.6, margin: 0 }}>
             Launching 2026 — Current cohort details coming soon.
           </p>
@@ -133,8 +133,8 @@ export default function VWLabsPage() {
 
         {/* How to Apply */}
         <div style={{ background: T.bg2, border: `1px solid ${T.rule}`, padding: "28px 32px" }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>How to Apply</div>
-          <p style={{ fontSize: 16, color: T.muted, lineHeight: 1.75, margin: "0 0 16px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 12 }}>How to Apply</div>
+          <p style={{ fontSize: 17, color: T.muted, lineHeight: 1.75, margin: "0 0 16px" }}>
             We review proposals on a rolling basis. Your submission should include:
           </p>
           <div style={{ margin: "0 0 20px" }}>
@@ -147,7 +147,7 @@ export default function VWLabsPage() {
             ].map((r, i) => (
               <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
                 <div style={{ width: 5, height: 5, background: T.gold, borderRadius: "50%", marginTop: 7, flexShrink: 0 }} />
-                <span style={{ fontSize: 14, color: T.muted, lineHeight: 1.5 }}>{r}</span>
+                <span style={{ fontSize: 17, color: T.muted, lineHeight: 1.5 }}>{r}</span>
               </div>
             ))}
           </div>
@@ -159,10 +159,10 @@ export default function VWLabsPage() {
         {/* Footer */}
         <div style={{ marginTop: 60, paddingTop: 32, borderTop: `1px solid ${T.rule}`, display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div style={{ fontSize: 13, color: T.dim, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 14, color: T.dim, lineHeight: 1.6 }}>
               ValleyWorks Labs · A <a href="/valley-works" style={{ color: T.accent, textDecoration: "none" }}>Valley Works Collaborative</a> initiative
             </div>
-            <div style={{ fontSize: 12, color: T.dim, marginTop: 4 }}>Napa County, CA · Not affiliated with Napa County government.</div>
+            <div style={{ fontSize: 14, color: T.dim, marginTop: 4 }}>Napa County, CA · Not affiliated with Napa County government.</div>
           </div>
           <div style={{ display: "flex", gap: 16 }}>
             <a href="mailto:valleyworkscollaborative@gmail.com" style={{ fontSize: 12, fontWeight: 600, color: T.accent, textDecoration: "none" }}>Contact →</a>

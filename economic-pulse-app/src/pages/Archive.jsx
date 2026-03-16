@@ -22,7 +22,7 @@ const styles = {
   },
   eyebrow: {
     fontFamily: "'Libre Baskerville', Georgia, serif",
-    fontSize: "0.75rem",
+    fontSize: "0.69rem",
     letterSpacing: "0.2em",
     textTransform: "uppercase",
     color: "#8B5E3C",
@@ -38,7 +38,7 @@ const styles = {
     margin: "0 0 16px",
   },
   subhead: {
-    fontSize: "1.05rem",
+    fontSize: "1.06rem",
     color: "#7A6A50",
     lineHeight: 1.6,
     maxWidth: 580,
@@ -135,7 +135,7 @@ const styles = {
   },
   answerLabel: {
     fontFamily: "'Libre Baskerville', serif",
-    fontSize: "0.7rem",
+    fontSize: "0.69rem",
     letterSpacing: "0.2em",
     textTransform: "uppercase",
     color: "#8B5E3C",
@@ -145,14 +145,14 @@ const styles = {
     gap: 8,
   },
   answerText: {
-    fontSize: "1rem",
+    fontSize: "1.06rem",
     lineHeight: 1.75,
     color: "#2C1810",
     whiteSpace: "pre-wrap",
   },
   sourcesLabel: {
     fontFamily: "'Libre Baskerville', serif",
-    fontSize: "0.7rem",
+    fontSize: "0.69rem",
     letterSpacing: "0.18em",
     textTransform: "uppercase",
     color: "#8B5E3C",
@@ -196,12 +196,12 @@ const styles = {
     flexShrink: 0,
   },
   chunkDate: {
-    fontSize: "0.75rem",
+    fontSize: "0.875rem",
     color: "#8B7355",
     marginBottom: 10,
   },
   chunkExcerpt: {
-    fontSize: "0.83rem",
+    fontSize: "0.875rem",
     color: "#7A6A50",
     lineHeight: 1.55,
   },

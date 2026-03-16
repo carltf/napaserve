@@ -75,7 +75,7 @@ function Delta({c,p,s="",inv=false}){
 function KPI({label,value,delta}){
   return(
     <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"16px 18px",flex:1,minWidth:140}}>
-      <div style={{fontSize:9,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{label}</div>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{label}</div>
       <div style={{fontSize:28,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1,marginBottom:6}}>{value}</div>
       <div>{delta}</div>
     </div>
@@ -85,9 +85,9 @@ function KPI({label,value,delta}){
 function StatCard({label,value,detail,accent}){
   return(
     <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"16px 18px",flex:1,minWidth:130}}>
-      <div style={{fontSize:9,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{label}</div>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{label}</div>
       <div style={{fontSize:26,fontWeight:700,color:accent||T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{value}</div>
-      {detail&&<div style={{fontSize:11,color:T.muted,marginTop:4,fontFamily:"'Source Sans 3',sans-serif"}}>{detail}</div>}
+      {detail&&<div style={{fontSize:14,color:T.muted,marginTop:4,fontFamily:"'Source Sans 3',sans-serif"}}>{detail}</div>}
     </div>
   );
 }
@@ -271,7 +271,7 @@ export default function EconomicPulseDashboard(){
             {label:"Platform",links:[{t:"About NapaServe",h:"/about"},{t:"Contact",h:"mailto:napaserve@gmail.com"}]},
           ].map((g,gi)=>(
             <div key={gi} style={{padding:"10px 0",borderBottom:gi<3?`1px solid ${T.rule}`:"none"}}>
-              <div style={{fontSize:9,fontWeight:700,letterSpacing:".18em",textTransform:"uppercase",color:T.dim,padding:"4px 20px 6px"}}>{g.label}</div>
+              <div style={{fontSize:11,fontWeight:700,letterSpacing:".18em",textTransform:"uppercase",color:T.dim,padding:"4px 20px 6px"}}>{g.label}</div>
               {g.links.map((l,li)=>(
                 <a key={li} href={l.h} onClick={()=>setNavOpen(false)} style={{display:"block",fontSize:13,fontWeight:600,color:l.cur?T.accent:T.muted,background:l.cur?T.bg2:"transparent",padding:"8px 20px",textDecoration:"none"}}>{l.t}</a>
               ))}
@@ -304,9 +304,9 @@ export default function EconomicPulseDashboard(){
   );
 
   const ctx={background:T.bg2,border:`1px solid ${T.rule}`,borderLeft:`3px solid ${T.accent}`,padding:"18px 22px",marginBottom:24};
-  const lbl={fontSize:9,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"};
+  const lbl={fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"};
   const chrt={background:T.bg2,border:`1px solid ${T.rule}`,padding:"20px 12px 12px 0",marginBottom:24};
-  const ctitle={paddingLeft:20,marginBottom:8,fontSize:9,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",fontFamily:"'Source Sans 3',sans-serif"};
+  const ctitle={paddingLeft:20,marginBottom:8,fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",fontFamily:"'Source Sans 3',sans-serif"};
 
   return(
     <div style={{minHeight:"100vh",background:T.bg,fontFamily:"'Source Sans 3',sans-serif",color:T.ink2}}>
@@ -320,7 +320,7 @@ export default function EconomicPulseDashboard(){
           <span style={{fontSize:10,color:T.dim}}>· Napa County</span>
         </div>
         <h1 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(28px,4vw,42px)",fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Community Pulse</h1>
-        <p style={{fontSize:13,color:T.dim,margin:"0 0 24px"}}>
+        <p style={{fontSize:17,color:T.dim,margin:"0 0 24px"}}>
           Weekly snapshot — {lastUpdated?fD(lastUpdated):"Loading..."} <span style={{color:T.rule}}>|</span> Live from Supabase
           <span style={{color:T.live,fontSize:11,marginLeft:8,fontWeight:600}}>● Connected</span>
         </p>
@@ -380,7 +380,7 @@ export default function EconomicPulseDashboard(){
               macroData.forEach(m=>{byId[m.id]=m;});
               return rows.map((row,ri)=>(
                 <div key={ri} style={{marginBottom:ri<2?16:0}}>
-                  <div style={{fontSize:9,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{row.label}</div>
+                  <div style={{fontSize:11,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{row.label}</div>
                   <div style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(140px,1fr))",gap:8,overflowX:"auto"}}>
                     {row.ids.map(id=>{
                       const m = byId[id];
@@ -401,7 +401,7 @@ export default function EconomicPulseDashboard(){
                       return(
                         <a key={id} href={`https://fred.stlouisfed.org/series/${id}`} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",color:"inherit"}}>
                         <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90,boxSizing:"border-box",overflow:"hidden"}}>
-                          <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.label}</div>
+                          <div style={{fontSize:11,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.label}</div>
                           <div style={{fontSize:22,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{displayVal}{unit}</div>
                           <div style={{marginTop:4,display:"flex",alignItems:"center",gap:6}}>
                             {delta&&<span style={{fontSize:10,fontWeight:600,color:deltaPos?T.pos:T.neg,fontFamily:"monospace"}}>{delta}</span>}
@@ -419,7 +419,7 @@ export default function EconomicPulseDashboard(){
 
           <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"12px 18px",marginTop:24}}>
             <span style={{...lbl,display:"inline"}}>Data Sources </span>
-            <span style={{fontSize:11,color:T.muted}}>ABC Licensing · FRED (BLS) · Zillow Research · CA EDD · Freddie Mac · U Michigan · {wineryData.length} snapshots</span>
+            <span style={{fontSize:14,color:T.muted}}>ABC Licensing · FRED (BLS) · Zillow Research · CA EDD · Freddie Mac · U Michigan · {wineryData.length} snapshots</span>
           </div>
 
           {/* ── COMMUNITY SENTIMENT ── */}
@@ -428,7 +428,7 @@ export default function EconomicPulseDashboard(){
               <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:16}}>
                 <div>
                   <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:20,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Community Sentiment</h2>
-                  <p style={{fontSize:12,color:T.dim,margin:0,fontFamily:"'Source Sans 3',sans-serif"}}>{fN(pollTotals.count)} polls · {fN(pollTotals.votes)} total votes from NVF readers</p>
+                  <p style={{fontSize:14,color:T.dim,margin:0,fontFamily:"'Source Sans 3',sans-serif"}}>{fN(pollTotals.count)} polls · {fN(pollTotals.votes)} total votes from NVF readers</p>
                 </div>
                 <button onClick={()=>setSection("pulse")} style={{fontSize:10,fontWeight:700,letterSpacing:".1em",textTransform:"uppercase",color:T.accent,background:"none",border:"none",cursor:"pointer",fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap"}}>View all →</button>
               </div>
@@ -452,11 +452,11 @@ export default function EconomicPulseDashboard(){
                                 <div style={{height:"100%",width:`${winPct}%`,background:T.accent,borderRadius:3}} />
                               </div>
                               <span style={{fontSize:12,fontWeight:600,color:T.accent,whiteSpace:"nowrap",fontFamily:"'Source Sans 3',sans-serif"}}>{winPct}%</span>
-                              <span style={{fontSize:11,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label || winner.text}</span>
+                              <span style={{fontSize:14,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label || winner.text}</span>
                             </div>
                           )}
                           {(()=>{const url=poll.substack_url&&poll.substack_url.trim();return(
-                          <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                          <div style={{fontSize:14,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
                           );})()}
                         </div>
                         <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>
@@ -498,7 +498,7 @@ export default function EconomicPulseDashboard(){
         {section==="winery"&&<>
           <div style={{marginBottom:20}}>
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(22px,4vw,32px)",fontWeight:700,color:T.ink2,margin:"0 0 6px"}}>Napa County Winery Licenses</h2>
-            <p style={{fontSize:13,color:T.muted,margin:0}}>ABC Type-02 active license count · {allNapa.length} data points, live from Supabase</p>
+            <p style={{fontSize:17,color:T.muted,margin:0}}>ABC Type-02 active license count · {allNapa.length} data points, live from Supabase</p>
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
             <StatCard label="Current" value={wStats.current.toLocaleString()} detail={`as of ${fMo(allNapa[allNapa.length-1]?.date||"")}`}/>
@@ -542,7 +542,7 @@ export default function EconomicPulseDashboard(){
         {section==="labor"&&<>
           <div style={{marginBottom:20}}>
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:24,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Labor Market</h2>
-            <p style={{fontSize:13,color:T.muted,margin:0}}>FRED / BLS data for Napa County — Monthly series, updated weekly</p>
+            <p style={{fontSize:17,color:T.muted,margin:0}}>FRED / BLS data for Napa County — Monthly series, updated weekly</p>
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
             {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Unemployment Rate" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
@@ -574,7 +574,7 @@ export default function EconomicPulseDashboard(){
         {section==="housing"&&<>
           <div style={{marginBottom:20}}>
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:24,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Housing Market</h2>
-            <p style={{fontSize:13,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
+            <p style={{fontSize:17,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
             {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
@@ -609,7 +609,7 @@ export default function EconomicPulseDashboard(){
         {section==="pulse"&&<>
           <div style={{marginBottom:20}}>
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(22px,4vw,32px)",fontWeight:700,color:T.ink2,margin:"0 0 6px"}}>Reader Pulse</h2>
-            <p style={{fontSize:13,color:T.muted,margin:0}}>Community intelligence — what Napa Valley readers said across three years of local journalism</p>
+            <p style={{fontSize:17,color:T.muted,margin:0}}>Community intelligence — what Napa Valley readers said across three years of local journalism</p>
           </div>
 
           {pollLoading ? (
@@ -630,7 +630,7 @@ export default function EconomicPulseDashboard(){
                 {pollThemes.map(g => (
                   <div key={g.theme} onClick={() => { setOpenTheme(g.theme); setOpenPoll(null); }}
                     style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"20px 22px",cursor:"pointer",transition:"box-shadow .15s",boxShadow:"0 1px 3px rgba(44,24,16,0.04)"}}>
-                    <div style={{fontSize:9,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{g.count} poll{g.count!==1?"s":""} · {fN(g.totalVotes)} votes</div>
+                    <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{g.count} poll{g.count!==1?"s":""} · {fN(g.totalVotes)} votes</div>
                     <div style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:18,fontWeight:700,color:T.ink2,marginBottom:8}}>{g.theme}</div>
                     <div style={{fontSize:12,color:T.muted,lineHeight:1.5}}>
                       {g.polls.filter(p => p.question && p.question.trim()).slice(0,2).map((p,i) => (
@@ -672,11 +672,11 @@ export default function EconomicPulseDashboard(){
                                   <div style={{height:"100%",width:`${winPct}%`,background:T.accent,borderRadius:3}} />
                                 </div>
                                 <span style={{fontSize:12,fontWeight:600,color:T.accent,whiteSpace:"nowrap",fontFamily:"'Source Sans 3',sans-serif"}}>{winPct}%</span>
-                                <span style={{fontSize:11,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label || winner.text}</span>
+                                <span style={{fontSize:14,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label || winner.text}</span>
                               </div>
                             )}
                             {(()=>{const url=poll.substack_url&&poll.substack_url.trim();return(
-                            <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                            <div style={{fontSize:14,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
                             );})()}
                           </div>
                           <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>
@@ -715,14 +715,14 @@ export default function EconomicPulseDashboard(){
 
             <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"12px 18px",marginTop:24}}>
               <span style={{...lbl,display:"inline"}}>Data Source </span>
-              <span style={{fontSize:11,color:T.muted}}>Napa Valley Features reader polls · {pollTotals.count} polls · {fN(pollTotals.votes)} total votes</span>
+              <span style={{fontSize:14,color:T.muted}}>Napa Valley Features reader polls · {pollTotals.count} polls · {fN(pollTotals.votes)} total votes</span>
             </div>
           </>)}
         </>}
 
         <div style={{borderTop:`1px solid ${T.rule}`,paddingTop:16,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginTop:20}}>
-          <span style={{fontSize:11,color:T.dim}}>Sources: CA ABC · FRED (BLS) · Zillow Research · CA EDD</span>
-          <span style={{fontSize:11,color:T.dim}}>Pipeline: GitHub Actions → Supabase | {wineryData.length} snapshots | {lastUpdated?fD(lastUpdated):""}</span>
+          <span style={{fontSize:14,color:T.dim}}>Sources: CA ABC · FRED (BLS) · Zillow Research · CA EDD</span>
+          <span style={{fontSize:14,color:T.dim}}>Pipeline: GitHub Actions → Supabase | {wineryData.length} snapshots | {lastUpdated?fD(lastUpdated):""}</span>
         </div>
       </div>
     </div>
