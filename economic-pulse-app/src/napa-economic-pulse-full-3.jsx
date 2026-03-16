@@ -516,11 +516,11 @@ export default function EconomicPulseDashboard(){
             {(priorE?.yoy??latestE?.yoy)!=null&&<KPI label="Year-over-Year" value={(priorE?.yoy??latestE?.yoy)+"%"} delta={<span style={{fontSize:11,color:T.dim}}>home value change</span>}/>}
             {(priorE?.pending??latestE?.pending)!=null&&<KPI label="Days to Pending" value={(priorE?.pending??latestE?.pending)+" days"} delta={<span style={{fontSize:11,color:T.dim}}>median listing</span>}/>}
           </div>
-          {econData.filter(d=>d.home!=null).length>=2&&(
+          {econData.filter(d=>d.home!=null).length>=2&&(()=>{const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-18);const homeData=econData.filter(d=>d.home!=null&&new Date(d.date)>=cutoff);return homeData.length>=2&&(
             <div style={chrt}>
               <div style={ctitle}>Napa County Home Value (ZHVI)</div>
               <ResponsiveContainer width="100%" height={260}>
-                <AreaChart data={econData.filter(d=>d.home!=null)} margin={{top:8,right:16,bottom:4,left:8}}>
+                <AreaChart data={homeData} margin={{top:8,right:16,bottom:4,left:8}}>
                   <defs><linearGradient id="hG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={T.pos} stopOpacity={0.25}/><stop offset="100%" stopColor={T.pos} stopOpacity={0.02}/></linearGradient></defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.rule} vertical={false}/>
                   <XAxis dataKey="date" tick={{fontSize:9,fill:T.dim}} tickFormatter={fMo} axisLine={false} tickLine={false}/>
@@ -530,7 +530,7 @@ export default function EconomicPulseDashboard(){
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          )}
+          );})()}
           <div style={{textAlign:"right",marginTop:4}}><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>Zillow Research ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>Housing Context</div>
