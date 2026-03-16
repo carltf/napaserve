@@ -67,12 +67,25 @@ jobs:
       - name: Slack — cookie expired
         if: failure() && steps.extract.outputs.cookie_expired == 'true'
         run: |
-          MSG="⚠️ NVF poll pipeline: substack.sid cookie expired — needs refresh"
+          read -r -d '' MSG << 'EOMSG'
+          ⚠️ NVF poll pipeline: substack.sid cookie expired. To fix:
+          1) Open Safari → napavalleyfocus.substack.com (make sure you're logged in)
+          2) Cmd+Option+I → Storage → Cookies → copy the Value for substack.sid
+          3) In terminal run: gh secret set SUBSTACK_SID --repo carltf/napaserve and paste the new value.
+          Pipeline will resume next Monday automatically.
+          EOMSG
           if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
-            MSG="$MSG\n🔔 Monthly reminder: export fresh Substack data and refresh substack.sid cookie"
+            read -r -d '' REMINDER << 'EOREMINDER'
+
+          🔔 Monthly reminder:
+          1) Go to Substack → Settings → Export → download fresh export → replace posts folder at ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
+          2) Refresh substack.sid cookie using steps above.
+          EOREMINDER
+            MSG="$MSG$REMINDER"
           fi
+          PAYLOAD=$(jq -n --arg text "$MSG" '{text: $text}')
           curl -sS -X POST -H 'Content-type: application/json' \
-            --data "{\"text\":\"$MSG\"}" \
+            --data "$PAYLOAD" \
             "${{ secrets.SLACK_WEBHOOK_URL }}"
 
       - name: Slack — success
@@ -80,10 +93,17 @@ jobs:
         run: |
           MSG="✅ NVF poll pipeline complete — ${{ steps.extract.outputs.new_polls }} new polls added"
           if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
-            MSG="$MSG\n🔔 Monthly reminder: export fresh Substack data and refresh substack.sid cookie"
+            read -r -d '' REMINDER << 'EOREMINDER'
+
+          🔔 Monthly reminder:
+          1) Go to Substack → Settings → Export → download fresh export → replace posts folder at ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
+          2) Refresh substack.sid cookie using steps above.
+          EOREMINDER
+            MSG="$MSG$REMINDER"
           fi
+          PAYLOAD=$(jq -n --arg text "$MSG" '{text: $text}')
           curl -sS -X POST -H 'Content-type: application/json' \
-            --data "{\"text\":\"$MSG\"}" \
+            --data "$PAYLOAD" \
             "${{ secrets.SLACK_WEBHOOK_URL }}"
 
       - name: Slack — other failure
