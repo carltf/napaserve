@@ -291,7 +291,7 @@ export default function EconomicPulseDashboard(){
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
       <div style={{textAlign:"center"}}>
         <div style={{width:36,height:36,border:`2px solid ${T.rule}`,borderTopColor:T.accent,borderRadius:"50%",animation:"spin 1s linear infinite",margin:"0 auto 16px"}}/>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;}`}</style>
         <p style={{fontFamily:"'Libre Baskerville',Georgia,serif",color:T.muted,fontSize:16}}>Loading Economic Pulse...</p>
       </div>
     </div>
@@ -328,9 +328,9 @@ export default function EconomicPulseDashboard(){
           Weekly snapshot — {lastUpdated?fD(lastUpdated):"Loading..."} <span style={{color:T.rule}}>|</span> Live from Supabase
           <span style={{color:T.live,fontSize:11,marginLeft:8,fontWeight:600}}>● Connected</span>
         </p>
-        <div style={{display:"flex",borderBottom:`1px solid ${T.rule}`}}>
+        <div className="dash-tabs" style={{display:"flex",borderBottom:`1px solid ${T.rule}`,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {SECTIONS.map(s=>(
-            <button key={s.key} onClick={()=>setSection(s.key)} style={{padding:"10px 20px",fontSize:13,fontWeight:600,background:"none",color:section===s.key?T.ink2:T.dim,border:"none",borderBottom:section===s.key?`2px solid ${T.accent}`:"2px solid transparent",cursor:"pointer",marginBottom:-1,fontFamily:"'Source Sans 3',sans-serif"}}>{s.label}</button>
+            <button key={s.key} onClick={()=>setSection(s.key)} style={{padding:"10px 20px",fontSize:13,fontWeight:600,background:"none",color:section===s.key?T.ink2:T.dim,border:"none",borderBottom:section===s.key?`2px solid ${T.accent}`:"2px solid transparent",cursor:"pointer",marginBottom:-1,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",flexShrink:0}}>{s.label}</button>
           ))}
         </div>
       </div>
