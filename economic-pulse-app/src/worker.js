@@ -5,6 +5,7 @@
  *   GET  /api/health             — health check
  *   POST /api/rag-search         — embed query → nvf_search() → return chunks
  *   POST /api/rag-answer         — embed → retrieve → Claude answer + sources
+ *   POST /api/poll-search         — embed query → nvf_poll_search() → matching polls
  *   GET  /api/fred               — FRED API proxy → macro indicators
  *
  * Env vars (Bindings):
@@ -248,6 +249,50 @@ async function handleFred(request, env) {
   }
 }
 
+// ─── Poll search handler ─────────────────────────────────────────────────────
+
+async function handlePollSearch(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return err("Invalid JSON body", 400, request);
+  }
+
+  const { query, matchCount = 5 } = body;
+  if (!query || typeof query !== "string" || query.trim().length < 2) {
+    return err("query is required (min 2 chars)", 400, request);
+  }
+
+  try {
+    const embedding = await embedQuery(query.trim(), env.VOYAGE_API_KEY);
+
+    const res = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/nvf_poll_search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: env.SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        query_embedding: embedding,
+        match_count: matchCount,
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Supabase nvf_poll_search error ${res.status}: ${text}`);
+    }
+
+    const results = await res.json();
+    return json({ results, query: query.trim() }, 200, request);
+  } catch (e) {
+    console.error("Poll search failed:", e);
+    return err(`Poll search failed: ${e.message}`, 502, request);
+  }
+}
+
 // ─── Subscribe handler ───────────────────────────────────────────────────────
 
 async function handleSubscribe(request, env) {
@@ -341,6 +386,10 @@ export default {
 
     if (url.pathname === "/api/fred" && request.method === "GET") {
       return handleFred(request, env);
+    }
+
+    if (url.pathname === "/api/poll-search" && request.method === "POST") {
+      return handlePollSearch(request, env);
     }
 
     if (url.pathname === "/api/subscribe" && request.method === "POST") {
