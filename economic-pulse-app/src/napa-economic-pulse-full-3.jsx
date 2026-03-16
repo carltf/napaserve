@@ -165,7 +165,7 @@ export default function EconomicPulseDashboard(){
     (async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_polls?select=poll_id,post_id,post_title,question,options_json,total_votes,published_at&order=published_at.desc`,
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=poll_id,post_id,post_title,question,options_json,total_votes,published_at,theme&order=published_at.desc`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (!res.ok) throw new Error("Poll fetch failed");
@@ -178,24 +178,11 @@ export default function EconomicPulseDashboard(){
   }, []);
 
   const pollThemes = useMemo(() => {
-    const THEME_RULES = [
-      { theme: "Wine & Hospitality", keywords: ["wine", "winery", "tasting", "vineyard", "hospitality", "tourism", "tourist", "visitor", "hotel", "restaurant", "dining"] },
-      { theme: "Housing & Development", keywords: ["housing", "home", "rent", "afford", "development", "building", "construction", "zoning", "permit"] },
-      { theme: "Government & Policy", keywords: ["city", "council", "county", "government", "policy", "regulation", "tax", "budget", "vote", "election", "supervisor", "ordinance", "law", "legislation"] },
-      { theme: "Economy & Jobs", keywords: ["economy", "economic", "job", "employ", "workforce", "business", "labor", "wage", "income", "retail", "commercial"] },
-      { theme: "Environment & Agriculture", keywords: ["environment", "climate", "fire", "wildfire", "water", "drought", "agriculture", "farm", "crop", "organic", "pesticide", "oak", "tree"] },
-      { theme: "Community & Culture", keywords: ["community", "school", "education", "health", "transit", "transport", "art", "culture", "library", "park", "safety", "crime", "police"] },
-    ];
     const grouped = {};
     for (const poll of pollData) {
-      const text = `${poll.question || ""} ${poll.post_title || ""}`.toLowerCase();
-      let matched = null;
-      for (const rule of THEME_RULES) {
-        if (rule.keywords.some(k => text.includes(k))) { matched = rule.theme; break; }
-      }
-      if (!matched) matched = "General";
-      if (!grouped[matched]) grouped[matched] = [];
-      grouped[matched].push(poll);
+      const t = poll.theme || "General";
+      if (!grouped[t]) grouped[t] = [];
+      grouped[t].push(poll);
     }
     return Object.entries(grouped)
       .map(([theme, polls]) => ({
@@ -554,7 +541,7 @@ export default function EconomicPulseDashboard(){
             <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
               <StatCard label="Total Polls" value={pollTotals.count} detail="from NVF articles" accent={T.gold}/>
               <StatCard label="Total Votes" value={fN(pollTotals.votes)} detail={`avg ${Math.round(pollTotals.votes / pollTotals.count)} per poll`}/>
-              <StatCard label="Themes" value={pollThemes.length} detail="auto-classified"/>
+              <StatCard label="Themes" value={pollThemes.length} detail="from database"/>
             </div>
 
             {/* Theme cards or expanded poll view */}
