@@ -387,6 +387,12 @@ async function handleSubmitEvent(request, env) {
   if (!category || !VALID_CATEGORIES.includes(category)) {
     return err(`Category is required. Valid: ${VALID_CATEGORIES.join(", ")}`, 400, request);
   }
+  if (!body.submitted_by || typeof body.submitted_by !== "string" || body.submitted_by.trim().length < 2) {
+    return err("Your name is required (min 2 characters)", 400, request);
+  }
+  if (!body.organizer_contact || typeof body.organizer_contact !== "string" || !body.organizer_contact.includes("@")) {
+    return err("A valid email is required", 400, request);
+  }
 
   // Build row — only include non-empty optional fields
   const row = {
@@ -395,6 +401,8 @@ async function handleSubmitEvent(request, env) {
     event_date,
     town,
     category,
+    submitted_by: body.submitted_by.trim(),
+    organizer_contact: body.organizer_contact.trim(),
     status: "pending",
     source: "community",
     submitted_at: new Date().toISOString(),
@@ -403,8 +411,7 @@ async function handleSubmitEvent(request, env) {
   const optionalText = [
     "end_date", "start_time", "end_time", "venue_name", "address",
     "price_info", "age_restriction", "indoor_outdoor", "recurrence_desc",
-    "website_url", "ticket_url", "organizer_contact", "accessibility_info",
-    "submitted_by",
+    "website_url", "ticket_url", "accessibility_info",
   ];
   for (const key of optionalText) {
     if (body[key] && typeof body[key] === "string" && body[key].trim()) {

@@ -407,12 +407,12 @@
 
       <div class="row">
         <div class="field">
-          <label for="submitted_by">Your Name</label>
-          <input type="text" id="submitted_by" name="submitted_by" placeholder="Optional" aria-label="Your name">
+          <label for="submitted_by">Your Name <span class="required">*</span></label>
+          <input type="text" id="submitted_by" name="submitted_by" required placeholder="First and last name" aria-label="Your name">
         </div>
         <div class="field">
-          <label for="organizer_contact">Contact Email</label>
-          <input type="email" id="organizer_contact" name="organizer_contact" placeholder="Optional" aria-label="Contact email">
+          <label for="organizer_contact">Your Email <span class="required">*</span></label>
+          <input type="email" id="organizer_contact" name="organizer_contact" required placeholder="you@example.com" aria-label="Your email">
         </div>
       </div>
 
@@ -461,14 +461,15 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     category: form.category.value,
     is_free: form.is_free.checked,
     is_recurring: form.is_recurring.checked,
+    submitted_by: form.submitted_by.value.trim(),
+    organizer_contact: form.organizer_contact.value.trim(),
   };
 
   // Optional text fields
   const optional = [
     'end_date', 'start_time', 'end_time', 'venue_name', 'address',
     'price_info', 'age_restriction', 'indoor_outdoor', 'recurrence_desc',
-    'website_url', 'ticket_url', 'organizer_contact', 'accessibility_info',
-    'submitted_by',
+    'website_url', 'ticket_url', 'accessibility_info',
   ];
 
   for (const key of optional) {
