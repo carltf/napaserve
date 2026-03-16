@@ -59,22 +59,45 @@ def supabase_headers(*, for_upsert=False):
 
 def fetch_polls():
     """Fetch all polls with question and post_title."""
-    url = (
-        f"{SUPABASE_URL}/rest/v1/nvf_polls"
-        f"?select=poll_id,question,post_title"
-        f"&order=poll_id.asc"
-    )
-    r = requests.get(url, headers=supabase_headers())
-    r.raise_for_status()
-    return r.json()
+    all_rows = []
+    batch = 0
+    page_size = 1000
+    while True:
+        url = (
+            f"{SUPABASE_URL}/rest/v1/nvf_polls"
+            f"?select=poll_id,question,post_title"
+            f"&order=poll_id.asc"
+            f"&limit={page_size}&offset={batch * page_size}"
+        )
+        r = requests.get(url, headers=supabase_headers())
+        r.raise_for_status()
+        rows = r.json()
+        all_rows.extend(rows)
+        if len(rows) < page_size:
+            break
+        batch += 1
+    return all_rows
 
 
 def fetch_existing_poll_ids():
     """Fetch poll_ids already in nvf_poll_embeddings."""
-    url = f"{SUPABASE_URL}/rest/v1/nvf_poll_embeddings?select=poll_id"
-    r = requests.get(url, headers=supabase_headers())
-    r.raise_for_status()
-    return {row["poll_id"] for row in r.json()}
+    ids = set()
+    batch = 0
+    page_size = 1000
+    while True:
+        url = (
+            f"{SUPABASE_URL}/rest/v1/nvf_poll_embeddings"
+            f"?select=poll_id&order=poll_id.asc"
+            f"&limit={page_size}&offset={batch * page_size}"
+        )
+        r = requests.get(url, headers=supabase_headers())
+        r.raise_for_status()
+        rows = r.json()
+        ids.update(row["poll_id"] for row in rows)
+        if len(rows) < page_size:
+            break
+        batch += 1
+    return ids
 
 
 def upsert_embeddings(rows):
