@@ -449,12 +449,9 @@ export default function ProjectEvaluator() {
           <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--live)", display: "inline-block" }} />
           NapaServe <span style={{ color: "var(--rule)" }}>·</span> Napa County
         </div>
-        <h1 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: "clamp(24px,4vw,36px)", fontWeight: 700, color: "var(--ink2)", marginBottom: 4 }}>Project Evaluator</h1>
-        <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.6, marginBottom: 16 }}>Structural resilience analysis across the Jobs · People · Place framework.</p>
-
-        <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", borderLeft: "3px solid var(--accent)", padding: "14px 18px", marginBottom: 18 }}>
-          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.75 }}>Explore the costs and benefits of any idea — a new business, a development proposal, a policy change, a community project. Think of it as your own team of analysts helping you ask better questions and see the full picture.</p>
-        </div>
+        <h1 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: "clamp(24px,4vw,36px)", fontWeight: 700, color: "var(--ink2)", marginBottom: 6 }}>Project Evaluator</h1>
+        <p style={{ fontSize: 15, fontWeight: 600, color: "var(--accent)", lineHeight: 1.5, marginBottom: 14, letterSpacing: ".01em" }}>Civic analysis grounded in community knowledge</p>
+        <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8, marginBottom: 18, maxWidth: 720 }}>Submit a proposed project — a resort, housing development, winery expansion, land use change or any initiative affecting Napa Valley — and this tool will evaluate it against the valley's own data, reporting and stated priorities. Analysis is structured around the Jobs · People · Place framework and draws on three years of local journalism, regional economic data and community polling. AI is one tool in that process — the knowledge comes from the community.</p>
 
         <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 8 }}>Try an example project</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 22 }}>
