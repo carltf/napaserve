@@ -313,7 +313,7 @@ export default function EconomicPulseDashboard(){
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
       <Nav/>
 
-      <div style={{maxWidth:1100,margin:"0 auto",padding:"36px 24px 0"}}>
+      <div id="main-content" style={{maxWidth:1100,margin:"0 auto",padding:"36px 24px 0"}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
           <div style={{width:5,height:5,background:T.live,borderRadius:"50%"}}/>
           <span style={{fontSize:10,fontWeight:700,letterSpacing:3,color:T.dim,textTransform:"uppercase"}}>NapaServe</span>
@@ -335,10 +335,10 @@ export default function EconomicPulseDashboard(){
 
         {section==="overview"&&<>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-            {latestW&&<a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<><Delta c={latestW.napa} p={allNapa[allNapa.length-2]?.napa}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>WoW</span></>}/></a>}
-            {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Unemployment" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
-            {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
-            {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestW&&<a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" aria-label="ABC Licensing, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<><Delta c={latestW.napa} p={allNapa[allNapa.length-2]?.napa}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>WoW</span></>}/></a>}
+            {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" aria-label="Unemployment Rate data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Unemployment" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
           </div>
           {latestE?.summary&&<div style={ctx}><div style={lbl}>Weekly Summary</div><p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:0}}>{latestE.summary}</p></div>}
           {overviewWinery.length>=2&&(
@@ -399,7 +399,7 @@ export default function EconomicPulseDashboard(){
                         }
                       }
                       return(
-                        <a key={id} href={`https://fred.stlouisfed.org/series/${id}`} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",color:"inherit"}}>
+                        <a key={id} href={`https://fred.stlouisfed.org/series/${id}`} target="_blank" rel="noopener noreferrer" aria-label={`${m.label} data, opens in new tab`} style={{textDecoration:"none",color:"inherit"}}>
                         <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90,boxSizing:"border-box",overflow:"hidden"}}>
                           <div style={{fontSize:11,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.label}</div>
                           <div style={{fontSize:22,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{displayVal}{unit}</div>
@@ -456,7 +456,7 @@ export default function EconomicPulseDashboard(){
                             </div>
                           )}
                           {(()=>{const url=poll.substack_url&&poll.substack_url.trim();return(
-                          <div style={{fontSize:14,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                          <div style={{fontSize:14,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} aria-label={`${poll.post_title}, opens in new tab`} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
                           );})()}
                         </div>
                         <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>
@@ -531,7 +531,7 @@ export default function EconomicPulseDashboard(){
               </ResponsiveContainer>
             </div>
           )}
-          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>ABC Licensing ↗</a></div>
+          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" aria-label="ABC Licensing, opens in new tab" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>ABC Licensing ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>The Story in the Data</div>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>Napa County's winery license count has followed a <span style={{color:T.accent,fontWeight:600}}>sawtooth pattern</span> since weekly tracking began in February 2024. Three major drops: <span style={{color:T.neg}}>October 2024</span> (−41), <span style={{color:T.neg}}>July 2025</span> (−30) and <span style={{color:T.neg}}>October 2025</span> (−68).</p>
@@ -545,9 +545,9 @@ export default function EconomicPulseDashboard(){
             <p style={{fontSize:17,color:T.muted,margin:0}}>FRED / BLS data for Napa County — Monthly series, updated weekly</p>
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-            {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Unemployment Rate" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
-            {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Civilian Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
-            {latestE?.food!=null&&<a href="https://fred.stlouisfed.org/series/SMU06349007072200001SA" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Food Services" value={fN(latestE.food)+" jobs"} delta={<><Delta c={latestE.food} p={priorE?.food}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" aria-label="Unemployment Rate data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Unemployment Rate" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Civilian Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.food!=null&&<a href="https://fred.stlouisfed.org/series/SMU06349007072200001SA" target="_blank" rel="noopener noreferrer" aria-label="Food Services data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Food Services" value={fN(latestE.food)+" jobs"} delta={<><Delta c={latestE.food} p={priorE?.food}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
           </div>
           {econData.filter(d=>d.unemp!=null).length>=2&&(
             <div style={chrt}>
@@ -563,7 +563,7 @@ export default function EconomicPulseDashboard(){
               </ResponsiveContainer>
             </div>
           )}
-          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.bls.gov/regions/west/california.htm" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>BLS Data ↗</a></div>
+          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.bls.gov/regions/west/california.htm" target="_blank" rel="noopener noreferrer" aria-label="BLS Data, opens in new tab" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>BLS Data ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>Labor Market Context</div>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>Napa County's labor market remains stable with unemployment at <span style={{color:T.accent,fontWeight:600}}>{latestE?.unemp||"—"}%</span>, compared to California's statewide rate of ~5.1% and the national average of ~4.1%.</p>
@@ -577,9 +577,9 @@ export default function EconomicPulseDashboard(){
             <p style={{fontSize:17,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
           </div>
           <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-            {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
-            {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const peak=Math.max(...homes.map(d=>d.home));const diff=latestE.home-peak;return diff!==0?<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="From Peak" value={f$(diff)} detail={`peak ${f$(peak)}`} accent={diff<0?T.neg:T.pos}/></a>:null;})()}
-            {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const idx=homes.findIndex(d=>d===latestE);const ago=homes[idx-12]||homes[0];if(!ago||ago===latestE)return null;const diff=latestE.home-ago.home;const pct=((diff/ago.home)*100).toFixed(1);return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="YoY Change" value={f$(diff)} detail={`${diff>=0?"+":""}${pct}% from ${fMo(ago.date)}`} accent={diff>=0?T.pos:T.neg}/></a>;})()}
+            {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const peak=Math.max(...homes.map(d=>d.home));const diff=latestE.home-peak;return diff!==0?<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="From Peak" value={f$(diff)} detail={`peak ${f$(peak)}`} accent={diff<0?T.neg:T.pos}/></a>:null;})()}
+            {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const idx=homes.findIndex(d=>d===latestE);const ago=homes[idx-12]||homes[0];if(!ago||ago===latestE)return null;const diff=latestE.home-ago.home;const pct=((diff/ago.home)*100).toFixed(1);return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="YoY Change" value={f$(diff)} detail={`${diff>=0?"+":""}${pct}% from ${fMo(ago.date)}`} accent={diff>=0?T.pos:T.neg}/></a>;})()}
             {(priorE?.yoy??latestE?.yoy)!=null&&<KPI label="Year-over-Year" value={(priorE?.yoy??latestE?.yoy)+"%"} delta={<span style={{fontSize:11,color:T.dim}}>home value change</span>}/>}
             {(priorE?.pending??latestE?.pending)!=null&&<KPI label="Days to Pending" value={(priorE?.pending??latestE?.pending)+" days"} delta={<span style={{fontSize:11,color:T.dim}}>median listing</span>}/>}
           </div>
@@ -598,7 +598,7 @@ export default function EconomicPulseDashboard(){
               </ResponsiveContainer>
             </div>
           );})()}
-          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>Zillow Research ↗</a></div>
+          <div style={{textAlign:"right",marginTop:4}}><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>Zillow Research ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>Housing Context</div>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>The average Napa County home is valued at <span style={{color:T.accent,fontWeight:600}}>{latestE?.home?f$(latestE.home):"—"}</span>.</p>
@@ -676,7 +676,7 @@ export default function EconomicPulseDashboard(){
                               </div>
                             )}
                             {(()=>{const url=poll.substack_url&&poll.substack_url.trim();return(
-                            <div style={{fontSize:14,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                            <div style={{fontSize:14,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} aria-label={`${poll.post_title}, opens in new tab`} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
                             );})()}
                           </div>
                           <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>

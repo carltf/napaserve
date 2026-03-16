@@ -67,7 +67,7 @@ export default function VWLabsPage() {
       <Nav />
 
       {/* Hero */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "48px 24px 0", textAlign: "center" }}>
+      <div id="main-content" style={{ maxWidth: 900, margin: "0 auto", padding: "48px 24px 0", textAlign: "center" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
           <div style={{ width: 8, height: 8, background: T.gold, borderRadius: "50%" }} />
           <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 4, color: T.accent, textTransform: "uppercase" }}>A Valley Works Collaborative Initiative</span>

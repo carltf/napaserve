@@ -137,7 +137,7 @@ export default function NapaServeHub() {
       </div>
 
       {/* LEAD */}
-      <div className="hub-lead">
+      <div id="main-content" className="hub-lead">
         <p className="hub-kicker">Community Intelligence for Napa Valley</p>
         <div className="hub-pillars">
           <span className="hub-pillar">People &amp; Well-Being</span><span className="hub-pdot">·</span>
@@ -161,7 +161,7 @@ export default function NapaServeHub() {
 <Link to="/news" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><rect x="4" y="5" width="32" height="30" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="10" y1="13" x2="30" y2="13" stroke="#8B5E3C" strokeWidth="1.5" strokeLinecap="round"/><line x1="10" y1="19" x2="30" y2="19" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".6"/><line x1="10" y1="24" x2="24" y2="24" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="10" y1="29" x2="20" y2="29" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".3"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="4" y="5" width="32" height="30" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="10" y1="13" x2="30" y2="13" stroke="#8B5E3C" strokeWidth="1.5" strokeLinecap="round"/><line x1="10" y1="19" x2="30" y2="19" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".6"/><line x1="10" y1="24" x2="24" y2="24" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="10" y1="29" x2="20" y2="29" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".3"/></svg>
             </div>
             <div className="hub-c-cat">News</div>
             <div className="hub-c-name">Napa Valley Features</div>
@@ -171,7 +171,7 @@ export default function NapaServeHub() {
           <Link to="/events" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="18" r="10" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M20 28 L20 38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="18" r="3.5" fill="#8B5E3C"/><line x1="14" y1="38" x2="26" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="18" r="10" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M20 28 L20 38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="18" r="3.5" fill="#8B5E3C"/><line x1="14" y1="38" x2="26" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
             </div>
             <div className="hub-c-cat">Community</div>
             <div className="hub-c-name">Event Finder</div>
@@ -181,7 +181,7 @@ export default function NapaServeHub() {
 <Link to="/dashboard" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
             </div>
             <div className="hub-c-cat">Economy</div>
             <div className="hub-c-name">Community Pulse</div>
@@ -191,7 +191,7 @@ export default function NapaServeHub() {
           <Link to="/archive" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><circle cx="17" cy="17" r="11" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="25" y1="25" x2="37" y2="37" stroke="#8B5E3C" strokeWidth="2" strokeLinecap="round"/><line x1="11" y1="17" x2="23" y2="17" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/><line x1="17" y1="11" x2="17" y2="23" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="17" cy="17" r="11" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="25" y1="25" x2="37" y2="37" stroke="#8B5E3C" strokeWidth="2" strokeLinecap="round"/><line x1="11" y1="17" x2="23" y2="17" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/><line x1="17" y1="11" x2="17" y2="23" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/></svg>
             </div>
             <div className="hub-c-cat">Archive · Journalism</div>
             <div className="hub-c-name">NVF Archive Search</div>
@@ -201,7 +201,7 @@ export default function NapaServeHub() {
           <a href="/agent.html" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="3 2.2"/><circle cx="20" cy="20" r="10" stroke="#8B5E3C" strokeWidth="1"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="2" x2="20" y2="8" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="20" y1="32" x2="20" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="2" y1="20" x2="8" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="32" y1="20" x2="38" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="3 2.2"/><circle cx="20" cy="20" r="10" stroke="#8B5E3C" strokeWidth="1"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="2" x2="20" y2="8" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="20" y1="32" x2="20" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="2" y1="20" x2="8" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="32" y1="20" x2="38" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
             </div>
             <div className="hub-c-cat">AI · Civic</div>
             <div className="hub-c-name">Research Agent</div>
@@ -211,7 +211,7 @@ export default function NapaServeHub() {
           <Link to="/evaluator" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg viewBox="0 0 40 40" fill="none"><polygon points="20,3 37,12 37,28 20,37 3,28 3,12" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><polygon points="20,10 30,15.5 30,24.5 20,30 10,24.5 10,15.5" stroke="#8B5E3C" strokeWidth="1" fill="none" opacity=".5"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="3" x2="20" y2="10" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="30" y1="15.5" x2="37" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="10" y1="15.5" x2="3" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><polygon points="20,3 37,12 37,28 20,37 3,28 3,12" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><polygon points="20,10 30,15.5 30,24.5 20,30 10,24.5 10,15.5" stroke="#8B5E3C" strokeWidth="1" fill="none" opacity=".5"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="3" x2="20" y2="10" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="30" y1="15.5" x2="37" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="10" y1="15.5" x2="3" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/></svg>
             </div>
             <div className="hub-c-cat">Civic · Analysis</div>
             <div className="hub-c-name">Project Evaluator</div>
@@ -224,7 +224,7 @@ export default function NapaServeHub() {
         <Link to="/valley-works" className="hub-vw">
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
             <div style={{ flexShrink: 0, width: 40, height: 40 }}>
-              <svg viewBox="0 0 40 40" fill="none"><rect x="3" y="14" width="34" height="20" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M10 14V10a10 10 0 0 1 20 0v4" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="24" r="3.5" fill="#8B5E3C" opacity=".6"/><line x1="20" y1="27.5" x2="20" y2="31" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="3" y="14" width="34" height="20" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M10 14V10a10 10 0 0 1 20 0v4" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="24" r="3.5" fill="#8B5E3C" opacity=".6"/><line x1="20" y1="27.5" x2="20" y2="31" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
             </div>
             <div>
               <div className="hub-c-cat">Innovation · Workforce</div>
@@ -282,8 +282,8 @@ export default function NapaServeHub() {
               <Link to="/news" className="hub-sm-link">Napa Valley Features</Link>
               <Link to="/archive" className="hub-sm-link">NVF Archive Search</Link>
               <Link to="/archive" className="hub-sm-link">Series index</Link>
-              <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link">Sonoma Co. Features ↗</a>
-              <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link">Lake Co. Features ↗</a>
+              <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link" aria-label="Sonoma Co. Features, opens in new tab">Sonoma Co. Features ↗</a>
+              <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link" aria-label="Lake Co. Features, opens in new tab">Lake Co. Features ↗</a>
             </div>
             <div>
               <div className="hub-sm-head">Community</div>
@@ -303,12 +303,12 @@ export default function NapaServeHub() {
           <div className="hub-four" style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid var(--rule)", alignItems: "start" }}>
             <div>
               <div className="hub-col-lbl">Follow</div>
-              <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8C10.8 8.4 7.8 4.2 5.4 2.4 3.6 1.2 2.4 2.4 2.4 4.2c0 1.2.6 5.4.9 6.6.9 3.3 4.2 4.2 7.2 3.6-3 .6-6 1.8-6.6 5.4-.3 1.8.6 3.6 2.4 3.6 3 0 5.7-3.6 5.7-3.6s2.7 3.6 5.7 3.6c1.8 0 2.7-1.8 2.4-3.6-.6-3.6-3.6-4.8-6.6-5.4 3 .6 6.3-.3 7.2-3.6.3-1.2.9-5.4.9-6.6 0-1.8-1.2-3-3-1.8C16.2 4.2 13.2 8.4 12 10.8z"/></svg>
+              <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }} aria-label="Bluesky, opens in new tab">
+                <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8C10.8 8.4 7.8 4.2 5.4 2.4 3.6 1.2 2.4 2.4 2.4 4.2c0 1.2.6 5.4.9 6.6.9 3.3 4.2 4.2 7.2 3.6-3 .6-6 1.8-6.6 5.4-.3 1.8.6 3.6 2.4 3.6 3 0 5.7-3.6 5.7-3.6s2.7 3.6 5.7 3.6c1.8 0 2.7-1.8 2.4-3.6-.6-3.6-3.6-4.8-6.6-5.4 3 .6 6.3-.3 7.2-3.6.3-1.2.9-5.4.9-6.6 0-1.8-1.2-3-3-1.8C16.2 4.2 13.2 8.4 12 10.8z"/></svg>
                 Bluesky ↗
               </a>
-              <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.5H2V8h20V5.5zM2 10.5V21l10-5.5 10 5.5V10.5H2zM22 2H2v2h20V2z"/></svg>
+              <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }} aria-label="Substack, opens in new tab">
+                <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.5H2V8h20V5.5zM2 10.5V21l10-5.5 10 5.5V10.5H2zM22 2H2v2h20V2z"/></svg>
                 Substack ↗
               </a>
             </div>
@@ -317,8 +317,8 @@ export default function NapaServeHub() {
               <div className="hub-sub-hed">Stay informed on Napa County.</div>
               <div className="hub-sub-dek">Original reporting, economic updates and civic intelligence from Napa Valley Features — delivered when it matters.</div>
               <div className="hub-sub-fields">
-                <input className="hub-sub-in" type="text" placeholder="Your name" value={subName} onChange={e => setSubName(e.target.value)} style={{ marginBottom: 6 }} />
-                <input className="hub-sub-in" type="email" placeholder="Your email address" value={email} onChange={e => setEmail(e.target.value)} />
+                <input className="hub-sub-in" type="text" placeholder="Your name" aria-label="Your name" value={subName} onChange={e => setSubName(e.target.value)} style={{ marginBottom: 6 }} />
+                <input className="hub-sub-in" type="email" placeholder="Your email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} />
                 <button className="hub-sub-btn" disabled={subStatus === "loading"} onClick={async () => {
                   setSubStatus("loading");
                   try {

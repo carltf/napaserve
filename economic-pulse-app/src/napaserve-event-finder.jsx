@@ -368,7 +368,7 @@ export default function EventFinder() {
       <Nav />
 
       {/* Header */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px 0" }}>
+      <div id="main-content" style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px 0" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
           <div style={{ width: 6, height: 6, background: "#8B5E3C", borderRadius: "50%" }} />
           <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: "#8B5E3C", textTransform: "uppercase" }}>NapaServe</span>
@@ -409,7 +409,7 @@ export default function EventFinder() {
                     </div>
                     {ev.category && <div style={{ fontSize: 14, color: "#8B7355", textTransform: "capitalize", marginBottom: 8 }}>{ev.category.replace(/_/g, " ")}</div>}
                     {(ev.website_url || ev.ticket_url) && (
-                      <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontSize: 11, fontWeight: 600, color: "#8B5E3C", textDecoration: "none", border: "1px solid rgba(139,105,20,0.25)", padding: "5px 12px", borderRadius: 4 }}>
+                      <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" aria-label={`${ev.title}, opens in new tab`} style={{ display: "inline-block", fontSize: 11, fontWeight: 600, color: "#8B5E3C", textDecoration: "none", border: "1px solid rgba(139,105,20,0.25)", padding: "5px 12px", borderRadius: 4 }}>
                         {ev.ticket_url ? "Get Tickets ↗" : "More Info ↗"}
                       </a>
                     )}
@@ -437,7 +437,7 @@ export default function EventFinder() {
                     </div>
                   );
                   return url
-                    ? <a key={ev.id || i} href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", display: "block" }}>{card}</a>
+                    ? <a key={ev.id || i} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${ev.title}, opens in new tab`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>{card}</a>
                     : <div key={ev.id || i}>{card}</div>;
                 })}
               </div>
@@ -464,23 +464,23 @@ export default function EventFinder() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, marginBottom: 18 }}>
               <div>
                 <label style={labelBase}>Town</label>
-                <select value={town} onChange={e => setTown(e.target.value)} style={{ ...inputBase, appearance: "none", cursor: "pointer" }}>
+                <select aria-label="Filter by town" value={town} onChange={e => setTown(e.target.value)} style={{ ...inputBase, appearance: "none", cursor: "pointer" }}>
                   {TOWNS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
               <div>
                 <label style={labelBase}>Type</label>
-                <select value={type} onChange={e => setType(e.target.value)} style={{ ...inputBase, appearance: "none", cursor: "pointer" }}>
+                <select aria-label="Filter by event type" value={type} onChange={e => setType(e.target.value)} style={{ ...inputBase, appearance: "none", cursor: "pointer" }}>
                   {CATEGORIES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
               <div>
                 <label style={labelBase}>From</label>
-                <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setActiveQuick(null); }} style={{ ...inputBase, fontFamily: "'JetBrains Mono',monospace" }} />
+                <input type="date" aria-label="Start date" value={startDate} onChange={e => { setStartDate(e.target.value); setActiveQuick(null); }} style={{ ...inputBase, fontFamily: "'JetBrains Mono',monospace" }} />
               </div>
               <div>
                 <label style={labelBase}>To</label>
-                <input type="date" value={endDate} onChange={e => { setEndDate(e.target.value); setActiveQuick(null); }} style={{ ...inputBase, fontFamily: "'JetBrains Mono',monospace" }} />
+                <input type="date" aria-label="End date" value={endDate} onChange={e => { setEndDate(e.target.value); setActiveQuick(null); }} style={{ ...inputBase, fontFamily: "'JetBrains Mono',monospace" }} />
               </div>
             </div>
 
@@ -518,7 +518,7 @@ export default function EventFinder() {
                   {urls.length > 0 && (
                     <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
                       {urls.map((url, j) => (
-                        <a key={j} href={url} target="_blank" rel="noopener noreferrer" style={{
+                        <a key={j} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${ev.title} link, opens in new tab`} style={{
                           display: "inline-flex", alignItems: "center", gap: 6,
                           padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
                           background: j === 0 ? "#2C1810" : "transparent",
@@ -527,7 +527,7 @@ export default function EventFinder() {
                           borderRadius: 6, textDecoration: "none", transition: "all 0.2s",
                         }}>
                           {linkLabel(url)}
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none">
                             <path d="M4 1.5H1.5V10.5H10.5V8" stroke={j === 0 ? "#F5F0E8" : "#8B5E3C"} strokeWidth="1.2" strokeLinecap="round"/>
                             <path d="M7 1.5H10.5V5" stroke={j === 0 ? "#F5F0E8" : "#8B5E3C"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M10.5 1.5L5.5 6.5" stroke={j === 0 ? "#F5F0E8" : "#8B5E3C"} strokeWidth="1.2" strokeLinecap="round"/>

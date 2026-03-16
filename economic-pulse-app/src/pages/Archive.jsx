@@ -322,6 +322,7 @@ function ChunkCard({ chunk }) {
           href={chunk.substack_url}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Read full article, opens in new tab"
           style={styles.chunkLink}
           onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
           onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
@@ -435,7 +436,7 @@ export default function Archive() {
   return (
     <div style={styles.page}>
       <Nav />
-      <div style={styles.hero}>
+      <div id="main-content" style={styles.hero}>
         <div style={styles.eyebrow}>Napa Valley Features</div>
         <h1 style={styles.headline}>
           Search the Archive
@@ -451,6 +452,7 @@ export default function Archive() {
               ref={inputRef}
               style={styles.input}
               type="text"
+              aria-label="Search the NVF archive"
               placeholder="Ask a question or enter keywords…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

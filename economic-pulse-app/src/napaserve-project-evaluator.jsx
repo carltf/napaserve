@@ -444,7 +444,7 @@ export default function ProjectEvaluator() {
       {/* NAV */}
       <Nav />
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px 60px" }}>
+      <div id="main-content" style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px 60px" }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--live)", display: "inline-block" }} />
           NapaServe <span style={{ color: "var(--rule)" }}>·</span> Napa County
@@ -468,8 +468,8 @@ export default function ProjectEvaluator() {
           <div>
             <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", padding: 20, marginBottom: 14 }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 12 }}>Project Details</div>
-              <input value={projName} onChange={e => setProjName(e.target.value)} placeholder="Project name..." style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid var(--rule)", color: "var(--ink2)", fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 19, padding: "6px 0", outline: "none", marginBottom: 12, boxSizing: "border-box" }} />
-              <textarea value={projDesc} onChange={e => setProjDesc(e.target.value)} placeholder="Brief description of the project or proposal..." style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink2)", fontFamily: "'Source Sans 3',sans-serif", fontSize: 13, padding: "10px 12px", outline: "none", resize: "vertical", minHeight: 72, lineHeight: 1.6, boxSizing: "border-box" }} />
+              <input aria-label="Project name" value={projName} onChange={e => setProjName(e.target.value)} placeholder="Project name..." style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid var(--rule)", color: "var(--ink2)", fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 19, padding: "6px 0", outline: "none", marginBottom: 12, boxSizing: "border-box" }} />
+              <textarea aria-label="Project description" value={projDesc} onChange={e => setProjDesc(e.target.value)} placeholder="Brief description of the project or proposal..." style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--rule)", color: "var(--ink2)", fontFamily: "'Source Sans 3',sans-serif", fontSize: 13, padding: "10px 12px", outline: "none", resize: "vertical", minHeight: 72, lineHeight: 1.6, boxSizing: "border-box" }} />
             </div>
 
             <div style={{ background: "var(--bg2)", border: "1px solid var(--rule)", padding: "14px 18px", marginBottom: 14 }}>
@@ -632,7 +632,7 @@ export default function ProjectEvaluator() {
                           <div style={{ width: 3, height: 3, background: "var(--accent)", borderRadius: "50%", flexShrink: 0, marginTop: 7 }} />
                           <div style={{ fontSize: 12, lineHeight: 1.5, fontFamily: "'Source Sans 3',sans-serif" }}>
                             {url
-                              ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>{s.title}</a>
+                              ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${s.title}, opens in new tab`} style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>{s.title}</a>
                               : <span style={{ color: "var(--ink2)", fontWeight: 600 }}>{s.title}</span>
                             }
                             {date && <span style={{ color: "var(--dim)", marginLeft: 6, fontSize: 11 }}>{date}</span>}

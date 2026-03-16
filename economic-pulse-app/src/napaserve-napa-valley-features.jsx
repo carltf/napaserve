@@ -92,7 +92,7 @@ function NewsSourceBar() {
         <div style={{ width: 1, height: 16, background: "rgba(44,24,16,0.15)", flexShrink: 0 }} />
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1 }}>
           {LOCAL_NEWS_LINKS.map((src, i) => (
-            <a key={i} href={src.url} target="_blank" rel="noopener noreferrer" style={{
+            <a key={i} href={src.url} target="_blank" rel="noopener noreferrer" aria-label={`${src.name}, opens in new tab`} style={{
               fontSize: 11, fontWeight: 600, color: src.color, textDecoration: "none",
               padding: "4px 10px", background: "transparent",
               border: "1px solid rgba(44,24,16,0.12)", borderRadius: 20,
@@ -213,7 +213,7 @@ export default function NapaValleyFeatures() {
   const filtered = category === "all" ? posts : posts.filter(p => p.categories.includes(category));
 
   const ArticleCard = ({ post }) => (
-    <a href={post.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block" }}>
+    <a href={post.link} target="_blank" rel="noopener noreferrer" aria-label={`${post.title}, opens in new tab`} style={{ textDecoration: "none", display: "block" }}>
       <div style={{
         background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.12)",
         borderRadius: 10, overflow: "hidden", transition: "border-color 0.2s, transform 0.2s",
@@ -259,7 +259,7 @@ export default function NapaValleyFeatures() {
       {/* Local news ticker — coming soon via Cloudflare Worker */}
 
       {/* Header */}
-      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px 0" }}>
+      <div id="main-content" style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px 0" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
           <div style={{ width: 5, height: 5, background: "#4A7A5A", borderRadius: "50%" }} />
           <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: "#8B7355", textTransform: "uppercase" }}>NapaServe</span>
@@ -271,14 +271,14 @@ export default function NapaValleyFeatures() {
               Stories and analysis about the issues shaping Napa County — from Napa Valley Features
             </p>
           </div>
-          <a href="https://napavalleyfocus.substack.com/account?utm_medium=web&utm_source=napaserve&utm_content=subscribe" target="_blank" rel="noopener noreferrer" style={{
+          <a href="https://napavalleyfocus.substack.com/account?utm_medium=web&utm_source=napaserve&utm_content=subscribe" target="_blank" rel="noopener noreferrer" aria-label="Subscribe on Substack, opens in new tab" style={{
             display: "inline-flex", alignItems: "center", gap: 6,
             padding: "10px 20px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
             background: "transparent", border: "1px solid rgba(139,105,20,0.25)",
             color: "#8B5E3C", borderRadius: 8, textDecoration: "none", marginTop: 4,
           }}>
             Subscribe
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M4 1.5H1.5V10.5H10.5V8" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/>
               <path d="M7 1.5H10.5V5" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M10.5 1.5L5.5 6.5" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/>
@@ -378,7 +378,7 @@ export default function NapaValleyFeatures() {
                         );
                       })}
                       <div style={{ fontSize: 14, color: "#8B7355", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
-                        {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+                        {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${poll.post_title}, opens in new tab`} style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                       </div>
                     </div>
                   );
@@ -416,8 +416,8 @@ export default function NapaValleyFeatures() {
         <div style={{ borderTop: "1px solid rgba(44,24,16,0.12)", padding: "20px 0 0", marginTop: 32, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <span style={{ fontSize: 14, color: "#8B7355" }}>Napa Valley Features · Stories from Napa Valley Features</span>
           <div style={{ display: "flex", gap: 12 }}>
-            <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none" }}>Substack ↗</a>
-            <a href="https://www.napavalleyfeatures.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none" }}>napavalleyfeatures.com ↗</a>
+            <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" aria-label="Substack, opens in new tab" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none" }}>Substack ↗</a>
+            <a href="https://www.napavalleyfeatures.com" target="_blank" rel="noopener noreferrer" aria-label="napavalleyfeatures.com, opens in new tab" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none" }}>napavalleyfeatures.com ↗</a>
           </div>
         </div>
       </div>

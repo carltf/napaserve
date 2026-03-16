@@ -65,7 +65,7 @@ export default function AboutNapaServe() {
       <div style={{ width: 5, flexShrink: 0, background: T.accent, borderRadius: 2, marginTop: 4 }} />
       <div>
         {isExternal
-          ? <a href={route} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.accent, textDecoration: "none" }}>{name} ↗</a>
+          ? <a href={route} target="_blank" rel="noopener noreferrer" aria-label={`${name}, opens in new tab`} style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.accent, textDecoration: "none" }}>{name} ↗</a>
           : <Link to={route} style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.accent, textDecoration: "none" }}>{name}</Link>
         }
         <p style={{ fontSize: 14, color: T.muted, margin: "4px 0 0", lineHeight: 1.6, fontFamily: "'Source Sans 3',sans-serif" }}>{desc}</p>
@@ -79,7 +79,7 @@ export default function AboutNapaServe() {
 
       <Nav />
 
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "60px 24px 80px" }}>
+      <div id="main-content" style={{ maxWidth: 800, margin: "0 auto", padding: "60px 24px 80px" }}>
 
         {/* PAGE HEADER */}
         <div style={{ marginBottom: 0 }}>
@@ -102,7 +102,7 @@ export default function AboutNapaServe() {
             NapaServe is a project of the <strong style={{ color: T.ink2 }}>Valley Works Collaborative</strong>, a regional organization focused on expanding Napa County's economic base beyond wine and hospitality. It's built on the belief that good decisions require good information — and that most communities don't have enough of either in one place.
           </P>
           <P>
-            The platform combines three things: weekly economic data pulled directly from federal and state sources, nearly three years of original local journalism from <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa Valley Features</a> and AI tools that help you work with all of it. The data pipeline runs every Monday. The journalism archive is searchable by semantic similarity — meaning you can ask it a question, not just a keyword.
+            The platform combines three things: weekly economic data pulled directly from federal and state sources, nearly three years of original local journalism from <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noopener noreferrer" aria-label="Napa Valley Features, opens in new tab" style={{ color: T.accent }}>Napa Valley Features</a> and AI tools that help you work with all of it. The data pipeline runs every Monday. The journalism archive is searchable by semantic similarity — meaning you can ask it a question, not just a keyword.
           </P>
           <P>
             This is not a government website. It is not affiliated with Napa County, the City of Napa, or any public agency. It is a community project, maintained by a small team, built with the tools available to us.

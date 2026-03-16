@@ -84,7 +84,7 @@ export default function ValleyWorksPage() {
       <Nav />
 
       {/* Hero */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "36px 24px 0", textAlign: "center" }}>
+      <div id="main-content" style={{ maxWidth: 900, margin: "0 auto", padding: "36px 24px 0", textAlign: "center" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
           <div style={{ width: 8, height: 8, background: "#C4A050", borderRadius: "50%" }} />
           <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 4, color: "#8B5E3C", textTransform: "uppercase" }}>Valley Works Collaborative</span>
@@ -195,8 +195,8 @@ export default function ValleyWorksPage() {
             <div>
               <div style={{ fontSize: 12, fontWeight: 600, color: "#8B5E3C", marginBottom: 4 }}>Follow</div>
               <div style={{ display: "flex", gap: 12 }}>
-                <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#8B5E3C", textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Substack ↗</a>
-                <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#8B5E3C", textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Bluesky ↗</a>
+                <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" aria-label="Substack, opens in new tab" style={{ fontSize: 13, color: "#8B5E3C", textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Substack ↗</a>
+                <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer" aria-label="Bluesky, opens in new tab" style={{ fontSize: 13, color: "#8B5E3C", textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Bluesky ↗</a>
               </div>
             </div>
           </div>
