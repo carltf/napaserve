@@ -1,7 +1,13 @@
 # .github/workflows/poll_pipeline.yml
 #
-# Runs every Monday at 9:00 AM Pacific (16:00 UTC)
-# Extracts NVF Substack poll results and upserts to Supabase.
+# Runs every Monday at 9:00 AM Pacific (16:00 UTC).
+#
+# This workflow handles CLASSIFICATION ONLY — it finds polls in Supabase
+# that have no theme and classifies them via Claude Haiku.
+#
+# Poll EXTRACTION (poll_extraction.py) must be run manually from the local
+# machine where the iCloud Substack HTML export lives:
+#   python pipeline/poll_extraction.py --cookie "substack.sid=..." --skip-existing
 
 name: NVF Poll Pipeline
 
@@ -14,9 +20,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  extract-polls:
+  classify-polls:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repo
@@ -30,29 +36,21 @@ jobs:
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
 
-      - name: Run poll extraction
-        id: extract
+      - name: Classify unthemed polls
+        id: classify
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set +e
-          OUTPUT=$(python pipeline/poll_extraction.py \
-            --cookie "substack.sid=${{ secrets.SUBSTACK_SID }}" \
-            --skip-existing 2>&1)
+          OUTPUT=$(python pipeline/classify_polls.py 2>&1)
           EXIT_CODE=$?
           echo "$OUTPUT"
 
-          # Detect 401 cookie expiry
-          if echo "$OUTPUT" | grep -qi "401\|unauthorized\|cookie.*expir"; then
-            echo "cookie_expired=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "cookie_expired=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          # Extract new poll count from "Upserted poll" log lines
-          NEW_COUNT=$(echo "$OUTPUT" | grep -c "Upserted poll")
-          echo "new_polls=$NEW_COUNT" >> "$GITHUB_OUTPUT"
+          # Extract classified count from summary line
+          CLASSIFIED=$(echo "$OUTPUT" | grep -oP '(?<=SUMMARY: )\d+(?= classified)')
+          echo "classified=${CLASSIFIED:-0}" >> "$GITHUB_OUTPUT"
 
           # Check if first Monday of month (day 1-7)
           DAY=$(date -u +%d)
@@ -64,62 +62,23 @@ jobs:
 
           exit $EXIT_CODE
 
-      - name: Slack — cookie expired
-        if: failure() && steps.extract.outputs.cookie_expired == 'true'
-        run: |
-          read -r -d '' MSG << 'EOMSG'
-          ⚠️ NVF poll pipeline: Substack cookie expired. To fix:
-          1. Open Safari → go to napavalleyfocus.substack.com (must be logged in as publisher)
-          2. Right-click anywhere → Inspect Element
-          3. Click Storage tab → Cookies → napavalleyfocus.substack.com
-          4. Find row named substack.sid → click it → copy the full Value
-          5. Open Terminal
-          6. Run: gh secret set SUBSTACK_SID --repo carltf/napaserve
-          7. Paste the value when prompted → press Enter
-          8. Pipeline will resume automatically next Monday
-          EOMSG
-          if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
-            read -r -d '' REMINDER << 'EOREMINDER'
-
-          🔔 Monthly maintenance reminder:
-          STEP 1 — Refresh Substack export:
-          1. Go to napavalleyfocus.substack.com → click your profile → Settings → Exports
-          2. Click Request new export → wait for email → download the zip
-          3. Unzip and replace the posts folder at: ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
-
-          STEP 2 — Refresh cookie (if needed):
-          1. Open Safari → napavalleyfocus.substack.com (logged in as publisher)
-          2. Right-click → Inspect Element → Storage → Cookies → napavalleyfocus.substack.com
-          3. Find substack.sid → copy the Value
-          4. Terminal: gh secret set SUBSTACK_SID --repo carltf/napaserve
-          5. Paste value → Enter
-          EOREMINDER
-            MSG="$MSG$REMINDER"
-          fi
-          PAYLOAD=$(jq -n --arg text "$MSG" '{text: $text}')
-          curl -sS -X POST -H 'Content-type: application/json' \
-            --data "$PAYLOAD" \
-            "${{ secrets.SLACK_WEBHOOK_URL }}"
-
       - name: Slack — success
         if: success()
         run: |
-          MSG="✅ NVF poll pipeline complete — ${{ steps.extract.outputs.new_polls }} new polls added"
-          if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
+          MSG="✅ NVF poll classification complete — ${{ steps.classify.outputs.classified }} polls themed"
+          if [ "${{ steps.classify.outputs.first_monday }}" = "true" ]; then
             read -r -d '' REMINDER << 'EOREMINDER'
 
           🔔 Monthly maintenance reminder:
-          STEP 1 — Refresh Substack export:
-          1. Go to napavalleyfocus.substack.com → click your profile → Settings → Exports
-          2. Click Request new export → wait for email → download the zip
-          3. Unzip and replace the posts folder at: ~/Library/Mobile Documents/com~apple~CloudDocs/Valley Works Collabrative/NapaServe/Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts/
+          STEP 1 — Run poll extraction locally:
+          1. Make sure iCloud Drive is synced
+          2. Refresh Substack export if needed (Settings → Exports → Request new export)
+          3. Run: python pipeline/poll_extraction.py --cookie "substack.sid=..." --skip-existing
 
           STEP 2 — Refresh cookie (if needed):
           1. Open Safari → napavalleyfocus.substack.com (logged in as publisher)
           2. Right-click → Inspect Element → Storage → Cookies → napavalleyfocus.substack.com
           3. Find substack.sid → copy the Value
-          4. Terminal: gh secret set SUBSTACK_SID --repo carltf/napaserve
-          5. Paste value → Enter
           EOREMINDER
             MSG="$MSG$REMINDER"
           fi
@@ -128,9 +87,9 @@ jobs:
             --data "$PAYLOAD" \
             "${{ secrets.SLACK_WEBHOOK_URL }}"
 
-      - name: Slack — other failure
-        if: failure() && steps.extract.outputs.cookie_expired != 'true'
+      - name: Slack — failure
+        if: failure()
         run: |
           curl -sS -X POST -H 'Content-type: application/json' \
-            --data '{"text":"❌ NVF poll pipeline failed — check GitHub Actions logs"}' \
+            --data '{"text":"❌ NVF poll classification failed — check GitHub Actions logs"}' \
             "${{ secrets.SLACK_WEBHOOK_URL }}"
