@@ -1,0 +1,94 @@
+# .github/workflows/poll_pipeline.yml
+#
+# Runs every Monday at 9:00 AM Pacific (16:00 UTC)
+# Extracts NVF Substack poll results and upserts to Supabase.
+
+name: NVF Poll Pipeline
+
+on:
+  schedule:
+    # 9 AM PT on Mondays (UTC 16:00, or 17:00 during PST)
+    - cron: "0 16 * * 1"
+
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  extract-polls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Run poll extraction
+        id: extract
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          set +e
+          OUTPUT=$(python pipeline/poll_extraction.py \
+            --cookie "substack.sid=${{ secrets.SUBSTACK_SID }}" \
+            --skip-existing 2>&1)
+          EXIT_CODE=$?
+          echo "$OUTPUT"
+
+          # Detect 401 cookie expiry
+          if echo "$OUTPUT" | grep -qi "401\|unauthorized\|cookie.*expir"; then
+            echo "cookie_expired=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "cookie_expired=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Extract new poll count from "Upserted poll" log lines
+          NEW_COUNT=$(echo "$OUTPUT" | grep -c "Upserted poll")
+          echo "new_polls=$NEW_COUNT" >> "$GITHUB_OUTPUT"
+
+          # Check if first Monday of month (day 1-7)
+          DAY=$(date -u +%d)
+          if [ "$DAY" -le 7 ]; then
+            echo "first_monday=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "first_monday=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          exit $EXIT_CODE
+
+      - name: Slack — cookie expired
+        if: failure() && steps.extract.outputs.cookie_expired == 'true'
+        run: |
+          MSG="⚠️ NVF poll pipeline: substack.sid cookie expired — needs refresh"
+          if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
+            MSG="$MSG\n🔔 Monthly reminder: export fresh Substack data and refresh substack.sid cookie"
+          fi
+          curl -sS -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"$MSG\"}" \
+            "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+      - name: Slack — success
+        if: success()
+        run: |
+          MSG="✅ NVF poll pipeline complete — ${{ steps.extract.outputs.new_polls }} new polls added"
+          if [ "${{ steps.extract.outputs.first_monday }}" = "true" ]; then
+            MSG="$MSG\n🔔 Monthly reminder: export fresh Substack data and refresh substack.sid cookie"
+          fi
+          curl -sS -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"$MSG\"}" \
+            "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+      - name: Slack — other failure
+        if: failure() && steps.extract.outputs.cookie_expired != 'true'
+        run: |
+          curl -sS -X POST -H 'Content-type: application/json' \
+            --data '{"text":"❌ NVF poll pipeline failed — check GitHub Actions logs"}' \
+            "${{ secrets.SLACK_WEBHOOK_URL }}"
