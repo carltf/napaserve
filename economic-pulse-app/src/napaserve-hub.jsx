@@ -11,35 +11,20 @@ export default function NapaServeHub() {
   const toggleDrawer = () => setDrawerOpen(o => !o);
 
   return (
-    <div style={{ background: "var(--bg)", minHeight: "100vh", fontFamily: "'Source Sans 3', sans-serif", color: "var(--ink2)" }}>
+    <div style={{ background: "#F5F0E8", minHeight: "100vh", fontFamily: "'Source Sans 3', sans-serif", color: "#2C1810" }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
       <style>{`
         :root {
           --bg:#F5F0E8; --bg2:#EDE8DE; --ink:#1A0E08; --ink2:#2C1810;
-          --accent:#8B5E3C; --gold:#C4A050; --muted:#7A6A50; --dim:#8B7355;
+          --accent:#8B5E3C; --muted:#7A6A50; --dim:#8B7355;
           --rule:rgba(44,24,16,0.12); --live:#4A7A5A;
-          --icon:#8B5E3C; --pdot:#C4B09A;
-          --success:#2E7D32; --error:#C62828;
-          --chip-s-color:#8B5E3C; --chip-s-border:rgba(139,94,60,0.25); --chip-s-bg:rgba(139,94,60,0.05);
-          --shadow:rgba(44,24,16,0.08);
-        }
-        @media(prefers-color-scheme:dark){
-          :root {
-            --bg:#0F0A06; --bg2:#1C120C; --ink:#F5E6C8; --ink2:#F5E6C8;
-            --accent:#C4A050; --gold:#C4A050; --muted:#B8A882; --dim:#9A8A6E;
-            --rule:#2A1A0E; --live:#6AAF7A;
-            --icon:#C4A050; --pdot:#6A5A3E;
-            --success:#6AAF7A; --error:#E07050;
-            --chip-s-color:#C4A050; --chip-s-border:rgba(196,160,80,0.35); --chip-s-bg:rgba(196,160,80,0.1);
-            --shadow:rgba(0,0,0,0.3);
-          }
         }
         .hub-nav{background:var(--bg);border-bottom:1px solid var(--rule);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
         .hub-wordmark{font-family:'Libre Baskerville',Georgia,serif;font-size:19px;font-weight:700;color:var(--ink2);}
         .hub-nav-tag{font-size:10px;color:var(--dim);letter-spacing:.05em;margin-left:14px;}
         .hub-hbtn{background:none;border:1px solid var(--rule);cursor:pointer;padding:7px 10px;display:flex;flex-direction:column;gap:4px;}
         .hub-hb{display:block;width:18px;height:1.5px;background:var(--muted);transition:transform .2s,opacity .2s;}
-        .hub-drawer{display:none;position:absolute;top:52px;right:0;width:230px;background:var(--bg);border:1px solid var(--rule);border-top:none;box-shadow:0 8px 24px var(--shadow);z-index:30;}
+        .hub-drawer{display:none;position:absolute;top:52px;right:0;width:230px;background:var(--bg);border:1px solid var(--rule);border-top:none;box-shadow:0 8px 24px rgba(44,24,16,0.08);z-index:30;}
         .hub-drawer.open{display:block;}
         .hub-dg{padding:10px 0;border-bottom:1px solid var(--rule);}
         .hub-dg:last-child{border-bottom:none;}
@@ -50,7 +35,7 @@ export default function NapaServeHub() {
         .hub-kicker{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
         .hub-pillars{display:flex;align-items:center;flex-wrap:wrap;margin-bottom:22px;}
         .hub-pillar{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
-        .hub-pdot{margin:0 12px;color:var(--pdot);}
+        .hub-pdot{margin:0 12px;color:#C4B09A;}
         .hub-hed{font-family:'Libre Baskerville',Georgia,serif;font-size:clamp(30px,4.5vw,50px);font-weight:700;line-height:1.08;color:var(--ink2);letter-spacing:-.015em;margin-bottom:18px;}
         .hub-hed em{font-style:italic;color:var(--accent);}
         .hub-dek{font-size:17px;line-height:1.8;color:var(--muted);}
@@ -79,7 +64,7 @@ export default function NapaServeHub() {
         .hub-chips-label{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
         .hub-chips{display:flex;flex-wrap:wrap;gap:5px;}
         .hub-chip{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule);padding:4px 9px;cursor:pointer;text-decoration:none;}
-        .hub-chip.s{color:var(--chip-s-color);border-color:var(--chip-s-border);background:var(--chip-s-bg);}
+        .hub-chip.s{color:var(--accent);border-color:rgba(139,94,60,0.25);background:rgba(139,94,60,0.05);}
         .hub-footer{padding:48px 28px 28px;background:var(--bg);}
         .hub-f-inner{max-width:1160px;margin:0 auto;}
         .hub-f-wm{font-family:'Libre Baskerville',Georgia,serif;font-size:20px;font-weight:700;color:var(--ink2);margin-bottom:4px;}
@@ -175,8 +160,8 @@ export default function NapaServeHub() {
         <div className="hub-grid">
 <Link to="/news" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14, color: "var(--icon)" }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="4" y="5" width="32" height="30" rx="2" stroke="currentColor" strokeWidth="1.2"/><line x1="10" y1="13" x2="30" y2="13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><line x1="10" y1="19" x2="30" y2="19" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity=".6"/><line x1="10" y1="24" x2="24" y2="24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="10" y1="29" x2="20" y2="29" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity=".3"/></svg>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="4" y="5" width="32" height="30" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="10" y1="13" x2="30" y2="13" stroke="#8B5E3C" strokeWidth="1.5" strokeLinecap="round"/><line x1="10" y1="19" x2="30" y2="19" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".6"/><line x1="10" y1="24" x2="24" y2="24" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="10" y1="29" x2="20" y2="29" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".3"/></svg>
             </div>
             <div className="hub-c-cat">News</div>
             <div className="hub-c-name">Napa Valley Features</div>
@@ -185,8 +170,8 @@ export default function NapaServeHub() {
           </Link>
           <Link to="/events" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14, color: "var(--icon)" }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="18" r="10" stroke="currentColor" strokeWidth="1.2"/><path d="M20 28 L20 38" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="18" r="3.5" fill="currentColor"/><line x1="14" y1="38" x2="26" y2="38" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="18" r="10" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M20 28 L20 38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="18" r="3.5" fill="#8B5E3C"/><line x1="14" y1="38" x2="26" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
             </div>
             <div className="hub-c-cat">Community</div>
             <div className="hub-c-name">Event Finder</div>
@@ -195,8 +180,8 @@ export default function NapaServeHub() {
           </Link>
 <Link to="/dashboard" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14, color: "var(--icon)" }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="currentColor" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="currentColor" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="currentColor" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="currentColor"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="currentColor" strokeWidth="1"/></svg>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
             </div>
             <div className="hub-c-cat">Economy</div>
             <div className="hub-c-name">Community Pulse</div>
@@ -205,8 +190,8 @@ export default function NapaServeHub() {
           </Link>
           <Link to="/archive" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14, color: "var(--icon)" }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="17" cy="17" r="11" stroke="currentColor" strokeWidth="1.2"/><line x1="25" y1="25" x2="37" y2="37" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><line x1="11" y1="17" x2="23" y2="17" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><line x1="17" y1="11" x2="17" y2="23" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/></svg>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="17" cy="17" r="11" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="25" y1="25" x2="37" y2="37" stroke="#8B5E3C" strokeWidth="2" strokeLinecap="round"/><line x1="11" y1="17" x2="23" y2="17" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/><line x1="17" y1="11" x2="17" y2="23" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/></svg>
             </div>
             <div className="hub-c-cat">Archive · Journalism</div>
             <div className="hub-c-name">NVF Archive Search</div>
@@ -215,8 +200,8 @@ export default function NapaServeHub() {
           </Link>
           <a href="/agent.html" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14, color: "var(--icon)" }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="1" strokeDasharray="3 2.2"/><circle cx="20" cy="20" r="10" stroke="currentColor" strokeWidth="1"/><circle cx="20" cy="20" r="3" fill="currentColor"/><line x1="20" y1="2" x2="20" y2="8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/><line x1="20" y1="32" x2="20" y2="38" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/><line x1="2" y1="20" x2="8" y2="20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/><line x1="32" y1="20" x2="38" y2="20" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="3 2.2"/><circle cx="20" cy="20" r="10" stroke="#8B5E3C" strokeWidth="1"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="2" x2="20" y2="8" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="20" y1="32" x2="20" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="2" y1="20" x2="8" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><line x1="32" y1="20" x2="38" y2="20" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
             </div>
             <div className="hub-c-cat">AI · Civic</div>
             <div className="hub-c-name">Research Agent</div>
@@ -225,8 +210,8 @@ export default function NapaServeHub() {
           </a>
           <Link to="/evaluator" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14, color: "var(--icon)" }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><polygon points="20,3 37,12 37,28 20,37 3,28 3,12" stroke="currentColor" strokeWidth="1.2" fill="none"/><polygon points="20,10 30,15.5 30,24.5 20,30 10,24.5 10,15.5" stroke="currentColor" strokeWidth="1" fill="none" opacity=".5"/><circle cx="20" cy="20" r="3" fill="currentColor"/><line x1="20" y1="3" x2="20" y2="10" stroke="currentColor" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="30" y1="15.5" x2="37" y2="12" stroke="currentColor" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="10" y1="15.5" x2="3" y2="12" stroke="currentColor" strokeWidth="1" strokeDasharray="1.5 1.5"/></svg>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><polygon points="20,3 37,12 37,28 20,37 3,28 3,12" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><polygon points="20,10 30,15.5 30,24.5 20,30 10,24.5 10,15.5" stroke="#8B5E3C" strokeWidth="1" fill="none" opacity=".5"/><circle cx="20" cy="20" r="3" fill="#8B5E3C"/><line x1="20" y1="3" x2="20" y2="10" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="30" y1="15.5" x2="37" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/><line x1="10" y1="15.5" x2="3" y2="12" stroke="#8B5E3C" strokeWidth="1" strokeDasharray="1.5 1.5"/></svg>
             </div>
             <div className="hub-c-cat">Civic · Analysis</div>
             <div className="hub-c-name">Project Evaluator</div>
@@ -238,8 +223,8 @@ export default function NapaServeHub() {
         {/* Valley Works */}
         <Link to="/valley-works" className="hub-vw">
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div style={{ flexShrink: 0, width: 40, height: 40, color: "var(--icon)" }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="3" y="14" width="34" height="20" rx="2" stroke="currentColor" strokeWidth="1.2"/><path d="M10 14V10a10 10 0 0 1 20 0v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="24" r="3.5" fill="currentColor" opacity=".6"/><line x1="20" y1="27.5" x2="20" y2="31" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            <div style={{ flexShrink: 0, width: 40, height: 40 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="3" y="14" width="34" height="20" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M10 14V10a10 10 0 0 1 20 0v4" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="24" r="3.5" fill="#8B5E3C" opacity=".6"/><line x1="20" y1="27.5" x2="20" y2="31" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
             </div>
             <div>
               <div className="hub-c-cat">Innovation · Workforce</div>
@@ -349,8 +334,8 @@ export default function NapaServeHub() {
                   } catch { setSubStatus("error"); }
                 }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
               </div>
-              {subStatus === "success" && <div style={{ fontSize: 14, color: "var(--success)", marginTop: 6 }}>Welcome to NapaServe. We'll be in touch.</div>}
-              {subStatus === "error" && <div style={{ fontSize: 14, color: "var(--error)", marginTop: 6 }}>Something went wrong. Email us at napaserve@gmail.com</div>}
+              {subStatus === "success" && <div style={{ fontSize: 14, color: "#2E7D32", marginTop: 6 }}>Welcome to NapaServe. We'll be in touch.</div>}
+              {subStatus === "error" && <div style={{ fontSize: 14, color: "#C62828", marginTop: 6 }}>Something went wrong. Email us at napaserve@gmail.com</div>}
               <div className="hub-sub-note">Join the NapaServe community. No spam, unsubscribe anytime.</div>
             </div>
           </div>
