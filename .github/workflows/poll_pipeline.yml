@@ -2,8 +2,9 @@
 #
 # Runs every Monday at 9:00 AM Pacific (16:00 UTC).
 #
-# This workflow handles CLASSIFICATION ONLY — it finds polls in Supabase
-# that have no theme and classifies them via Claude Haiku.
+# Jobs:
+#   1. classify-polls — finds polls in Supabase with no theme, classifies via Claude Haiku
+#   2. subscriber-digest — posts weekly subscriber summary to Slack
 #
 # Poll EXTRACTION (poll_extraction.py) must be run manually from the local
 # machine where the iCloud Substack HTML export lives:
@@ -93,3 +94,87 @@ jobs:
           curl -sS -X POST -H 'Content-type: application/json' \
             --data '{"text":"❌ NVF poll classification failed — check GitHub Actions logs"}' \
             "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+  subscriber-digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Post subscriber digest to Slack
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          python - <<'PYEOF'
+          import os, json, requests
+          from datetime import datetime, timedelta, timezone
+
+          SUPABASE_URL = os.environ["SUPABASE_URL"]
+          SUPABASE_KEY = os.environ["SUPABASE_KEY"]
+          SLACK_WEBHOOK_URL = os.environ["SLACK_WEBHOOK_URL"]
+
+          headers = {
+              "apikey": SUPABASE_KEY,
+              "Authorization": f"Bearer {SUPABASE_KEY}",
+              "Content-Type": "application/json",
+          }
+
+          # Total subscriber count
+          r = requests.get(
+              f"{SUPABASE_URL}/rest/v1/napaserve_subscribers?select=id",
+              headers={**headers, "Prefer": "count=exact"},
+          )
+          r.raise_for_status()
+          total = int(r.headers.get("content-range", "*/0").split("/")[-1])
+
+          # New signups in the last 7 days
+          week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+          r = requests.get(
+              f"{SUPABASE_URL}/rest/v1/napaserve_subscribers"
+              f"?select=name,email,subscribed_at"
+              f"&subscribed_at=gte.{week_ago}"
+              f"&order=subscribed_at.desc",
+              headers=headers,
+          )
+          r.raise_for_status()
+          new_subs = r.json()
+
+          today = datetime.now(timezone.utc).strftime("%B %d, %Y")
+
+          if new_subs:
+              lines = []
+              for s in new_subs:
+                  name = s.get("name") or "(no name)"
+                  email = s.get("email", "")
+                  sub_date = s.get("subscribed_at", "")[:10]
+                  lines.append(f"- {name} — {email} — {sub_date}")
+              signups_block = "\n".join(lines)
+              msg = (
+                  f"\U0001f4ec NapaServe Weekly Subscribers — {today}\n"
+                  f"New this week: {len(new_subs)}\n"
+                  f"Total subscribers: {total}\n\n"
+                  f"New signups:\n{signups_block}"
+              )
+          else:
+              msg = (
+                  f"\U0001f4ec No new NapaServe subscribers this week. "
+                  f"Total: {total}"
+              )
+
+          r = requests.post(
+              SLACK_WEBHOOK_URL,
+              json={"text": msg},
+              headers={"Content-Type": "application/json"},
+          )
+          r.raise_for_status()
+          print(msg)
+          PYEOF
