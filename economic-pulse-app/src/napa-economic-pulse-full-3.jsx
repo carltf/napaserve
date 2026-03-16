@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from "recharts";
+import PollSearch from "./components/PollSearch";
 
 const SUPABASE_URL = "https://csenpchwxxepdvjebsrt.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ";
@@ -610,6 +611,11 @@ export default function EconomicPulseDashboard(){
           <div style={{marginBottom:20}}>
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(22px,4vw,32px)",fontWeight:700,color:T.ink2,margin:"0 0 6px"}}>Reader Pulse</h2>
             <p style={{fontSize:17,color:T.muted,margin:0}}>Community intelligence — what Napa Valley readers said across three years of local journalism</p>
+          </div>
+
+          <div style={{marginBottom:32}}>
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.dim,marginBottom:12,fontFamily:"'Source Sans 3',sans-serif"}}>Search Polls</div>
+            <PollSearch />
           </div>
 
           {pollLoading ? (
