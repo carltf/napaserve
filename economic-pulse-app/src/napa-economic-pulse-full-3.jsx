@@ -542,7 +542,7 @@ export default function EconomicPulseDashboard(){
         {section==="pulse"&&<>
           <div style={{marginBottom:20}}>
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(22px,4vw,32px)",fontWeight:700,color:T.ink2,margin:"0 0 6px"}}>Reader Pulse</h2>
-            <p style={{fontSize:13,color:T.muted,margin:0}}>Community opinion data from Napa Valley Features reader polls</p>
+            <p style={{fontSize:13,color:T.muted,margin:0}}>Community intelligence — what Napa Valley readers said across three years of local journalism</p>
           </div>
 
           {pollLoading ? (
