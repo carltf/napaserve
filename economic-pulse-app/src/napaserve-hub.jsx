@@ -101,7 +101,7 @@ export default function NapaServeHub() {
         <nav className="hub-nav">
           <div style={{ display: "flex", alignItems: "baseline" }}>
             <div className="hub-wordmark">NapaServe</div>
-            <span className="hub-nav-tag">Civic intelligence · Napa County</span>
+            <span className="hub-nav-tag">Community Intelligence · Napa County</span>
           </div>
           <button className="hub-hbtn" onClick={toggleDrawer} aria-label="Menu">
             <span className="hub-hb" style={{ transform: drawerOpen ? "translateY(5.5px) rotate(45deg)" : "" }} />
