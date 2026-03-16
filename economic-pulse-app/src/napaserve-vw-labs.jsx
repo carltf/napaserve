@@ -3,7 +3,7 @@ import { useState } from "react";
 const T = {
   bg:"#F5F0E8", bg2:"#EDE8DE",
   ink2:"#2C1810", accent:"#8B5E3C", gold:"#C4A050",
-  muted:"#7A6A50", dim:"#A89880",
+  muted:"#7A6A50", dim:"#8B7355",
   rule:"rgba(44,24,16,0.12)",
 };
 
@@ -61,8 +61,9 @@ export default function VWLabsPage() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'Source Sans 3',sans-serif", color: T.ink2 }}>
+    <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'Source Sans 3',sans-serif", color: T.ink2, overflowX: "hidden" }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
+      <style>{`@media(max-width:700px){.vwl-focus{grid-template-columns:1fr 1fr!important;}}`}</style>
       <Nav />
 
       {/* Hero */}
@@ -112,7 +113,7 @@ export default function VWLabsPage() {
         {/* Focus Areas */}
         <div style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Focus Areas</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+          <div className="vwl-focus" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
             {FOCUS.map(f => (
               <div key={f.title} style={{ background: T.bg2, border: `1px solid ${T.rule}`, borderLeft: `3px solid ${T.gold}`, padding: "20px 22px" }}>
                 <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.ink2, margin: "0 0 8px" }}>{f.title}</h3>

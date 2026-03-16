@@ -16,7 +16,7 @@ export default function NapaServeHub() {
       <style>{`
         :root {
           --bg:#F5F0E8; --bg2:#EDE8DE; --ink:#1A0E08; --ink2:#2C1810;
-          --accent:#8B5E3C; --muted:#7A6A50; --dim:#A89880;
+          --accent:#8B5E3C; --muted:#7A6A50; --dim:#8B7355;
           --rule:rgba(44,24,16,0.12); --live:#4A7A5A;
         }
         .hub-nav{background:var(--bg);border-bottom:1px solid var(--rule);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
@@ -92,7 +92,7 @@ export default function NapaServeHub() {
         }
         @media(max-width:450px){
           .hub-grid{grid-template-columns:1fr!important;}
-          .hub-four{grid-template-columns:1fr;}
+          .hub-four{grid-template-columns:1fr 1fr;}
         }
       `}</style>
 

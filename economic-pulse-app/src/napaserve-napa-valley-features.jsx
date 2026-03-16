@@ -133,7 +133,7 @@ export default function NapaValleyFeatures() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -225,7 +225,7 @@ export default function NapaValleyFeatures() {
           </div>
         ) : (
           <div style={{ width: "100%", aspectRatio: "16/9", background: "#EDE8DE", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: 11, color: "#A89880", letterSpacing: 2 }}>NAPA VALLEY FOCUS</span>
+            <span style={{ fontSize: 11, color: "#8B7355", letterSpacing: 2 }}>NAPA VALLEY FOCUS</span>
           </div>
         )}
         <div style={{ padding: "14px 16px 18px", flex: 1, display: "flex", flexDirection: "column" }}>
@@ -241,11 +241,11 @@ export default function NapaValleyFeatures() {
           }}>{post.title}</h3>
           {post.subtitle && (
             <p style={{
-              fontSize: 13, color: "#A89880", lineHeight: 1.5, margin: "0 0 auto",
+              fontSize: 13, color: "#8B7355", lineHeight: 1.5, margin: "0 0 auto",
               display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
             }}>{post.subtitle}</p>
           )}
-          <div style={{ fontSize: 11, color: "#A89880", marginTop: 10 }}>{fmtDate(post.pubDate)}</div>
+          <div style={{ fontSize: 11, color: "#8B7355", marginTop: 10 }}>{fmtDate(post.pubDate)}</div>
         </div>
       </div>
     </a>
@@ -262,12 +262,12 @@ export default function NapaValleyFeatures() {
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 24px 0" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
           <div style={{ width: 5, height: 5, background: "#4A7A5A", borderRadius: "50%" }} />
-          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: "#A89880", textTransform: "uppercase" }}>NapaServe</span>
+          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: "#8B7355", textTransform: "uppercase" }}>NapaServe</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
           <div>
             <h1 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: "clamp(26px,4vw,38px)", fontWeight: 700, color: "#2C1810", margin: "0 0 4px" }}>Napa Valley Features</h1>
-            <p style={{ fontSize: 15, color: "#A89880", margin: "0 0 24px" }}>
+            <p style={{ fontSize: 15, color: "#8B7355", margin: "0 0 24px" }}>
               Stories and analysis about the issues shaping Napa County — from Napa Valley Features
             </p>
           </div>
@@ -310,7 +310,7 @@ export default function NapaValleyFeatures() {
             ].map((s, i) => (
               <div key={i} style={{ flex: 1, minWidth: 120, textAlign: "center", padding: "10px 8px", background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)" }}>
                 <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 22, fontWeight: 700, color: "#C4A050", lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: "#A89880", textTransform: "uppercase", marginTop: 4, fontFamily: "'Source Sans 3',sans-serif" }}>{s.label}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: "#8B7355", textTransform: "uppercase", marginTop: 4, fontFamily: "'Source Sans 3',sans-serif" }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -327,7 +327,7 @@ export default function NapaValleyFeatures() {
           <div style={{ textAlign: "center", padding: "60px 0" }}>
             <div style={{ width: 32, height: 32, border: "3px solid rgba(139,105,20,0.3)", borderTopColor: "#8B5E3C", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-            <p style={{ color: "#A89880", fontSize: 14 }}>Loading stories...</p>
+            <p style={{ color: "#8B7355", fontSize: 14 }}>Loading stories...</p>
           </div>
         )}
 
@@ -350,7 +350,7 @@ export default function NapaValleyFeatures() {
           {/* Reader Demographics poll interstitial */}
           {readerPolls.length > 0 && (
             <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 28px 24px", margin: "32px -24px", marginLeft: 0, marginRight: 0 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2.5, color: "#A89880", textTransform: "uppercase", marginBottom: 4, fontFamily: "'Source Sans 3',sans-serif" }}>Who Are Our Readers</div>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2.5, color: "#8B7355", textTransform: "uppercase", marginBottom: 4, fontFamily: "'Source Sans 3',sans-serif" }}>Who Are Our Readers</div>
               <p style={{ fontSize: 14, color: "#7A6A50", margin: "0 0 20px", fontFamily: "'Source Sans 3',sans-serif" }}>What Napa Valley Features subscribers told us about themselves</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 {readerPolls.map(poll => {
@@ -377,7 +377,7 @@ export default function NapaValleyFeatures() {
                           </div>
                         );
                       })}
-                      <div style={{ fontSize: 11, color: "#A89880", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 11, color: "#8B7355", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
                         {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                       </div>
                     </div>
@@ -403,7 +403,7 @@ export default function NapaValleyFeatures() {
         {/* Empty state */}
         {!loading && filtered.length === 0 && (
           <div style={{ textAlign: "center", padding: "40px 0" }}>
-            <p style={{ fontSize: 15, color: "#A89880" }}>No stories in this category yet.</p>
+            <p style={{ fontSize: 15, color: "#8B7355" }}>No stories in this category yet.</p>
             <button onClick={() => setCategory("all")} style={{
               padding: "10px 20px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
               background: "transparent", border: "1px solid rgba(139,105,20,0.25)",
@@ -414,7 +414,7 @@ export default function NapaValleyFeatures() {
 
         {/* Footer */}
         <div style={{ borderTop: "1px solid rgba(44,24,16,0.12)", padding: "20px 0 0", marginTop: 32, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          <span style={{ fontSize: 11, color: "#A89880" }}>Napa Valley Features · Stories from Napa Valley Features</span>
+          <span style={{ fontSize: 11, color: "#8B7355" }}>Napa Valley Features · Stories from Napa Valley Features</span>
           <div style={{ display: "flex", gap: 12 }}>
             <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B5E3C", textDecoration: "none" }}>Substack ↗</a>
             <a href="https://www.napavalleyfeatures.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B5E3C", textDecoration: "none" }}>napavalleyfeatures.com ↗</a>

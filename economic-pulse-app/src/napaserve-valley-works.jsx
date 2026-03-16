@@ -66,7 +66,7 @@ export default function ValleyWorksPage() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -78,8 +78,9 @@ export default function ValleyWorksPage() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F5F0E8", fontFamily: "'Source Sans 3',sans-serif", color: "#2C1810" }}>
+    <div style={{ minHeight: "100vh", background: "#F5F0E8", fontFamily: "'Source Sans 3',sans-serif", color: "#2C1810", overflowX: "hidden" }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
+      <style>{`@media(max-width:700px){.vw-pillars{grid-template-columns:1fr!important;}}`}</style>
       <Nav />
 
       {/* Hero */}
@@ -93,11 +94,11 @@ export default function ValleyWorksPage() {
           Building Solutions,<br /><span style={{ color: "#8B5E3C" }}>Locally.</span>
         </h1>
 
-        <p style={{ fontSize: 17, color: "#A89880", maxWidth: 600, margin: "0 auto 12px", lineHeight: 1.65 }}>
+        <p style={{ fontSize: 17, color: "#8B7355", maxWidth: 600, margin: "0 auto 12px", lineHeight: 1.65 }}>
           An innovation hub rooted in Napa County. We place jobs, people, and place at the center of every idea we build.
         </p>
 
-        <div style={{ display: "inline-flex", gap: 20, fontSize: 12, color: "#A89880", fontFamily: "'Source Sans 3',sans-serif", letterSpacing: 1, marginBottom: 40 }}>
+        <div style={{ display: "inline-flex", gap: 20, fontSize: 12, color: "#8B7355", fontFamily: "'Source Sans 3',sans-serif", letterSpacing: 1, marginBottom: 40 }}>
           <span>Jobs</span>
           <span style={{ color: "rgba(44,24,16,0.2)" }}>·</span>
           <span>People</span>
@@ -125,7 +126,7 @@ export default function ValleyWorksPage() {
         {/* Three Pillars */}
         <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Our Priorities</div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18, marginBottom: 32 }}>
+        <div className="vw-pillars" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18, marginBottom: 32 }}>
           {PILLARS.map(p => (
             <div key={p.id} onClick={() => setActivePillar(activePillar === p.id ? null : p.id)} style={{
               background: activePillar === p.id ? `${p.color}18` : "#EDE8DE",
@@ -140,7 +141,7 @@ export default function ValleyWorksPage() {
                   {p.points.map((pt, i) => (
                     <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
                       <div style={{ width: 5, height: 5, background: p.color, borderRadius: "50%", marginTop: 7, flexShrink: 0 }} />
-                      <span style={{ fontSize: 13, color: "#A89880", lineHeight: 1.5 }}>{pt}</span>
+                      <span style={{ fontSize: 13, color: "#8B7355", lineHeight: 1.5 }}>{pt}</span>
                     </div>
                   ))}
                   <p style={{ fontSize: 13, color: p.color, fontWeight: 600, margin: "12px 0 0", lineHeight: 1.5 }}>{p.footer}</p>
@@ -148,7 +149,7 @@ export default function ValleyWorksPage() {
               )}
 
               {activePillar !== p.id && (
-                <span style={{ fontSize: 12, color: "#A89880", fontFamily: "'Source Sans 3',sans-serif" }}>Click to expand →</span>
+                <span style={{ fontSize: 12, color: "#8B7355", fontFamily: "'Source Sans 3',sans-serif" }}>Click to expand →</span>
               )}
             </div>
           ))}

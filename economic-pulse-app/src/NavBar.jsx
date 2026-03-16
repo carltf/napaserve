@@ -200,7 +200,7 @@ export default function NavBar() {
             { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ path: "/about", label: "About NapaServe" }, { path: "mailto:napaserve@gmail.com", label: "Contact", external: true }] },
           ].map((group, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(139,105,20,0.15)" : "none" }}>
-              <div style={{ padding: "4px 24px 2px", fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", fontFamily: "'Source Sans 3',sans-serif" }}>{group.label}</div>
+              <div style={{ padding: "4px 24px 2px", fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", fontFamily: "'Source Sans 3',sans-serif" }}>{group.label}</div>
               <div style={{ padding: "0 24px 6px", fontSize: 11, color: "#7A6B50", fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.4 }}>{group.desc}</div>
               {group.links.map(item => {
                 const isActive = item.path === current || (item.path !== "/" && current.startsWith(item.path));

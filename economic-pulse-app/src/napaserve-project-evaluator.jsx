@@ -368,7 +368,7 @@ export default function ProjectEvaluator() {
       if (!t) return `<div key="${i}" style="height:10px"></div>`;
       if (/^# /.test(t)) return `<h2 key="${i}" style="font-family:'Libre Baskerville',Georgia,serif;font-size:20px;font-weight:700;color:#2C1810;margin:20px 0 6px">${t.replace(/^# /,"")}</h2>`;
       if (/^## /.test(t)) return `<h3 key="${i}" style="font-family:'Libre Baskerville',Georgia,serif;font-size:16px;font-weight:700;color:#8B5E3C;margin:18px 0 6px">${t.replace(/^## /,"")}</h3>`;
-      if (/^### /.test(t)) return `<h4 key="${i}" style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A89880;margin:16px 0 6px">${t.replace(/^### /,"")}</h4>`;
+      if (/^### /.test(t)) return `<h4 key="${i}" style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8B7355;margin:16px 0 6px">${t.replace(/^### /,"")}</h4>`;
       const parts = t.split(/(\*\*[^*]+\*\*)/g);
       const pInner = parts.map(part => {
         if (/^\*\*(.+)\*\*$/.test(part)) {
@@ -420,7 +420,7 @@ export default function ProjectEvaluator() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -435,7 +435,7 @@ export default function ProjectEvaluator() {
     <div style={{ background: "#F5F0E8", minHeight: "100vh", fontFamily: "'Source Sans 3', sans-serif", color: "#2C1810" }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
       <style>{`
-        :root{--bg:#F5F0E8;--bg2:#EDE8DE;--bg3:#E6E0D4;--bg4:#DDD7CB;--ink:#1A0E08;--ink2:#2C1810;--accent:#8B5E3C;--gold:#C4A050;--muted:#7A6A50;--dim:#A89880;--rule:rgba(44,24,16,0.12);--live:#4A7A5A;--neg:#8A3A2A;--pos:#3A6A4A;}
+        :root{--bg:#F5F0E8;--bg2:#EDE8DE;--bg3:#E6E0D4;--bg4:#DDD7CB;--ink:#1A0E08;--ink2:#2C1810;--accent:#8B5E3C;--gold:#C4A050;--muted:#7A6A50;--dim:#8B7355;--rule:rgba(44,24,16,0.12);--live:#4A7A5A;--neg:#8A3A2A;--pos:#3A6A4A;}
         .ev-opt{text-align:left;padding:10px 14px;font-size:13px;font-family:'Source Sans 3',sans-serif;line-height:1.4;background:var(--bg);border:1px solid var(--rule);color:var(--muted);cursor:pointer;transition:all .15s;width:100%;margin-bottom:5px;}
         .ev-opt:hover{background:var(--bg3);color:var(--ink2);}
         @media(max-width:800px){.ev-grid{grid-template-columns:1fr!important;} .ev-right{order:-1;} canvas#compass{max-width:100%;height:auto!important;} .ev-grid .ev-right canvas{width:100%!important;}}

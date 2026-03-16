@@ -5,7 +5,7 @@ const T = {
   bg:"#F5F0E8", bg2:"#EDE8DE", bg3:"#E6E0D4",
   ink2:"#2C1810", ink:"#1A0E08",
   accent:"#8B5E3C", gold:"#C4A050",
-  muted:"#7A6A50", dim:"#A89880",
+  muted:"#7A6A50", dim:"#8B7355",
   rule:"rgba(44,24,16,0.12)", live:"#4A7A5A",
 };
 

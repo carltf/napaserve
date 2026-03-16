@@ -197,7 +197,7 @@ const styles = {
   },
   chunkDate: {
     fontSize: "0.75rem",
-    color: "#A89880",
+    color: "#8B7355",
     marginBottom: 10,
   },
   chunkExcerpt: {
@@ -236,7 +236,7 @@ const styles = {
   empty: {
     textAlign: "center",
     padding: "60px 0",
-    color: "#A89880",
+    color: "#8B7355",
     fontSize: "0.95rem",
     lineHeight: 1.6,
   },
@@ -261,7 +261,7 @@ const styles = {
   },
   statLabel: {
     fontSize: "0.72rem",
-    color: "#A89880",
+    color: "#8B7355",
     letterSpacing: "0.12em",
     textTransform: "uppercase",
   },
@@ -421,7 +421,7 @@ export default function Archive() {
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", padding: "4px 20px 6px" }}>{g.label}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", padding: "4px 20px 6px" }}>{g.label}</div>
               {g.links.map((l, li) => (
                 <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? "#8B5E3C" : "#7A6A50", background: l.cur ? "#EDE8DE" : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
               ))}
@@ -524,7 +524,7 @@ export default function Archive() {
                     borderRadius: 20,
                     padding: "5px 14px",
                     fontSize: "0.78rem",
-                    color: "#A89880",
+                    color: "#8B7355",
                     cursor: "pointer",
                     fontFamily: "'Source Sans 3', sans-serif",
                     transition: "all 0.15s",
@@ -534,7 +534,7 @@ export default function Archive() {
                     e.currentTarget.style.borderColor = "rgba(139,94,60,0.35)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#A89880";
+                    e.currentTarget.style.color = "#8B7355";
                     e.currentTarget.style.borderColor = "rgba(44,24,16,0.12)";
                   }}
                   onClick={() => {
@@ -621,7 +621,7 @@ export default function Archive() {
           <div style={styles.empty}>
             No passages found for "{query}"
             <br />
-            <span style={{ fontSize: "0.85rem", color: "#A89880" }}>
+            <span style={{ fontSize: "0.85rem", color: "#8B7355" }}>
               Try broader terms or different keywords
             </span>
           </div>
