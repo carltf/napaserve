@@ -180,49 +180,60 @@ export default function NavBar() {
             WebkitBackdropFilter: "blur(12px)",
           }}
         >
-          {NAV_ITEMS.filter(item => item.path !== "/").map(item => {
-            const isActive = item.path === current || (item.path !== "/" && current.startsWith(item.path));
+          {/* Home link */}
+          <button
+            onClick={() => handleNav("/")}
+            style={{
+              display: "block", width: "100%", textAlign: "left",
+              padding: "14px 24px", fontSize: 13, fontWeight: 700,
+              fontFamily: "'Source Sans 3',sans-serif",
+              color: "#C4A050", background: "none", border: "none",
+              borderBottom: "1px solid rgba(139,105,20,0.15)", cursor: "pointer",
+            }}
+          >← NapaServe Home</button>
 
-            if (item.external) {
-              return (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  onClick={() => setMenuOpen(false)}
-                  style={{
-                    display: "block",
-                    padding: "12px 24px",
-                    fontSize: 15,
-                    fontWeight: 600,
-                    fontFamily: "'Source Sans 3',sans-serif",
-                    color: "#B8A882",
-                    textDecoration: "none",
-                  }}
-                >{item.label}</a>
-              );
-            }
-
-            return (
-              <button
-                key={item.path}
-                onClick={() => handleNav(item.path)}
-                style={{
-                  display: "block",
-                  width: "100%",
-                  textAlign: "left",
-                  padding: "12px 24px",
-                  fontSize: 15,
-                  fontWeight: 600,
-                  fontFamily: "'Source Sans 3',sans-serif",
-                  background: isActive ? "rgba(196,160,80,0.08)" : "none",
-                  color: isActive ? "#C4A050" : "#7A6B50",
-                  border: "none",
-                  borderLeft: isActive ? "2px solid #C4A050" : "2px solid transparent",
-                  cursor: "pointer",
-                }}
-              >{item.label}</button>
-            );
-          })}
+          {/* Grouped nav sections */}
+          {[
+            { label: "Journalism", desc: "Original reporting and searchable archives", links: [{ path: "/news", label: "Napa Valley Features" }, { path: "/archive", label: "NVF Archive Search" }] },
+            { label: "Community", desc: "Events, workforce and civic innovation", links: [{ path: "/events", label: "Event Finder" }, { path: "/valley-works", label: "Valley Works" }, { path: "/vw-labs", label: "VW Labs" }] },
+            { label: "Intelligence", desc: "Data, analysis and AI-assisted research", links: [{ path: "/dashboard", label: "Economic Dashboard" }, { path: "/evaluator", label: "Project Evaluator" }, { path: "/agent.html", label: "Research Agent", external: true }] },
+            { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ path: "/about", label: "About NapaServe" }, { path: "mailto:napaserve@gmail.com", label: "Contact", external: true }] },
+          ].map((group, gi) => (
+            <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(139,105,20,0.15)" : "none" }}>
+              <div style={{ padding: "4px 24px 2px", fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#A89880", fontFamily: "'Source Sans 3',sans-serif" }}>{group.label}</div>
+              <div style={{ padding: "0 24px 6px", fontSize: 11, color: "#7A6B50", fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.4 }}>{group.desc}</div>
+              {group.links.map(item => {
+                const isActive = item.path === current || (item.path !== "/" && current.startsWith(item.path));
+                if (item.external) {
+                  return (
+                    <a
+                      key={item.path}
+                      href={item.path}
+                      onClick={() => setMenuOpen(false)}
+                      style={{
+                        display: "block", padding: "8px 24px", fontSize: 14, fontWeight: 600,
+                        fontFamily: "'Source Sans 3',sans-serif", color: "#B8A882", textDecoration: "none",
+                      }}
+                    >{item.label}</a>
+                  );
+                }
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => handleNav(item.path)}
+                    style={{
+                      display: "block", width: "100%", textAlign: "left",
+                      padding: "8px 24px", fontSize: 14, fontWeight: 600,
+                      fontFamily: "'Source Sans 3',sans-serif",
+                      background: isActive ? "rgba(196,160,80,0.08)" : "none",
+                      color: isActive ? "#C4A050" : "#7A6B50",
+                      border: "none", cursor: "pointer",
+                    }}
+                  >{item.label}</button>
+                );
+              })}
+            </div>
+          ))}
         </div>
       )}
     </>
