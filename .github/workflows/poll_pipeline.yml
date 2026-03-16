@@ -5,6 +5,7 @@
 # Jobs:
 #   1. classify-polls — finds polls in Supabase with no theme, classifies via Claude Haiku
 #   2. subscriber-digest — posts weekly subscriber summary to Slack
+#   3. events-digest — posts weekly pending event submissions summary to Slack
 #
 # Poll EXTRACTION (poll_extraction.py) must be run manually from the local
 # machine where the iCloud Substack HTML export lives:
@@ -167,6 +168,92 @@ jobs:
               msg = (
                   f"\U0001f4ec No new NapaServe subscribers this week. "
                   f"Total: {total}"
+              )
+
+          r = requests.post(
+              SLACK_WEBHOOK_URL,
+              json={"text": msg},
+              headers={"Content-Type": "application/json"},
+          )
+          r.raise_for_status()
+          print(msg)
+          PYEOF
+
+  events-digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Post events digest to Slack
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          python - <<'PYEOF'
+          import os, json, requests
+          from datetime import datetime, timedelta, timezone
+
+          SUPABASE_URL = os.environ["SUPABASE_URL"]
+          SUPABASE_KEY = os.environ["SUPABASE_KEY"]
+          SLACK_WEBHOOK_URL = os.environ["SLACK_WEBHOOK_URL"]
+
+          headers = {
+              "apikey": SUPABASE_KEY,
+              "Authorization": f"Bearer {SUPABASE_KEY}",
+              "Content-Type": "application/json",
+          }
+
+          # Fetch all pending events ordered by most recent first
+          r = requests.get(
+              f"{SUPABASE_URL}/rest/v1/community_events"
+              f"?select=title,submitted_by,organizer_contact,submitted_at"
+              f"&status=eq.pending"
+              f"&order=submitted_at.desc",
+              headers=headers,
+          )
+          r.raise_for_status()
+          all_pending = r.json()
+          total_pending = len(all_pending)
+
+          # Filter to last 7 days
+          week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+          new_events = [
+              e for e in all_pending
+              if e.get("submitted_at") and
+              datetime.fromisoformat(e["submitted_at"].replace("Z", "+00:00")) >= week_ago
+          ]
+
+          today = datetime.now(timezone.utc).strftime("%B %d, %Y")
+
+          if new_events:
+              lines = []
+              for e in new_events:
+                  title = e.get("title", "(untitled)")
+                  name = e.get("submitted_by") or "(no name)"
+                  email = e.get("organizer_contact") or "(no email)"
+                  sub_date = e.get("submitted_at", "")[:10]
+                  lines.append(f"- {title} — {name} — {email} — {sub_date}")
+              events_block = "\n".join(lines)
+              msg = (
+                  f"\U0001f4c5 New Event Submissions This Week — {today}\n"
+                  f"New this week: {len(new_events)}\n\n"
+                  f"{events_block}\n\n"
+                  f"Review and approve at napaserve.org/events\n"
+                  f"Total pending (all time): {total_pending}"
+              )
+          else:
+              msg = (
+                  f"\U0001f4c5 No new event submissions this week. "
+                  f"Total pending: {total_pending}"
               )
 
           r = requests.post(
