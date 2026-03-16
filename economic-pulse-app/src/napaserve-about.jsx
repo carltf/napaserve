@@ -30,7 +30,7 @@ export default function AboutNapaServe() {
           {[
             { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }] },
             { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }, { t: "VW Labs", h: "/vw-labs" }] },
-            { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "Research Agent", h: "/agent.html" }] },
+            { label: "Intelligence", links: [{ t: "Community Pulse", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "Research Agent", h: "/agent.html" }] },
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about", cur: true }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? `1px solid ${T.rule}` : "none" }}>
@@ -118,7 +118,7 @@ export default function AboutNapaServe() {
 
           <H>The tools</H>
           <div style={{ margin: "8px 0 32px" }}>
-            <Tool name="Economic Dashboard" route="/dashboard" desc="Weekly snapshot of Napa County's economy — winery licenses, unemployment, home values, food services employment. Updated every Monday from federal and state sources." />
+            <Tool name="Community Pulse" route="/dashboard" desc="Weekly snapshot of Napa County's economy — winery licenses, unemployment, home values, food services employment. Updated every Monday from federal and state sources." />
             <Tool name="Project Evaluator" route="/evaluator" desc="Submit any proposed project — a resort, a housing development, an innovation hub — and get a structural analysis across the Jobs · People · Place framework. AI-generated, intended as a discussion document." />
             <Tool name="NVF Archive Search" route="/archive" desc="Nearly 1,000 original articles from Napa Valley Features, searchable by meaning. Ask a question about lodging supply, water rights, the ag preserve, or any local topic — and find the coverage." />
             <Tool name="AI Policy Agent" route="/agent.html" isExternal desc="A research assistant grounded in the NVF archive and live web search. Ask hard questions about local policy, economy, or development. It cites its sources." />
@@ -165,7 +165,7 @@ export default function AboutNapaServe() {
             Every tool on NapaServe is built around a question you're trying to answer. The best way to use the platform is to start with what you actually want to know.
           </P>
           <P>
-            <em style={{ color: T.ink2 }}>What's happening with winery licenses?</em> → Economic Dashboard, Winery Licenses tab.<br />
+            <em style={{ color: T.ink2 }}>What's happening with winery licenses?</em> → Community Pulse, Winery Licenses tab.<br />
             <em style={{ color: T.ink2 }}>What have we reported on Stanley Ranch?</em> → NVF Archive Search.<br />
             <em style={{ color: T.ink2 }}>What would a 75-room resort mean for St. Helena?</em> → Project Evaluator.<br />
             <em style={{ color: T.ink2 }}>What's the water situation in Napa County?</em> → AI Policy Agent.

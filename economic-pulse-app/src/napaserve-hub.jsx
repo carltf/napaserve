@@ -124,7 +124,7 @@ export default function NapaServeHub() {
           </div>
           <div className="hub-dg">
             <div className="hub-dlabel">Intelligence</div>
-            <Link to="/dashboard" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Economic Dashboard</Link>
+            <Link to="/dashboard" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Community Pulse</Link>
             <Link to="/evaluator" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Project Evaluator</Link>
             <a href="/agent.html" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Research Agent</a>
           </div>
@@ -184,7 +184,7 @@ export default function NapaServeHub() {
               <svg viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
             </div>
             <div className="hub-c-cat">Economy</div>
-            <div className="hub-c-name">Economic Dashboard</div>
+            <div className="hub-c-name">Community Pulse</div>
             <div className="hub-c-desc">Winery licenses, unemployment, home values, food services jobs. Interactive charts with full weekly history. Updated every Monday via GitHub Actions.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
@@ -272,7 +272,7 @@ export default function NapaServeHub() {
           <div className="hub-four" style={{ marginBottom: 28, paddingBottom: 28, borderBottom: "1px solid var(--rule)" }}>
             <div>
               <div className="hub-sm-head">Intelligence</div>
-              <Link to="/dashboard" className="hub-sm-link">Economic Dashboard</Link>
+              <Link to="/dashboard" className="hub-sm-link">Community Pulse</Link>
               <Link to="/evaluator" className="hub-sm-link">Project Evaluator</Link>
               <a href="/agent.html" className="hub-sm-link">Research Agent</a>
               <Link to="/evaluator" className="hub-sm-link">Structural Compass</Link>

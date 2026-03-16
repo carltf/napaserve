@@ -62,7 +62,7 @@ export default function ValleyWorksPage() {
           {[
             { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }] },
             { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works", cur: true }, { t: "VW Labs", h: "/vw-labs" }] },
-            { label: "Intelligence", links: [{ t: "Economic Dashboard", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "Research Agent", h: "/agent.html" }] },
+            { label: "Intelligence", links: [{ t: "Community Pulse", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "Research Agent", h: "/agent.html" }] },
             { label: "Platform", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
           ].map((g, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.12)" : "none" }}>
@@ -171,7 +171,7 @@ export default function ValleyWorksPage() {
             NapaServe is Valley Works' prototype for community-scale civic AI — accurate information and AI-powered tools for everyone invested in Napa County's future. Policy analysis, economic tracking, project evaluation, event discovery, and local news, all in one place.
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <a href="/dashboard" style={{ padding: "8px 16px", fontSize: 12, fontWeight: 600, background: "transparent", border: "1px solid rgba(44,24,16,0.12)", color: "#8B5E3C", textDecoration: "none" }}>Economic Dashboard</a>
+            <a href="/dashboard" style={{ padding: "8px 16px", fontSize: 12, fontWeight: 600, background: "transparent", border: "1px solid rgba(44,24,16,0.12)", color: "#8B5E3C", textDecoration: "none" }}>Community Pulse</a>
             <a href="/evaluator" style={{ padding: "8px 16px", fontSize: 12, fontWeight: 600, background: "transparent", border: "1px solid rgba(44,24,16,0.12)", color: "#8B5E3C", textDecoration: "none" }}>Project Evaluator</a>
             <a href="/events" style={{ padding: "8px 16px", fontSize: 12, fontWeight: 600, background: "transparent", border: "1px solid rgba(44,24,16,0.12)", color: "#8B5E3C", textDecoration: "none" }}>Event Finder</a>
             <a href="/news" style={{ padding: "8px 16px", fontSize: 12, fontWeight: 600, background: "transparent", border: "1px solid rgba(44,24,16,0.12)", color: "#8B5E3C", textDecoration: "none" }}>News & Features</a>

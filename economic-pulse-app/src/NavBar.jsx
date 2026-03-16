@@ -196,7 +196,7 @@ export default function NavBar() {
           {[
             { label: "Journalism", desc: "Original reporting and searchable archives", links: [{ path: "/news", label: "Napa Valley Features" }, { path: "/archive", label: "NVF Archive Search" }] },
             { label: "Community", desc: "Events, workforce and civic innovation", links: [{ path: "/events", label: "Event Finder" }, { path: "/valley-works", label: "Valley Works" }, { path: "/vw-labs", label: "VW Labs" }] },
-            { label: "Intelligence", desc: "Data, analysis and AI-assisted research", links: [{ path: "/dashboard", label: "Economic Dashboard" }, { path: "/evaluator", label: "Project Evaluator" }, { path: "/agent.html", label: "Research Agent", external: true }] },
+            { label: "Intelligence", desc: "Data, analysis and AI-assisted research", links: [{ path: "/dashboard", label: "Community Pulse" }, { path: "/evaluator", label: "Project Evaluator" }, { path: "/agent.html", label: "Research Agent", external: true }] },
             { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ path: "/about", label: "About NapaServe" }, { path: "mailto:napaserve@gmail.com", label: "Contact", external: true }] },
           ].map((group, gi) => (
             <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(139,105,20,0.15)" : "none" }}>
