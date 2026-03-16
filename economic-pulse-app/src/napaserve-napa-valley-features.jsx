@@ -243,6 +243,27 @@ export default function NapaValleyFeatures() {
         </div>
       </div>
 
+      {/* Overview block */}
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "0 24px 0" }}>
+        <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 28px 24px", marginBottom: 32 }}>
+          <div style={{ display: "flex", gap: 12, marginBottom: 18, flexWrap: "wrap" }}>
+            {[
+              { value: "1,000+", label: "Stories Published" },
+              { value: "6,000+", label: "Subscribers" },
+              { value: "Bestseller", label: "Substack News" },
+            ].map((s, i) => (
+              <div key={i} style={{ flex: 1, minWidth: 120, textAlign: "center", padding: "10px 8px", background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)" }}>
+                <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 22, fontWeight: 700, color: "#C4A050", lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: "#A89880", textTransform: "uppercase", marginTop: 4, fontFamily: "'Source Sans 3',sans-serif" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: 14, color: "#7A6A50", lineHeight: 1.75, margin: 0, fontFamily: "'Source Sans 3',sans-serif" }}>
+            Napa Valley Features launched in May 2023 as a fully independent, ad-free, conflict-of-interest-free local news platform built on a public radio model — all stories are free to read except our Thursday Under the Hood editions, which are for paid subscribers. In three years we've published over 1,000 stories, grown to more than 6,000 subscribers and earned Substack Bestseller status in the News category. After the cost of production, 100% of every subscription dollar goes directly to our contributors. No advertisers. No outside owners. No agenda except honest, accurate, hyperlocal journalism.
+          </p>
+        </div>
+      </div>
+
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "0 24px 60px" }}>
 
         {/* Loading */}

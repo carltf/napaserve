@@ -49,6 +49,7 @@ const SECTIONS = [
   { key: "winery",   label: "Winery Licenses" },
   { key: "labor",    label: "Labor Market" },
   { key: "housing",  label: "Housing" },
+  { key: "pulse",    label: "Reader Pulse" },
 ];
 
 const T = {
@@ -152,6 +153,64 @@ export default function EconomicPulseDashboard(){
     })();
     return () => { cancelled = true; };
   }, []);
+
+  // ── Reader Pulse: poll data ──
+  const [pollData, setPollData] = useState([]);
+  const [pollLoading, setPollLoading] = useState(true);
+  const [openTheme, setOpenTheme] = useState(null);
+  const [openPoll, setOpenPoll] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=poll_id,post_id,post_title,question,options_json,total_votes,published_at&order=published_at.desc`,
+          { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+        );
+        if (!res.ok) throw new Error("Poll fetch failed");
+        const data = await res.json();
+        if (!cancelled) setPollData(data);
+      } catch (e) { console.error("Poll fetch failed:", e); }
+      finally { if (!cancelled) setPollLoading(false); }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const pollThemes = useMemo(() => {
+    const THEME_RULES = [
+      { theme: "Wine & Hospitality", keywords: ["wine", "winery", "tasting", "vineyard", "hospitality", "tourism", "tourist", "visitor", "hotel", "restaurant", "dining"] },
+      { theme: "Housing & Development", keywords: ["housing", "home", "rent", "afford", "development", "building", "construction", "zoning", "permit"] },
+      { theme: "Government & Policy", keywords: ["city", "council", "county", "government", "policy", "regulation", "tax", "budget", "vote", "election", "supervisor", "ordinance", "law", "legislation"] },
+      { theme: "Economy & Jobs", keywords: ["economy", "economic", "job", "employ", "workforce", "business", "labor", "wage", "income", "retail", "commercial"] },
+      { theme: "Environment & Agriculture", keywords: ["environment", "climate", "fire", "wildfire", "water", "drought", "agriculture", "farm", "crop", "organic", "pesticide", "oak", "tree"] },
+      { theme: "Community & Culture", keywords: ["community", "school", "education", "health", "transit", "transport", "art", "culture", "library", "park", "safety", "crime", "police"] },
+    ];
+    const grouped = {};
+    for (const poll of pollData) {
+      const text = `${poll.question || ""} ${poll.post_title || ""}`.toLowerCase();
+      let matched = null;
+      for (const rule of THEME_RULES) {
+        if (rule.keywords.some(k => text.includes(k))) { matched = rule.theme; break; }
+      }
+      if (!matched) matched = "General";
+      if (!grouped[matched]) grouped[matched] = [];
+      grouped[matched].push(poll);
+    }
+    return Object.entries(grouped)
+      .map(([theme, polls]) => ({
+        theme,
+        polls,
+        count: polls.length,
+        totalVotes: polls.reduce((s, p) => s + (p.total_votes || 0), 0),
+      }))
+      .sort((a, b) => b.totalVotes - a.totalVotes);
+  }, [pollData]);
+
+  const pollTotals = useMemo(() => ({
+    count: pollData.length,
+    votes: pollData.reduce((s, p) => s + (p.total_votes || 0), 0),
+  }), [pollData]);
 
   const allNapa=useMemo(()=>wineryData.filter(d=>d.napa!=null),[wineryData]);
 
@@ -408,7 +467,7 @@ export default function EconomicPulseDashboard(){
           <div style={{textAlign:"right",marginTop:4}}><a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>ABC Licensing ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>The Story in the Data</div>
-            <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>Napa County's winery license count has followed a <span style={{color:T.accent,fontWeight:600}}>sawtooth pattern</span> since weekly tracking began in February 2024. Three major drops: <span style={{color:T.neg}}>October 2024</span> (−41), <span style={{color:T.neg}}>July 2025</span> (−30), and <span style={{color:T.neg}}>October 2025</span> (−68).</p>
+            <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>Napa County's winery license count has followed a <span style={{color:T.accent,fontWeight:600}}>sawtooth pattern</span> since weekly tracking began in February 2024. Three major drops: <span style={{color:T.neg}}>October 2024</span> (−41), <span style={{color:T.neg}}>July 2025</span> (−30) and <span style={{color:T.neg}}>October 2025</span> (−68).</p>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:0}}>Despite these corrections, the long-term trend remains positive: from 1,681 in December 2019 to the current {wStats.current.toLocaleString()} (<span style={{color:T.pos,fontWeight:600}}>+{wStats.pctGrowth}% over six years</span>). The all-time weekly peak of {wStats.peak.toLocaleString()} was reached on {fD(wStats.peakDate)}.</p>
           </div>
         </>}
@@ -478,6 +537,108 @@ export default function EconomicPulseDashboard(){
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:"0 0 10px"}}>The average Napa County home is valued at <span style={{color:T.accent,fontWeight:600}}>{latestE?.home?f$(latestE.home):"—"}</span>.</p>
             <p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:0}}>Napa's constrained geography — bounded by the Agricultural Preserve and hillside development limits — keeps supply tight even as demand fluctuates with interest rates and wildfire insurance costs.</p>
           </div>
+        </>}
+
+        {section==="pulse"&&<>
+          <div style={{marginBottom:20}}>
+            <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:"clamp(22px,4vw,32px)",fontWeight:700,color:T.ink2,margin:"0 0 6px"}}>Reader Pulse</h2>
+            <p style={{fontSize:13,color:T.muted,margin:0}}>Community opinion data from Napa Valley Features reader polls</p>
+          </div>
+
+          {pollLoading ? (
+            <div style={{fontSize:13,color:T.dim,padding:"16px 0"}}>Loading polls...</div>
+          ) : pollData.length === 0 ? (
+            <div style={{fontSize:13,color:T.dim,padding:"16px 0"}}>No poll data available.</div>
+          ) : (<>
+            {/* Engagement header */}
+            <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
+              <StatCard label="Total Polls" value={pollTotals.count} detail="from NVF articles" accent={T.gold}/>
+              <StatCard label="Total Votes" value={fN(pollTotals.votes)} detail={`avg ${Math.round(pollTotals.votes / pollTotals.count)} per poll`}/>
+              <StatCard label="Themes" value={pollThemes.length} detail="auto-classified"/>
+            </div>
+
+            {/* Theme cards or expanded poll view */}
+            {openTheme === null ? (
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:12}}>
+                {pollThemes.map(g => (
+                  <div key={g.theme} onClick={() => { setOpenTheme(g.theme); setOpenPoll(null); }}
+                    style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"20px 22px",cursor:"pointer",transition:"box-shadow .15s",boxShadow:"0 1px 3px rgba(44,24,16,0.04)"}}>
+                    <div style={{fontSize:9,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{g.count} poll{g.count!==1?"s":""} · {fN(g.totalVotes)} votes</div>
+                    <div style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:18,fontWeight:700,color:T.ink2,marginBottom:8}}>{g.theme}</div>
+                    <div style={{fontSize:12,color:T.muted,lineHeight:1.5}}>
+                      {g.polls.slice(0,2).map((p,i) => (
+                        <div key={i} style={{whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>• {p.question}</div>
+                      ))}
+                      {g.count > 2 && <div style={{color:T.gold,fontWeight:600,marginTop:4}}>+ {g.count - 2} more →</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                <button onClick={() => { setOpenTheme(null); setOpenPoll(null); }}
+                  style={{background:"none",border:`1px solid ${T.rule}`,padding:"8px 18px",fontSize:12,fontWeight:600,color:T.muted,cursor:"pointer",marginBottom:16,fontFamily:"'Source Sans 3',sans-serif"}}>
+                  ← All Themes
+                </button>
+                <h3 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:22,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>{openTheme}</h3>
+                <p style={{fontSize:12,color:T.dim,margin:"0 0 16px"}}>
+                  {pollThemes.find(g=>g.theme===openTheme)?.count || 0} polls · {fN(pollThemes.find(g=>g.theme===openTheme)?.totalVotes || 0)} total votes
+                </p>
+                <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                  {(pollThemes.find(g=>g.theme===openTheme)?.polls || []).map(poll => {
+                    const isOpen = openPoll === poll.poll_id;
+                    const options = Array.isArray(poll.options_json) ? poll.options_json : [];
+                    const maxVotes = Math.max(...options.map(o => Number(o.votes) || 0), 1);
+                    return (
+                      <div key={poll.poll_id} style={{background:T.bg2,border:`1px solid ${T.rule}`,overflow:"hidden"}}>
+                        <div onClick={() => setOpenPoll(isOpen ? null : poll.poll_id)}
+                          style={{padding:"16px 20px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:15,fontWeight:700,color:T.ink2,lineHeight:1.4}}>{poll.question}</div>
+                            <div style={{fontSize:11,color:T.dim,marginTop:4}}>
+                              {poll.total_votes} votes
+                              {poll.post_title && <> · <span style={{fontStyle:"italic"}}>{poll.post_title.length > 60 ? poll.post_title.slice(0,60) + "…" : poll.post_title}</span></>}
+                            </div>
+                          </div>
+                          <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>
+                        </div>
+                        {isOpen && (
+                          <div style={{padding:"0 20px 18px",borderTop:`1px solid ${T.rule}`}}>
+                            {options.map((opt, oi) => {
+                              const votes = Number(opt.votes) || 0;
+                              const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
+                              const isWinner = votes === maxVotes && votes > 0;
+                              return (
+                                <div key={oi} style={{marginTop:oi===0?14:10}}>
+                                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                                    <span style={{fontSize:13,fontWeight:isWinner?700:400,color:isWinner?T.ink2:T.muted,fontFamily:"'Source Sans 3',sans-serif"}}>{opt.text}</span>
+                                    <span style={{fontSize:12,fontWeight:600,color:isWinner?T.gold:T.dim,fontFamily:"monospace",whiteSpace:"nowrap",marginLeft:8}}>{pct.toFixed(1)}% ({votes})</span>
+                                  </div>
+                                  <div style={{height:18,background:T.bg,border:`1px solid ${T.rule}`,overflow:"hidden"}}>
+                                    <div style={{height:"100%",width:`${pct}%`,background:isWinner?T.gold:T.dim,opacity:isWinner?0.7:0.3,transition:"width .3s ease"}}/>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                            {poll.published_at && (
+                              <div style={{fontSize:10,color:T.dim,marginTop:10,textAlign:"right"}}>
+                                Published {fD(poll.published_at.split("T")[0])}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"12px 18px",marginTop:24}}>
+              <span style={{...lbl,display:"inline"}}>Data Source </span>
+              <span style={{fontSize:11,color:T.muted}}>Napa Valley Features reader polls · {pollTotals.count} polls · {fN(pollTotals.votes)} total votes</span>
+            </div>
+          </>)}
         </>}
 
         <div style={{borderTop:`1px solid ${T.rule}`,paddingTop:16,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginTop:20}}>
