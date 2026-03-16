@@ -6,6 +6,9 @@ import { useState, useEffect } from "react";
 
 const SUBSTACK_API = "https://misty-bush-fc93.tfcarl.workers.dev/substack/archive?sort=new&offset=0&limit=50";
 
+const SUPABASE_URL = "https://csenpchwxxepdvjebsrt.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ";
+
 // RSS-to-JSON for ticker headlines
 const NEWS_SOURCES = [
   { id: "caltrib", name: "Calistoga Tribune", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://calistogatribune.com/feed&count=5", color: "#8B5E3C" },
@@ -193,7 +196,60 @@ export default function NapaValleyFeatures() {
     })();
   }, []);
 
+  // Fetch Reader Demographics polls
+  const [readerPolls, setReaderPolls] = useState([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=poll_id,post_title,question,options_json,total_votes,published_at,substack_url&theme=eq.Reader%20Demographics&order=total_votes.desc&limit=3`,
+          { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+        );
+        if (res.ok) setReaderPolls(await res.json());
+      } catch { /* silent */ }
+    })();
+  }, []);
+
   const filtered = category === "all" ? posts : posts.filter(p => p.categories.includes(category));
+
+  const ArticleCard = ({ post }) => (
+    <a href={post.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block" }}>
+      <div style={{
+        background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.12)",
+        borderRadius: 10, overflow: "hidden", transition: "border-color 0.2s, transform 0.2s",
+        height: "100%", display: "flex", flexDirection: "column",
+      }}>
+        {post.image ? (
+          <div style={{ width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#E6E0D4" }}>
+            <img src={post.image} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.85, display: "block" }} />
+          </div>
+        ) : (
+          <div style={{ width: "100%", aspectRatio: "16/9", background: "#EDE8DE", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: 11, color: "#A89880", letterSpacing: 2 }}>NAPA VALLEY FOCUS</span>
+          </div>
+        )}
+        <div style={{ padding: "14px 16px 18px", flex: 1, display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
+            <span style={{ fontSize: 10, fontWeight: 600, color: "#8B5E3C", textTransform: "uppercase", letterSpacing: 1 }}>
+              {CATEGORIES.find(c => c.key === post.categories[0])?.label || "Feature"}
+            </span>
+          </div>
+          <h3 style={{
+            fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700,
+            color: "#2C1810", margin: "0 0 6px", lineHeight: 1.3,
+            display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
+          }}>{post.title}</h3>
+          {post.subtitle && (
+            <p style={{
+              fontSize: 13, color: "#A89880", lineHeight: 1.5, margin: "0 0 auto",
+              display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+            }}>{post.subtitle}</p>
+          )}
+          <div style={{ fontSize: 11, color: "#A89880", marginTop: 10 }}>{fmtDate(post.pubDate)}</div>
+        </div>
+      </div>
+    </a>
+  );
 
   return (
     <div style={{ minHeight: "100vh", background: "#F5F0E8", fontFamily: "'Source Sans 3',sans-serif", color: "#2C1810" }}>
@@ -282,53 +338,64 @@ export default function NapaValleyFeatures() {
           </div>
         )}
 
-        {/* 3-column card grid */}
-        {!loading && filtered.length > 0 && (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            gap: 24,
-          }}>
-            {filtered.map((post, i) => (
-              <a key={i} href={post.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block" }}>
-                <div style={{
-                  background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.12)",
-                  borderRadius: 10, overflow: "hidden", transition: "border-color 0.2s, transform 0.2s",
-                  height: "100%", display: "flex", flexDirection: "column",
-                }}>
-                  {post.image ? (
-                    <div style={{ width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#E6E0D4" }}>
-                      <img src={post.image} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.85, display: "block" }} />
-                    </div>
-                  ) : (
-                    <div style={{ width: "100%", aspectRatio: "16/9", background: "#EDE8DE", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ fontSize: 11, color: "#A89880", letterSpacing: 2 }}>NAPA VALLEY FOCUS</span>
-                    </div>
-                  )}
-                  <div style={{ padding: "14px 16px 18px", flex: 1, display: "flex", flexDirection: "column" }}>
-                    <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
-                      <span style={{ fontSize: 10, fontWeight: 600, color: "#8B5E3C", textTransform: "uppercase", letterSpacing: 1 }}>
-                        {CATEGORIES.find(c => c.key === post.categories[0])?.label || "Feature"}
-                      </span>
-                    </div>
-                    <h3 style={{
-                      fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700,
-                      color: "#2C1810", margin: "0 0 6px", lineHeight: 1.3,
-                      display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
-                    }}>{post.title}</h3>
-                    {post.subtitle && (
-                      <p style={{
-                        fontSize: 13, color: "#A89880", lineHeight: 1.5, margin: "0 0 auto",
-                        display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
-                      }}>{post.subtitle}</p>
-                    )}
-                    <div style={{ fontSize: 11, color: "#A89880", marginTop: 10 }}>{fmtDate(post.pubDate)}</div>
-                  </div>
-                </div>
-              </a>
+        {/* 3-column card grid with poll interstitial after row 2 */}
+        {!loading && filtered.length > 0 && (<>
+          {/* Rows 1-2 */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24 }}>
+            {filtered.slice(0, 6).map((post, i) => (
+              <ArticleCard key={i} post={post} />
             ))}
           </div>
-        )}
+
+          {/* Reader Demographics poll interstitial */}
+          {readerPolls.length > 0 && (
+            <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 28px 24px", margin: "32px -24px", marginLeft: 0, marginRight: 0 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2.5, color: "#A89880", textTransform: "uppercase", marginBottom: 4, fontFamily: "'Source Sans 3',sans-serif" }}>Who Are Our Readers</div>
+              <p style={{ fontSize: 14, color: "#7A6A50", margin: "0 0 20px", fontFamily: "'Source Sans 3',sans-serif" }}>What Napa Valley Features subscribers told us about themselves</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {readerPolls.map(poll => {
+                  const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : (poll.options_json || []);
+                  const opts = (Array.isArray(rawOpts) ? rawOpts : []).filter(o => o && (o.label || o.text));
+                  const maxVotes = Math.max(...opts.map(o => Number(o.votes) || 0), 1);
+                  const url = poll.substack_url && poll.substack_url.trim();
+                  return (
+                    <div key={poll.poll_id} style={{ background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)", padding: "18px 20px" }}>
+                      <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.4, marginBottom: 12 }}>{poll.question}</div>
+                      {opts.map((opt, oi) => {
+                        const votes = Number(opt.votes) || 0;
+                        const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
+                        const isWinner = votes === maxVotes && votes > 0;
+                        return (
+                          <div key={oi} style={{ marginBottom: oi < opts.length - 1 ? 8 : 0 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                              <span style={{ fontSize: 13, fontWeight: isWinner ? 700 : 400, color: isWinner ? "#2C1810" : "#7A6A50", fontFamily: "'Source Sans 3',sans-serif" }}>{opt.text || opt.label}</span>
+                              <span style={{ fontSize: 12, fontWeight: 600, color: isWinner ? "#C4A050" : "#A89880", fontFamily: "monospace", whiteSpace: "nowrap", marginLeft: 8 }}>{pct.toFixed(1)}% ({votes})</span>
+                            </div>
+                            <div style={{ height: 16, background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.06)", overflow: "hidden" }}>
+                              <div style={{ height: "100%", width: `${pct}%`, background: isWinner ? "#C4A050" : "#A89880", opacity: isWinner ? 0.7 : 0.25, transition: "width .3s ease" }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <div style={{ fontSize: 11, color: "#A89880", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
+                        {fmtDate(poll.published_at)}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Remaining rows */}
+          {filtered.length > 6 && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24, marginTop: readerPolls.length > 0 ? 32 : 0 }}>
+              {filtered.slice(6).map((post, i) => (
+                <ArticleCard key={i + 6} post={post} />
+              ))}
+            </div>
+          )}
+        </>)}
 
         {/* Responsive: on mobile, grid collapses */}
         <style>{`@media (max-width: 820px) { [style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; } }`}</style>
