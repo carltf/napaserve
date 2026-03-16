@@ -165,7 +165,7 @@ export default function EconomicPulseDashboard(){
     (async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_polls?select=poll_id,post_id,post_title,question,options_json,total_votes,published_at,theme&order=published_at.desc`,
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=poll_id,post_id,post_title,question,options_json,total_votes,published_at,theme,substack_url&order=published_at.desc`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (!res.ok) throw new Error("Poll fetch failed");
@@ -454,7 +454,7 @@ export default function EconomicPulseDashboard(){
                               <span style={{fontSize:11,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label || winner.text}</span>
                             </div>
                           )}
-                          <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <> · from <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span></>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                          <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{poll.substack_url ? <a href={poll.substack_url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
                         </div>
                         <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>
                       </div>
