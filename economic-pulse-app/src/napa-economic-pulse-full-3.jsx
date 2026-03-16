@@ -656,29 +656,41 @@ export default function EconomicPulseDashboard(){
                     const isOpen = openPoll === poll.poll_id;
                     const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : poll.options_json;
                     const options = Array.isArray(rawOpts) ? rawOpts : [];
-                    const maxVotes = Math.max(...options.map(o => Number(o.votes) || 0), 1);
+                    const opts = options.filter(o => o && (o.label || o.text));
+                    const winner = opts.length > 0 ? opts.reduce((a, b) => (Number(b.votes) || 0) > (Number(a.votes) || 0) ? b : a, opts[0]) : null;
+                    const winPct = winner && poll.total_votes > 0 ? Math.round(((Number(winner.votes) || 0) / poll.total_votes) * 100) : 0;
+                    const maxVotes = Math.max(...opts.map(o => Number(o.votes) || 0), 1);
                     return (
                       <div key={poll.poll_id} style={{background:T.bg2,border:`1px solid ${T.rule}`,overflow:"hidden"}}>
                         <div onClick={() => setOpenPoll(isOpen ? null : poll.poll_id)}
-                          style={{padding:"16px 20px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                          style={{padding:"14px 18px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                           <div style={{flex:1,minWidth:0}}>
-                            <div style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:15,fontWeight:700,color:T.ink2,lineHeight:1.4}}>{poll.question}</div>
+                            <div style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:14,fontWeight:700,color:T.ink2,lineHeight:1.4,marginBottom:4}}>{poll.question}</div>
+                            {!isOpen && winner && (
+                              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                                <div style={{flex:1,height:6,background:T.rule,borderRadius:3,overflow:"hidden"}}>
+                                  <div style={{height:"100%",width:`${winPct}%`,background:T.accent,borderRadius:3}} />
+                                </div>
+                                <span style={{fontSize:12,fontWeight:600,color:T.accent,whiteSpace:"nowrap",fontFamily:"'Source Sans 3',sans-serif"}}>{winPct}%</span>
+                                <span style={{fontSize:11,color:T.muted,fontFamily:"'Source Sans 3',sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{winner.label || winner.text}</span>
+                              </div>
+                            )}
                             {(()=>{const url=poll.substack_url&&poll.substack_url.trim();return(
-                            <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
+                            <div style={{fontSize:11,color:T.dim,marginTop:4,fontFamily:"'Source Sans 3',sans-serif",lineHeight:1.5}}>{fN(poll.total_votes)} votes{poll.theme ? ` · ${poll.theme}` : ""}{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{color:T.gold,textDecoration:"none",fontWeight:600}}>{poll.post_title} ↗</a> : <span style={{fontStyle:"italic",color:T.muted}}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`}</div>
                             );})()}
                           </div>
                           <span style={{fontSize:16,color:T.dim,marginLeft:12,transform:isOpen?"rotate(180deg)":"",transition:"transform .2s"}}>▾</span>
                         </div>
                         {isOpen && (
-                          <div style={{padding:"0 20px 18px",borderTop:`1px solid ${T.rule}`}}>
-                            {options.map((opt, oi) => {
+                          <div style={{padding:"0 18px 16px",borderTop:`1px solid ${T.rule}`}}>
+                            {opts.map((opt, oi) => {
                               const votes = Number(opt.votes) || 0;
                               const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
                               const isWinner = votes === maxVotes && votes > 0;
                               return (
                                 <div key={oi} style={{marginTop:oi===0?14:10}}>
                                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-                                    <span style={{fontSize:13,fontWeight:isWinner?700:400,color:isWinner?T.ink2:T.muted,fontFamily:"'Source Sans 3',sans-serif"}}>{opt.text}</span>
+                                    <span style={{fontSize:13,fontWeight:isWinner?700:400,color:isWinner?T.ink2:T.muted,fontFamily:"'Source Sans 3',sans-serif"}}>{opt.text || opt.label}</span>
                                     <span style={{fontSize:12,fontWeight:600,color:isWinner?T.gold:T.dim,fontFamily:"monospace",whiteSpace:"nowrap",marginLeft:8}}>{pct.toFixed(1)}% ({votes})</span>
                                   </div>
                                   <div style={{height:18,background:T.bg,border:`1px solid ${T.rule}`,overflow:"hidden"}}>
