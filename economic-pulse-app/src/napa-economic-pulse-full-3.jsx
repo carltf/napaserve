@@ -566,7 +566,7 @@ export default function EconomicPulseDashboard(){
                     <div style={{fontSize:9,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{g.count} poll{g.count!==1?"s":""} · {fN(g.totalVotes)} votes</div>
                     <div style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:18,fontWeight:700,color:T.ink2,marginBottom:8}}>{g.theme}</div>
                     <div style={{fontSize:12,color:T.muted,lineHeight:1.5}}>
-                      {g.polls.slice(0,2).map((p,i) => (
+                      {g.polls.filter(p => p.question && p.question.trim()).slice(0,2).map((p,i) => (
                         <div key={i} style={{whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>• {p.question}</div>
                       ))}
                       {g.count > 2 && <div style={{color:T.gold,fontWeight:600,marginTop:4}}>+ {g.count - 2} more →</div>}
@@ -587,7 +587,8 @@ export default function EconomicPulseDashboard(){
                 <div style={{display:"flex",flexDirection:"column",gap:10}}>
                   {(pollThemes.find(g=>g.theme===openTheme)?.polls || []).map(poll => {
                     const isOpen = openPoll === poll.poll_id;
-                    const options = Array.isArray(poll.options_json) ? poll.options_json : [];
+                    const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : poll.options_json;
+                    const options = Array.isArray(rawOpts) ? rawOpts : [];
                     const maxVotes = Math.max(...options.map(o => Number(o.votes) || 0), 1);
                     return (
                       <div key={poll.poll_id} style={{background:T.bg2,border:`1px solid ${T.rule}`,overflow:"hidden"}}>
