@@ -157,8 +157,14 @@ export default function NapaServeHub() {
           <span className="hub-tools-lbl">Tools &amp; Intelligence</span>
           <span className="hub-tools-lbl">7 live tools</span>
         </div>
+
+        {/* ── JOURNALISM ── */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "14px 0 10px", borderBottom: "1px solid rgba(44,24,16,0.08)" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Journalism</span>
+          <span style={{ fontSize: 13, color: "#8B7355" }}>Original reporting and searchable archives</span>
+        </div>
         <div className="hub-grid">
-<Link to="/news" className="hub-card">
+          <Link to="/news" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
               <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="4" y="5" width="32" height="30" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><line x1="10" y1="13" x2="30" y2="13" stroke="#8B5E3C" strokeWidth="1.5" strokeLinecap="round"/><line x1="10" y1="19" x2="30" y2="19" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".6"/><line x1="10" y1="24" x2="24" y2="24" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="10" y1="29" x2="20" y2="29" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".3"/></svg>
@@ -166,26 +172,6 @@ export default function NapaServeHub() {
             <div className="hub-c-cat">News</div>
             <div className="hub-c-name">Napa Valley Features</div>
             <div className="hub-c-desc">The flagship publication. Original reporting on Napa County economy, agriculture, civic affairs and community life.</div>
-            <div className="hub-arrow">Open →</div>
-          </Link>
-          <Link to="/events" className="hub-card">
-            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="18" r="10" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M20 28 L20 38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="18" r="3.5" fill="#8B5E3C"/><line x1="14" y1="38" x2="26" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
-            </div>
-            <div className="hub-c-cat">Community</div>
-            <div className="hub-c-name">Event Finder</div>
-            <div className="hub-c-desc">Community events across Napa County. Discover, filter by category and submit your own event.</div>
-            <div className="hub-arrow">Open →</div>
-          </Link>
-<Link to="/dashboard" className="hub-card">
-            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
-            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
-            </div>
-            <div className="hub-c-cat">Economy</div>
-            <div className="hub-c-name">Community Pulse</div>
-            <div className="hub-c-desc">Winery licenses, unemployment, home values, food services jobs. Interactive charts with full weekly history. Updated every Monday via GitHub Actions.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
           <Link to="/archive" className="hub-card">
@@ -196,6 +182,72 @@ export default function NapaServeHub() {
             <div className="hub-c-cat">Archive · Journalism</div>
             <div className="hub-c-name">NVF Archive Search</div>
             <div className="hub-c-desc">1,000+ original articles from Napa Valley Features, AI-searchable with semantic similarity. A decade of local reporting on economics, land use, policy and community.</div>
+            <div className="hub-arrow">Open →</div>
+          </Link>
+          <Link to="/under-the-hood" className="hub-card" style={{ opacity: 0.75 }}>
+            <div style={{ position: "absolute", top: 16, right: 16, fontSize: 9, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#8B7355" }}>Coming Soon</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><path d="M20 4L4 14v12l16 10 16-10V14L20 4z" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><circle cx="20" cy="20" r="6" stroke="#8B5E3C" strokeWidth="1" fill="none"/><circle cx="20" cy="20" r="2" fill="#8B5E3C"/><line x1="20" y1="14" x2="20" y2="4" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="20" y1="26" x2="20" y2="36" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/></svg>
+            </div>
+            <div className="hub-c-cat" style={{ color: "#8B7355" }}>Deep Dives</div>
+            <div className="hub-c-name">Under the Hood</div>
+            <div className="hub-c-desc">Data-driven deep dives into Napa County industries. Charts, polls and original analysis on the numbers behind the headlines.</div>
+            <div className="hub-arrow">Open →</div>
+          </Link>
+        </div>
+
+        {/* ── section divider ── */}
+        <div style={{ borderTop: "1px solid rgba(44,24,16,0.06)", marginTop: 24 }} />
+
+        {/* ── COMMUNITY ── */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "14px 0 10px", borderBottom: "1px solid rgba(44,24,16,0.08)" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Community</span>
+          <span style={{ fontSize: 13, color: "#8B7355" }}>Events and regional collaboration</span>
+        </div>
+        <div className="hub-grid">
+          <Link to="/events" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="18" r="10" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M20 28 L20 38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="18" r="3.5" fill="#8B5E3C"/><line x1="14" y1="38" x2="26" y2="38" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            </div>
+            <div className="hub-c-cat">Community</div>
+            <div className="hub-c-name">Event Finder</div>
+            <div className="hub-c-desc">Community events across Napa County. Discover, filter by category and submit your own event.</div>
+            <div className="hub-arrow">Open →</div>
+          </Link>
+        </div>
+        {/* Valley Works */}
+        <Link to="/valley-works" className="hub-vw">
+          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+            <div style={{ flexShrink: 0, width: 40, height: 40 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="3" y="14" width="34" height="20" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M10 14V10a10 10 0 0 1 20 0v4" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="24" r="3.5" fill="#8B5E3C" opacity=".6"/><line x1="20" y1="27.5" x2="20" y2="31" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            </div>
+            <div>
+              <div className="hub-c-cat">Innovation · Workforce</div>
+              <div className="hub-c-name">Valley Works Collaborative</div>
+              <div className="hub-c-desc" style={{ marginBottom: 0, maxWidth: 600 }}>The regional innovation hub diversifying Napa County&apos;s economy beyond wine and hospitality. Training pipelines, emerging industries and the VWC mission.</div>
+            </div>
+          </div>
+          <div className="hub-arrow" style={{ flexShrink: 0 }}>Open →</div>
+        </Link>
+
+        {/* ── section divider ── */}
+        <div style={{ borderTop: "1px solid rgba(44,24,16,0.06)", marginTop: 24 }} />
+
+        {/* ── INTELLIGENCE ── */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "14px 0 10px", borderBottom: "1px solid rgba(44,24,16,0.08)" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Intelligence</span>
+          <span style={{ fontSize: 13, color: "#8B7355" }}>Data tools and AI-assisted analysis</span>
+        </div>
+        <div className="hub-grid">
+          <Link to="/dashboard" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="2" y="22" width="7" height="16" rx="1.5" fill="#8B5E3C" opacity=".35"/><rect x="12" y="15" width="7" height="23" rx="1.5" fill="#8B5E3C" opacity=".6"/><rect x="22" y="8" width="7" height="30" rx="1.5" fill="#8B5E3C" opacity=".85"/><rect x="32" y="12" width="7" height="26" rx="1.5" fill="#8B5E3C"/><line x1="1" y1="38.5" x2="39" y2="38.5" stroke="#8B5E3C" strokeWidth="1"/></svg>
+            </div>
+            <div className="hub-c-cat">Economy</div>
+            <div className="hub-c-name">Community Pulse</div>
+            <div className="hub-c-desc">Winery licenses, unemployment, home values, food services jobs. Interactive charts with full weekly history. Updated every Monday via GitHub Actions.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
           <a href="/agent.html" className="hub-card">
@@ -218,22 +270,7 @@ export default function NapaServeHub() {
             <div className="hub-c-desc">Structural Compass — 11-axis scoring of any proposed project against the Jobs / People / Place framework. For civic leaders and stakeholders.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
-          
         </div>
-        {/* Valley Works */}
-        <Link to="/valley-works" className="hub-vw">
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div style={{ flexShrink: 0, width: 40, height: 40 }}>
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><rect x="3" y="14" width="34" height="20" rx="2" stroke="#8B5E3C" strokeWidth="1.2"/><path d="M10 14V10a10 10 0 0 1 20 0v4" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="20" cy="24" r="3.5" fill="#8B5E3C" opacity=".6"/><line x1="20" y1="27.5" x2="20" y2="31" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/></svg>
-            </div>
-            <div>
-              <div className="hub-c-cat">Innovation · Workforce</div>
-              <div className="hub-c-name">Valley Works Collaborative</div>
-              <div className="hub-c-desc" style={{ marginBottom: 0, maxWidth: 600 }}>The regional innovation hub diversifying Napa County&apos;s economy beyond wine and hospitality. Training pipelines, emerging industries and the VWC mission.</div>
-            </div>
-          </div>
-          <div className="hub-arrow" style={{ flexShrink: 0 }}>Open →</div>
-        </Link>
       </div>
 
       {/* ARCHIVE */}
