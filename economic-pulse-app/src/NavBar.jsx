@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { path: "/events", label: "Events" },
   { path: "/news", label: "News" },
   { path: "/archive", label: "Archive" },
+  { path: "/under-the-hood", label: "Under the Hood" },
   { path: "/agent.html", label: "AI Agent", external: true },
   { path: "/valley-works", label: "Valley Works" },
 ];
@@ -201,7 +202,7 @@ export default function NavBar() {
 
           {/* Grouped nav sections */}
           {[
-            { label: "Journalism", desc: "Original reporting and searchable archives", links: [{ path: "/news", label: "Napa Valley Features" }, { path: "/archive", label: "NVF Archive Search" }] },
+            { label: "Journalism", desc: "Original reporting and searchable archives", links: [{ path: "/news", label: "Napa Valley Features" }, { path: "/archive", label: "NVF Archive Search" }, { path: "/under-the-hood", label: "Under the Hood" }] },
             { label: "Community", desc: "Events, workforce and civic innovation", links: [{ path: "/events", label: "Event Finder" }, { path: "/valley-works", label: "Valley Works" }, { path: "/vw-labs", label: "VW Labs" }] },
             { label: "Intelligence", desc: "Data, analysis and AI-assisted research", links: [{ path: "/dashboard", label: "Community Pulse" }, { path: "/evaluator", label: "Project Evaluator" }, { path: "/agent.html", label: "Research Agent", external: true }] },
             { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ path: "/about", label: "About NapaServe" }, { path: "mailto:napaserve@gmail.com", label: "Contact", external: true }] },
