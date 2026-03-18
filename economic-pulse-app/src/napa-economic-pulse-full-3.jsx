@@ -304,7 +304,7 @@ export default function EconomicPulseDashboard(){
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
       <div style={{textAlign:"center"}}>
         <div style={{width:36,height:36,border:`2px solid ${T.rule}`,borderTopColor:T.accent,borderRadius:"50%",animation:"spin 1s linear infinite",margin:"0 auto 16px"}}/>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;}`}</style>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;} @media(max-width:768px){.kpi-grid-overview,.kpi-grid-macro,.kpi-grid-labor,.kpi-grid-housing{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;flex-wrap:unset!important;}.kpi-grid-overview>*,.kpi-grid-macro>*,.kpi-grid-labor>*,.kpi-grid-housing>*{min-width:0!important;min-height:80px;}}`}</style>
         <p style={{fontFamily:"'Libre Baskerville',Georgia,serif",color:T.muted,fontSize:16}}>Loading Community Pulse...</p>
       </div>
     </div>
@@ -352,7 +352,7 @@ export default function EconomicPulseDashboard(){
 
         {section==="overview"&&<>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.gold,marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>Napa County</div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24}}>
+          <div className="kpi-grid-overview" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24,overflow:"hidden"}}>
             {latestW&&<a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" aria-label="ABC Licensing, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<><Delta c={latestW.napa} p={findPriorDifferent(allNapa,"napa",allNapa.length-1)}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>WoW</span></>}/></a>}
             {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" aria-label="Unemployment Rate data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Unemployment" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={findPriorDifferent(econData,"unemp",econData.length-1)} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
             {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={findPriorDifferent(econData,"labor",econData.length-1)}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
@@ -415,7 +415,7 @@ export default function EconomicPulseDashboard(){
               return rows.map((row,ri)=>(
                 <div key={ri} style={{marginBottom:ri<2?16:0}}>
                   <div style={{fontSize:11,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{row.label}</div>
-                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(140px,1fr))",gap:8,overflowX:"auto"}}>
+                  <div className="kpi-grid-macro" style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(140px,1fr))",gap:8,overflowX:"auto",overflow:"hidden"}}>
                     {row.ids.map(id=>{
                       const m = byId[id];
                       if(!m) return <div key={id} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90}} />;
@@ -578,7 +578,7 @@ export default function EconomicPulseDashboard(){
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:24,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Labor Market</h2>
             <p style={{fontSize:17,color:T.muted,margin:0}}>FRED / BLS data for Napa County — Monthly series, updated weekly</p>
           </div>
-          <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap",alignItems:"stretch"}}>
+          <div className="kpi-grid-labor" style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap",alignItems:"stretch",overflow:"hidden"}}>
             {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" aria-label="Unemployment Rate data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Unemployment Rate" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
             {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Civilian Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
             {latestE?.food!=null&&<a href="https://fred.stlouisfed.org/series/SMU06349007072200001SA" target="_blank" rel="noopener noreferrer" aria-label="Food Services data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Food Services" value={fN(latestE.food)+" jobs"} delta={<><Delta c={latestE.food} p={priorE?.food}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
@@ -610,7 +610,7 @@ export default function EconomicPulseDashboard(){
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:24,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Housing Market</h2>
             <p style={{fontSize:17,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24}}>
+          <div className="kpi-grid-housing" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24,overflow:"hidden"}}>
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const ci=homes.length-1;const mom=ci>=4?homes[ci-4]:null;const yoy=ci>=52?homes[ci-52]:null;return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={mom?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span>{yoy&&<><span style={{margin:"0 6px",color:T.rule}}>·</span><Delta c={latestE.home} p={yoy.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>YoY</span></>}</>}/></a>;})()}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const peak=Math.max(...homes.map(d=>d.home));const diff=latestE.home-peak;return diff!==0?<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="From Peak" value={f$(diff)} detail={`peak ${f$(peak)}`} accent={diff<0?T.neg:T.pos}/></a>:null;})()}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const idx=homes.findIndex(d=>d===latestE);const ago=homes[idx-12]||homes[0];if(!ago||ago===latestE)return null;const diff=latestE.home-ago.home;const pct=((diff/ago.home)*100).toFixed(1);return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="YoY Change" value={f$(diff)} detail={`${diff>=0?"+":""}${pct}% from ${fMo(ago.date)}`} accent={diff>=0?T.pos:T.neg}/></a>;})()}
