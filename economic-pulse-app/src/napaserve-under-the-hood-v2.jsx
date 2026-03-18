@@ -401,7 +401,7 @@ export default function UnderTheHood() {
           <h1 style={{ fontFamily:"'Libre Baskerville', serif", fontSize:28, fontWeight:700, color:T.ink, margin:"0 0 12px 0", lineHeight:1.3 }}>Napa Cabernet Prices Break the Growth Curve</h1>
           <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:15, color:T.muted, margin:"0 0 16px 0" }}>By Tim Carl · March 2026 · Preliminary 2025 Grape Crush Report</p>
           <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:15, color:T.ink, lineHeight:1.6, margin:"0 0 16px 0", maxWidth:600 }}>
-            The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years — the first such decline in the modern data series. This interactive edition includes six data visualizations and live reader polls.
+            NAPA VALLEY, Calif. — March 17, 2026 — The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years — the first such decline in the modern data series. This interactive edition includes six data visualizations and live reader polls.
           </p>
           <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noreferrer"
             style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:13, color:T.accent, textDecoration:"underline" }}>
