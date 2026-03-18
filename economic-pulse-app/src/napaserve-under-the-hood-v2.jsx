@@ -411,7 +411,8 @@ export default function UnderTheHood() {
       </div>
 
       {/* article body */}
-      <div style={{ maxWidth:720, margin:"0 auto", padding:"40px 24px 0" }}>
+      <div style={{ padding:"40px 24px 0" }}>
+      <div style={{ maxWidth:720, margin:"0 auto" }}>
 
         {SECTIONS.map(section => (
           <div key={section.id}>
@@ -468,6 +469,7 @@ export default function UnderTheHood() {
             Data sourced from CDFA·USDA-NASS Grape Crush Reports. 2025 figures are preliminary pending the final report due April 30, 2026.
           </p>
         </div>
+      </div>
       </div>
 
       {/* footer */}
