@@ -387,9 +387,16 @@ export default function ProjectEvaluator() {
     }).join("");
   };
 
+  const stripMarkdown = (md) =>
+    md
+      .replace(/^#{1,2}\s+(.+)$/gm, "$1\n")
+      .replace(/\*\*/g, "")
+      .replace(/^[\s]*[-*]\s+/gm, "  • ")
+      .replace(/\n{3,}/g, "\n\n");
+
   const copyReport = () => {
     if (!reportText) return;
-    navigator.clipboard.writeText(reportText).then(() => {
+    navigator.clipboard.writeText(stripMarkdown(reportText)).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
