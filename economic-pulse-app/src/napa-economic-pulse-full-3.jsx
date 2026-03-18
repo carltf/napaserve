@@ -88,7 +88,7 @@ function KPI({label,value,delta}){
   return(
     <div className="kpi-card-pulse" style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"16px 18px",flex:1,minWidth:140,minHeight:120}}>
       <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{label}</div>
-      <div style={{fontSize:28,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1,marginBottom:6}}>{value}</div>
+      <div className="kpi-value" style={{fontSize:28,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1,marginBottom:6}}>{value}</div>
       <div>{delta}</div>
     </div>
   );
@@ -304,7 +304,7 @@ export default function EconomicPulseDashboard(){
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
       <div style={{textAlign:"center"}}>
         <div style={{width:36,height:36,border:`2px solid ${T.rule}`,borderTopColor:T.accent,borderRadius:"50%",animation:"spin 1s linear infinite",margin:"0 auto 16px"}}/>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;} @media(max-width:768px){.kpi-grid-overview,.kpi-grid-macro,.kpi-grid-housing{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;flex-wrap:unset!important;}.kpi-grid-labor{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;flex-wrap:unset!important;}.kpi-grid-labor>*:last-child:nth-child(odd){grid-column:1/-1;}.kpi-card-pulse{min-height:130px!important;box-sizing:border-box!important;}}`}</style>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;} @media(max-width:768px){.kpi-grid-overview,.kpi-grid-macro,.kpi-grid-housing{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;flex-wrap:unset!important;}.kpi-grid-labor{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;flex-wrap:unset!important;}.kpi-grid-labor>*:last-child:nth-child(odd){grid-column:1/-1;}.kpi-card-pulse{min-height:160px!important;box-sizing:border-box!important;}.kpi-card-pulse .kpi-value{font-size:clamp(1.4rem,4vw,2rem)!important;}}`}</style>
         <p style={{fontFamily:"'Libre Baskerville',Georgia,serif",color:T.muted,fontSize:16}}>Loading Community Pulse...</p>
       </div>
     </div>
