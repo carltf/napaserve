@@ -391,6 +391,7 @@ export default function ProjectEvaluator() {
     md
       .replace(/^#{1,2}\s+(.+)$/gm, "$1\n")
       .replace(/\*\*/g, "")
+      .replace(/(?<!\w)\*([^*]+)\*(?!\w)/g, "$1")
       .replace(/^[\s]*[-*]\s+/gm, "  • ")
       .replace(/\n{3,}/g, "\n\n");
 
