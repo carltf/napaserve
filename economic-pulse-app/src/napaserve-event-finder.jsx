@@ -519,7 +519,7 @@ export default function EventFinder() {
                   {urls.length > 0 && (
                     <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
                       {urls.map((url, j) => (
-                        <a key={j} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${ev.title} link, opens in new tab`} style={{
+                        <a key={j} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${event.header} link, opens in new tab`} style={{
                           display: "inline-flex", alignItems: "center", gap: 6,
                           padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
                           background: j === 0 ? "#2C1810" : "transparent",
