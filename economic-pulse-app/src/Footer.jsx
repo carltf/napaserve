@@ -95,7 +95,7 @@ export default function Footer() {
             <div style={{ gridColumn: "span 3" }}>
               <div style={colLabel}>Newsletter</div>
               <div style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, marginBottom: 4 }}>Stay informed on Napa County.</div>
-              <div style={{ fontSize: 14, color: T.muted, fontFamily: font, lineHeight: 1.6, marginBottom: 14 }}>Original reporting, economic updates and civic intelligence from Napa Valley Features — delivered when it matters.</div>
+              <div style={{ fontSize: 14, color: T.muted, fontFamily: font, lineHeight: 1.6, marginBottom: 14 }}>Original reporting, economic updates and community intelligence from Napa Valley Features — delivered when it matters.</div>
               <div style={{ display: "flex", gap: 8, maxWidth: 440 }}>
                 <input className="ns-footer-sub-in" type="text" placeholder="Your name" aria-label="Your name" value={subName} onChange={e => setSubName(e.target.value)} style={{ marginBottom: 6 }} />
                 <input className="ns-footer-sub-in" type="email" placeholder="Your email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} />
