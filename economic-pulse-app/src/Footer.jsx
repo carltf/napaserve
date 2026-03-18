@@ -43,7 +43,7 @@ export default function Footer() {
           {/* Branding */}
           <div style={{ marginBottom: 32, paddingBottom: 24, borderBottom: `1px solid ${T.rule}` }}>
             <div style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, marginBottom: 4 }}>NapaServe</div>
-            <div style={{ fontSize: 14, color: T.dim, fontFamily: font }}>Civic intelligence for Napa County · A Valley Works Collaborative · VW Labs project</div>
+            <div style={{ fontSize: 14, color: T.dim, fontFamily: font }}>Community intelligence for Napa County · A Valley Works Collaborative · VW Labs project</div>
           </div>
 
           {/* Nav columns */}

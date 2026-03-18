@@ -267,7 +267,7 @@ export default function NapaServeHub() {
         <div className="hub-f-inner">
           <div style={{ marginBottom: 32, paddingBottom: 24, borderBottom: "1px solid var(--rule)" }}>
             <div className="hub-f-wm">NapaServe</div>
-            <div className="hub-f-tag">Civic intelligence for Napa County · A Valley Works Collaborative · VW Labs project</div>
+            <div className="hub-f-tag">Community intelligence for Napa County · A Valley Works Collaborative · VW Labs project</div>
           </div>
           <div className="hub-four" style={{ marginBottom: 28, paddingBottom: 28, borderBottom: "1px solid var(--rule)" }}>
             <div>
