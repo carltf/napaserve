@@ -42,7 +42,7 @@ export default function NapaServeHub() {
         .hub-section-rule{border-top:1px solid var(--rule);margin:52px 0 0;}
         .hub-tools-wrap{max-width:1160px;margin:0 auto;padding:32px 28px 0;}
         .hub-tools-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
-        .hub-tools-lbl{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);}
+        .hub-tools-lbl{font-size:14px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);}
         .hub-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule);border-left:1px solid var(--rule);}
         .hub-card{padding:22px 22px 16px;background:var(--bg);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);cursor:pointer;transition:background .15s;position:relative;text-decoration:none;display:block;color:inherit;}
         .hub-card:hover{background:var(--bg2);}
@@ -163,8 +163,8 @@ export default function NapaServeHub() {
 
         {/* ── JOURNALISM ── */}
         <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "14px 0 10px", borderBottom: "1px solid rgba(44,24,16,0.08)" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Journalism</span>
-          <span style={{ fontSize: 13, color: "#8B7355" }}>Original reporting and searchable archives</span>
+          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".10em", textTransform: "uppercase", color: "#8B5E3C" }}>Journalism</span>
+          <span style={{ fontSize: 14, color: "#8B7355" }}>Original reporting and searchable archives</span>
         </div>
         <div className="hub-grid hub-grid-journalism">
           <Link to="/news" className="hub-card">
@@ -204,8 +204,8 @@ export default function NapaServeHub() {
 
         {/* ── COMMUNITY ── */}
         <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "14px 0 10px", borderBottom: "1px solid rgba(44,24,16,0.08)" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Community</span>
-          <span style={{ fontSize: 13, color: "#8B7355" }}>Events and regional collaboration</span>
+          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".10em", textTransform: "uppercase", color: "#8B5E3C" }}>Community</span>
+          <span style={{ fontSize: 14, color: "#8B7355" }}>Events and regional collaboration</span>
         </div>
         <div className="hub-grid hub-grid-community" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
           <Link to="/events" className="hub-card">
@@ -235,8 +235,8 @@ export default function NapaServeHub() {
 
         {/* ── INTELLIGENCE ── */}
         <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "14px 0 10px", borderBottom: "1px solid rgba(44,24,16,0.08)" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Intelligence</span>
-          <span style={{ fontSize: 13, color: "#8B7355" }}>Data tools and AI-assisted analysis</span>
+          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".10em", textTransform: "uppercase", color: "#8B5E3C" }}>Intelligence</span>
+          <span style={{ fontSize: 14, color: "#8B7355" }}>Data tools and AI-assisted analysis</span>
         </div>
         <div className="hub-grid hub-grid-intelligence">
           <Link to="/dashboard" className="hub-card">
