@@ -18,7 +18,7 @@ function transformData(rows) {
   const wineryData = [], econData = [];
   for (const r of rows) {
     if (r.napa_type02_count != null)
-      wineryData.push({ date: r.run_date, napa: Number(r.napa_type02_count) });
+      wineryData.push({ date: r.run_date, napa: Number(r.napa_type02_count), ca: r.ca_type02_count != null ? Number(r.ca_type02_count) : undefined });
     if (r.unemployment_rate != null || r.home_value != null)
       econData.push({
         date: r.run_date,
@@ -65,6 +65,16 @@ const fMo   = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{month:"sh
 const fFull = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
 const f$    = v => "$"+Number(v).toLocaleString("en-US",{maximumFractionDigits:0});
 const fN    = v => Number(v).toLocaleString("en-US");
+
+function findPriorDifferent(arr, key, currentIdx) {
+  const cv = arr[currentIdx]?.[key];
+  if (cv == null) return undefined;
+  for (let i = currentIdx - 1; i >= 0; i--) {
+    const v = arr[i]?.[key];
+    if (v != null && v !== cv) return v;
+  }
+  return undefined;
+}
 
 function Delta({c,p,s="",inv=false}){
   if(c==null||p==null)return<span style={{color:T.dim,fontSize:12}}>—</span>;
@@ -247,6 +257,11 @@ export default function EconomicPulseDashboard(){
   const oMax=overviewWinery.length?Math.max(...overviewWinery.map(d=>d.napa)):1950;
   const oPad=Math.round((oMax-oMin)*0.08);
 
+  const overviewCA=useMemo(()=>overviewWinery.filter(d=>d.ca!=null),[overviewWinery]);
+  const caMin=overviewCA.length?Math.min(...overviewCA.map(d=>d.ca)):5000;
+  const caMax=overviewCA.length?Math.max(...overviewCA.map(d=>d.ca)):6000;
+  const caPad=Math.round((caMax-caMin)*0.08);
+
   const latestW=allNapa.length?allNapa[allNapa.length-1]:null;
   const latestE=econData.length?econData[econData.length-1]:null;
   const priorE=econData.length>1?econData[econData.length-2]:null;
@@ -336,11 +351,11 @@ export default function EconomicPulseDashboard(){
       <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px 60px"}}>
 
         {section==="overview"&&<>
-          <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-            {latestW&&<a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" aria-label="ABC Licensing, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<><Delta c={latestW.napa} p={allNapa[allNapa.length-2]?.napa}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>WoW</span></>}/></a>}
-            {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" aria-label="Unemployment Rate data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Unemployment" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={priorE?.unemp} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
-            {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
-            {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:24}}>
+            {latestW&&<a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" aria-label="ABC Licensing, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<><Delta c={latestW.napa} p={findPriorDifferent(allNapa,"napa",allNapa.length-1)}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>WoW</span></>}/></a>}
+            {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" aria-label="Unemployment Rate data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Unemployment" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={findPriorDifferent(econData,"unemp",econData.length-1)} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={findPriorDifferent(econData,"labor",econData.length-1)}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={findPriorDifferent(econData,"home",econData.length-1)}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
           </div>
           {latestE?.summary&&<div style={ctx}><div style={lbl}>Weekly Summary</div><p style={{fontSize:14,color:T.muted,lineHeight:1.75,margin:0}}>{latestE.summary}</p></div>}
           {overviewWinery.length>=2&&(
@@ -354,6 +369,22 @@ export default function EconomicPulseDashboard(){
                   <YAxis domain={[oMin-oPad,oMax+oPad]} tick={{fontSize:9,fill:T.dim}} axisLine={false} tickLine={false} width={48} tickFormatter={v=>v.toLocaleString()}/>
                   <Tooltip content={<Tip/>} cursor={{stroke:T.accent,strokeWidth:1,strokeDasharray:"4 4"}}/>
                   <Area type="monotone" dataKey="napa" stroke={T.gold} strokeWidth={2} fill="url(#oG)" dot={false} name="Napa Type-02"/>
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
+          {overviewCA.length>=2&&(
+            <div style={chrt}>
+              <div style={ctitle}>California Type-02 Winery Licenses — Weekly Trend</div>
+              <ResponsiveContainer width="100%" height={240}>
+                <AreaChart data={overviewCA} margin={{top:8,right:16,bottom:4,left:8}}>
+                  <defs><linearGradient id="caG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={T.accent} stopOpacity={0.25}/><stop offset="100%" stopColor={T.accent} stopOpacity={0.02}/></linearGradient></defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.rule} vertical={false}/>
+                  <XAxis dataKey="date" tick={{fontSize:9,fill:T.dim}} tickFormatter={fMo} interval={Math.floor(overviewCA.length/6)} axisLine={false} tickLine={false}/>
+                  <YAxis domain={[caMin-caPad,caMax+caPad]} tick={{fontSize:9,fill:T.dim}} axisLine={false} tickLine={false} width={48} tickFormatter={v=>v.toLocaleString()}/>
+                  <Tooltip content={<Tip/>} cursor={{stroke:T.accent,strokeWidth:1,strokeDasharray:"4 4"}}/>
+                  <Area type="monotone" dataKey="ca" stroke={T.accent} strokeWidth={2} fill="url(#caG)" dot={false} name="CA Type-02"/>
                 </AreaChart>
               </ResponsiveContainer>
             </div>
