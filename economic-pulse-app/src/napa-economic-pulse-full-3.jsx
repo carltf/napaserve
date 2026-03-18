@@ -583,20 +583,20 @@ export default function EconomicPulseDashboard(){
             {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Civilian Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={priorE?.labor}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
             {latestE?.food!=null&&<a href="https://fred.stlouisfed.org/series/SMU06349007072200001SA" target="_blank" rel="noopener noreferrer" aria-label="Food Services data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Food Services" value={fN(latestE.food)+" jobs"} delta={<><Delta c={latestE.food} p={priorE?.food}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
           </div>
-          {econData.filter(d=>d.unemp!=null).length>=2&&(
+          {(()=>{const ud=econData.filter(d=>d.unemp!=null&&d.date>="2022-01");return ud.length>=2&&(
             <div style={chrt}>
               <div style={ctitle}>Unemployment Rate — Napa County</div>
               <ResponsiveContainer width="100%" height={260}>
-                <LineChart data={econData.filter(d=>d.unemp!=null)} margin={{top:8,right:16,bottom:4,left:8}}>
+                <LineChart data={ud} margin={{top:8,right:16,bottom:4,left:8}}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.rule} vertical={false}/>
                   <XAxis dataKey="date" tick={{fontSize:9,fill:T.dim}} tickFormatter={fMo} axisLine={false} tickLine={false}/>
-                  <YAxis domain={[0,"auto"]} tick={{fontSize:9,fill:T.dim}} tickFormatter={v=>v+"%"} axisLine={false} tickLine={false} width={40}/>
+                  <YAxis domain={[2,6]} tick={{fontSize:9,fill:T.dim}} tickFormatter={v=>v+"%"} axisLine={false} tickLine={false} width={40}/>
                   <Tooltip content={<Tip fmt={v=>v+"%"}/>} cursor={{stroke:T.accent,strokeWidth:1,strokeDasharray:"4 4"}}/>
                   <Line type="monotone" dataKey="unemp" stroke={T.neg} strokeWidth={2.5} dot={{r:4,fill:T.neg,stroke:"#F5F0E8",strokeWidth:2}} name="Unemployment"/>
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          )}
+          );})()}
           <div style={{textAlign:"right",marginTop:4}}><a href="https://www.bls.gov/regions/west/california.htm" target="_blank" rel="noopener noreferrer" aria-label="BLS Data, opens in new tab" style={{fontSize:10,color:T.dim,textDecoration:"none"}}>BLS Data ↗</a></div>
           <div style={ctx}>
             <div style={lbl}>Labor Market Context</div>
@@ -611,7 +611,7 @@ export default function EconomicPulseDashboard(){
             <p style={{fontSize:17,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24}}>
-            {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
+            {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const ci=homes.length-1;const mom=ci>=4?homes[ci-4]:null;const yoy=ci>=52?homes[ci-52]:null;return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={mom?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span>{yoy&&<><span style={{margin:"0 6px",color:T.rule}}>·</span><Delta c={latestE.home} p={yoy.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>YoY</span></>}</>}/></a>;})()}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const peak=Math.max(...homes.map(d=>d.home));const diff=latestE.home-peak;return diff!==0?<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="From Peak" value={f$(diff)} detail={`peak ${f$(peak)}`} accent={diff<0?T.neg:T.pos}/></a>:null;})()}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const idx=homes.findIndex(d=>d===latestE);const ago=homes[idx-12]||homes[0];if(!ago||ago===latestE)return null;const diff=latestE.home-ago.home;const pct=((diff/ago.home)*100).toFixed(1);return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="YoY Change" value={f$(diff)} detail={`${diff>=0?"+":""}${pct}% from ${fMo(ago.date)}`} accent={diff>=0?T.pos:T.neg}/></a>;})()}
             {(priorE?.yoy??latestE?.yoy)!=null&&<KPI label="Year-over-Year" value={(priorE?.yoy??latestE?.yoy)+"%"} delta={<span style={{fontSize:11,color:T.dim}}>home value change</span>}/>}
@@ -625,7 +625,7 @@ export default function EconomicPulseDashboard(){
                   <defs><linearGradient id="hG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={T.pos} stopOpacity={0.25}/><stop offset="100%" stopColor={T.pos} stopOpacity={0.02}/></linearGradient></defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.rule} vertical={false}/>
                   <XAxis dataKey="date" tick={{fontSize:9,fill:T.dim}} tickFormatter={fMo} axisLine={false} tickLine={false}/>
-                  <YAxis tick={{fontSize:9,fill:T.dim}} tickFormatter={v=>"$"+(v/1000).toFixed(0)+"k"} axisLine={false} tickLine={false} width={50}/>
+                  <YAxis domain={[750000,1000000]} tick={{fontSize:9,fill:T.dim}} tickFormatter={v=>"$"+(v/1000).toFixed(0)+"k"} axisLine={false} tickLine={false} width={50}/>
                   <Tooltip content={<Tip fmt={v=>f$(v)}/>} cursor={{stroke:T.accent,strokeWidth:1,strokeDasharray:"4 4"}}/>
                   <Area type="monotone" dataKey="home" stroke={T.pos} strokeWidth={2.5} fill="url(#hG)" dot={{r:4,fill:T.pos,stroke:"#F5F0E8",strokeWidth:2}} name="ZHVI"/>
                 </AreaChart>
