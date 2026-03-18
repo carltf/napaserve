@@ -84,6 +84,9 @@ export default function NapaServeHub() {
         .hub-sub-in::placeholder{color:var(--dim);}
         .hub-sub-btn{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--ink2);color:var(--bg);border:none;padding:10px 18px;cursor:pointer;white-space:nowrap;}
         .hub-sub-note{font-size:14px;color:var(--dim);margin-top:7px;}
+        @media(max-width:768px){
+          .hub-grid-journalism,.hub-grid-community,.hub-grid-intelligence{grid-template-columns:1fr!important;}
+        }
         @media(max-width:700px){
           .hub-grid{grid-template-columns:1fr 1fr;}
           .hub-arch-inner{grid-template-columns:1fr;gap:20px;}
@@ -163,7 +166,7 @@ export default function NapaServeHub() {
           <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Journalism</span>
           <span style={{ fontSize: 13, color: "#8B7355" }}>Original reporting and searchable archives</span>
         </div>
-        <div className="hub-grid">
+        <div className="hub-grid hub-grid-journalism">
           <Link to="/news" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
@@ -204,7 +207,7 @@ export default function NapaServeHub() {
           <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Community</span>
           <span style={{ fontSize: 13, color: "#8B7355" }}>Events and regional collaboration</span>
         </div>
-        <div className="hub-grid" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+        <div className="hub-grid hub-grid-community" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
           <Link to="/events" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
@@ -235,7 +238,7 @@ export default function NapaServeHub() {
           <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B5E3C" }}>Intelligence</span>
           <span style={{ fontSize: 13, color: "#8B7355" }}>Data tools and AI-assisted analysis</span>
         </div>
-        <div className="hub-grid">
+        <div className="hub-grid hub-grid-intelligence">
           <Link to="/dashboard" className="hub-card">
             <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
