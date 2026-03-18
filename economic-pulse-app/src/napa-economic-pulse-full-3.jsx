@@ -348,11 +348,11 @@ export default function EconomicPulseDashboard(){
         </div>
       </div>
 
-      <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px 60px"}}>
+      <div style={{maxWidth:1100,margin:"0 auto",padding:"28px 24px 24px"}}>
 
         {section==="overview"&&<>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.gold,marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>Napa County</div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:24}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24}}>
             {latestW&&<a href="https://www.abc.ca.gov/licensing/licensing-reports/" target="_blank" rel="noopener noreferrer" aria-label="ABC Licensing, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Winery Licenses" value={fN(latestW.napa)} delta={<><Delta c={latestW.napa} p={findPriorDifferent(allNapa,"napa",allNapa.length-1)}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>WoW</span></>}/></a>}
             {latestE?.unemp!=null&&<a href="https://fred.stlouisfed.org/series/CANAPA0URN" target="_blank" rel="noopener noreferrer" aria-label="Unemployment Rate data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Unemployment" value={latestE.unemp+"%"} delta={<><Delta c={latestE.unemp} p={findPriorDifferent(econData,"unemp",econData.length-1)} s="%" inv/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
             {latestE?.labor!=null&&<a href="https://fred.stlouisfed.org/series/NAPA906LFN" target="_blank" rel="noopener noreferrer" aria-label="Labor Force data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit"}}><KPI label="Labor Force" value={fN(latestE.labor)} delta={<><Delta c={latestE.labor} p={findPriorDifferent(econData,"labor",econData.length-1)}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
@@ -610,7 +610,7 @@ export default function EconomicPulseDashboard(){
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:24,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Housing Market</h2>
             <p style={{fontSize:17,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
           </div>
-          <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap",alignItems:"stretch"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24}}>
             {latestE?.home!=null&&<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={priorE?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span></>}/></a>}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const peak=Math.max(...homes.map(d=>d.home));const diff=latestE.home-peak;return diff!==0?<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="From Peak" value={f$(diff)} detail={`peak ${f$(peak)}`} accent={diff<0?T.neg:T.pos}/></a>:null;})()}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const idx=homes.findIndex(d=>d===latestE);const ago=homes[idx-12]||homes[0];if(!ago||ago===latestE)return null;const diff=latestE.home-ago.home;const pct=((diff/ago.home)*100).toFixed(1);return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="YoY Change" value={f$(diff)} detail={`${diff>=0?"+":""}${pct}% from ${fMo(ago.date)}`} accent={diff>=0?T.pos:T.neg}/></a>;})()}
