@@ -25,10 +25,17 @@
     font-family: 'Source Sans 3', sans-serif;
     background: var(--cream);
     color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+  .agent-app {
     height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex-shrink: 0;
   }
 
   header {
@@ -268,6 +275,7 @@
 </head>
 <body>
 
+<div class="agent-app">
 <header>
   <div class="logo">
     <a href="/" style="text-decoration:none;display:flex;align-items:baseline;gap:0.5rem">
@@ -403,6 +411,125 @@
     </div>
   </div>
 </div>
+</div><!-- /.agent-app -->
+
+<!-- FOOTER -->
+<footer id="ns-footer" style="padding:48px 28px 28px;background:#F5F0E8;border-top:1px solid rgba(44,24,16,0.12);font-family:'Source Sans 3','Source Sans Pro',sans-serif;">
+  <style>
+    #ns-footer a { text-decoration:none; transition:color .15s; }
+    #ns-footer a:hover { color:#8B5E3C !important; }
+    .nsf-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+    .nsf-sbtn { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:#7A6A50; border:1px solid rgba(44,24,16,0.12); padding:7px 12px; background:none; width:100%; margin-bottom:7px; text-decoration:none; transition:color .15s,border-color .15s; }
+    .nsf-sbtn:hover { color:#8B5E3C !important; border-color:#8B5E3C !important; }
+    .nsf-sub-in { flex:1; background:transparent; border:none; border-bottom:1px solid rgba(44,24,16,0.12); padding:8px 0; font-family:'Source Sans 3',sans-serif; font-size:13px; color:#2C1810; outline:none; min-width:0; }
+    .nsf-sub-in:focus { border-color:#8B5E3C; }
+    .nsf-sub-in::placeholder { color:#8B7355; }
+    @media (max-width:900px) { .nsf-grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:480px) { .nsf-grid { grid-template-columns:1fr 1fr; } }
+  </style>
+  <div style="max-width:1160px;margin:0 auto;">
+
+    <!-- Branding -->
+    <div style="margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid rgba(44,24,16,0.12);">
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:20px;font-weight:700;color:#2C1810;margin-bottom:4px;">NapaServe</div>
+      <div style="font-size:14px;color:#8B7355;">Civic intelligence for Napa County · A Valley Works Collaborative · VW Labs project</div>
+    </div>
+
+    <!-- Nav columns -->
+    <div class="nsf-grid" style="margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid rgba(44,24,16,0.12);">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#2C1810;margin-bottom:12px;">Intelligence</div>
+        <a href="/dashboard" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Community Pulse</a>
+        <a href="/evaluator" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Project Evaluator</a>
+        <a href="/agent.html" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Research Agent</a>
+        <a href="/evaluator" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Structural Compass</a>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#2C1810;margin-bottom:12px;">Journalism</div>
+        <a href="/news" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Napa Valley Features</a>
+        <a href="/archive" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">NVF Archive Search</a>
+        <a href="/under-the-hood" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Under the Hood</a>
+        <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;" aria-label="Sonoma Co. Features, opens in new tab">Sonoma Co. Features ↗</a>
+        <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;" aria-label="Lake Co. Features, opens in new tab">Lake Co. Features ↗</a>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#2C1810;margin-bottom:12px;">Community</div>
+        <a href="/events" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Event Finder</a>
+        <a href="/events" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Submit an event</a>
+        <a href="/valley-works" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Valley Works</a>
+        <a href="/vw-labs" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">VW Labs</a>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#2C1810;margin-bottom:12px;">Platform</div>
+        <a href="/about" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">About NapaServe</a>
+        <a href="/about#how-to-use" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">How to use this site</a>
+        <a href="/about#disclaimer" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Disclaimer</a>
+        <a href="mailto:napaserve@gmail.com" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Contact us</a>
+      </div>
+    </div>
+
+    <!-- Follow + Newsletter -->
+    <div class="nsf-grid" style="margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(44,24,16,0.12);align-items:start;">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#8B7355;margin-bottom:12px;">Follow</div>
+        <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer" class="nsf-sbtn" aria-label="Bluesky, opens in new tab">
+          <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8C10.8 8.4 7.8 4.2 5.4 2.4 3.6 1.2 2.4 2.4 2.4 4.2c0 1.2.6 5.4.9 6.6.9 3.3 4.2 4.2 7.2 3.6-3 .6-6 1.8-6.6 5.4-.3 1.8.6 3.6 2.4 3.6 3 0 5.7-3.6 5.7-3.6s2.7 3.6 5.7 3.6c1.8 0 2.7-1.8 2.4-3.6-.6-3.6-3.6-4.8-6.6-5.4 3 .6 6.3-.3 7.2-3.6.3-1.2.9-5.4.9-6.6 0-1.8-1.2-3-3-1.8C16.2 4.2 13.2 8.4 12 10.8z"/></svg>
+          Bluesky ↗
+        </a>
+        <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" class="nsf-sbtn" aria-label="Substack, opens in new tab">
+          <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.5H2V8h20V5.5zM2 10.5V21l10-5.5 10 5.5V10.5H2zM22 2H2v2h20V2z"/></svg>
+          Substack ↗
+        </a>
+      </div>
+      <div style="grid-column:span 3;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#8B7355;margin-bottom:12px;">Newsletter</div>
+        <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:15px;font-weight:700;color:#2C1810;margin-bottom:4px;">Stay informed on Napa County.</div>
+        <div style="font-size:14px;color:#7A6A50;line-height:1.6;margin-bottom:14px;">Original reporting, economic updates and civic intelligence from Napa Valley Features — delivered when it matters.</div>
+        <div style="display:flex;gap:8px;max-width:440px;">
+          <input class="nsf-sub-in" type="text" id="nsf-sub-name" placeholder="Your name" aria-label="Your name">
+          <input class="nsf-sub-in" type="email" id="nsf-sub-email" placeholder="Your email address" aria-label="Email address">
+          <button id="nsf-sub-btn" onclick="nsfSubscribe()" style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:#2C1810;color:#F5F0E8;border:none;padding:10px 18px;cursor:pointer;white-space:nowrap;font-family:'Source Sans 3',sans-serif;">Subscribe</button>
+        </div>
+        <div id="nsf-sub-msg" style="font-size:14px;margin-top:6px;"></div>
+        <div style="font-size:14px;color:#8B7355;margin-top:7px;">Join the NapaServe community. No spam, unsubscribe anytime.</div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div style="font-size:14px;color:#8B7355;">© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</div>
+      <div style="font-size:14px;color:#7A6A50;">napaserve@gmail.com</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function nsfSubscribe() {
+  const name = document.getElementById('nsf-sub-name').value;
+  const email = document.getElementById('nsf-sub-email').value;
+  const btn = document.getElementById('nsf-sub-btn');
+  const msg = document.getElementById('nsf-sub-msg');
+  btn.textContent = 'Subscribing\u2026';
+  btn.disabled = true;
+  fetch('https://misty-bush-fc93.tfcarl.workers.dev/api/subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email }),
+  }).then(r => {
+    if (!r.ok) throw new Error('insert failed');
+    msg.style.color = '#2E7D32';
+    msg.textContent = "Welcome to NapaServe. We'll be in touch.";
+    document.getElementById('nsf-sub-name').value = '';
+    document.getElementById('nsf-sub-email').value = '';
+  }).catch(() => {
+    msg.style.color = '#C62828';
+    msg.textContent = 'Something went wrong. Email us at napaserve@gmail.com';
+  }).finally(() => {
+    btn.textContent = 'Subscribe';
+    btn.disabled = false;
+  });
+}
+</script>
 
 <script>
 const WORKER_URL = 'https://misty-bush-fc93.tfcarl.workers.dev';
