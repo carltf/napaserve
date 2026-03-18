@@ -360,10 +360,10 @@ const SECTIONS = [
 ];
 
 const RELATED = [
-  { title:"Under the Hood: 2024 Harvest Report Reveals a Market Splitting in Two", date:"Feb. 15, 2025", url:"https://napavalleyfeatures.substack.com/p/under-the-hood-2024-harvest-report" },
-  { title:"Under the Hood: Wine Overproduction Scenarios Suggest Tougher Days Ahead", date:"Oct. 25, 2025", url:"https://napavalleyfeatures.substack.com/p/1-wine-overproduction-the-math-of" },
-  { title:"Under the Hood: The Dismal Math of Napa's Skipped Acres", date:"Nov. 29, 2025", url:"https://napavalleyfeatures.substack.com/p/1-wine-overproduction-the-math-of" },
-  { title:"Napa Valley Grape Prices See Continued Surge in 2023", date:"Feb. 12, 2024", url:"https://napavalleyfeatures.substack.com/p/napa-valley-grape-prices-see-continued" },
+  { title:"Under the Hood: 2024 Harvest Report Reveals a Market Splitting in Two", date:"Feb. 15, 2025", url:"https://napavalleyfocus.substack.com/p/under-the-hood-2024-harvest-report" },
+  { title:"Under the Hood: Wine Overproduction Scenarios Suggest Tougher Days Ahead", date:"Oct. 25, 2025", url:"https://napavalleyfocus.substack.com/p/1-wine-overproduction-the-math-of" },
+  { title:"Under the Hood: The Dismal Math of Napa's Skipped Acres", date:"Nov. 29, 2025", url:"https://napavalleyfocus.substack.com/p/1-wine-overproduction-the-math-of" },
+  { title:"Napa Valley Grape Prices See Continued Surge in 2023", date:"Feb. 12, 2024", url:"https://napavalleyfocus.substack.com/p/napa-valley-grape-prices-see-continued" },
 ];
 
 const SOURCES = [
@@ -403,7 +403,7 @@ export default function UnderTheHood() {
           <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:15, color:T.ink, lineHeight:1.6, margin:"0 0 16px 0", maxWidth:600 }}>
             The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years — the first such decline in the modern data series. This interactive edition includes six data visualizations and live reader polls.
           </p>
-          <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noreferrer"
+          <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noreferrer"
             style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:13, color:T.accent, textDecoration:"underline" }}>
             Read on Napa Valley Features · Substack →
           </a>
@@ -500,7 +500,7 @@ export default function UnderTheHood() {
           <div style={{ borderTop:`1px solid ${T.border}`, paddingTop:16, display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:8 }}>
             <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:12, color:T.muted, margin:0 }}>© 2026 Valley Works Collaborative · NapaServe.org</p>
             <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:12, color:T.muted, margin:0 }}>
-              <a href="https://napavalleyfeatures.substack.com" target="_blank" rel="noreferrer" style={{ color:T.muted, textDecoration:"underline" }}>Napa Valley Features on Substack</a>
+              <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noreferrer" style={{ color:T.muted, textDecoration:"underline" }}>Napa Valley Features on Substack</a>
             </p>
           </div>
         </div>
