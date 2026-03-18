@@ -78,7 +78,7 @@ function findPriorDifferent(arr, key, currentIdx) {
 
 function Delta({c,p,s="",inv=false}){
   if(c==null||p==null)return<span style={{color:T.dim,fontSize:12}}>—</span>;
-  const d=c-p; if(Math.abs(d)<0.001)return<span style={{color:T.dim,fontSize:12}}>0{s}</span>;
+  const d=c-p; if(Math.abs(d)<0.001)return<span className="delta-unchanged" style={{color:T.dim,fontSize:12}}>Unchanged</span>;
   let good=d>0; if(inv)good=!good;
   const val=Math.abs(d)>=1000?fN(Math.round(d)):Math.abs(d)>=100?Math.round(d):Number(d.toFixed(1));
   return<span style={{color:good?T.pos:T.neg,fontSize:12,fontWeight:600,fontFamily:"monospace"}}>{d>0?"▲":"▼"} {d>0?"+":""}{val}{s}</span>;
@@ -304,7 +304,7 @@ export default function EconomicPulseDashboard(){
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
       <div style={{textAlign:"center"}}>
         <div style={{width:36,height:36,border:`2px solid ${T.rule}`,borderTopColor:T.accent,borderRadius:"50%",animation:"spin 1s linear infinite",margin:"0 auto 16px"}}/>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;} @media(max-width:768px){.kpi-grid-overview,.kpi-grid-macro,.kpi-grid-housing{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;flex-wrap:unset!important;}.kpi-grid-labor{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;}.kpi-labor-card{min-width:0!important;}.kpi-grid-labor>*:last-child:nth-child(odd){grid-column:1/-1;}.kpi-card-pulse{min-height:160px!important;box-sizing:border-box!important;}.kpi-card-pulse .kpi-value{font-size:clamp(1.4rem,4vw,2rem)!important;}}`}</style>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}} .dash-tabs::-webkit-scrollbar{display:none} .dash-tabs{scrollbar-width:none;-ms-overflow-style:none;} .delta-unchanged+span{display:none!important;} @media(max-width:768px){.kpi-grid-overview,.kpi-grid-macro,.kpi-grid-housing{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;flex-wrap:unset!important;}.kpi-grid-labor{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important;overflow:hidden!important;align-items:flex-start!important;}.kpi-labor-card{min-width:0!important;}.kpi-grid-labor>*:last-child:nth-child(odd){grid-column:1/-1;}.kpi-card-pulse{min-height:160px!important;box-sizing:border-box!important;}.kpi-card-pulse .kpi-value{font-size:clamp(1.4rem,4vw,2rem)!important;}}`}</style>
         <p style={{fontFamily:"'Libre Baskerville',Georgia,serif",color:T.muted,fontSize:16}}>Loading Community Pulse...</p>
       </div>
     </div>
