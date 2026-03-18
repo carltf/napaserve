@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import Footer from "./Footer";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from "recharts";
 import PollSearch from "./components/PollSearch";
 
@@ -731,6 +732,7 @@ export default function EconomicPulseDashboard(){
           <span style={{fontSize:14,color:T.dim}}>Pipeline: GitHub Actions → Supabase | {wineryData.length} snapshots | {lastUpdated?fD(lastUpdated):""}</span>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

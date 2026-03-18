@@ -4,6 +4,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import Footer from "../Footer";
 
 const WORKER_URL = "https://misty-bush-fc93.tfcarl.workers.dev";
 
@@ -643,6 +644,7 @@ export default function Archive() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

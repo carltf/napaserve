@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import Footer from "./Footer";
 import { Link } from "react-router-dom";
 import { buildRagContext } from "./hooks/useRag";
 
@@ -655,6 +656,7 @@ export default function ProjectEvaluator() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

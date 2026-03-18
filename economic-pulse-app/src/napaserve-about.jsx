@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Footer from "./Footer";
 
 const T = {
   bg:"#F5F0E8", bg2:"#EDE8DE", bg3:"#E6E0D4",
@@ -225,16 +226,8 @@ export default function AboutNapaServe() {
           </P>
         </Section>
 
-        {/* SECTION NAV */}
-        <div style={{ marginTop: 60, paddingTop: 32, borderTop: `1px solid ${T.rule}`, display: "flex", gap: 24, flexWrap: "wrap" }}>
-          <a href="#about" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>About NapaServe</a>
-          <a href="#community-intelligence" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Community Intelligence</a>
-          <a href="#how-to-use" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>How to use this site</a>
-          <a href="#disclaimer" style={{ fontSize: 14, fontWeight: 600, color: T.muted, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Disclaimer</a>
-          <a href="mailto:napaserve@gmail.com" style={{ fontSize: 14, fontWeight: 600, color: T.accent, textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>Contact us →</a>
-        </div>
-
       </div>
+      <Footer />
     </div>
   );
 }

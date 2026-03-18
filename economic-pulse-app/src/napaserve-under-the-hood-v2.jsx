@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Footer from "./Footer";
 
 // ─── theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -472,41 +473,7 @@ export default function UnderTheHood() {
       </div>
       </div>
 
-      {/* footer */}
-      <footer style={{ background:T.surface, borderTop:`1px solid ${T.border}`, marginTop:64, padding:"32px 24px" }}>
-        <div style={{ maxWidth:720, margin:"0 auto" }}>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:"32px 48px", marginBottom:24 }}>
-            <div>
-              <p style={{ fontFamily:"'Libre Baskerville', serif", fontSize:15, fontWeight:700, color:T.ink, margin:"0 0 10px 0" }}>NapaServe</p>
-              <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:13, color:T.muted, margin:"0 0 4px 0", maxWidth:220, lineHeight:1.5 }}>Community intelligence for Napa Valley. Reporting, data, archives and tools.</p>
-            </div>
-            <div>
-              <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:11, letterSpacing:"0.1em", color:T.gold, fontWeight:700, textTransform:"uppercase", margin:"0 0 10px 0" }}>Journalism</p>
-              {[["Napa Valley Features","/news"],["NVF Archive Search","/archive"],["Under the Hood","/under-the-hood"]].map(([l,p])=>(
-                <a key={p} href={p} style={{ display:"block", fontFamily:"'Source Sans 3', sans-serif", fontSize:13, color:T.ink, textDecoration:"none", marginBottom:4 }}>{l}</a>
-              ))}
-            </div>
-            <div>
-              <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:11, letterSpacing:"0.1em", color:T.gold, fontWeight:700, textTransform:"uppercase", margin:"0 0 10px 0" }}>Intelligence</p>
-              {[["Community Pulse","/dashboard"],["Project Evaluator","/evaluator"],["AI Policy Agent","/agent.html"]].map(([l,p])=>(
-                <a key={p} href={p} style={{ display:"block", fontFamily:"'Source Sans 3', sans-serif", fontSize:13, color:T.ink, textDecoration:"none", marginBottom:4 }}>{l}</a>
-              ))}
-            </div>
-            <div>
-              <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:11, letterSpacing:"0.1em", color:T.gold, fontWeight:700, textTransform:"uppercase", margin:"0 0 10px 0" }}>Community</p>
-              {[["Event Finder","/events"],["Valley Works","/valley-works"],["About NapaServe","/about"]].map(([l,p])=>(
-                <a key={p} href={p} style={{ display:"block", fontFamily:"'Source Sans 3', sans-serif", fontSize:13, color:T.ink, textDecoration:"none", marginBottom:4 }}>{l}</a>
-              ))}
-            </div>
-          </div>
-          <div style={{ borderTop:`1px solid ${T.border}`, paddingTop:16, display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:8 }}>
-            <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:12, color:T.muted, margin:0 }}>© 2026 Valley Works Collaborative · NapaServe.org</p>
-            <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:12, color:T.muted, margin:0 }}>
-              <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noreferrer" style={{ color:T.muted, textDecoration:"underline" }}>Napa Valley Features on Substack</a>
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

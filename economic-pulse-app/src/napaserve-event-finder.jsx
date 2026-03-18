@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import Footer from "./Footer";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONFIG
@@ -778,12 +779,8 @@ export default function EventFinder() {
           )}
         </>)}
 
-        {/* Footer */}
-        <div style={{ borderTop: "1px solid rgba(139,105,20,0.12)", padding: "16px 0 0", marginTop: 28, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
-          <span style={{ fontSize: 11, color: "#5A4D38" }}>NapaServe Event Finder · Local calendars + community submissions</span>
-          <span style={{ fontSize: 11, color: "#5A4D38" }}>Always confirm details with the event organizer</span>
-        </div>
       </div>
+      <Footer />
     </div>
   );
 }

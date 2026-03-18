@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Footer from "./Footer";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONFIG
@@ -412,15 +413,8 @@ export default function NapaValleyFeatures() {
           </div>
         )}
 
-        {/* Footer */}
-        <div style={{ borderTop: "1px solid rgba(44,24,16,0.12)", padding: "20px 0 0", marginTop: 32, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          <span style={{ fontSize: 14, color: "#8B7355" }}>Napa Valley Features · Stories from Napa Valley Features</span>
-          <div style={{ display: "flex", gap: 12 }}>
-            <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" aria-label="Substack, opens in new tab" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none" }}>Substack ↗</a>
-            <a href="https://www.napavalleyfeatures.com" target="_blank" rel="noopener noreferrer" aria-label="napavalleyfeatures.com, opens in new tab" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none" }}>napavalleyfeatures.com ↗</a>
-          </div>
-        </div>
       </div>
+      <Footer />
     </div>
   );
 }

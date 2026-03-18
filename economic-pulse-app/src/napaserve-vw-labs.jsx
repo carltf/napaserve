@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Footer from "./Footer";
 
 const T = {
   bg:"#F5F0E8", bg2:"#EDE8DE",
@@ -156,20 +157,8 @@ export default function VWLabsPage() {
           </a>
         </div>
 
-        {/* Footer */}
-        <div style={{ marginTop: 60, paddingTop: 32, borderTop: `1px solid ${T.rule}`, display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <div>
-            <div style={{ fontSize: 14, color: T.dim, lineHeight: 1.6 }}>
-              ValleyWorks Labs · A <a href="/valley-works" style={{ color: T.accent, textDecoration: "none" }}>Valley Works Collaborative</a> initiative
-            </div>
-            <div style={{ fontSize: 14, color: T.dim, marginTop: 4 }}>Napa County, CA · Not affiliated with Napa County government.</div>
-          </div>
-          <div style={{ display: "flex", gap: 16 }}>
-            <a href="mailto:valleyworkscollaborative@gmail.com" style={{ fontSize: 12, fontWeight: 600, color: T.accent, textDecoration: "none" }}>Contact →</a>
-            <a href="/about" style={{ fontSize: 12, fontWeight: 600, color: T.muted, textDecoration: "none" }}>About NapaServe</a>
-          </div>
-        </div>
       </div>
+      <Footer />
     </div>
   );
 }

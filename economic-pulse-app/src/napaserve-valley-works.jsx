@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Footer from "./Footer";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // VALLEY WORKS COLLABORATIVE — NapaServe integrated page
@@ -218,6 +219,7 @@ export default function ValleyWorksPage() {
         </div>
 
       </div>
+      <Footer />
     </div>
   );
 }
