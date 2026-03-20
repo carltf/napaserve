@@ -187,8 +187,7 @@ export default function NapaServeHub() {
             <div className="hub-c-desc">1,000+ original articles from Napa Valley Features, AI-searchable with semantic similarity. A decade of local reporting on economics, land use, policy and community.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
-          <div className="hub-card" style={{ opacity: 0.6, pointerEvents: "none" }}>
-            <div style={{ position: "absolute", top: 16, right: 16, fontSize: 9, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#8B7355" }}>Coming Soon</div>
+          <Link to="/under-the-hood" className="hub-card">
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
               <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><path d="M20 4L4 14v12l16 10 16-10V14L20 4z" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><circle cx="20" cy="20" r="6" stroke="#8B5E3C" strokeWidth="1" fill="none"/><circle cx="20" cy="20" r="2" fill="#8B5E3C"/><line x1="20" y1="14" x2="20" y2="4" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="20" y1="26" x2="20" y2="36" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/></svg>
             </div>
@@ -196,7 +195,7 @@ export default function NapaServeHub() {
             <div className="hub-c-name">Under the Hood</div>
             <div className="hub-c-desc">Data-driven deep dives into Napa County industries. Charts, polls and original analysis on the numbers behind the headlines.</div>
             <div className="hub-arrow">Open →</div>
-          </div>
+          </Link>
         </div>
 
         {/* ── section divider ── */}
