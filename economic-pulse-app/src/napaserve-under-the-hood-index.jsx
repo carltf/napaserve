@@ -38,11 +38,14 @@ function dedupeArticles(rows) {
 }
 
 /** Extract first sentence, capped at maxLen chars */
-function firstSentence(text, maxLen = 150) {
+function firstSentence(text) {
   if (!text) return "";
-  const m = text.match(/^[^.!?]*[.!?]/);
-  const s = m ? m[0] : text;
-  return s.length > maxLen ? s.slice(0, maxLen).trimEnd() + "…" : s;
+  // Find all complete sentences (ending with . ! or ?)
+  const sentences = text.match(/[A-Z][^.!?]*[.!?]/g) || [];
+  const good = sentences.find(s => s.trim().length >= 40);
+  if (good) return good.trim().length > 200 ? good.trim().slice(0, 200).trimEnd() + "…" : good.trim();
+  // Fallback: first 150 chars with ellipsis
+  return text.slice(0, 150).trimEnd() + "...";
 }
 
 // ── Poll card (reused for Reader Pulse section) ──────────────────────────
