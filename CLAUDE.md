@@ -189,11 +189,38 @@ No CSS files — inline styles only or @media style tags
 
 ---
 
+## March 20, 2026 Session — Changes Made
+
+### Hub Page
+- Pillar section dividers added (Journalism / Community / Intelligence)
+- 768px mobile breakpoint collapses card grids to single column
+- Section typography bumped (tools 14px, pillars 13px, descriptors 14px)
+- Under the Hood card: enabled with green LIVE dot indicator
+- Valley Works moved to standard grid card
+
+### Community Pulse
+- KPI card mobile responsiveness fixed (min-height, flex-start alignment, responsive font sizes)
+- Labor Market KPI grid: CSS-controlled layout with .kpi-labor-card mobile override
+- "Unchanged" displayed instead of "0 MoM" / "0% MoM" on zero deltas
+- Dual poll sections: Recent Reader Pulse + Most Engaged All Time
+
+### Under the Hood Index
+- Created index page with search, archive, and topic browsing
+- Enhanced with: article summaries, badges (NATIVE, POLL), topic view, inline polls
+- Archive fetch limit increased from 200 to 300
+
+### NavBar
+- Updated all pages to Theme 02 cream (rgba(245,240,232,0.97)) — replaces old dark nav
+
+---
+
 ## Under the Hood Articles — Pattern
 
-- Index: `napaserve-under-the-hood-index.jsx` (search, archive, topic browsing)
+- Index: `napaserve-under-the-hood-index.jsx` (search, archive, topic browsing, summaries, badges, native article indicators, inline polls, topic view)
 - Article component: `napaserve-under-the-hood-v2.jsx`
 - Article slug: `napa-cab-2025` (kebab-case)
 - Polls seeded in `napaserve_article_polls` with matching `article_slug`
 - Charts use Chart.js from Cloudflare CDN (no build dependency)
 - RAG search wired inline at bottom of article
+- Archive fetch limit: 300 (increased from 200)
+- Hub card shows green LIVE dot when articles are available
