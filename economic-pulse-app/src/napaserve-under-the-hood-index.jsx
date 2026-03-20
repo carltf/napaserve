@@ -135,7 +135,7 @@ export default function UnderTheHoodIndex() {
     (async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_polls?select=post_title,substack_url,published_at&post_title=ilike.%25under%20the%20hood%25&order=published_at.desc&limit=200`,
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=post_title,substack_url,published_at&post_title=ilike.%25under%20the%20hood%25&order=published_at.desc&limit=300`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (res.ok) {
@@ -163,7 +163,7 @@ export default function UnderTheHoodIndex() {
     (async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_polls?select=post_title,substack_url,published_at,theme&post_title=ilike.%25under%20the%20hood%25&theme=not.is.null&order=published_at.desc&limit=200`,
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=post_title,substack_url,published_at,theme&post_title=ilike.%25under%20the%20hood%25&theme=not.is.null&order=published_at.desc&limit=300`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (res.ok) {
