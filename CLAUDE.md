@@ -1,6 +1,6 @@
 # NapaServe — Claude Code Reference
 
-Last updated: March 18, 2026
+Last updated: March 20, 2026
 
 ## Project Overview
 
@@ -60,15 +60,18 @@ All React pages are inside `economic-pulse-app/src/`:
 | Valley Works | napaserve-valley-works.jsx |
 | VW Labs | napaserve-vw-labs.jsx |
 | About | napaserve-about.jsx |
-| Under the Hood | napaserve-under-the-hood-v2.jsx |
+| Under the Hood Index | napaserve-under-the-hood-index.jsx |
+| Under the Hood Article | napaserve-under-the-hood-v2.jsx |
 | Shared Footer | Footer.jsx (imported on ALL pages) |
 | Archive | pages/Archive.jsx (ALWAYS this — never src/Archive.jsx) |
 | NavBar | NavBar.jsx |
 | App router | App.jsx |
 | RAG hook | hooks/useRag.js |
 
+`/under-the-hood` route → index page. `/under-the-hood/napa-cab-2025` → article.
+
 **Standalone files (repo root, NOT in src/):**
-- `agent.html` — AI Research Agent (no footer yet)
+- `agent.html` — AI Research Agent
 - `embed-events.html` — Squarespace embed form
 - `api/evaluate.js` — Evaluator serverless function
 
@@ -113,7 +116,7 @@ All React pages are inside `economic-pulse-app/src/`:
 | napaserve_poll_votes | Individual votes — RLS enabled (select + insert only) |
 | nvf_posts | 1,000+ NVF posts |
 | nvf_chunks | 10,033 semantic chunks, voyage-3 |
-| nvf_polls | 1,603 polls with themes |
+| nvf_polls | 1,700+ polls with themes (extraction run March 20, 2026) |
 | nvf_poll_embeddings | 1,603 voyage-3 embeddings |
 
 ---
@@ -149,6 +152,7 @@ No CSS files — inline styles only or @media style tags
 8. Never delete Google Search Console verification file from `public/`
 9. Use "Community intelligence" — never "Civic intelligence"
 10. Article polls slug: `napa-cab-2025` — match exactly when seeding
+11. NavBar.jsx uses Theme 02 cream — background rgba(245,240,232,0.97). Never revert to dark theme.
 
 ---
 
@@ -173,18 +177,22 @@ No CSS files — inline styles only or @media style tags
 
 ## Known Issues / Pending Work
 
-- `agent.html` footer: needs raw HTML footer added
+- ~~`agent.html` footer: needs raw HTML footer added~~ DONE
 - Valley Works mobile overflow: Jobs/People/Place cards stretch beyond viewport
-- ABC pipeline regex: broke ~3/3/26, watch Monday 3/23 run
+- ~~ABC pipeline regex: broke ~3/3/26~~ DONE — fixed with 4-fallback parsing strategies
 - `days_pending` + `home_value_yoy`: not wired into pipeline — Phase 2
 - `zillow_backfill.py`: run against NULL home_value rows
 - Final crush report: April 30, 2026 — update Under the Hood numbers
+- Community Pulse Labor Market KPI card height on mobile — inline style vs media query conflict, needs refactor
+- Poll extraction path typo fixed — Collaborative (not Collabrative) in poll_extraction.py
+- food_services_employment 2026-02-24 corrected to 7,339 in Supabase
 
 ---
 
 ## Under the Hood Articles — Pattern
 
-- Component: `napaserve-under-the-hood-v2.jsx`
+- Index: `napaserve-under-the-hood-index.jsx` (search, archive, topic browsing)
+- Article component: `napaserve-under-the-hood-v2.jsx`
 - Article slug: `napa-cab-2025` (kebab-case)
 - Polls seeded in `napaserve_article_polls` with matching `article_slug`
 - Charts use Chart.js from Cloudflare CDN (no build dependency)
