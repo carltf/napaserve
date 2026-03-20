@@ -49,8 +49,8 @@ export default function NavBar() {
       `}</style>
 
       <nav style={{
-        background: "rgba(15,10,6,0.95)",
-        borderBottom: "1px solid rgba(196,160,80,0.4)",
+        background: "rgba(245,240,232,0.97)",
+        borderBottom: "1px solid rgba(44,24,16,0.1)",
         position: "sticky",
         top: 0,
         zIndex: 100,
@@ -74,9 +74,9 @@ export default function NavBar() {
               padding: "6px 0", flexShrink: 0,
             }}
           >
-            <div style={{ width: 5, height: 5, background: "#C4A050", borderRadius: "50%" }} />
+            <div style={{ width: 5, height: 5, background: "#8B5E3C", borderRadius: "50%" }} />
             <span style={{
-              fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: "#C4A050",
+              fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: "#2C1810",
               fontFamily: "'Source Sans 3','Source Sans Pro',sans-serif",
               whiteSpace: "nowrap",
             }}>NAPASERVE</span>
@@ -103,7 +103,7 @@ export default function NavBar() {
                   <a key={item.path} href={item.path} style={{
                     padding: "6px 14px", fontSize: 13, fontWeight: 600,
                     fontFamily: "'Source Sans 3',sans-serif",
-                    color: "#B8A882",
+                    color: "#7A6A50",
                     textDecoration: "none",
                     borderRadius: 6,
                     transition: "all 0.15s",
@@ -117,8 +117,8 @@ export default function NavBar() {
                 <button key={item.path} onClick={() => handleNav(item.path)} style={{
                   padding: "6px 14px", fontSize: 13, fontWeight: 600,
                   fontFamily: "'Source Sans 3',sans-serif",
-                  background: isActive ? "rgba(196,160,80,0.12)" : "none",
-                  color: isActive ? "#C4A050" : "#7A6B50",
+                  background: isActive ? "rgba(139,94,60,0.1)" : "none",
+                  color: isActive ? "#8B5E3C" : "#7A6A50",
                   border: "none",
                   borderRadius: 6,
                   cursor: "pointer",
@@ -150,19 +150,19 @@ export default function NavBar() {
           >
             <span style={{
               display: "block", width: 20, height: 1.5,
-              background: menuOpen ? "#C4A050" : "#7A6B50",
+              background: "#2C1810",
               transition: "all 0.2s",
               transform: menuOpen ? "translateY(6.5px) rotate(45deg)" : "none",
             }} />
             <span style={{
               display: "block", width: 20, height: 1.5,
-              background: menuOpen ? "#C4A050" : "#7A6B50",
+              background: "#2C1810",
               transition: "all 0.2s",
               opacity: menuOpen ? 0 : 1,
             }} />
             <span style={{
               display: "block", width: 20, height: 1.5,
-              background: menuOpen ? "#C4A050" : "#7A6B50",
+              background: "#2C1810",
               transition: "all 0.2s",
               transform: menuOpen ? "translateY(-6.5px) rotate(-45deg)" : "none",
             }} />
@@ -180,12 +180,10 @@ export default function NavBar() {
             top: 48,
             left: 0,
             right: 0,
-            background: "rgba(15,10,6,0.98)",
-            borderBottom: "1px solid rgba(139,105,20,0.2)",
+            background: "#F5F0E8",
+            borderBottom: "1px solid rgba(44,24,16,0.1)",
             zIndex: 99,
             padding: "8px 0 16px",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
           }}
         >
           {/* Home link */}
@@ -195,8 +193,8 @@ export default function NavBar() {
               display: "block", width: "100%", textAlign: "left",
               padding: "14px 24px", fontSize: 13, fontWeight: 700,
               fontFamily: "'Source Sans 3',sans-serif",
-              color: "#C4A050", background: "none", border: "none",
-              borderBottom: "1px solid rgba(139,105,20,0.15)", cursor: "pointer",
+              color: "#8B5E3C", background: "none", border: "none",
+              borderBottom: "1px solid rgba(44,24,16,0.1)", cursor: "pointer",
             }}
           >← NapaServe Home</button>
 
@@ -207,7 +205,7 @@ export default function NavBar() {
             { label: "Intelligence", desc: "Data, analysis and AI-assisted research", links: [{ path: "/dashboard", label: "Community Pulse" }, { path: "/evaluator", label: "Project Evaluator" }, { path: "/agent.html", label: "Research Agent", external: true }] },
             { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ path: "/about", label: "About NapaServe" }, { path: "mailto:napaserve@gmail.com", label: "Contact", external: true }] },
           ].map((group, gi) => (
-            <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(139,105,20,0.15)" : "none" }}>
+            <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? "1px solid rgba(44,24,16,0.1)" : "none" }}>
               <div style={{ padding: "4px 24px 2px", fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B7355", fontFamily: "'Source Sans 3',sans-serif" }}>{group.label}</div>
               <div style={{ padding: "0 24px 6px", fontSize: 11, color: "#7A6B50", fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.4 }}>{group.desc}</div>
               {group.links.map(item => {
@@ -220,7 +218,7 @@ export default function NavBar() {
                       onClick={() => setMenuOpen(false)}
                       style={{
                         display: "block", padding: "8px 24px", fontSize: 14, fontWeight: 600,
-                        fontFamily: "'Source Sans 3',sans-serif", color: "#B8A882", textDecoration: "none",
+                        fontFamily: "'Source Sans 3',sans-serif", color: "#7A6A50", textDecoration: "none",
                       }}
                     >{item.label}</a>
                   );
@@ -233,8 +231,8 @@ export default function NavBar() {
                       display: "block", width: "100%", textAlign: "left",
                       padding: "8px 24px", fontSize: 14, fontWeight: 600,
                       fontFamily: "'Source Sans 3',sans-serif",
-                      background: isActive ? "rgba(196,160,80,0.08)" : "none",
-                      color: isActive ? "#C4A050" : "#7A6B50",
+                      background: isActive ? "rgba(139,94,60,0.1)" : "none",
+                      color: isActive ? "#8B5E3C" : "#7A6A50",
                       border: "none", cursor: "pointer",
                     }}
                   >{item.label}</button>
