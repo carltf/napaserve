@@ -36,15 +36,8 @@ export default function NavBar() {
          onBlur={e => { e.currentTarget.style.position = "absolute"; e.currentTarget.style.left = "-9999px"; e.currentTarget.style.width = "1px"; e.currentTarget.style.height = "1px"; }}
       >Skip to main content</a>
       <style>{`
-        @media (min-width: 768px) {
-          .nav-hamburger { display: none !important; }
-          .nav-links-desktop { display: flex !important; }
-          .nav-menu-mobile { display: none !important; }
-        }
-        @media (max-width: 767px) {
-          .nav-hamburger { display: flex !important; }
-          .nav-links-desktop { display: none !important; }
-        }
+        .nav-hamburger { display: flex !important; }
+        .nav-links-desktop { display: none !important; }
         nav div::-webkit-scrollbar { display: none; }
       `}</style>
 
