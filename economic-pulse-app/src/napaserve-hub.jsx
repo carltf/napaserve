@@ -188,6 +188,7 @@ export default function NapaServeHub() {
             <div className="hub-arrow">Open →</div>
           </Link>
           <Link to="/under-the-hood" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
             <div style={{ width: 40, height: 40, marginBottom: 14 }}>
               <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><path d="M20 4L4 14v12l16 10 16-10V14L20 4z" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><circle cx="20" cy="20" r="6" stroke="#8B5E3C" strokeWidth="1" fill="none"/><circle cx="20" cy="20" r="2" fill="#8B5E3C"/><line x1="20" y1="14" x2="20" y2="4" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/><line x1="20" y1="26" x2="20" y2="36" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".4"/></svg>
             </div>
