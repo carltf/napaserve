@@ -197,7 +197,22 @@ export default function NapaValleyFeatures() {
     })();
   }, []);
 
-  // Fetch Reader Demographics polls
+  // Fetch Recent Reader Pulse polls (any theme, last 6 months, 10+ votes)
+  const [recentPolls, setRecentPolls] = useState([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const sixMonthsAgo = new Date(Date.now() - 180*24*60*60*1000).toISOString().split('T')[0];
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=poll_id,post_title,question,options_json,total_votes,published_at,substack_url&published_at=gte.${sixMonthsAgo}&total_votes=gte.10&order=published_at.desc&limit=3`,
+          { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+        );
+        if (res.ok) setRecentPolls(await res.json());
+      } catch { /* silent */ }
+    })();
+  }, []);
+
+  // Fetch Most Engaged All Time polls (Reader Demographics, by votes)
   const [readerPolls, setReaderPolls] = useState([]);
   useEffect(() => {
     (async () => {
@@ -348,49 +363,94 @@ export default function NapaValleyFeatures() {
             ))}
           </div>
 
-          {/* Reader Demographics poll interstitial */}
-          {readerPolls.length > 0 && (
-            <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 28px 24px", margin: "32px -24px", marginLeft: 0, marginRight: 0 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2.5, color: "#8B7355", textTransform: "uppercase", marginBottom: 4, fontFamily: "'Source Sans 3',sans-serif" }}>Who Are Our Readers</div>
-              <p style={{ fontSize: 14, color: "#7A6A50", margin: "0 0 20px", fontFamily: "'Source Sans 3',sans-serif" }}>What Napa Valley Features subscribers told us about themselves</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                {readerPolls.map(poll => {
-                  const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : (poll.options_json || []);
-                  const opts = (Array.isArray(rawOpts) ? rawOpts : []).filter(o => o && (o.label || o.text));
-                  const maxVotes = Math.max(...opts.map(o => Number(o.votes) || 0), 1);
-                  const url = poll.substack_url && poll.substack_url.trim();
-                  return (
-                    <div key={poll.poll_id} style={{ background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)", padding: "18px 20px" }}>
-                      <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.4, marginBottom: 12 }}>{poll.question}</div>
-                      {opts.map((opt, oi) => {
-                        const votes = Number(opt.votes) || 0;
-                        const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
-                        const isWinner = votes === maxVotes && votes > 0;
-                        return (
-                          <div key={oi} style={{ marginBottom: oi < opts.length - 1 ? 8 : 0 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                              <span style={{ fontSize: 13, fontWeight: isWinner ? 700 : 400, color: isWinner ? "#2C1810" : "#7A6A50", fontFamily: "'Source Sans 3',sans-serif" }}>{opt.text || opt.label}</span>
-                              <span style={{ fontSize: 12, fontWeight: 600, color: isWinner ? "#C4A050" : "#A89880", fontFamily: "monospace", whiteSpace: "nowrap", marginLeft: 8 }}>{pct.toFixed(1)}% ({votes})</span>
-                            </div>
-                            <div style={{ height: 18, background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.06)", overflow: "hidden" }}>
-                              <div style={{ height: "100%", width: `${pct}%`, background: isWinner ? "#C4A050" : "#A89880", opacity: isWinner ? 0.7 : 0.25, transition: "width .3s ease" }} />
-                            </div>
+          {/* Poll interstitials */}
+          {(recentPolls.length > 0 || readerPolls.length > 0) && (
+            <div style={{ margin: "32px 0" }}>
+              {/* Recent Reader Pulse */}
+              {recentPolls.length > 0 && (
+                <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 28px 24px", marginBottom: readerPolls.length > 0 ? 24 : 0 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2.5, color: "#8B7355", textTransform: "uppercase", marginBottom: 4, fontFamily: "'Source Sans 3',sans-serif" }}>Recent Reader Pulse</div>
+                  <p style={{ fontSize: 14, color: "#7A6A50", margin: "0 0 20px", fontFamily: "'Source Sans 3',sans-serif" }}>What readers are saying now</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    {recentPolls.map(poll => {
+                      const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : (poll.options_json || []);
+                      const opts = (Array.isArray(rawOpts) ? rawOpts : []).filter(o => o && (o.label || o.text));
+                      const maxVotes = Math.max(...opts.map(o => Number(o.votes) || 0), 1);
+                      const url = poll.substack_url && poll.substack_url.trim();
+                      return (
+                        <div key={poll.poll_id} style={{ background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)", padding: "18px 20px" }}>
+                          <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.4, marginBottom: 12 }}>{poll.question}</div>
+                          {opts.map((opt, oi) => {
+                            const votes = Number(opt.votes) || 0;
+                            const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
+                            const isWinner = votes === maxVotes && votes > 0;
+                            return (
+                              <div key={oi} style={{ marginBottom: oi < opts.length - 1 ? 8 : 0 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                  <span style={{ fontSize: 13, fontWeight: isWinner ? 700 : 400, color: isWinner ? "#2C1810" : "#7A6A50", fontFamily: "'Source Sans 3',sans-serif" }}>{opt.text || opt.label}</span>
+                                  <span style={{ fontSize: 12, fontWeight: 600, color: isWinner ? "#C4A050" : "#A89880", fontFamily: "monospace", whiteSpace: "nowrap", marginLeft: 8 }}>{pct.toFixed(1)}% ({votes})</span>
+                                </div>
+                                <div style={{ height: 18, background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.06)", overflow: "hidden" }}>
+                                  <div style={{ height: "100%", width: `${pct}%`, background: isWinner ? "#C4A050" : "#A89880", opacity: isWinner ? 0.7 : 0.25, transition: "width .3s ease" }} />
+                                </div>
+                              </div>
+                            );
+                          })}
+                          <div style={{ fontSize: 14, color: "#8B7355", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
+                            {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${poll.post_title}, opens in new tab`} style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                           </div>
-                        );
-                      })}
-                      <div style={{ fontSize: 14, color: "#8B7355", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
-                        {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${poll.post_title}, opens in new tab`} style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Most Engaged All Time */}
+              {readerPolls.length > 0 && (
+                <div style={{ background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.12)", padding: "28px 28px 24px" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2.5, color: "#8B7355", textTransform: "uppercase", marginBottom: 4, fontFamily: "'Source Sans 3',sans-serif" }}>Most Engaged All Time</div>
+                  <p style={{ fontSize: 14, color: "#7A6A50", margin: "0 0 20px", fontFamily: "'Source Sans 3',sans-serif" }}>Our highest-voted reader polls</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    {readerPolls.map(poll => {
+                      const rawOpts = typeof poll.options_json === "string" ? (() => { try { return JSON.parse(poll.options_json); } catch { return []; } })() : (poll.options_json || []);
+                      const opts = (Array.isArray(rawOpts) ? rawOpts : []).filter(o => o && (o.label || o.text));
+                      const maxVotes = Math.max(...opts.map(o => Number(o.votes) || 0), 1);
+                      const url = poll.substack_url && poll.substack_url.trim();
+                      return (
+                        <div key={poll.poll_id} style={{ background: "#F5F0E8", border: "1px solid rgba(44,24,16,0.08)", padding: "18px 20px" }}>
+                          <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.4, marginBottom: 12 }}>{poll.question}</div>
+                          {opts.map((opt, oi) => {
+                            const votes = Number(opt.votes) || 0;
+                            const pct = poll.total_votes > 0 ? ((votes / poll.total_votes) * 100) : 0;
+                            const isWinner = votes === maxVotes && votes > 0;
+                            return (
+                              <div key={oi} style={{ marginBottom: oi < opts.length - 1 ? 8 : 0 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                  <span style={{ fontSize: 13, fontWeight: isWinner ? 700 : 400, color: isWinner ? "#2C1810" : "#7A6A50", fontFamily: "'Source Sans 3',sans-serif" }}>{opt.text || opt.label}</span>
+                                  <span style={{ fontSize: 12, fontWeight: 600, color: isWinner ? "#C4A050" : "#A89880", fontFamily: "monospace", whiteSpace: "nowrap", marginLeft: 8 }}>{pct.toFixed(1)}% ({votes})</span>
+                                </div>
+                                <div style={{ height: 18, background: "#EDE8DE", border: "1px solid rgba(44,24,16,0.06)", overflow: "hidden" }}>
+                                  <div style={{ height: "100%", width: `${pct}%`, background: isWinner ? "#C4A050" : "#A89880", opacity: isWinner ? 0.7 : 0.25, transition: "width .3s ease" }} />
+                                </div>
+                              </div>
+                            );
+                          })}
+                          <div style={{ fontSize: 14, color: "#8B7355", marginTop: 10, fontFamily: "'Source Sans 3',sans-serif", lineHeight: 1.5 }}>
+                            {(poll.total_votes || 0).toLocaleString()} votes{poll.post_title && <>{" · from "}{url ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${poll.post_title}, opens in new tab`} style={{ color: "#C4A050", textDecoration: "none", fontWeight: 600 }}>{poll.post_title} ↗</a> : <span style={{ fontStyle: "italic", color: "#7A6A50" }}>{poll.post_title}</span>}</>}{poll.published_at && ` · ${new Date(poll.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* Remaining rows */}
           {filtered.length > 6 && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24, marginTop: readerPolls.length > 0 ? 32 : 0 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24, marginTop: (recentPolls.length > 0 || readerPolls.length > 0) ? 0 : 0 }}>
               {filtered.slice(6).map((post, i) => (
                 <ArticleCard key={i + 6} post={post} />
               ))}
