@@ -73,17 +73,21 @@
     position: fixed;
     top: 52px;
     right: 0;
-    width: 240px;
+    width: 260px;
     background: var(--cream);
     border: 1px solid rgba(44,24,16,0.12);
     border-top: none;
     box-shadow: 0 8px 24px rgba(44,24,16,0.1);
     z-index: 100;
+    max-height: calc(100vh - 52px);
+    overflow-y: auto;
+    font-family: 'Source Sans 3', sans-serif;
   }
   .mobile-nav.open { display: flex; }
   .nav-group { padding: 10px 0; border-bottom: 1px solid rgba(44,24,16,0.12); }
   .nav-group:last-child { border-bottom: none; }
-  .nav-group-label { font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #A89880; padding: 4px 20px 6px; }
+  .nav-group-label { font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #8B7355; padding: 4px 20px 2px; }
+  .nav-group-desc { font-size: 11px; color: #7A6B50; padding: 0 20px 6px; line-height: 1.4; }
   .mobile-nav-link {
     display: block;
     color: #7A6A50;
@@ -303,26 +307,30 @@
   <a href="/" style="display:block;padding:14px 20px;font-size:13px;font-weight:700;color:#8B5E3C;border-bottom:1px solid rgba(44,24,16,0.12);text-decoration:none">← NapaServe Home</a>
   <div class="nav-group">
     <div class="nav-group-label">Journalism</div>
+    <div class="nav-group-desc">Original reporting and searchable archives</div>
     <a href="/news" class="mobile-nav-link">Napa Valley Features</a>
     <a href="/archive" class="mobile-nav-link">NVF Archive Search</a>
     <a href="/under-the-hood" class="mobile-nav-link">Under the Hood</a>
   </div>
   <div class="nav-group">
     <div class="nav-group-label">Community</div>
+    <div class="nav-group-desc">Events, workforce and civic innovation</div>
     <a href="/events" class="mobile-nav-link">Event Finder</a>
     <a href="/valley-works" class="mobile-nav-link">Valley Works</a>
     <a href="/vw-labs" class="mobile-nav-link">VW Labs</a>
   </div>
   <div class="nav-group">
     <div class="nav-group-label">Intelligence</div>
+    <div class="nav-group-desc">Data, analysis and AI-assisted research</div>
     <a href="/dashboard" class="mobile-nav-link">Community Pulse</a>
     <a href="/evaluator" class="mobile-nav-link">Project Evaluator</a>
     <a href="/agent.html" class="mobile-nav-link nav-active">Research Agent</a>
   </div>
   <div class="nav-group">
     <div class="nav-group-label">Platform</div>
+    <div class="nav-group-desc">About NapaServe and how to reach us</div>
     <a href="/about" class="mobile-nav-link">About NapaServe</a>
-    <a href="mailto:napaserve@gmail.com" class="mobile-nav-link">Contact</a>
+    <a href="/about#contact" class="mobile-nav-link">Contact</a>
   </div>
 </nav>
 
