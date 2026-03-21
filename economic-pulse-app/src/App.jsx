@@ -8,8 +8,9 @@ import ValleyWorks from "./napaserve-valley-works";
 import Archive from "./pages/Archive";
 import About from "./napaserve-about";
 import VWLabs from "./napaserve-vw-labs";
-import UnderTheHoodIndex from "./napaserve-under-the-hood-index";
+import UnderTheHoodIndex from "./under-the-hood-index";
 import UnderTheHoodArticle from "./napaserve-under-the-hood-v2";
+import UnderTheHoodSonoma from "./under-the-hood-sonoma";
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/archive" element={<Archive />} />
         <Route path="/under-the-hood" element={<UnderTheHoodIndex />} />
         <Route path="/under-the-hood/napa-cab-2025" element={<UnderTheHoodArticle />} />
+        <Route path="/under-the-hood/sonoma-cab-2025" element={<UnderTheHoodSonoma />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </BrowserRouter>
