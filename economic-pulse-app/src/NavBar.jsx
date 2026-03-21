@@ -14,8 +14,6 @@ export default function NavBar() {
   const current = location.pathname;
   const [navOpen, setNavOpen] = useState(false);
 
-  if (current === "/") return null;
-
   const go = (path) => {
     setNavOpen(false);
     if (path.startsWith("/agent")) {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Footer from "./Footer";
+import NavBar from "./NavBar";
 
 // ─── theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -16,63 +16,6 @@ const T = {
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 const ARTICLE_SLUG = "napa-cab-2025";
 
-// ─── nav links ────────────────────────────────────────────────────────────────
-const NAV = [
-  { group: "Journalism",    links: [{ label: "Napa Valley Features", path: "/news" }, { label: "NVF Archive Search", path: "/archive" }, { label: "Under the Hood", path: "/under-the-hood" }] },
-  { group: "Community",     links: [{ label: "Event Finder", path: "/events" }, { label: "Valley Works", path: "/valley-works" }, { label: "VW Labs", path: "/vw-labs" }] },
-  { group: "Intelligence",  links: [{ label: "Community Pulse", path: "/dashboard" }, { label: "Project Evaluator", path: "/evaluator" }, { label: "AI Policy Agent", path: "/agent.html" }] },
-  { group: "Platform",      links: [{ label: "About NapaServe", path: "/about" }] },
-];
-
-// ─── hamburger nav ────────────────────────────────────────────────────────────
-function HamburgerNav() {
-  const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const go = (path) => {
-    setOpen(false);
-    if (path.endsWith(".html")) { window.location.href = path; }
-    else { navigate(path); }
-  };
-
-  return (
-    <>
-      {/* top bar */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: T.surface, borderBottom: `1px solid ${T.border}`, height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px" }}>
-        <button onClick={() => go("/")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-          <span style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 17, fontWeight: 700, color: T.ink }}>NapaServe</span>
-        </button>
-        <button onClick={() => setOpen(v => !v)} style={{ background: "none", border: "none", cursor: "pointer", padding: "6px", display: "flex", flexDirection: "column", gap: 5 }} aria-label="Menu">
-          {[0,1,2].map(i => (
-            <span key={i} style={{ display: "block", width: 22, height: 2, background: T.ink, borderRadius: 1, transition: "all 0.2s",
-              transform: open ? (i===0 ? "translateY(7px) rotate(45deg)" : i===2 ? "translateY(-7px) rotate(-45deg)" : "scaleX(0)") : "none",
-              opacity: open && i===1 ? 0 : 1 }} />
-          ))}
-        </button>
-      </div>
-
-      {/* drawer */}
-      {open && (
-        <div style={{ position: "fixed", top: 52, right: 0, bottom: 0, width: 260, background: T.surface, borderLeft: `1px solid ${T.border}`, zIndex: 99, overflowY: "auto", padding: "24px 0" }}>
-          {NAV.map(section => (
-            <div key={section.group} style={{ marginBottom: 24 }}>
-              <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 10, letterSpacing: "0.12em", color: T.gold, fontWeight: 700, textTransform: "uppercase", padding: "0 20px", margin: "0 0 8px 0" }}>{section.group}</p>
-              {section.links.map(link => (
-                <button key={link.path} onClick={() => go(link.path)}
-                  style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer", padding: "9px 20px", fontFamily: "'Source Sans 3', sans-serif", fontSize: 15, color: T.ink }}>
-                  {link.label}
-                </button>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* overlay */}
-      {open && <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 98 }} />}
-    </>
-  );
-}
 
 // ─── live poll component ──────────────────────────────────────────────────────
 function LivePoll({ poll }) {
@@ -393,7 +336,7 @@ export default function UnderTheHood() {
 
   return (
     <div style={{ background:T.bg, minHeight:"100vh", paddingTop:52 }}>
-      <HamburgerNav />
+      <NavBar />
 
       {/* header */}
       <div style={{ background:T.surface, borderBottom:`1px solid ${T.border}`, padding:"40px 24px 32px" }}>

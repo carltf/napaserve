@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
+import NavBar from "./NavBar";
 
 const T = {
   bg:"#F5F0E8", bg2:"#EDE8DE", bg3:"#E6E0D4",
@@ -11,40 +11,6 @@ const T = {
 };
 
 export default function AboutNapaServe() {
-  const [navOpen, setNavOpen] = useState(false);
-
-  // ─── INLINE NAV ────────────────────────────────────────────────────────────
-  const Nav = () => (
-    <div style={{ position: "relative" }}>
-      <nav style={{ background: T.bg, borderBottom: `1px solid ${T.rule}`, padding: "0 24px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 20 }}>
-        <a href="/" style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 19, fontWeight: 700, color: T.ink2, textDecoration: "none" }}>NapaServe</a>
-        <button onClick={() => setNavOpen(o => !o)} style={{ background: "none", border: `1px solid ${T.rule}`, cursor: "pointer", padding: "7px 10px", display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={{ display: "block", width: 18, height: 1.5, background: T.muted, transform: navOpen ? "translateY(5.5px) rotate(45deg)" : "", transition: "transform .2s" }} />
-          <span style={{ display: "block", width: 18, height: 1.5, background: T.muted, opacity: navOpen ? 0 : 1, transition: "opacity .2s" }} />
-          <span style={{ display: "block", width: 18, height: 1.5, background: T.muted, transform: navOpen ? "translateY(-5.5px) rotate(-45deg)" : "", transition: "transform .2s" }} />
-        </button>
-      </nav>
-      {navOpen && <>
-        <div onClick={() => setNavOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 19 }} />
-        <div style={{ position: "fixed", top: 52, right: 0, width: 240, background: T.bg, border: `1px solid ${T.rule}`, borderTop: "none", boxShadow: "0 8px 24px rgba(44,24,16,0.1)", zIndex: 20, fontFamily: "'Source Sans 3',sans-serif" }}>
-          <a href="/" onClick={() => setNavOpen(false)} style={{ display: "block", padding: "14px 20px", fontSize: 13, fontWeight: 700, color: "#8B5E3C", borderBottom: `1px solid ${T.rule}`, textDecoration: "none" }}>← NapaServe Home</a>
-          {[
-            { label: "Journalism", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }] },
-            { label: "Community", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }, { t: "VW Labs", h: "/vw-labs" }] },
-            { label: "Intelligence", links: [{ t: "Community Pulse", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "Research Agent", h: "/agent.html" }] },
-            { label: "Platform", links: [{ t: "About NapaServe", h: "/about", cur: true }, { t: "Contact", h: "mailto:napaserve@gmail.com" }] },
-          ].map((g, gi) => (
-            <div key={gi} style={{ padding: "10px 0", borderBottom: gi < 3 ? `1px solid ${T.rule}` : "none" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.dim, padding: "4px 20px 6px" }}>{g.label}</div>
-              {g.links.map((l, li) => (
-                <a key={li} href={l.h} onClick={() => setNavOpen(false)} style={{ display: "block", fontSize: 13, fontWeight: 600, color: l.cur ? T.accent : T.muted, background: l.cur ? T.bg2 : "transparent", padding: "8px 20px", textDecoration: "none" }}>{l.t}</a>
-              ))}
-            </div>
-          ))}
-        </div>
-      </>}
-    </div>
-  );
 
   const Section = ({ id, label, children }) => (
     <div id={id} style={{ borderTop: `1px solid ${T.rule}`, paddingTop: 48, marginTop: 48 }}>
@@ -78,7 +44,7 @@ export default function AboutNapaServe() {
     <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'Source Sans 3',sans-serif", color: T.ink2 }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
-      <Nav />
+      <NavBar />
 
       <div id="main-content" style={{ maxWidth: 800, margin: "0 auto", padding: "60px 24px 80px" }}>
 

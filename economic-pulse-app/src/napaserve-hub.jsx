@@ -1,15 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import NavBar from "./NavBar";
 
 export default function NapaServeHub() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [subName, setSubName] = useState("");
   const [email, setEmail] = useState("");
   const [subStatus, setSubStatus] = useState("idle");
-  const navigate = useNavigate();
-
-  const toggleDrawer = () => setDrawerOpen(o => !o);
-
   return (
     <div style={{ background: "#F5F0E8", minHeight: "100vh", fontFamily: "'Source Sans 3', sans-serif", color: "#2C1810" }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
@@ -19,18 +15,6 @@ export default function NapaServeHub() {
           --accent:#8B5E3C; --muted:#7A6A50; --dim:#8B7355;
           --rule:rgba(44,24,16,0.12); --live:#4A7A5A;
         }
-        .hub-nav{background:var(--bg);border-bottom:1px solid var(--rule);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
-        .hub-wordmark{font-family:'Libre Baskerville',Georgia,serif;font-size:19px;font-weight:700;color:var(--ink2);}
-        .hub-nav-tag{font-size:10px;color:var(--dim);letter-spacing:.05em;margin-left:14px;}
-        .hub-hbtn{background:none;border:1px solid var(--rule);cursor:pointer;padding:7px 10px;display:flex;flex-direction:column;gap:4px;}
-        .hub-hb{display:block;width:18px;height:1.5px;background:var(--muted);transition:transform .2s,opacity .2s;}
-        .hub-drawer{display:none;position:absolute;top:52px;right:0;width:230px;background:var(--bg);border:1px solid var(--rule);border-top:none;box-shadow:0 8px 24px rgba(44,24,16,0.08);z-index:30;}
-        .hub-drawer.open{display:block;}
-        .hub-dg{padding:10px 0;border-bottom:1px solid var(--rule);}
-        .hub-dg:last-child{border-bottom:none;}
-        .hub-dlabel{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding:4px 20px 6px;font-family:'Source Sans 3',sans-serif;}
-        .hub-dlink{display:block;font-size:13px;font-weight:600;color:var(--muted);padding:7px 20px;cursor:pointer;transition:color .15s,background .15s;text-decoration:none;}
-        .hub-dlink:hover{color:var(--accent);background:var(--bg2);}
         .hub-lead{max-width:1160px;margin:0 auto;padding:56px 28px 0;}
         .hub-kicker{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
         .hub-pillars{display:flex;align-items:center;flex-wrap:wrap;margin-bottom:22px;}
@@ -91,7 +75,6 @@ export default function NapaServeHub() {
           .hub-grid{grid-template-columns:1fr 1fr;}
           .hub-arch-inner{grid-template-columns:1fr;gap:20px;}
           .hub-four{grid-template-columns:1fr 1fr;}
-          .hub-nav-tag{display:none;}
         }
         @media(max-width:450px){
           .hub-grid{grid-template-columns:1fr!important;}
@@ -99,45 +82,7 @@ export default function NapaServeHub() {
         }
       `}</style>
 
-      {/* NAV */}
-      <div style={{ position: "relative" }}>
-        <nav className="hub-nav">
-          <div style={{ display: "flex", alignItems: "baseline" }}>
-            <div className="hub-wordmark">NapaServe</div>
-            <span className="hub-nav-tag">Community Intelligence · Napa County</span>
-          </div>
-          <button className="hub-hbtn" onClick={toggleDrawer} aria-label="Menu">
-            <span className="hub-hb" style={{ transform: drawerOpen ? "translateY(5.5px) rotate(45deg)" : "" }} />
-            <span className="hub-hb" style={{ opacity: drawerOpen ? 0 : 1 }} />
-            <span className="hub-hb" style={{ transform: drawerOpen ? "translateY(-5.5px) rotate(-45deg)" : "" }} />
-          </button>
-        </nav>
-        <div className={`hub-drawer${drawerOpen ? " open" : ""}`}>
-          <Link to="/" onClick={() => setDrawerOpen(false)} style={{ display: "block", padding: "14px 20px", fontSize: 13, fontWeight: 700, color: "var(--accent)", borderBottom: "1px solid var(--rule)", textDecoration: "none" }}>← NapaServe Home</Link>
-          <div className="hub-dg">
-            <div className="hub-dlabel">Journalism</div>
-            <Link to="/news" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Napa Valley Features</Link>
-            <Link to="/archive" className="hub-dlink" onClick={() => setDrawerOpen(false)}>NVF Archive Search</Link>
-          </div>
-          <div className="hub-dg">
-            <div className="hub-dlabel">Community</div>
-            <Link to="/events" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Event Finder</Link>
-            <Link to="/valley-works" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Valley Works</Link>
-            <Link to="/vw-labs" className="hub-dlink" onClick={() => setDrawerOpen(false)}>VW Labs</Link>
-          </div>
-          <div className="hub-dg">
-            <div className="hub-dlabel">Intelligence</div>
-            <Link to="/dashboard" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Community Pulse</Link>
-            <Link to="/evaluator" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Project Evaluator</Link>
-            <a href="/agent.html" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Research Agent</a>
-          </div>
-          <div className="hub-dg">
-            <div className="hub-dlabel">Platform</div>
-            <Link to="/about" className="hub-dlink" onClick={() => setDrawerOpen(false)}>About NapaServe</Link>
-            <a href="mailto:napaserve@gmail.com" className="hub-dlink" onClick={() => setDrawerOpen(false)}>Contact</a>
-          </div>
-        </div>
-      </div>
+      <NavBar />
 
       {/* LEAD */}
       <div id="main-content" className="hub-lead">
