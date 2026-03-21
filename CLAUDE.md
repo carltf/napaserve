@@ -71,7 +71,7 @@ All React pages are inside `economic-pulse-app/src/`:
 `/under-the-hood` route → index page. `/under-the-hood/napa-cab-2025` → article.
 
 **Standalone files (repo root, NOT in src/):**
-- `agent.html` — AI Research Agent
+- `agent.html` — AI Research Agent. Standalone HTML — has its own raw HTML nav and footer that must be maintained manually. Does not use NavBar.jsx or Footer.jsx. Nav and footer changes must be mirrored here manually.
 - `embed-events.html` — Squarespace embed form
 - `api/evaluate.js` — Evaluator serverless function
 
