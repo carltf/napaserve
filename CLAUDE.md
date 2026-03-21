@@ -18,7 +18,7 @@ NapaServe (napaserve.org) is a civic AI platform for Napa County built on React/
 - **Worker:** Cloudflare Worker — misty-bush-fc93.tfcarl.workers.dev (manual deploy)
 - **AI:** Anthropic claude-sonnet-4-20250514 · Voyage AI voyage-3 (1024 dims)
 - **Repo:** github.com/carltf/napaserve
-- **Live:** napaserve.org (also .com and .ai — both forward to .org)
+- **Live:** napaserve.org (also .com and .ai — both forward to .org; valleyworkscollaborative.org and valleyworkslab.org also redirect to napaserve.org)
 
 ---
 
@@ -211,6 +211,34 @@ No CSS files — inline styles only or @media style tags
 
 ### NavBar
 - Updated all pages to Theme 02 cream (rgba(245,240,232,0.97)) — replaces old dark nav
+
+### March 20 Afternoon — Nav Consolidation & Cleanup
+
+#### Nav Consolidation
+- All 10 pages now import and render shared `NavBar.jsx` — no more inline nav code
+- Removed 402 lines of duplicated hamburger/drawer nav from: Hub, NVF, Dashboard, Evaluator, Event Finder, Archive, Valley Works, VW Labs, About, Under the Hood Article
+- NavBar no longer returns null on `/` — renders on Hub page too
+- Under the Hood Index already used NavBar; no change needed
+- NavBar design: right-side drawer (260px), grouped sections with eyebrow labels + descriptors, animated hamburger, "NapaServe" wordmark + "Community Intelligence · Napa County" tagline, Contact → /about#contact
+
+#### agent.html Fixes
+- Title: "NapaServe — Research Agent" (was "Civic AI for Napa County")
+- Footer tagline: "Community intelligence" (was "Civic intelligence")
+- Nav drawer: added Under the Hood to Journalism section, fixed VW Labs href (/vw-labs, was /valley-works)
+- Nav drawer styles matched to NavBar.jsx: group label color #8B7355, descriptor text below each group, drawer width 260px, Contact → /about#contact
+
+#### Napa Valley Features
+- Dual poll sections: Recent Reader Pulse + Most Engaged All Time
+
+#### Under the Hood Index
+- RAG summary extraction fixed to use complete sentences
+- Archive fetch limit: 300
+- Reader Pulse polls integrated
+- Topic toggle view
+
+#### Domain Redirects
+- valleyworkscollaborative.org → napaserve.org
+- valleyworkslab.org → napaserve.org
 
 ---
 
