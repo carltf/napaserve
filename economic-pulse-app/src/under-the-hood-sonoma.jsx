@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+
+Chart.register(...registerables);
 
 const T = {
   bg: "#F5F0E8",
@@ -36,7 +39,7 @@ function ChartCanvas({ id, buildChart, deps }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
-    if (!window.Chart || !canvasRef.current) return;
+    if (!canvasRef.current) return;
     if (chartRef.current) chartRef.current.destroy();
     const ctx = canvasRef.current.getContext("2d");
     chartRef.current = buildChart(ctx);
@@ -80,39 +83,19 @@ export default function UnderTheHoodSonoma() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("[Sonoma] Fetching community data...");
         const [sRes, nRes] = await Promise.all([
           fetch(`${API_BASE}?domain=grape_crush&geography=Sonoma%20County&limit=500`),
           fetch(`${API_BASE}?domain=grape_crush&geography=Napa%20County&limit=500`),
         ]);
-        console.log("[Sonoma] Response status:", sRes.status, nRes.status);
         if (!sRes.ok || !nRes.ok) throw new Error(`Failed to fetch data (${sRes.status}, ${nRes.status})`);
         const [sJson, nJson] = await Promise.all([sRes.json(), nRes.json()]);
-        console.log("[Sonoma] Sonoma rows:", sJson?.rows?.length, "Napa rows:", nJson?.rows?.length);
         setSonomaData(sJson);
         setNapaData(nJson);
       } catch (e) {
-        console.error("[Sonoma] Fetch error:", e);
         setError(e.message);
       }
     };
-    // Load Chart.js from CDN
-    if (!window.Chart) {
-      const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js";
-      script.onload = () => {
-        console.log("[Sonoma] Chart.js loaded successfully");
-        fetchData();
-      };
-      script.onerror = () => {
-        console.error("[Sonoma] Failed to load Chart.js from CDN");
-        setError("Failed to load charting library. Please refresh the page.");
-      };
-      document.head.appendChild(script);
-    } else {
-      console.log("[Sonoma] Chart.js already available");
-      fetchData();
-    }
+    fetchData();
   }, []);
 
   const loading = !sonomaData || !napaData;
@@ -191,7 +174,7 @@ export default function UnderTheHoodSonoma() {
                 <ChartCanvas id="chart-overall" deps={[sonomaOverall]} buildChart={(ctx) => {
                   const labels = sonomaOverall.map(yearLabel);
                   const values = sonomaOverall.map(r => r.value);
-                  return new window.Chart(ctx, {
+                  return new Chart(ctx, {
                     type: "bar",
                     data: {
                       labels,
@@ -248,7 +231,7 @@ export default function UnderTheHoodSonoma() {
                       spanGaps: true,
                     };
                   });
-                  return new window.Chart(ctx, {
+                  return new Chart(ctx, {
                     type: "line",
                     data: { labels: allYears, datasets },
                     options: {
@@ -290,7 +273,7 @@ export default function UnderTheHoodSonoma() {
                   const nPct = calcPctChange(napaOverall);
                   const years = [...new Set([...sPct.map(d => d.year), ...nPct.map(d => d.year)])].sort();
 
-                  return new window.Chart(ctx, {
+                  return new Chart(ctx, {
                     type: "bar",
                     data: {
                       labels: years,
@@ -341,7 +324,7 @@ export default function UnderTheHoodSonoma() {
                   const years = [...new Set([...Object.keys(sMap), ...Object.keys(nMap)])].sort();
                   const ratios = years.map(yr => (nMap[yr] && sMap[yr]) ? +(nMap[yr] / sMap[yr]).toFixed(3) : null);
 
-                  return new window.Chart(ctx, {
+                  return new Chart(ctx, {
                     type: "line",
                     data: {
                       labels: years,
