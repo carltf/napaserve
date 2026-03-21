@@ -80,15 +80,19 @@ export default function UnderTheHoodSonoma() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("[Sonoma] Fetching community data...");
         const [sRes, nRes] = await Promise.all([
           fetch(`${API_BASE}?domain=grape_crush&geography=Sonoma%20County&limit=500`),
           fetch(`${API_BASE}?domain=grape_crush&geography=Napa%20County&limit=500`),
         ]);
-        if (!sRes.ok || !nRes.ok) throw new Error("Failed to fetch data");
+        console.log("[Sonoma] Response status:", sRes.status, nRes.status);
+        if (!sRes.ok || !nRes.ok) throw new Error(`Failed to fetch data (${sRes.status}, ${nRes.status})`);
         const [sJson, nJson] = await Promise.all([sRes.json(), nRes.json()]);
+        console.log("[Sonoma] Sonoma rows:", sJson?.rows?.length, "Napa rows:", nJson?.rows?.length);
         setSonomaData(sJson);
         setNapaData(nJson);
       } catch (e) {
+        console.error("[Sonoma] Fetch error:", e);
         setError(e.message);
       }
     };
@@ -96,9 +100,17 @@ export default function UnderTheHoodSonoma() {
     if (!window.Chart) {
       const script = document.createElement("script");
       script.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js";
-      script.onload = fetchData;
+      script.onload = () => {
+        console.log("[Sonoma] Chart.js loaded successfully");
+        fetchData();
+      };
+      script.onerror = () => {
+        console.error("[Sonoma] Failed to load Chart.js from CDN");
+        setError("Failed to load charting library. Please refresh the page.");
+      };
       document.head.appendChild(script);
     } else {
+      console.log("[Sonoma] Chart.js already available");
       fetchData();
     }
   }, []);
@@ -162,6 +174,17 @@ export default function UnderTheHoodSonoma() {
 
         {!loading && !error && (
           <>
+            {/* ── Section 1: Overall Trend ─────────────────────────── */}
+            <div style={{ marginBottom: 36 }}>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The overall trend: down for the second straight year</h2>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 24px" }}>
+                The decline is broad-based but not uniform. Cabernet Sauvignon and Sauvignon Blanc took the steepest hits in percentage terms, while Pinot Noir — Sonoma's flagship cool-climate grape — held up comparatively well.
+              </p>
+            </div>
+
             {/* ── Chart 1: Overall trend ────────────────────────────── */}
             <Section eyebrow="Chart 1" title="Sonoma County — Overall Weighted Average Price per Ton" note="Source: CDFA/USDA-NASS Table 6 — District 3 total, all varieties. 2025 data is preliminary.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
@@ -188,6 +211,20 @@ export default function UnderTheHoodSonoma() {
                 }} />
               </div>
             </Section>
+
+            {/* ── Section 2: Varietal breakdown ─────────────────────── */}
+            <div style={{ marginBottom: 36 }}>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Varietal breakdown: Cab leads the decline</h2>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                Cabernet Sauvignon, which commands the highest per-ton price among Sonoma red varietals, fell from $3,061 in 2023 to $2,773 in 2025 — a cumulative drop of nearly $289 per ton, or 9.4%. In a county where Cab anchors the premium tier, that slide reverberates through tasting-room margins and grape-purchase contracts alike.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                Pinot Noir, by contrast, dipped just 1.6% over the same two-year window — from $3,881 to $3,818. It remains the county's highest-priced varietal overall, reflecting the enduring strength of Russian River Valley and Sonoma Coast appellations for cool-climate Pinot.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                Chardonnay edged down from $2,560 to $2,429 (−5.1%), while Sauvignon Blanc fell from $2,054 to $1,904 (−7.3%). Of the major white varietals, Sauvignon Blanc saw the sharpest percentage decline — possibly reflecting oversupply pressure from Lake County and other value-oriented districts.
+              </p>
+            </div>
 
             {/* ── Chart 2: Varietal prices ──────────────────────────── */}
             <Section eyebrow="Chart 2" title="Sonoma Varietal Prices — Year over Year" note="Source: CDFA/USDA-NASS Table 6 — District 3 varietal breakdowns.">
@@ -223,6 +260,17 @@ export default function UnderTheHoodSonoma() {
                 }} />
               </div>
             </Section>
+
+            {/* ── Section 3: Sonoma vs Napa ─────────────────────────── */}
+            <div style={{ marginBottom: 36 }}>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Sonoma vs Napa: both counties declining, but at different speeds</h2>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                Napa County's overall weighted average also fell — from $7,029 in 2023 to $6,768 in 2025, a decline of 3.7%. But Napa's slide is shallower in percentage terms than Sonoma's 7.2% cumulative decline over the same window. Both counties are adjusting to a cooler market after the pandemic-era price surge, but Napa's brand premium provides a wider cushion.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                The year-over-year chart below puts the two counties side by side. In 2024, Sonoma fell 1.6% while Napa dropped 1.3%. In 2025, the gap widened: Sonoma declined 5.7% versus Napa's 2.5%. The disparity suggests that mid-tier pricing regions face steeper pressure when the market softens.
+              </p>
+            </div>
 
             {/* ── Chart 3: Sonoma vs Napa % change ──────────────────── */}
             <Section eyebrow="Chart 3" title="Year-over-Year % Change — Sonoma vs Napa" note="Percentage change in district-wide weighted average price per ton. Negative values indicate price declines.">
@@ -271,6 +319,17 @@ export default function UnderTheHoodSonoma() {
               </div>
             </Section>
 
+            {/* ── Section 4: Price gap ──────────────────────────────── */}
+            <div style={{ marginBottom: 36 }}>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The gap chart: Napa's premium over Sonoma is widening</h2>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                The Napa-to-Sonoma price ratio has climbed from 2.36x in 2023 to 2.45x in 2025. In dollar terms, Napa grapes now command roughly $4,006 more per ton than Sonoma's — up from $4,054 in 2023 on an absolute basis, but representing a growing proportional gap as Sonoma's base price erodes faster.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                For growers deciding where to invest, the ratio is a shorthand for brand premium. A higher ratio suggests that the "Napa Valley" appellation captures more consumer willingness-to-pay relative to "Sonoma County." That gap has structural implications for land values, replanting decisions, and the long-term competitiveness of Sonoma's grape market.
+              </p>
+            </div>
+
             {/* ── Chart 4: Napa / Sonoma ratio ──────────────────────── */}
             <Section eyebrow="Chart 4" title="Napa-to-Sonoma Price Ratio" note="A ratio above 1.0 means Napa grapes command a premium over Sonoma. Higher values indicate a wider price gap.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
@@ -308,6 +367,20 @@ export default function UnderTheHoodSonoma() {
                 }} />
               </div>
             </Section>
+
+            {/* ── Section 5: Caveats ───────────────────────────────── */}
+            <div style={{ marginBottom: 36 }}>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Caveats and what to watch</h2>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                The 2025 figures are preliminary. The CDFA's final crush report — expected in late April 2026 — often revises district-level averages by a few percentage points as late-reported contracts filter in. That said, the direction of the trend is unlikely to reverse: Sonoma grape prices are adjusting downward.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                Several factors bear watching. First, tonnage: a smaller 2025 harvest could concentrate value and soften the price decline on a per-ton basis. Second, inventory levels in the bulk market — if wineries are sitting on unsold wine, contract prices for the 2026 vintage could face further pressure. Third, the ongoing acreage reduction across Sonoma, as some growers pull vines in response to lower returns and rising costs. That supply correction, if it continues, could eventually support prices — but not overnight.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                We will update this article when the final 2025 crush report is published and revise the charts accordingly. All data powering these charts is served live from the NapaServe Community Data Commons, so the numbers will update automatically when new data is loaded.
+              </p>
+            </div>
 
             {/* ── Methodology ───────────────────────────────────────── */}
             <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 20 }}>
