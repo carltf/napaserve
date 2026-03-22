@@ -63,7 +63,7 @@ const s = {
   header: {
     maxWidth: "780px",
     margin: "0 auto",
-    padding: "32px 24px 32px",
+    padding: "48px 24px 32px",
   },
   sectionLabel: {
     fontFamily: FONTS.mono,
@@ -100,9 +100,9 @@ const s = {
     paddingTop: "16px",
   },
   body: {
-    maxWidth: "680px",
+    maxWidth: "780px",
     margin: "0 auto",
-    padding: "48px 24px 80px",
+    padding: "0 24px 80px",
   },
   p: {
     marginBottom: "22px",
@@ -546,7 +546,7 @@ export default function UnderTheHoodLake() {
             Live data from the NapaServe Community Data Commons &nbsp;·&nbsp; CDFA·USDA-NASS Grape Crush Report
           </span>
           <br />
-          <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: FONTS.body, fontSize: "14px", color: T.accent, textDecoration: "none", display: "inline-block", marginTop: "12px" }}>
+          <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: FONTS.body, fontSize: "14px", fontWeight: 400, color: T.accent, textDecoration: "none", textTransform: "none", letterSpacing: "normal", display: "inline-block", marginTop: "12px" }}>
             Read on Lake County Features · Substack →
           </a>
         </div>

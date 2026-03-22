@@ -157,7 +157,7 @@ export default function UnderTheHoodSonoma() {
           <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8B7355", fontStyle: "italic", marginTop: 4 }}>
             Live data from the NapaServe Community Data Commons &nbsp;·&nbsp; CDFA·USDA-NASS Grape Crush Report
           </div>
-          <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 14, color: T.accent, textDecoration: "none", display: "inline-block", marginTop: 12 }}>
+          <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 14, fontWeight: 400, color: T.accent, textDecoration: "none", textTransform: "none", letterSpacing: "normal", display: "inline-block", marginTop: 12 }}>
             Read on Sonoma County Features · Substack →
           </a>
         </div>
@@ -169,7 +169,7 @@ export default function UnderTheHoodSonoma() {
           <>
             {/* ── Section 1: Overall Trend ─────────────────────────── */}
             <div style={{ marginBottom: 36 }}>
-              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The overall trend: down for the second straight year</h2>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The Overall Trend: Down for the Second Straight Year</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
                 SONOMA COUNTY, Calif. — Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
               </p>
@@ -207,7 +207,7 @@ export default function UnderTheHoodSonoma() {
 
             {/* ── Section 2: Varietal breakdown ─────────────────────── */}
             <div style={{ marginBottom: 36 }}>
-              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Varietal breakdown: Cab leads the decline</h2>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Varietal Breakdown: Cab Leads the Decline</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
                 Cabernet Sauvignon, which commands the highest per-ton price among Sonoma red varietals, fell from $3,061 in 2023 to $2,773 in 2025 — a cumulative drop of nearly $289 per ton, or 9.4%. In a county where Cab anchors the premium tier, that slide reverberates through tasting-room margins and grape-purchase contracts alike.
               </p>
@@ -274,7 +274,7 @@ export default function UnderTheHoodSonoma() {
 
             {/* ── Section 3: Sonoma vs Napa ─────────────────────────── */}
             <div style={{ marginBottom: 36 }}>
-              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Sonoma vs Napa: both counties declining, but at different speeds</h2>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Sonoma vs. Napa: Both Counties Declining, but at Different Speeds</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
                 <a href="/under-the-hood/napa-cab-2025" style={{ color: T.accent }}>Napa County</a>'s overall weighted average also fell — from $7,029 in 2023 to $6,768 in 2025, a decline of 3.7%. But Napa's slide is shallower in percentage terms than Sonoma's 7.2% cumulative decline over the same window. Both counties are adjusting to a cooler market after the pandemic-era price surge, but Napa's brand premium provides a wider cushion.
               </p>
@@ -335,7 +335,7 @@ export default function UnderTheHoodSonoma() {
 
             {/* ── Section 4: Price gap ──────────────────────────────── */}
             <div style={{ marginBottom: 36 }}>
-              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The gap chart: Napa's premium over Sonoma is widening</h2>
+              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The Gap Chart: Napa's Premium over Sonoma Is Widening</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
                 The Napa-to-Sonoma price ratio has climbed from 2.36x in 2023 to 2.45x in 2025. In dollar terms, Napa grapes now command roughly $4,006 more per ton than Sonoma's — up from $4,054 in 2023 on an absolute basis, but representing a growing proportional gap as Sonoma's base price erodes faster.
               </p>
@@ -408,9 +408,13 @@ export default function UnderTheHoodSonoma() {
               </p>
             </div>
 
-            {/* ── Section 5: Caveats ───────────────────────────────── */}
+            {/* ── Section 5: What the Data Don't Show ──────────────── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 14, margin: "40px 0 32px" }}>
+              <div style={{ flex: 1, height: 1, background: T.rule }} />
+              <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: T.muted, whiteSpace: "nowrap" }}>{"What the Data Don\u2019t Show"}</span>
+              <div style={{ flex: 1, height: 1, background: T.rule }} />
+            </div>
             <div style={{ marginBottom: 36 }}>
-              <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Caveats and what to watch</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
                 The 2025 figures are preliminary. The CDFA's final crush report — expected in late April 2026 — often revises district-level averages by a few percentage points as late-reported contracts filter in. That said, the direction of the trend is unlikely to reverse: Sonoma grape prices are adjusting downward.
               </p>

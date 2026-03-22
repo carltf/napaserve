@@ -346,7 +346,7 @@ export default function UnderTheHood() {
       </div>
 
       {/* Header */}
-      <div style={{ maxWidth:720, margin:"0 auto", padding:"32px 24px 32px" }}>
+      <div style={{ maxWidth:780, margin:"0 auto", padding:"48px 24px 32px" }}>
         <div style={{ fontFamily:"monospace", fontSize:14, letterSpacing:"0.2em", textTransform:"uppercase", color:"#C4A050", marginTop:32, marginBottom:16 }}>
           Under the Hood &nbsp;·&nbsp; Napa Valley Features
         </div>
@@ -363,15 +363,15 @@ export default function UnderTheHood() {
           <div style={{ fontFamily:"monospace", fontSize:10, letterSpacing:"0.1em", color:"#8B7355", fontStyle:"italic", marginTop:4 }}>
             Live data from the NapaServe Community Data Commons &nbsp;·&nbsp; CDFA·USDA-NASS Grape Crush Report
           </div>
-          <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:14, color:T.accent, textDecoration:"none", display:"inline-block", marginTop:12 }}>
+          <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:14, fontWeight:400, color:T.accent, textDecoration:"none", textTransform:"none", letterSpacing:"normal", display:"inline-block", marginTop:12 }}>
             Read on Napa Valley Features · Substack →
           </a>
         </div>
       </div>
 
       {/* article body */}
-      <div style={{ padding:"40px 24px 0" }}>
-      <div style={{ maxWidth:720, margin:"0 auto" }}>
+      <div style={{ padding:"0 24px" }}>
+      <div style={{ maxWidth:780, margin:"0 auto" }}>
 
         {SECTIONS.map(section => (
           <div key={section.id}>
@@ -379,6 +379,22 @@ export default function UnderTheHood() {
             {section.body.split("\n\n").map((para, i) => (
               <p key={i} style={prose}>{para}</p>
             ))}
+            {section.id === "varietal-change" && (
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"1px", background:T.border, border:`1px solid ${T.border}`, margin:"40px 0" }}>
+                <div style={{ background:"#FAF8F5", padding:"20px 16px", textAlign:"center" }}>
+                  <span style={{ fontFamily:"'Libre Baskerville', serif", fontSize:28, fontWeight:700, color:T.accent, lineHeight:1, marginBottom:6, display:"block" }}>{"\u2212"}3.6%</span>
+                  <span style={{ fontFamily:"monospace", fontSize:9, letterSpacing:"0.15em", textTransform:"uppercase", color:T.muted, lineHeight:1.4, display:"block" }}>Cab Sauv<br/>2023–2025</span>
+                </div>
+                <div style={{ background:"#FAF8F5", padding:"20px 16px", textAlign:"center" }}>
+                  <span style={{ fontFamily:"'Libre Baskerville', serif", fontSize:28, fontWeight:700, color:T.accent, lineHeight:1, marginBottom:6, display:"block" }}>{"\u2212"}2.4%</span>
+                  <span style={{ fontFamily:"monospace", fontSize:9, letterSpacing:"0.15em", textTransform:"uppercase", color:T.muted, lineHeight:1.4, display:"block" }}>Pinot Noir<br/>2023–2025</span>
+                </div>
+                <div style={{ background:"#FAF8F5", padding:"20px 16px", textAlign:"center" }}>
+                  <span style={{ fontFamily:"'Libre Baskerville', serif", fontSize:28, fontWeight:700, color:T.accent, lineHeight:1, marginBottom:6, display:"block" }}>+4.7%</span>
+                  <span style={{ fontFamily:"monospace", fontSize:9, letterSpacing:"0.15em", textTransform:"uppercase", color:T.muted, lineHeight:1.4, display:"block" }}>Cab Franc<br/>2023–2025</span>
+                </div>
+              </div>
+            )}
             {section.chart && chartReady && (
               <ChartBox title={section.chart.title} caption={section.chart.caption}>
                 <section.chart.component />
@@ -396,7 +412,7 @@ export default function UnderTheHood() {
             {"\u201C"}District average prices throughout the North Coast are not representative of the spot market prices for new contracts for the second consecutive year.{"\u201D"}
           </p>
           <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted }}>
-            {"\u2014"} Christian Klier, North Coast, <a href="https://www.turrentinebrokerage.com" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Turrentine Brokerage</a>, <a href="https://www.winebusiness.com/content/file/2025_Crush_Report_Press_Release(1).pdf" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>{"\u201C"}The 2025 Crop Was Down an Equivalent of 72 Million Cases From the Five-Year Average,{"\u201D"}</a> Wine Business, March 13, 2026.
+            {"\u2014"} Christian Klier, North Coast, Turrentine Brokerage, <a href="https://www.winebusiness.com/content/file/2025_Crush_Report_Press_Release(1).pdf" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>{"\u201C"}The 2025 Crop Was Down an Equivalent of 72 Million Cases From the Five-Year Average,{"\u201D"}</a> Wine Business, March 13, 2026.
           </div>
         </div>
 
