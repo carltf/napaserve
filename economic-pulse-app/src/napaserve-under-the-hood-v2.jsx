@@ -268,7 +268,7 @@ function Chart5() {
   useEffect(()=>{
     if(!window.Chart||!ref.current)return;
     const data=[-0.4,-0.7,4.7,-3.3,-2.4];
-    const ch=new window.Chart(ref.current,{type:"bar",data:{labels:["Chardonnay","Sauv. Blanc","Cab Franc","Cab Sauv","Pinot Noir"],datasets:[{data,backgroundColor:data.map(v=>v<0?"rgba(226,75,74,0.82)":"rgba(29,158,117,0.82)"),borderRadius:3}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(c.parsed.x>0?"+":"")+c.parsed.x.toFixed(1)+"%"}}},scales:{x:{ticks:{color:T.muted,font:{size:10},callback:v=>(v>0?"+":"")+v+"%"},grid:{color:"rgba(0,0,0,0.06)"}},y:{ticks:{color:T.muted,font:{size:10}},grid:{color:"rgba(0,0,0,0.06)"}}}}});
+    const ch=new window.Chart(ref.current,{type:"bar",data:{labels:["Chardonnay","Sauv. Blanc","Cab Franc","Cab Sauv","Pinot Noir"],datasets:[{data,backgroundColor:data.map(v=>v<0?"rgba(226,75,74,0.82)":"rgba(29,158,117,0.82)"),borderRadius:3}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(c.parsed.x>0?"+":"")+c.parsed.x.toFixed(1)+"%"}}},scales:{x:{beginAtZero:false,ticks:{color:T.muted,font:{size:10},callback:v=>(v>0?"+":"")+v+"%"},grid:{color:"rgba(0,0,0,0.06)"}},y:{ticks:{color:T.muted,font:{size:10}},grid:{color:"rgba(0,0,0,0.06)"}}}}});
     return()=>ch.destroy();
   },[]);
   return <div style={{position:"relative",width:"100%",height:260}}><canvas ref={ref}/></div>;
@@ -333,7 +333,7 @@ export default function UnderTheHood() {
   }, []);
 
   const prose   = { fontFamily:"'Source Sans 3', sans-serif", fontSize:17, color:T.ink, lineHeight:1.75, margin:"0 0 18px 0" };
-  const heading = { fontFamily:"'Libre Baskerville', serif", fontSize:20, fontWeight:700, color:T.ink, margin:"40px 0 12px 0" };
+  const heading = { fontFamily:"'Libre Baskerville', serif", fontSize:22, fontWeight:700, color:T.ink, margin:"40px 0 16px 0" };
   const h2style = { fontFamily:"'Libre Baskerville', serif", fontSize:20, fontWeight:700, color:T.ink, margin:"0 0 16px 0" };
 
   return (
@@ -394,6 +394,9 @@ export default function UnderTheHood() {
                   <span style={{ fontFamily:"monospace", fontSize:9, letterSpacing:"0.15em", textTransform:"uppercase", color:T.muted, lineHeight:1.4, display:"block" }}>Cab Franc<br/>2023–2025</span>
                 </div>
               </div>
+            )}
+            {section.id === "varietal-change" && (
+              <p style={prose}>The chart below breaks down the price change by varietal from 2023 to 2025.</p>
             )}
             {section.chart && chartReady && (
               <ChartBox title={section.chart.title} caption={section.chart.caption}>
