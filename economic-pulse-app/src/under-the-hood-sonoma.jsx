@@ -19,6 +19,104 @@ const font = "'Source Sans 3','Source Sans Pro',sans-serif";
 const serif = "'Libre Baskerville',Georgia,serif";
 
 const API_BASE = "/api/community-data";
+const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
+const ARTICLE_SLUG = "sonoma-cab-2025";
+
+/* ── live poll component ───────────────────────────────────────────────────── */
+function LivePoll({ poll }) {
+  const [voted, setVoted]   = useState(null);
+  const [counts, setCounts] = useState(poll.counts || {});
+  const [total, setTotal]   = useState(poll.total || 0);
+  const [loading, setLoading] = useState(false);
+
+  const vote = async (idx) => {
+    if (voted !== null || loading) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${WORKER}/api/article-poll-vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ poll_id: poll.id, option_index: idx })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCounts(data.counts);
+        setTotal(data.total);
+        setVoted(idx);
+      }
+    } catch(e) { /* silent fail */ }
+    setLoading(false);
+  };
+
+  const options = poll.options;
+
+  return (
+    <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 8, padding: "20px 20px 16px", marginBottom: 16 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 8px 0" }}>Poll</p>
+      <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: "0 0 14px 0", lineHeight: 1.4 }}>{poll.question}</p>
+
+      {options.map((opt, idx) => {
+        const count = counts[idx] || 0;
+        const pct   = total > 0 ? Math.round((count / total) * 100) : 0;
+        const isVoted = voted === idx;
+
+        return (
+          <div key={idx} style={{ marginBottom: 8 }}>
+            {voted === null ? (
+              <button onClick={() => vote(idx)} disabled={loading}
+                style={{ width: "100%", textAlign: "center", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "9px 12px", fontFamily: font, fontSize: 14, color: T.ink, cursor: loading ? "default" : "pointer" }}>
+                {opt}
+              </button>
+            ) : (
+              <div style={{ position: "relative", overflow: "hidden", borderRadius: 4, border: `1px solid ${isVoted ? T.accent : T.border}` }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: pct + "%", background: isVoted ? "rgba(139,94,60,0.15)" : "rgba(139,94,60,0.06)", transition: "width 0.5s ease" }} />
+                <div style={{ position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 12px" }}>
+                  <span style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: isVoted ? 600 : 400 }}>{opt}</span>
+                  <span style={{ fontFamily: font, fontSize: 13, color: T.muted, marginLeft: 12, whiteSpace: "nowrap" }}>{pct}%</span>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {voted !== null && (
+        <p style={{ fontFamily: font, fontSize: 12, color: T.muted, margin: "10px 0 0 0" }}>{total} {total === 1 ? "vote" : "votes"} · Results update in real time</p>
+      )}
+    </div>
+  );
+}
+
+/* ── polls section ─────────────────────────────────────────────────────────── */
+function PollsSection() {
+  const [polls, setPolls] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${WORKER}/api/article-polls?slug=${ARTICLE_SLUG}`)
+      .then(r => r.json())
+      .then(data => { setPolls(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return (
+    <div style={{ padding: "24px 0", fontFamily: font, fontSize: 14, color: T.muted }}>Loading polls...</div>
+  );
+  if (!polls.length) return null;
+
+  return (
+    <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>Today's Polls</p>
+      <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 20px 0" }}>What do you think?</h2>
+      {polls.map(poll => <LivePoll key={poll.id} poll={poll} />)}
+      <p style={{ fontFamily: font, fontSize: 12, color: T.muted, marginTop: 8, lineHeight: 1.5 }}>
+        Poll results are anonymous and stored on NapaServe. Results shown after you vote.
+        Historical reader polls from Napa Valley Features are searchable in the{" "}
+        <a href="/dashboard" style={{ color: T.accent }}>Community Pulse dashboard</a>.
+      </p>
+    </div>
+  );
+}
 
 /* ── helpers ────────────────────────────────────────────────────────────────── */
 function extractByDimension(rows, prefix) {
@@ -447,6 +545,9 @@ export default function UnderTheHoodSonoma() {
                 <span style={{ fontSize: 14, color: T.muted }}> — Lake County Features</span>
               </div>
             </div>
+
+            {/* ── Polls ─────────────────────────────────────────────── */}
+            <PollsSection />
 
             {/* ── Methodology ───────────────────────────────────────── */}
             <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 20 }}>
