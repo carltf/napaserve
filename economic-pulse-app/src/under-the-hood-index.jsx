@@ -58,14 +58,14 @@ const SECTIONS = [
   },
   {
     label: "Lake County Features",
-    desc: "Coverage of Lake County's agriculture, economy and community — coming soon.",
+    desc: "Coverage of Lake County's agriculture, economy and community.",
     tiles: [
       {
-        title: "Coming Soon",
-        date: "",
+        title: "Lake County Grape Prices Have Fallen 38% in Two Years",
+        date: "March 21, 2026",
         tag: "Lake County Features",
-        href: null,
-        live: false,
+        href: "/under-the-hood/lake-county-cab-2025",
+        live: true,
       },
     ],
   },
