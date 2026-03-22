@@ -114,7 +114,7 @@ export default function UnderTheHoodSonoma() {
     const parts = r.dimension.split("|");
     if (parts[1]) varietalSet.add(parts[1]);
   });
-  const TOP_VARIETALS = ["Cabernet Sauvignon", "Chardonnay", "Pinot Noir", "Merlot", "Zinfandel", "Sauvignon Blanc"];
+  const TOP_VARIETALS = ["Cabernet Sauvignon", "Pinot Noir", "Chardonnay", "Sauvignon Blanc", "Cabernet Franc"];
   const displayVarietals = TOP_VARIETALS.filter(v => varietalSet.has(v));
 
   // 3. Years available
@@ -256,37 +256,37 @@ export default function UnderTheHoodSonoma() {
             </div>
 
             {/* ── Chart 3: Sonoma vs Napa % change ──────────────────── */}
-            <Section eyebrow="Chart 3" title="Year-over-Year % Change — Sonoma vs Napa" note="Percentage change in district-wide weighted average price per ton. Negative values indicate price declines.">
+            <Section eyebrow="Chart 3" title="YOY % Change by Varietal — Sonoma vs Napa (2023–2025)" note="Percentage change in weighted average price per ton, 2023 to 2025. Negative values indicate price declines.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-                <ChartCanvas id="chart-pctchange" deps={[sonomaOverall, napaOverall]} buildChart={(ctx) => {
-                  const calcPctChange = (rows) => {
-                    const sorted = [...rows].sort((a, b) => a.period_start.localeCompare(b.period_start));
-                    const changes = [];
-                    for (let i = 1; i < sorted.length; i++) {
-                      const prev = sorted[i - 1].value;
-                      const curr = sorted[i].value;
-                      changes.push({ year: yearLabel(sorted[i]), pct: prev > 0 ? ((curr - prev) / prev) * 100 : 0 });
-                    }
-                    return changes;
+                <ChartCanvas id="chart-pctchange" deps={[sonomaVarietals, napaRows]} buildChart={(ctx) => {
+                  const VARIETALS = ["Cabernet Sauvignon", "Pinot Noir", "Chardonnay", "Sauvignon Blanc", "Cabernet Franc"];
+                  const LABELS = ["Cab Sauv", "Pinot Noir", "Chardonnay", "Sauv Blanc", "Cab Franc"];
+                  const napaVarietals = extractByDimension(napaRows, "varietal|");
+
+                  const calcChange = (varRows, varietal) => {
+                    const rows = varRows
+                      .filter(r => r.dimension === `varietal|${varietal}`)
+                      .sort((a, b) => a.period_start.localeCompare(b.period_start));
+                    const v2023 = rows.find(r => yearLabel(r) === "2023");
+                    const v2025 = rows.find(r => yearLabel(r) === "2025");
+                    if (!v2023 || !v2025 || !v2023.value) return 0;
+                    return +((v2025.value - v2023.value) / v2023.value * 100).toFixed(1);
                   };
-                  const sPct = calcPctChange(sonomaOverall);
-                  const nPct = calcPctChange(napaOverall);
-                  const years = [...new Set([...sPct.map(d => d.year), ...nPct.map(d => d.year)])].sort();
 
                   return new Chart(ctx, {
                     type: "bar",
                     data: {
-                      labels: years,
+                      labels: LABELS,
                       datasets: [
                         {
                           label: "Sonoma County",
-                          data: years.map(yr => { const m = sPct.find(d => d.year === yr); return m ? +m.pct.toFixed(2) : null; }),
+                          data: VARIETALS.map(v => calcChange(sonomaVarietals, v)),
                           backgroundColor: T.accent,
                           borderRadius: 3,
                         },
                         {
                           label: "Napa County",
-                          data: years.map(yr => { const m = nPct.find(d => d.year === yr); return m ? +m.pct.toFixed(2) : null; }),
+                          data: VARIETALS.map(v => calcChange(napaVarietals, v)),
                           backgroundColor: T.gold,
                           borderRadius: 3,
                         },
@@ -295,7 +295,10 @@ export default function UnderTheHoodSonoma() {
                     options: {
                       responsive: true,
                       plugins: { tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y > 0 ? "+" : ""}${c.parsed.y.toFixed(1)}%` } } },
-                      scales: { y: { ticks: { callback: v => `${v > 0 ? "+" : ""}${v}%` } } },
+                      scales: {
+                        x: { ticks: { maxRotation: 0 } },
+                        y: { ticks: { callback: v => `${v > 0 ? "+" : ""}${v}%` } },
+                      },
                     },
                   });
                 }} />
