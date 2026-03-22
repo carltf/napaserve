@@ -268,7 +268,7 @@ function Chart5() {
   useEffect(()=>{
     if(!window.Chart||!ref.current)return;
     const data=[-0.4,-0.7,4.7,-3.3,-2.4];
-    const ch=new window.Chart(ref.current,{type:"bar",data:{labels:["Chardonnay","Sauv. Blanc","Cab Franc","Cab Sauv","Pinot Noir"],datasets:[{data,backgroundColor:data.map(v=>v<0?"rgba(226,75,74,0.82)":"rgba(29,158,117,0.82)"),borderRadius:3}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(c.parsed.x>0?"+":"")+c.parsed.x.toFixed(1)+"%"}}},scales:{x:{beginAtZero:false,ticks:{color:T.muted,font:{size:10},callback:v=>(v>0?"+":"")+v+"%"},grid:{color:"rgba(0,0,0,0.06)"}},y:{ticks:{color:T.muted,font:{size:10}},grid:{color:"rgba(0,0,0,0.06)"}}}}});
+    const ch=new window.Chart(ref.current,{type:"bar",data:{labels:["Chardonnay","Sauv. Blanc","Cab Franc","Cab Sauv","Pinot Noir"],datasets:[{data,backgroundColor:data.map(v=>v<0?"rgba(226,75,74,0.82)":"rgba(29,158,117,0.82)"),borderRadius:3}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(c.parsed.x>0?"+":"")+c.parsed.x.toFixed(1)+"%"}}},scales:{x:{ticks:{color:T.muted,font:{size:10},callback:v=>(v>0?"+":"")+v+"%"},grid:{color:"rgba(0,0,0,0.06)"}},y:{ticks:{color:T.muted,font:{size:10}},grid:{color:"rgba(0,0,0,0.06)"}}}}});
     return()=>ch.destroy();
   },[]);
   return <div style={{position:"relative",width:"100%",height:260}}><canvas ref={ref}/></div>;
@@ -370,8 +370,7 @@ export default function UnderTheHood() {
       </div>
 
       {/* article body */}
-      <div style={{ padding:"0 24px" }}>
-      <div style={{ maxWidth:780, margin:"0 auto" }}>
+      <div style={{ maxWidth:780, margin:"0 auto", padding:"0 24px" }}>
 
         {SECTIONS.map(section => (
           <div key={section.id}>
@@ -472,7 +471,6 @@ export default function UnderTheHood() {
             Data sourced from CDFA·USDA-NASS Grape Crush Reports. 2025 figures are preliminary pending the final report due April 30, 2026.
           </p>
         </div>
-      </div>
       </div>
 
       <Footer />
