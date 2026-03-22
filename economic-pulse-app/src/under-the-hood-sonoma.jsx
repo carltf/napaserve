@@ -130,7 +130,7 @@ export default function UnderTheHoodSonoma() {
 
       <article id="main-content" style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px 60px" }}>
         {/* Breadcrumb */}
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: T.muted, textTransform: "uppercase", marginBottom: 8 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "0.2em", color: T.gold, textTransform: "uppercase", marginBottom: 8 }}>
           <a href="/under-the-hood" style={{ color: T.muted, textDecoration: "none" }}>Under the Hood</a> · Sonoma County Features
         </div>
 
@@ -148,7 +148,7 @@ export default function UnderTheHoodSonoma() {
         {/* Lede */}
         <div style={{ borderLeft: `3px solid ${T.accent}`, paddingLeft: 20, marginBottom: 40 }}>
           <p style={{ fontFamily: serif, fontSize: 17, color: T.ink, lineHeight: 1.7, margin: 0 }}>
-            Sonoma County's weighted average grape price fell for the second consecutive year in 2025, driven by declines in Cabernet Sauvignon and several key varietals. The charts below draw directly from CDFA crush report data to show how Sonoma's wine-grape economy is shifting — and how it compares to neighboring Napa County.
+            Sonoma County's weighted average grape price fell for the second consecutive year in 2025, driven by declines in Cabernet Sauvignon and several key varietals. The charts below draw directly from CDFA <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Grape_Crush/index.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>crush report</a> data to show how Sonoma's wine-grape economy is shifting — and how it compares to neighboring Napa County.
           </p>
         </div>
 
@@ -161,7 +161,7 @@ export default function UnderTheHoodSonoma() {
             <div style={{ marginBottom: 36 }}>
               <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The overall trend: down for the second straight year</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-                Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
+                <strong>SONOMA COUNTY, Calif.</strong> — Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
               </p>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 24px" }}>
                 The decline is broad-based but not uniform. Cabernet Sauvignon and Sauvignon Blanc took the steepest hits in percentage terms, while Pinot Noir — Sonoma's flagship cool-climate grape — held up comparatively well.
@@ -205,8 +205,26 @@ export default function UnderTheHoodSonoma() {
                 Pinot Noir, by contrast, dipped just 1.6% over the same two-year window — from $3,881 to $3,818. It remains the county's highest-priced varietal overall, reflecting the enduring strength of Russian River Valley and Sonoma Coast appellations for cool-climate Pinot.
               </p>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-                Chardonnay edged down from $2,560 to $2,429 (−5.1%), while Sauvignon Blanc fell from $2,054 to $1,904 (−7.3%). Of the major white varietals, Sauvignon Blanc saw the sharpest percentage decline — possibly reflecting oversupply pressure from Lake County and other value-oriented districts.
+                Chardonnay edged down from $2,560 to $2,429 (−5.1%), while Sauvignon Blanc fell from $2,054 to $1,904 (−7.3%). Of the major white varietals, Sauvignon Blanc saw the sharpest percentage decline — possibly reflecting oversupply pressure from <a href="/under-the-hood/lake-county-cab-2025" style={{ color: T.accent }}>Lake County</a> and other value-oriented districts.
               </p>
+            </div>
+
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px",
+              background: T.rule, border: `1px solid ${T.rule}`, margin: "40px 0",
+            }}>
+              <div style={{ background: "#FAF8F5", padding: "20px 16px", textAlign: "center" }}>
+                <span style={{ fontFamily: serif, fontSize: 28, fontWeight: 700, color: T.accent, lineHeight: 1, marginBottom: 6, display: "block" }}>{"\u2212"}9.4%</span>
+                <span style={{ fontFamily: "'monospace'", fontSize: 9, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, lineHeight: 1.4, display: "block" }}>Cab Sauv<br />2023–2025</span>
+              </div>
+              <div style={{ background: "#FAF8F5", padding: "20px 16px", textAlign: "center" }}>
+                <span style={{ fontFamily: serif, fontSize: 28, fontWeight: 700, color: T.accent, lineHeight: 1, marginBottom: 6, display: "block" }}>{"\u2212"}1.6%</span>
+                <span style={{ fontFamily: "'monospace'", fontSize: 9, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, lineHeight: 1.4, display: "block" }}>Pinot Noir<br />2023–2025</span>
+              </div>
+              <div style={{ background: "#FAF8F5", padding: "20px 16px", textAlign: "center" }}>
+                <span style={{ fontFamily: serif, fontSize: 28, fontWeight: 700, color: T.accent, lineHeight: 1, marginBottom: 6, display: "block" }}>{"\u2212"}5.1%</span>
+                <span style={{ fontFamily: "'monospace'", fontSize: 9, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, lineHeight: 1.4, display: "block" }}>Chardonnay<br />2023–2025</span>
+              </div>
             </div>
 
             {/* ── Chart 2: Varietal prices ──────────────────────────── */}
@@ -248,7 +266,7 @@ export default function UnderTheHoodSonoma() {
             <div style={{ marginBottom: 36 }}>
               <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Sonoma vs Napa: both counties declining, but at different speeds</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-                Napa County's overall weighted average also fell — from $7,029 in 2023 to $6,768 in 2025, a decline of 3.7%. But Napa's slide is shallower in percentage terms than Sonoma's 7.2% cumulative decline over the same window. Both counties are adjusting to a cooler market after the pandemic-era price surge, but Napa's brand premium provides a wider cushion.
+                <a href="/under-the-hood/napa-cab-2025" style={{ color: T.accent }}>Napa County</a>'s overall weighted average also fell — from $7,029 in 2023 to $6,768 in 2025, a decline of 3.7%. But Napa's slide is shallower in percentage terms than Sonoma's 7.2% cumulative decline over the same window. Both counties are adjusting to a cooler market after the pandemic-era price surge, but Napa's brand premium provides a wider cushion.
               </p>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
                 The year-over-year chart below puts the two counties side by side. In 2024, Sonoma fell 1.6% while Napa dropped 1.3%. In 2025, the gap widened: Sonoma declined 5.7% versus Napa's 2.5%. The disparity suggests that mid-tier pricing regions face steeper pressure when the market softens.
@@ -354,6 +372,32 @@ export default function UnderTheHoodSonoma() {
               </div>
             </Section>
 
+            {/* ── Verified pullquote ──────────────────────────────── */}
+            <div style={{ borderLeft: `3px solid ${T.accent}`, padding: "4px 0 4px 24px", margin: "36px 0" }}>
+              <p style={{ fontFamily: serif, fontSize: 20, fontStyle: "italic", lineHeight: 1.5, color: T.ink, marginBottom: 8 }}>
+                "District average prices throughout the North Coast are not representative of the spot market prices for new contracts for the second consecutive year."
+              </p>
+              <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted }}>
+                — Christian Klier, North Coast, <a href="https://www.turrentinebrokerage.com" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Turrentine Brokerage</a>, <a href="https://www.winebusiness.com/content/file/2025_Crush_Report_Press_Release(1).pdf" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>"The 2025 Crop Was Down an Equivalent of 72 Million Cases From the Five-Year Average,"</a> Wine Business, March 13, 2026.
+              </div>
+            </div>
+
+            {/* ── The Broader Picture ─────────────────────────────── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 14, margin: "40px 0 32px" }}>
+              <div style={{ flex: 1, height: 1, background: T.rule }} />
+              <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: T.muted, whiteSpace: "nowrap" }}>The Broader Picture</span>
+              <div style={{ flex: 1, height: 1, background: T.rule }} />
+            </div>
+
+            <div style={{ marginBottom: 36 }}>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                The statewide picture offers context. California crushed 2.62 million tons in 2025 — 8% below 2024 and 23% below the five-year average of 3.6 million tons, the lightest harvest since 1999. For the wine industry overall, that reduction in supply is welcome. "The decrease in tons is still very positive news for the industry overall," said Steve Fredricks, president of <a href="https://www.turrentinebrokerage.com" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Turrentine Brokerage</a>, in a March 13, 2026 market assessment. But Turrentine's own North Coast analyst flagged a critical caveat: published district averages overstate what growers negotiating new contracts actually receive. For Sonoma County chardonnay, the published district average of $2,370 contrasts with spot market prices closer to $800 per ton — a gap of more than 65%.
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
+                For consumers, the dynamics are mixed. A lighter harvest and lower grape prices can eventually translate to more accessible wine at retail — but that benefit moves slowly through the supply chain, and only if growers remain solvent long enough to plant and tend future vintages. The more immediate market signal is a shift toward lighter white varieties: Sauvignon Blanc tonnage increased 22,000 tons statewide in 2025 and Pinot Gris rose 8,000 tons, even as red varieties contracted sharply. Audra Cooper, vice president at Turrentine, described the season as representing "continued challenges for growers and wineries that were strikingly apparent at harvest."
+              </p>
+            </div>
+
             {/* ── Section 5: Caveats ───────────────────────────────── */}
             <div style={{ marginBottom: 36 }}>
               <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>Caveats and what to watch</h2>
@@ -366,6 +410,28 @@ export default function UnderTheHoodSonoma() {
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
                 We will update this article when the final 2025 crush report is published and revise the charts accordingly. All data powering these charts is served live from the NapaServe Community Data Commons, so the numbers will update automatically when new data is loaded.
               </p>
+            </div>
+
+            {/* ── Related Coverage ────────────────────────────────── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 14, margin: "40px 0 32px" }}>
+              <div style={{ flex: 1, height: 1, background: T.rule }} />
+              <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: T.muted, whiteSpace: "nowrap" }}>Related Coverage</span>
+              <div style={{ flex: 1, height: 1, background: T.rule }} />
+            </div>
+
+            <div style={{ marginBottom: 36 }}>
+              <div style={{ marginBottom: 12 }}>
+                <a href="/under-the-hood/napa-cab-2025" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
+                  "2025 Napa Grape Prices Slip After a Record High"
+                </a>
+                <span style={{ fontSize: 14, color: T.muted }}> — Napa Valley Features</span>
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <a href="/under-the-hood/lake-county-cab-2025" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
+                  "Lake County Grape Prices Have Fallen 38% in Two Years — and Chardonnay Has Nearly Vanished"
+                </a>
+                <span style={{ fontSize: 14, color: T.muted }}> — Lake County Features</span>
+              </div>
             </div>
 
             {/* ── Methodology ───────────────────────────────────────── */}
