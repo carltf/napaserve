@@ -54,7 +54,7 @@ const s = {
     background: T.ink,
     color: T.bg,
     textAlign: "center",
-    padding: "12px 24px",
+    padding: "10px 24px",
     letterSpacing: "0.18em",
     fontFamily: FONTS.mono,
     fontSize: "10px",
@@ -63,9 +63,7 @@ const s = {
   header: {
     maxWidth: "780px",
     margin: "0 auto",
-    padding: "48px 24px 32px",
-    borderBottom: `2px solid ${T.ink}`,
-    textAlign: "center",
+    padding: "32px 24px 32px",
   },
   sectionLabel: {
     fontFamily: FONTS.mono,
@@ -73,16 +71,16 @@ const s = {
     letterSpacing: "0.2em",
     textTransform: "uppercase",
     color: T.gold,
-    marginBottom: "20px",
+    marginTop: "32px",
+    marginBottom: "16px",
   },
   h1: {
     fontFamily: FONTS.heading,
     fontSize: "clamp(26px, 5vw, 42px)",
     fontWeight: "700",
-    lineHeight: "1.18",
+    lineHeight: "1.15",
     color: T.ink,
     marginBottom: "20px",
-    letterSpacing: "-0.01em",
   },
   deck: {
     fontFamily: FONTS.body,
@@ -90,8 +88,7 @@ const s = {
     fontWeight: "300",
     lineHeight: "1.65",
     color: T.inkLight,
-    maxWidth: "620px",
-    margin: "0 auto 24px",
+    marginBottom: "24px",
   },
   byline: {
     fontFamily: FONTS.mono,
@@ -532,7 +529,7 @@ export default function UnderTheHoodLake() {
 
       {/* Header */}
       <div style={s.header}>
-        <div style={s.sectionLabel}>Under the Hood</div>
+        <div style={s.sectionLabel}>Under the Hood &nbsp;·&nbsp; Lake County Features</div>
         <h1 style={s.h1}>
           Lake County Grape Prices Have Fallen 38% in Two Years — and Chardonnay Has Nearly Vanished
         </h1>
@@ -545,9 +542,13 @@ export default function UnderTheHoodLake() {
         <div style={s.byline}>
           By Tim Carl &nbsp;·&nbsp; Lake County Features &nbsp;·&nbsp; March 21, 2026
           <br />
-          <span style={{ fontStyle: "italic", letterSpacing: "0.05em" }}>
-            Live data from the NapaServe Community Data Commons · CDFA/USDA-NASS Grape Crush Report
+          <span style={{ fontFamily: FONTS.mono, fontSize: "10px", letterSpacing: "0.1em", color: T.muted, fontStyle: "italic" }}>
+            Live data from the NapaServe Community Data Commons &nbsp;·&nbsp; CDFA·USDA-NASS Grape Crush Report
           </span>
+          <br />
+          <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: FONTS.body, fontSize: "14px", color: T.accent, textDecoration: "none", display: "inline-block", marginTop: "12px" }}>
+            Read on Lake County Features · Substack →
+          </a>
         </div>
       </div>
 
@@ -555,7 +556,7 @@ export default function UnderTheHoodLake() {
       <div style={s.body}>
 
         <p style={s.p}>
-          <strong>LAKE COUNTY, Calif.</strong> — The <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Grape_Crush/index.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>2025 preliminary grape crush report</a>, published by the California Department of
+          LAKE COUNTY, Calif. — The <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Specialty_and_Other_Releases/Grapes/Crush/Reports/index.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>2025 preliminary grape crush report</a>, published by the California Department of
           Food and Agriculture in cooperation with USDA's National Agricultural Statistics
           Service, shows Lake County's district-wide weighted average price falling to $1,165.52
           per ton — down 5.7% from 2024 and 37.9% below the 2023 figure of $1,877.76.

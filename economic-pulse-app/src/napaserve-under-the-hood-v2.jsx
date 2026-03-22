@@ -337,20 +337,33 @@ export default function UnderTheHood() {
   const h2style = { fontFamily:"'Libre Baskerville', serif", fontSize:20, fontWeight:700, color:T.ink, margin:"0 0 16px 0" };
 
   return (
-    <div style={{ background:T.bg, minHeight:"100vh", paddingTop:52 }}>
+    <div style={{ background:T.bg, minHeight:"100vh" }}>
       <NavBar />
 
-      {/* header */}
-      <div style={{ background:T.surface, borderBottom:`1px solid ${T.border}`, padding:"40px 24px 32px" }}>
-        <div style={{ maxWidth:720, margin:"0 auto" }}>
-          <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:14, letterSpacing:"0.2em", color:T.gold, fontWeight:700, margin:"0 0 10px 0", textTransform:"uppercase" }}>Under the Hood · Napa Valley Features</p>
-          <h1 style={{ fontFamily:"'Libre Baskerville', serif", fontSize:28, fontWeight:700, color:T.ink, margin:"0 0 12px 0", lineHeight:1.3 }}>Napa Cabernet Prices Break the Growth Curve</h1>
-          <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:15, color:T.muted, margin:"0 0 16px 0" }}>By Tim Carl · March 2026 · <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Grape_Crush/index.php" target="_blank" rel="noopener noreferrer" style={{ color: T.muted, textDecoration: "underline" }}>Preliminary 2025 Grape Crush Report</a></p>
-          <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:15, color:T.ink, lineHeight:1.6, margin:"0 0 16px 0", maxWidth:600 }}>
-            The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years — the first such decline in the modern data series. This interactive edition includes six data visualizations and live reader polls.
-          </p>
-          <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noreferrer"
-            style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:13, color:T.accent, textDecoration:"underline" }}>
+      {/* Masthead */}
+      <div style={{ background:"#2C1810", color:"#F5F0E8", textAlign:"center", fontFamily:"monospace", fontSize:10, letterSpacing:"0.18em", textTransform:"uppercase", padding:"10px 24px" }}>
+        Napa Valley Features &nbsp;·&nbsp; Under the Hood &nbsp;·&nbsp; March 2026
+      </div>
+
+      {/* Header */}
+      <div style={{ maxWidth:720, margin:"0 auto", padding:"32px 24px 32px" }}>
+        <div style={{ fontFamily:"monospace", fontSize:14, letterSpacing:"0.2em", textTransform:"uppercase", color:"#C4A050", marginTop:32, marginBottom:16 }}>
+          Under the Hood &nbsp;·&nbsp; Napa Valley Features
+        </div>
+        <h1 style={{ fontFamily:"'Libre Baskerville', serif", fontWeight:700, fontSize:"clamp(26px, 5vw, 42px)", color:"#2C1810", lineHeight:1.15, marginBottom:20 }}>
+          Napa Cabernet Prices Break the Growth Curve
+        </h1>
+        <p style={{ fontFamily:"'Source Sans 3', sans-serif", fontWeight:300, fontSize:17, lineHeight:1.65, color:"#5C4033", marginBottom:24 }}>
+          The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years — the first such decline in the modern data series. This interactive edition includes six data visualizations and live reader polls.
+        </p>
+        <div style={{ borderTop:"1px solid #D4C4A8", paddingTop:14 }}>
+          <div style={{ fontFamily:"monospace", fontSize:10, letterSpacing:"0.15em", textTransform:"uppercase", color:"#8B7355" }}>
+            By Tim Carl &nbsp;·&nbsp; Napa Valley Features &nbsp;·&nbsp; March 19, 2026
+          </div>
+          <div style={{ fontFamily:"monospace", fontSize:10, letterSpacing:"0.1em", color:"#8B7355", fontStyle:"italic", marginTop:4 }}>
+            Live data from the NapaServe Community Data Commons &nbsp;·&nbsp; CDFA·USDA-NASS Grape Crush Report
+          </div>
+          <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily:"'Source Sans 3', sans-serif", fontSize:14, color:T.accent, textDecoration:"none", display:"inline-block", marginTop:12 }}>
             Read on Napa Valley Features · Substack →
           </a>
         </div>

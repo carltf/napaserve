@@ -128,28 +128,38 @@ export default function UnderTheHoodSonoma() {
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
       <NavBar />
 
+      {/* Masthead */}
+      <div style={{ background: "#2C1810", color: "#F5F0E8", textAlign: "center", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", padding: "10px 24px" }}>
+        Sonoma County Features &nbsp;·&nbsp; Under the Hood &nbsp;·&nbsp; March 2026
+      </div>
+
       <article id="main-content" style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px 60px" }}>
-        {/* Breadcrumb */}
-        <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "0.2em", color: T.gold, textTransform: "uppercase", marginBottom: 8 }}>
-          <a href="/under-the-hood" style={{ color: T.muted, textDecoration: "none" }}>Under the Hood</a> · Sonoma County Features
+        {/* Eyebrow */}
+        <div style={{ fontFamily: "monospace", fontSize: 14, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C4A050", marginTop: 32, marginBottom: 16 }}>
+          Under the Hood &nbsp;·&nbsp; Sonoma County Features
         </div>
 
         {/* Headline */}
-        <h1 style={{ fontFamily: serif, fontSize: "2.2rem", fontWeight: 700, color: T.ink, margin: "0 0 10px", lineHeight: 1.2 }}>
+        <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(26px, 5vw, 42px)", color: "#2C1810", lineHeight: 1.15, marginBottom: 20 }}>
           Sonoma Grape Prices Fall for a Second Year as Cab Sauv Leads the Decline
         </h1>
-        <p style={{ fontSize: 15, color: T.muted, margin: "0 0 6px" }}>
-          March 21, 2026 · Sonoma County Features
-        </p>
-        <p style={{ fontSize: 14, color: T.muted, margin: "0 0 32px", fontStyle: "italic" }}>
-          Live data from the NapaServe Community Data Commons · CDFA/USDA-NASS Grape Crush Report
+
+        {/* Deck */}
+        <p style={{ fontFamily: font, fontWeight: 300, fontSize: 17, lineHeight: 1.65, color: "#5C4033", marginBottom: 24 }}>
+          Sonoma County's weighted average grape price fell for the second consecutive year in 2025, driven by declines in Cabernet Sauvignon and several key varietals. The charts below draw directly from CDFA <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Specialty_and_Other_Releases/Grapes/Crush/Reports/index.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>crush report</a> data to show how Sonoma's wine-grape economy is shifting — and how it compares to neighboring Napa County.
         </p>
 
-        {/* Lede */}
-        <div style={{ borderLeft: `3px solid ${T.accent}`, paddingLeft: 20, marginBottom: 40 }}>
-          <p style={{ fontFamily: serif, fontSize: 17, color: T.ink, lineHeight: 1.7, margin: 0 }}>
-            Sonoma County's weighted average grape price fell for the second consecutive year in 2025, driven by declines in Cabernet Sauvignon and several key varietals. The charts below draw directly from CDFA <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Grape_Crush/index.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>crush report</a> data to show how Sonoma's wine-grape economy is shifting — and how it compares to neighboring Napa County.
-          </p>
+        {/* Byline */}
+        <div style={{ borderTop: "1px solid #D4C4A8", paddingTop: 14 }}>
+          <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355" }}>
+            By Tim Carl &nbsp;·&nbsp; Sonoma County Features &nbsp;·&nbsp; March 21, 2026
+          </div>
+          <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8B7355", fontStyle: "italic", marginTop: 4 }}>
+            Live data from the NapaServe Community Data Commons &nbsp;·&nbsp; CDFA·USDA-NASS Grape Crush Report
+          </div>
+          <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 14, color: T.accent, textDecoration: "none", display: "inline-block", marginTop: 12 }}>
+            Read on Sonoma County Features · Substack →
+          </a>
         </div>
 
         {loading && <Spinner />}
@@ -161,7 +171,7 @@ export default function UnderTheHoodSonoma() {
             <div style={{ marginBottom: 36 }}>
               <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 14px", lineHeight: 1.3 }}>The overall trend: down for the second straight year</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-                <strong>SONOMA COUNTY, Calif.</strong> — Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
+                SONOMA COUNTY, Calif. — Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
               </p>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 24px" }}>
                 The decline is broad-based but not uniform. Cabernet Sauvignon and Sauvignon Blanc took the steepest hits in percentage terms, while Pinot Noir — Sonoma's flagship cool-climate grape — held up comparatively well.
