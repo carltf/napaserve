@@ -882,6 +882,32 @@ export default function UnderTheHoodLake() {
         {/* Polls */}
         <PollsSection />
 
+        {/* ── Sources ─────────────────────────────────────────────── */}
+        <div style={{ borderTop: `1px solid ${T.rule}`, marginTop: 48, paddingTop: 24 }}>
+          <h2 style={{ fontWeight: 700, fontSize: 17, color: T.ink, fontFamily: FONTS.heading, marginBottom: 16 }}>Sources</h2>
+          {[
+            { label: "Preliminary 2025 California Grape Crush Report (USDA-NASS PDF)", url: "https://www.nass.usda.gov/Statistics_by_State/California/Publications/Specialty_and_Other_Releases/Grapes/Crush/Reports/index.php" },
+            { label: "USDA-NASS Grape Crush Reports Index — all years", url: "https://www.nass.usda.gov/Statistics_by_State/California/Publications/Specialty_and_Other_Releases/Grapes/Crush/Reports/index.php" },
+            { label: "Turrentine Brokerage 2025 market assessment (via Wine Business Monthly)", url: "https://www.winebusiness.com/content/file/2025_Crush_Report_Press_Release(1).pdf" },
+            { label: "SF Chronicle: California's 2025 grape harvest was the lightest in over two decades", url: "https://www.sfchronicle.com/food/wine/article/california-grape-harvest-2025-20269647.php" },
+            { label: "Press Democrat: North Coast wine grape crop value slips to $1.33 billion — March 16, 2026", url: "https://www.pressdemocrat.com" },
+          ].map(s => (
+            <div key={s.label} style={{ marginBottom: 10 }}>
+              <a href={s.url} target="_blank" rel="noreferrer"
+                style={{ fontFamily: FONTS.body, fontSize: 14, color: T.accent, textDecoration: "underline", lineHeight: 1.5 }}>
+                {s.label}
+              </a>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Author note ─────────────────────────────────────────── */}
+        <div style={{ marginTop: 32, padding: "20px 0", borderTop: `1px solid ${T.rule}` }}>
+          <p style={{ fontFamily: FONTS.body, fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
+            Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Lake County Features. Data sourced from CDFA·USDA-NASS Grape Crush Reports. 2025 figures are preliminary pending the final report due April 30, 2026.
+          </p>
+        </div>
+
         {/* Footer */}
         <div style={s.footer}>
           <p style={s.footerText}>
