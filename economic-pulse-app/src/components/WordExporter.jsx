@@ -3,18 +3,23 @@ import { Document, Packer, Paragraph, TextRun } from "docx";
 
 const FONT = "Times New Roman";
 const SIZE = 24; // 12pt in half-points
-const SPACING = { line: 240 };
+const BODY_SPACING = { line: 360, after: 160 };
+const HEADER_SPACING = { line: 360, before: 240, after: 160 };
 
 function tr(text) {
   return new TextRun({ text, size: SIZE, font: FONT });
 }
 
 function p(text) {
-  return new Paragraph({ spacing: SPACING, children: [tr(text)] });
+  return new Paragraph({ spacing: BODY_SPACING, children: [tr(text)] });
+}
+
+function headerP(text) {
+  return new Paragraph({ spacing: HEADER_SPACING, children: [tr(text)] });
 }
 
 function blank() {
-  return new Paragraph({ spacing: SPACING, children: [tr("")] });
+  return new Paragraph({ spacing: BODY_SPACING, children: [tr("")] });
 }
 
 export default function WordExporter({ article }) {
@@ -25,8 +30,8 @@ export default function WordExporter({ article }) {
     try {
       const children = [];
 
-      // 1. Headline
-      children.push(p(article.headline));
+      // 1. Headline — "Under the Hood: [Headline]"
+      children.push(p(`Under the Hood: ${article.headline}`));
 
       // 2. Blank line
       children.push(blank());
@@ -37,17 +42,17 @@ export default function WordExporter({ article }) {
       // 4. Blank line
       children.push(blank());
 
-      // 5. Body prose — dateline flows into first paragraph
+      // 5. Body — handles paragraph, header, and chart types
       if (article.body && article.body.length > 0) {
-        const first = article.body[0];
-        const hasDateline = first.startsWith(article.dateline);
-        if (hasDateline) {
-          children.push(p(first));
-        } else {
-          children.push(p(`${article.dateline} \u2014 ${first}`));
-        }
-        for (let i = 1; i < article.body.length; i++) {
-          children.push(p(article.body[i]));
+        for (const item of article.body) {
+          if (item.type === "header") {
+            children.push(headerP(item.text));
+          } else if (item.type === "chart") {
+            children.push(p(`[Chart ${item.number}]`));
+          } else {
+            // paragraph (default)
+            children.push(p(item.text));
+          }
         }
       }
 
