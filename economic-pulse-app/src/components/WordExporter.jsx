@@ -89,16 +89,24 @@ export default function WordExporter({ article }) {
       // 12. Blank line
       children.push(blank());
 
-      // 13. Captions — all run together as one paragraph
+      // 13. Captions — each as its own paragraph
       if (article.captions && article.captions.length > 0) {
         children.push(p("Captions:"));
-        const captionText = article.captions
-          .map(
-            (c) =>
-              `Chart ${c.number}: ${c.title} \u2014 ${c.description}. Source: ${c.source}.`
+        children.push(
+          ...article.captions.map(
+            (cap) =>
+              new Paragraph({
+                spacing: BODY_SPACING,
+                children: [
+                  new TextRun({
+                    text: `Chart ${cap.number}: ${cap.title} \u2014 ${cap.description}. Source: ${cap.source}.`,
+                    size: SIZE,
+                    font: FONT,
+                  }),
+                ],
+              })
           )
-          .join(" ");
-        children.push(p(captionText));
+        );
       }
 
       // 14. Blank line

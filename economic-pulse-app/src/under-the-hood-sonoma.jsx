@@ -222,7 +222,7 @@ function ChartCanvas({ id, buildChart, deps, downloadName }) {
 
   return <>
     <canvas ref={canvasRef} id={id} />
-    {downloadName && <button onClick={()=>{const c=canvasRef.current;if(!c)return;const a=document.createElement("a");a.download=downloadName;a.href=c.toDataURL("image/png");a.click();}} style={{marginTop:"8px",padding:"4px 12px",fontSize:"11px",fontFamily:"monospace",letterSpacing:"0.08em",color:"#8B7355",background:"transparent",border:"1px solid #D4C4A8",borderRadius:"3px",cursor:"pointer",display:"block"}}>DOWNLOAD CHART PNG</button>}
+    {downloadName && <button onClick={()=>{const canvas=canvasRef.current;if(!canvas)return;const offscreen=document.createElement("canvas");offscreen.width=canvas.width;offscreen.height=canvas.height;const ctx=offscreen.getContext("2d");ctx.fillStyle="#FAF6F0";ctx.fillRect(0,0,offscreen.width,offscreen.height);ctx.drawImage(canvas,0,0);const link=document.createElement("a");link.download=downloadName;link.href=offscreen.toDataURL("image/png");link.click();}} style={{marginTop:"8px",padding:"4px 12px",fontSize:"11px",fontFamily:"monospace",letterSpacing:"0.08em",color:"#8B7355",background:"transparent",border:"1px solid #D4C4A8",borderRadius:"3px",cursor:"pointer",display:"block"}}>DOWNLOAD CHART PNG</button>}
   </>;
 }
 

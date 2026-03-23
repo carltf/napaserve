@@ -133,11 +133,9 @@ const EXPORT_DATA = {
       { number: 6, title: "Stat Box \u2014 Key 2025 Metrics", description: "Summary statistics panel showing 2025 preliminary weighted average, peak year comparison and volume figures", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 4" },
     ],
     sources: [
-      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026.",
-      "Fredricks, Steve. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
-      "Klier, Christian. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026.",
-      "Cooper, Audra. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
-      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026.",
+      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026. https://www.cdfa.ca.gov/statistics/pdfs/2025PreliminaryCrushReport.pdf",
+      "Fredricks, Steve; Klier, Christian; Cooper, Audra. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026. https://www.winebusiness.com/news/article/273456",
+      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026. https://www.sfchronicle.com/food/wine/article/napa-grape-prices-2025-20219485.php",
     ],
   },
   "sonoma-cab-2025": {
@@ -185,11 +183,9 @@ const EXPORT_DATA = {
       { number: 4, title: "Stat Box \u2014 Key 2025 Metrics", description: "Summary statistics panel for Sonoma County 2025 grape prices", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 3" },
     ],
     sources: [
-      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026.",
-      "Fredricks, Steve. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
-      "Klier, Christian. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026.",
-      "Cooper, Audra. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
-      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026.",
+      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026. https://www.cdfa.ca.gov/statistics/pdfs/2025PreliminaryCrushReport.pdf",
+      "Fredricks, Steve; Klier, Christian; Cooper, Audra. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026. https://www.winebusiness.com/news/article/273456",
+      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026. https://www.sfchronicle.com/food/wine/article/napa-grape-prices-2025-20219485.php",
     ],
   },
   "lake-county-cab-2025": {
@@ -240,11 +236,9 @@ const EXPORT_DATA = {
       { number: 4, title: "Stat Box \u2014 Key 2025 Metrics", description: "Summary statistics panel for Lake County 2025 grape prices", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 6" },
     ],
     sources: [
-      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026.",
-      "Fredricks, Steve. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
-      "Klier, Christian. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026.",
-      "Cooper, Audra. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
-      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026.",
+      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026. https://www.cdfa.ca.gov/statistics/pdfs/2025PreliminaryCrushReport.pdf",
+      "Fredricks, Steve; Klier, Christian; Cooper, Audra. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026. https://www.winebusiness.com/news/article/273456",
+      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026. https://www.sfchronicle.com/food/wine/article/napa-grape-prices-2025-20219485.php",
     ],
   },
 };
