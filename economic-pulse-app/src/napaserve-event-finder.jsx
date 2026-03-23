@@ -215,11 +215,12 @@ function EventMap({ pins }) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export default function EventFinder() {
-  const [tab, setTab] = useState(() => window.location.hash === "#submit" ? "submit" : "search");
-
-  useEffect(() => {
-    if (window.location.hash === "#submit") setTab("submit");
-  }, []);
+  const [tab, setTab] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#submit') {
+      return 'submit';
+    }
+    return 'search';
+  });
 
   // Search state
   const [town, setTown] = useState("all");
