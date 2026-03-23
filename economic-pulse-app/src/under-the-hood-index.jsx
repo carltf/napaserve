@@ -239,25 +239,28 @@ export default function UnderTheHoodIndex() {
   };
 
   const ArchiveRow = ({ a, i }) => (
-    <a
+    <div
       key={i}
-      href={a.substack_url}
-      target="_blank"
-      rel="noopener noreferrer"
       style={{
         display: "flex", justifyContent: "space-between", alignItems: "baseline",
         padding: "10px 0", borderBottom: "1px solid rgba(44,24,16,0.06)",
-        textDecoration: "none", gap: 12,
+        gap: 12,
       }}
     >
-      <span style={{ fontSize: 15, fontWeight: 600, color: T.ink, lineHeight: 1.4, flex: 1 }}>
+      <a
+        href={a.substack_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: 15, fontWeight: 600, color: "#2C1810", lineHeight: 1.4, flex: 1, textDecoration: "none", font: "inherit" }}
+        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+      >
         {stripPrefix(a.post_title)}
-      </span>
+      </a>
       <span style={{ fontSize: 13, color: T.muted, whiteSpace: "nowrap", flexShrink: 0 }}>
         {fmtDate(a.published_at)}
       </span>
-      <span style={{ fontSize: 14, color: T.gold, flexShrink: 0 }}>\u2192</span>
-    </a>
+    </div>
   );
 
   return (
