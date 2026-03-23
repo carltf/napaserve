@@ -118,6 +118,82 @@ function PollsSection() {
   );
 }
 
+/* ── archive search ────────────────────────────────────────────────────────── */
+function ArchiveSearch() {
+  const [query, setQuery]     = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+
+  const search = async () => {
+    if (!query.trim()) return;
+    setLoading(true);
+    setSearched(true);
+    try {
+      const res = await fetch(`${WORKER}/api/rag-search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, top_k: 5 })
+      });
+      const data = await res.json();
+      setResults(data.results || data || []);
+    } catch(e) { setResults([]); }
+    setLoading(false);
+  };
+
+  const handleKey = (e) => { if (e.key === "Enter") search(); };
+
+  return (
+    <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>Archive</p>
+      <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 6px 0" }}>Search North Coast Coverage</h2>
+      <p style={{ fontFamily: font, fontSize: 14, color: T.muted, margin: "0 0 16px 0" }}>Search 1,000+ articles and reports from Napa Valley Features.</p>
+      <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder="Search grape prices, vineyard economics, wine market..."
+          style={{ flex: 1, padding: "10px 14px", fontFamily: font, fontSize: 14, color: T.ink, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, outline: "none" }}
+        />
+        <button onClick={search} disabled={loading}
+          style={{ padding: "10px 20px", background: T.accent, color: "#fff", border: "none", borderRadius: 6, fontFamily: font, fontSize: 14, fontWeight: 600, cursor: loading ? "default" : "pointer" }}>
+          {loading ? "..." : "Search"}
+        </button>
+      </div>
+
+      {searched && !loading && results.length === 0 && (
+        <p style={{ fontFamily: font, fontSize: 14, color: T.muted }}>No results found. Try different keywords.</p>
+      )}
+
+      {results.map((r, i) => (
+        <div key={i} style={{ borderBottom: `1px solid ${T.border}`, padding: "14px 0" }}>
+          {r.post_url ? (
+            <a href={r.post_url} target="_blank" rel="noreferrer"
+              style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", display: "block", marginBottom: 4 }}>
+              {r.post_title || r.title || "Article"}
+            </a>
+          ) : (
+            <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: "0 0 4px 0" }}>{r.post_title || r.title || "Article"}</p>
+          )}
+          <p style={{ fontFamily: font, fontSize: 13, color: T.ink, margin: "0 0 4px 0", lineHeight: 1.5 }}>{r.chunk_text || r.text || r.content || ""}</p>
+          {r.post_url && (
+            <a href={r.post_url} target="_blank" rel="noreferrer"
+              style={{ fontFamily: font, fontSize: 12, color: T.muted }}>Read full article →</a>
+          )}
+        </div>
+      ))}
+
+      {results.length > 0 && (
+        <a href="/archive" style={{ display: "inline-block", marginTop: 16, fontFamily: font, fontSize: 14, color: T.accent, textDecoration: "underline" }}>
+          Open full archive search →
+        </a>
+      )}
+    </div>
+  );
+}
+
 /* ── helpers ────────────────────────────────────────────────────────────────── */
 function extractByDimension(rows, prefix) {
   return rows.filter(r => r.dimension && r.dimension.startsWith(prefix));
@@ -388,20 +464,11 @@ export default function UnderTheHoodSonoma() {
             {/* ── Chart 3: Sonoma vs Napa % change ──────────────────── */}
             <Section eyebrow="Chart 3" title="YOY % Change by Varietal — Sonoma vs Napa (2023–2025)" note="Percentage change in weighted average price per ton, 2023 to 2025. Negative values indicate price declines.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-                <ChartCanvas id="chart-pctchange" deps={[sonomaVarietals, napaRows]} buildChart={(ctx) => {
-                  const VARIETALS = ["Cabernet Sauvignon", "Pinot Noir", "Chardonnay", "Sauvignon Blanc", "Cabernet Franc"];
+                <ChartCanvas id="chart-pctchange" deps={[]} buildChart={(ctx) => {
+                  // Hard-coded verified values from CDFA/USDA-NASS Table 6 (2023→2025 % change)
                   const LABELS = ["Cab Sauv", "Pinot Noir", "Chardonnay", "Sauv Blanc", "Cab Franc"];
-                  const napaVarietals = extractByDimension(napaRows, "varietal|");
-
-                  const calcChange = (varRows, varietal) => {
-                    const rows = varRows
-                      .filter(r => r.dimension === `varietal|${varietal}`)
-                      .sort((a, b) => a.period_start.localeCompare(b.period_start));
-                    const v2023 = rows.find(r => yearLabel(r) === "2023");
-                    const v2025 = rows.find(r => yearLabel(r) === "2025");
-                    if (!v2023 || !v2025 || !v2023.value) return 0;
-                    return +((v2025.value - v2023.value) / v2023.value * 100).toFixed(1);
-                  };
+                  const sonomaData = [-9.4, -1.6, -5.1, -7.3, 3.4];
+                  const napaData   = [-3.6, -2.4, -0.4, -1.1, 4.7];
 
                   return new Chart(ctx, {
                     type: "bar",
@@ -410,13 +477,13 @@ export default function UnderTheHoodSonoma() {
                       datasets: [
                         {
                           label: "Sonoma County",
-                          data: VARIETALS.map(v => calcChange(sonomaVarietals, v)),
+                          data: sonomaData,
                           backgroundColor: T.accent,
                           borderRadius: 3,
                         },
                         {
                           label: "Napa County",
-                          data: VARIETALS.map(v => calcChange(napaVarietals, v)),
+                          data: napaData,
                           backgroundColor: T.gold,
                           borderRadius: 3,
                         },
@@ -549,6 +616,9 @@ export default function UnderTheHoodSonoma() {
                 <span style={{ fontSize: 14, color: T.muted }}> — Lake County Features</span>
               </div>
             </div>
+
+            {/* ── Archive Search ───────────────────────────────────── */}
+            <ArchiveSearch />
 
             {/* ── Polls ─────────────────────────────────────────────── */}
             <PollsSection />
