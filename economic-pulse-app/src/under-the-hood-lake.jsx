@@ -958,9 +958,6 @@ export default function UnderTheHoodLake() {
         {/* Archive Search */}
         <ArchiveSearch />
 
-        {/* Polls */}
-        <PollsSection />
-
         {/* ── Sources ─────────────────────────────────────────────── */}
         <div style={{ borderTop: `1px solid ${T.rule}`, marginTop: 48, paddingTop: 24 }}>
           <h2 style={{ fontWeight: 700, fontSize: 17, color: T.ink, fontFamily: FONTS.heading, marginBottom: 16 }}>Sources</h2>
@@ -986,6 +983,9 @@ export default function UnderTheHoodLake() {
             Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Lake County Features. Data sourced from CDFA·USDA-NASS Grape Crush Reports. 2025 figures are preliminary pending the final report due April 30, 2026.
           </p>
         </div>
+
+        {/* Polls */}
+        <PollsSection />
 
         {/* Footer */}
         <div style={s.footer}>

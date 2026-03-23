@@ -620,9 +620,6 @@ export default function UnderTheHoodSonoma() {
             {/* ── Archive Search ───────────────────────────────────── */}
             <ArchiveSearch />
 
-            {/* ── Polls ─────────────────────────────────────────────── */}
-            <PollsSection />
-
             {/* ── Sources ─────────────────────────────────────────────── */}
             <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 24 }}>
               <h2 style={{ fontWeight: 700, fontSize: 17, color: T.ink, fontFamily: serif, marginBottom: 16 }}>Sources</h2>
@@ -648,6 +645,9 @@ export default function UnderTheHoodSonoma() {
                 Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Sonoma County Features. Data sourced from CDFA·USDA-NASS Grape Crush Reports. 2025 figures are preliminary pending the final report due April 30, 2026.
               </p>
             </div>
+
+            {/* ── Polls ─────────────────────────────────────────────── */}
+            <PollsSection />
 
             {/* ── Methodology ───────────────────────────────────────── */}
             <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 20 }}>
