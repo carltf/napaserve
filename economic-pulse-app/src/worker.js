@@ -8,6 +8,7 @@
  *   POST /api/poll-search         — embed query → nvf_poll_search() → matching polls
  *   GET  /api/fred               — FRED API proxy → macro indicators
  *   POST /api/submit-event       — community event submission → community_events
+ *   POST /api/bluesky-publish    — post Under the Hood article to BlueSky
  *
  * Env vars (Bindings):
  *   SUPABASE_URL       (plaintext)
@@ -15,6 +16,8 @@
  *   VOYAGE_API_KEY     (secret)
  *   ANTHROPIC_API_KEY  (secret)
  *   FRED_API_KEY       (secret)
+ *   BLUESKY_HANDLE     (secret)
+ *   BLUESKY_APP_PASSWORD (secret)
  */
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
@@ -22,6 +25,8 @@
 const ALLOWED_ORIGINS = [
   "https://napavalleyfeatures.com",
   "https://www.napavalleyfeatures.com",
+  "https://napaserve.org",
+  "https://www.napaserve.org",
 ];
 
 function isAllowedOrigin(origin) {
@@ -443,6 +448,70 @@ async function handleSubmitEvent(request, env) {
   }
 }
 
+// ─── BlueSky publish ─────────────────────────────────────────────────────────
+
+async function handleBlueskyPublish(request, env) {
+  try {
+    const body = await request.json();
+    const { headline, deck, slug, publication } = body;
+    if (!headline || !slug || !publication) {
+      return err("Missing required fields: headline, slug, publication", 400, request);
+    }
+
+    // Authenticate with BlueSky
+    const sessionRes = await fetch("https://bsky.social/xrpc/com.atproto.server.createSession", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        identifier: env.BLUESKY_HANDLE,
+        password: env.BLUESKY_APP_PASSWORD,
+      }),
+    });
+    if (!sessionRes.ok) {
+      const text = await sessionRes.text();
+      throw new Error(`BlueSky auth failed (${sessionRes.status}): ${text}`);
+    }
+    const session = await sessionRes.json();
+    const { accessJwt, did } = session;
+
+    // Format post text
+    const url = `napaserve.org/under-the-hood/${slug}`;
+    const header = `${publication} \u00B7 UNDER THE HOOD`;
+    const maxDeckLen = 300 - header.length - headline.length - url.length - 8; // 8 = newlines
+    const truncatedDeck = deck && deck.length > maxDeckLen
+      ? deck.slice(0, maxDeckLen - 1).trimEnd() + "\u2026"
+      : (deck || "");
+    const text = `${header}\n\n${headline}\n\n${truncatedDeck}\n\n${url}`;
+
+    // Create the post
+    const postRes = await fetch("https://bsky.social/xrpc/com.atproto.repo.createRecord", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessJwt}`,
+      },
+      body: JSON.stringify({
+        repo: did,
+        collection: "app.bsky.feed.post",
+        record: {
+          text,
+          createdAt: new Date().toISOString(),
+          langs: ["en"],
+        },
+      }),
+    });
+    if (!postRes.ok) {
+      const text = await postRes.text();
+      throw new Error(`BlueSky post failed (${postRes.status}): ${text}`);
+    }
+    const post = await postRes.json();
+    return json({ success: true, uri: post.uri }, 200, request);
+  } catch (e) {
+    console.error("BlueSky publish failed:", e);
+    return json({ success: false, error: e.message }, 502, request);
+  }
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
@@ -511,6 +580,10 @@ export default {
 
     if (url.pathname === "/api/submit-event" && request.method === "POST") {
       return handleSubmitEvent(request, env);
+    }
+
+    if (url.pathname === "/api/bluesky-publish" && request.method === "POST") {
+      return handleBlueskyPublish(request, env);
     }
 
     return new Response("Not found", { status: 404 });

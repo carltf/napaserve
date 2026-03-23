@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import BlueSkyPublisher from "./components/BlueSkyPublisher";
 
 Chart.register(...registerables);
 
@@ -645,6 +646,14 @@ export default function UnderTheHoodSonoma() {
                 Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Sonoma County Features. Data sourced from CDFA·USDA-NASS Grape Crush Reports. 2025 figures are preliminary pending the final report due April 30, 2026.
               </p>
             </div>
+
+            {/* ── BlueSky ──────────────────────────────────────────── */}
+            <BlueSkyPublisher
+              headline="Sonoma Grape Prices Fall for a Second Year as Cab Sauv Leads the Decline"
+              deck="Sonoma County's weighted average grape price fell for the second consecutive year in 2025, driven by declines in Cabernet Sauvignon and several key varietals. The charts below draw directly from CDFA crush report data to show how Sonoma's wine-grape economy is shifting — and how it compares to neighboring Napa County."
+              slug="sonoma-cab-2025"
+              publication="Sonoma County Features"
+            />
 
             {/* ── Polls ─────────────────────────────────────────────── */}
             <PollsSection />

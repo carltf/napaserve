@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import BlueSkyPublisher from "./components/BlueSkyPublisher";
 
 Chart.register(...registerables);
 
@@ -983,6 +984,14 @@ export default function UnderTheHoodLake() {
             Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Lake County Features. Data sourced from CDFA·USDA-NASS Grape Crush Reports. 2025 figures are preliminary pending the final report due April 30, 2026.
           </p>
         </div>
+
+        {/* BlueSky */}
+        <BlueSkyPublisher
+          headline="Lake County Grape Prices Have Fallen 38% in Two Years — and Chardonnay Has Nearly Vanished"
+          deck="The preliminary 2025 crush report shows Lake County's district-wide weighted average dropping to $1,165 per ton — down 38% from 2023 — as buyer withdrawal accelerates across nearly every varietal. Chardonnay, which briefly surged in 2024, collapsed 76.8% in a single year to $288 per ton."
+          slug="lake-county-cab-2025"
+          publication="Lake County Features"
+        />
 
         {/* Polls */}
         <PollsSection />

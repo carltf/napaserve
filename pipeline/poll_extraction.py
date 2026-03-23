@@ -41,7 +41,7 @@ SUPABASE_TABLE = "nvf_polls"
 # Path to the Substack HTML export directory (iCloud)
 POSTS_DIR = os.path.expanduser(
     "~/Library/Mobile Documents/com~apple~CloudDocs/"
-    "Valley Works Collabrative/NapaServe/"
+    "Valley Works Collaborative/NapaServe/"
     "Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts"
 )
 
@@ -50,7 +50,7 @@ SUBSTACK_POLL_API = "https://napavalleyfocus.substack.com/api/v1/poll/{poll_id}"
 # posts.csv lives one level above the posts/ directory
 POSTS_CSV = os.path.expanduser(
     "~/Library/Mobile Documents/com~apple~CloudDocs/"
-    "Valley Works Collabrative/NapaServe/"
+    "Valley Works Collaborative/NapaServe/"
     "Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts.csv"
 )
 
@@ -328,7 +328,7 @@ def run(cookie: str, dry_run: bool = False, limit: int | None = None,
                 log.error("SUPABASE_KEY not set — cannot upsert. Use --dry-run to preview.")
                 return
             result = supabase_upsert(row)
-            log.info(f"Upserted poll {row['poll_id']}: {row['question'][:60]}")
+            log.info(f"Upserted poll {row['poll_id']}: {(row['question'] or '')[:60]}")
 
         time.sleep(2)
 

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS nvf_poll_embeddings (
 COMMENT ON TABLE  nvf_poll_embeddings IS 'Voyage-3 embeddings of poll question + post_title for semantic search';
 COMMENT ON COLUMN nvf_poll_embeddings.embedding IS '1024-dim voyage-3 vector of concatenated question and post_title';
 
--- 2. HNSW index for fast cosine similarity
+-- 2. IVFFlat index for fast cosine similarity
 -- ------------------------------------------------------------
 
 CREATE INDEX IF NOT EXISTS idx_nvf_poll_embeddings_cosine
