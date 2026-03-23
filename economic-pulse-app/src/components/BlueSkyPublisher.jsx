@@ -12,20 +12,50 @@ function formatPostText(publication, headline, deck, slug) {
   return `${header}\n\n${headline}\n\n${truncatedDeck}\n\n${url}`;
 }
 
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function BlueSkyPublisher({ headline, deck, slug, publication }) {
   const [state, setState] = useState("idle"); // idle | preview | posting | success | error
   const [postUri, setPostUri] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const postText = formatPostText(publication, headline, deck, slug);
+
+  function handleImageSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onload = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+  }
 
   async function handleConfirm() {
     setState("posting");
     try {
+      const body = { headline, deck, slug, publication };
+
+      if (imageFile) {
+        const dataUrl = await readFileAsBase64(imageFile);
+        // strip "data:image/png;base64," prefix
+        const base64 = dataUrl.split(",")[1];
+        body.imageData = base64;
+        body.imageMimeType = imageFile.type;
+      }
+
       const res = await fetch(`${WORKER}/api/bluesky-publish`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ headline, deck, slug, publication }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (data.success) {
@@ -44,7 +74,6 @@ export default function BlueSkyPublisher({ headline, deck, slug, publication }) 
   // Convert at:// URI to web URL
   function bskyWebUrl(uri) {
     if (!uri) return "#";
-    // at://did:plc:xxx/app.bsky.feed.post/yyy → https://bsky.app/profile/did:plc:xxx/post/yyy
     const m = uri.match(/^at:\/\/(did:[^/]+)\/app\.bsky\.feed\.post\/(.+)$/);
     if (m) return `https://bsky.app/profile/${m[1]}/post/${m[2]}`;
     return "#";
@@ -136,7 +165,21 @@ export default function BlueSkyPublisher({ headline, deck, slug, publication }) 
       <div style={{ fontSize: 12, color: "#8B7355", marginBottom: 12 }}>
         {postText.length} / 300 characters
       </div>
-      <div style={{ display: "flex", gap: 8 }}>
+      <div style={{ marginTop: "16px" }}>
+        <label style={{ fontFamily: "monospace", fontSize: "11px", letterSpacing: "0.08em", color: "#8B7355", display: "block", marginBottom: "6px" }}>
+          ATTACH CHART IMAGE (OPTIONAL)
+        </label>
+        <input
+          type="file"
+          accept="image/png,image/jpeg"
+          onChange={handleImageSelect}
+          style={{ fontSize: "13px", fontFamily: "Source Sans 3, sans-serif", color: "#2C1810" }}
+        />
+        {imagePreview && (
+          <img src={imagePreview} alt="Chart preview" style={{ marginTop: "8px", maxWidth: "100%", borderRadius: "4px", border: "1px solid #D4C4A8" }} />
+        )}
+      </div>
+      <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
         <button
           onClick={handleConfirm}
           disabled={state === "posting"}

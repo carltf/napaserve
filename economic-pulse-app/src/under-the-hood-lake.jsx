@@ -759,6 +759,7 @@ export default function UnderTheHoodLake() {
           source="Source: CDFA/USDA-NASS Grape Crush Reports, 2023–2025. 2025 figures preliminary pending final report April 30, 2026."
         >
           <canvas ref={chart1Ref} height={220} />
+          <button onClick={()=>{const c=chart1Ref.current;if(!c)return;const a=document.createElement("a");a.download="lake-county-cab-2025-chart-1.png";a.href=c.toDataURL("image/png");a.click();}} style={{marginTop:"8px",padding:"4px 12px",fontSize:"11px",fontFamily:"monospace",letterSpacing:"0.08em",color:"#8B7355",background:"transparent",border:"1px solid #D4C4A8",borderRadius:"3px",cursor:"pointer",display:"block"}}>DOWNLOAD CHART PNG</button>
         </ChartBlock>
 
         <SectionBreak label="The Chardonnay Collapse" />
@@ -793,6 +794,7 @@ export default function UnderTheHoodLake() {
           source="Source: CDFA/USDA-NASS Grape Crush Reports, Table 6, District 2. 2025 preliminary."
         >
           <canvas ref={chart2Ref} height={220} />
+          <button onClick={()=>{const c=chart2Ref.current;if(!c)return;const a=document.createElement("a");a.download="lake-county-cab-2025-chart-2.png";a.href=c.toDataURL("image/png");a.click();}} style={{marginTop:"8px",padding:"4px 12px",fontSize:"11px",fontFamily:"monospace",letterSpacing:"0.08em",color:"#8B7355",background:"transparent",border:"1px solid #D4C4A8",borderRadius:"3px",cursor:"pointer",display:"block"}}>DOWNLOAD CHART PNG</button>
         </ChartBlock>
 
         <SectionBreak label="Varietal by Varietal" />
@@ -852,6 +854,7 @@ export default function UnderTheHoodLake() {
           source="Source: CDFA/USDA-NASS Grape Crush Reports, Table 6. 2025 preliminary."
         >
           <canvas ref={chart3Ref} height={260} />
+          <button onClick={()=>{const c=chart3Ref.current;if(!c)return;const a=document.createElement("a");a.download="lake-county-cab-2025-chart-3.png";a.href=c.toDataURL("image/png");a.click();}} style={{marginTop:"8px",padding:"4px 12px",fontSize:"11px",fontFamily:"monospace",letterSpacing:"0.08em",color:"#8B7355",background:"transparent",border:"1px solid #D4C4A8",borderRadius:"3px",cursor:"pointer",display:"block"}}>DOWNLOAD CHART PNG</button>
         </ChartBlock>
 
         <SectionBreak label="The Appellation Gap" />
@@ -894,6 +897,7 @@ export default function UnderTheHoodLake() {
           source="Source: CDFA/USDA-NASS 2025 Preliminary Grape Crush Report, Table 6."
         >
           <canvas ref={chart4Ref} height={280} />
+          <button onClick={()=>{const c=chart4Ref.current;if(!c)return;const a=document.createElement("a");a.download="lake-county-cab-2025-chart-4.png";a.href=c.toDataURL("image/png");a.click();}} style={{marginTop:"8px",padding:"4px 12px",fontSize:"11px",fontFamily:"monospace",letterSpacing:"0.08em",color:"#8B7355",background:"transparent",border:"1px solid #D4C4A8",borderRadius:"3px",cursor:"pointer",display:"block"}}>DOWNLOAD CHART PNG</button>
         </ChartBlock>
 
         <SectionBreak label="The Broader Picture" />

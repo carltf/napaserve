@@ -9,6 +9,8 @@
  *   GET  /api/fred               — FRED API proxy → macro indicators
  *   POST /api/submit-event       — community event submission → community_events
  *   POST /api/bluesky-publish    — post Under the Hood article to BlueSky
+ *   GET  /api/article-polls      — fetch polls + vote counts for an article
+ *   POST /api/article-poll-vote  — submit a vote for an article poll
  *
  * Env vars (Bindings):
  *   SUPABASE_URL       (plaintext)
@@ -16,7 +18,7 @@
  *   VOYAGE_API_KEY     (secret)
  *   ANTHROPIC_API_KEY  (secret)
  *   FRED_API_KEY       (secret)
- *   BLUESKY_HANDLE     (secret)
+ *   BLUESKY_HANDLE      (plaintext)
  *   BLUESKY_APP_PASSWORD (secret)
  */
 
@@ -450,40 +452,60 @@ async function handleSubmitEvent(request, env) {
 
 // ─── BlueSky publish ─────────────────────────────────────────────────────────
 
-async function handleBlueskyPublish(request, env) {
-  try {
-    const body = await request.json();
-    const { headline, deck, slug, publication } = body;
-    if (!headline || !slug || !publication) {
-      return err("Missing required fields: headline, slug, publication", 400, request);
-    }
+async function handleBlueSkyPublish(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return err("Invalid JSON body", 400, request); }
 
-    // Authenticate with BlueSky
+  const { headline, deck, slug, publication, imageData, imageMimeType } = body;
+  if (!headline || !slug || !publication) return err("headline, slug, and publication required", 400, request);
+
+  try {
+    // Authenticate
     const sessionRes = await fetch("https://bsky.social/xrpc/com.atproto.server.createSession", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        identifier: env.BLUESKY_HANDLE,
-        password: env.BLUESKY_APP_PASSWORD,
-      }),
+      body: JSON.stringify({ identifier: env.BLUESKY_HANDLE, password: env.BLUESKY_APP_PASSWORD }),
     });
-    if (!sessionRes.ok) {
-      const text = await sessionRes.text();
-      throw new Error(`BlueSky auth failed (${sessionRes.status}): ${text}`);
-    }
-    const session = await sessionRes.json();
-    const { accessJwt, did } = session;
+    if (!sessionRes.ok) throw new Error(`BlueSky auth failed: ${sessionRes.status}`);
+    const { accessJwt, did } = await sessionRes.json();
 
-    // Format post text
+    // Format post text under 300 chars
     const url = `napaserve.org/under-the-hood/${slug}`;
-    const header = `${publication} \u00B7 UNDER THE HOOD`;
-    const maxDeckLen = 300 - header.length - headline.length - url.length - 8; // 8 = newlines
-    const truncatedDeck = deck && deck.length > maxDeckLen
-      ? deck.slice(0, maxDeckLen - 1).trimEnd() + "\u2026"
-      : (deck || "");
-    const text = `${header}\n\n${headline}\n\n${truncatedDeck}\n\n${url}`;
+    const prefix = `${publication} \u00B7 UNDER THE HOOD\n\n${headline}\n\n`;
+    const suffix = `\n\n${url}`;
+    const maxDeck = 300 - prefix.length - suffix.length;
+    const trimmedDeck = deck && deck.length > 0
+      ? (deck.length > maxDeck ? deck.slice(0, maxDeck - 1) + "\u2026" : deck)
+      : "";
+    const text = prefix + trimmedDeck + suffix;
 
-    // Create the post
+    // Optional image upload
+    let embed = undefined;
+    if (imageData && imageMimeType) {
+      const imageBytes = Uint8Array.from(atob(imageData), c => c.charCodeAt(0));
+      const blobRes = await fetch("https://bsky.social/xrpc/com.atproto.repo.uploadBlob", {
+        method: "POST",
+        headers: {
+          "Content-Type": imageMimeType,
+          Authorization: `Bearer ${accessJwt}`,
+        },
+        body: imageBytes,
+      });
+      if (!blobRes.ok) throw new Error(`BlueSky blob upload failed: ${blobRes.status}`);
+      const { blob } = await blobRes.json();
+      embed = {
+        $type: "app.bsky.embed.images",
+        images: [{
+          image: blob,
+          alt: `Chart from ${headline}`,
+        }],
+      };
+    }
+
+    // Create post record
+    const record = { text, createdAt: new Date().toISOString(), langs: ["en"] };
+    if (embed) record.embed = embed;
+
     const postRes = await fetch("https://bsky.social/xrpc/com.atproto.repo.createRecord", {
       method: "POST",
       headers: {
@@ -493,23 +515,85 @@ async function handleBlueskyPublish(request, env) {
       body: JSON.stringify({
         repo: did,
         collection: "app.bsky.feed.post",
-        record: {
-          text,
-          createdAt: new Date().toISOString(),
-          langs: ["en"],
-        },
+        record,
       }),
     });
-    if (!postRes.ok) {
-      const text = await postRes.text();
-      throw new Error(`BlueSky post failed (${postRes.status}): ${text}`);
-    }
-    const post = await postRes.json();
-    return json({ success: true, uri: post.uri }, 200, request);
+    if (!postRes.ok) throw new Error(`BlueSky post failed: ${postRes.status}`);
+    const postData = await postRes.json();
+    return json({ success: true, uri: postData.uri }, 200, request);
   } catch (e) {
     console.error("BlueSky publish failed:", e);
-    return json({ success: false, error: e.message }, 502, request);
+    return err(`BlueSky publish failed: ${e.message}`, 502, request);
   }
+}
+
+// ─── Article polls ───────────────────────────────────────────────────────────
+
+async function handleArticlePolls(request, env) {
+  const url = new URL(request.url);
+  const slug = url.searchParams.get("slug");
+  if (!slug) return err("slug required", 400, request);
+
+  const pollsRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/napaserve_article_polls?article_slug=eq.${slug}&order=sort_order.asc`,
+    { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+  );
+  const polls = await pollsRes.json();
+
+  const pollsWithCounts = await Promise.all(polls.map(async (poll) => {
+    const votesRes = await fetch(
+      `${env.SUPABASE_URL}/rest/v1/napaserve_poll_votes?poll_id=eq.${poll.id}&select=option_index`,
+      { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+    );
+    const votes = await votesRes.json();
+    const counts = {};
+    votes.forEach(v => { counts[v.option_index] = (counts[v.option_index] || 0) + 1; });
+    return { ...poll, counts, total: votes.length };
+  }));
+
+  return json(pollsWithCounts, 200, request);
+}
+
+async function handleArticlePollVote(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return err("Invalid JSON body", 400, request);
+  }
+
+  const { poll_id, option_index } = body;
+  if (poll_id === undefined || option_index === undefined) {
+    return err("poll_id and option_index required", 400, request);
+  }
+
+  const insertRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/napaserve_poll_votes`,
+    {
+      method: "POST",
+      headers: {
+        apikey: env.SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({ poll_id, option_index }),
+    }
+  );
+
+  if (!insertRes.ok) {
+    return err("Vote failed", 500, request);
+  }
+
+  const votesRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/napaserve_poll_votes?poll_id=eq.${poll_id}&select=option_index`,
+    { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+  );
+  const votes = await votesRes.json();
+  const counts = {};
+  votes.forEach(v => { counts[v.option_index] = (counts[v.option_index] || 0) + 1; });
+
+  return json({ success: true, counts, total: votes.length }, 200, request);
 }
 
 // ─── Main fetch handler ───────────────────────────────────────────────────────
@@ -583,7 +667,15 @@ export default {
     }
 
     if (url.pathname === "/api/bluesky-publish" && request.method === "POST") {
-      return handleBlueskyPublish(request, env);
+      return handleBlueSkyPublish(request, env);
+    }
+
+    if (url.pathname === "/api/article-polls" && request.method === "GET") {
+      return handleArticlePolls(request, env);
+    }
+
+    if (url.pathname === "/api/article-poll-vote" && request.method === "POST") {
+      return handleArticlePollVote(request, env);
     }
 
     return new Response("Not found", { status: 404 });
