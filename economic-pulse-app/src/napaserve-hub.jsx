@@ -1,11 +1,8 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import NavBar from "./NavBar";
+import Footer from "./Footer";
 
 export default function NapaServeHub() {
-  const [subName, setSubName] = useState("");
-  const [email, setEmail] = useState("");
-  const [subStatus, setSubStatus] = useState("idle");
   return (
     <div style={{ background: "#F5F0E8", minHeight: "100vh", fontFamily: "'Source Sans 3', sans-serif", color: "#2C1810" }}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
@@ -49,36 +46,15 @@ export default function NapaServeHub() {
         .hub-chips{display:flex;flex-wrap:wrap;gap:5px;}
         .hub-chip{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule);padding:4px 9px;cursor:pointer;text-decoration:none;}
         .hub-chip.s{color:var(--accent);border-color:rgba(139,94,60,0.25);background:rgba(139,94,60,0.05);}
-        .hub-footer{padding:48px 28px 28px;background:var(--bg);}
-        .hub-f-inner{max-width:1160px;margin:0 auto;}
-        .hub-f-wm{font-family:'Libre Baskerville',Georgia,serif;font-size:20px;font-weight:700;color:var(--ink2);margin-bottom:4px;}
-        .hub-f-tag{font-size:14px;color:var(--dim);}
-        .hub-four{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
-        .hub-sm-head{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:12px;}
-        .hub-sm-link{display:block;font-size:14px;color:var(--muted);padding:3px 0;cursor:pointer;text-decoration:none;transition:color .15s;}
-        .hub-sm-link:hover{color:var(--accent);}
-        .hub-col-lbl{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
-        .hub-sbtn{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--rule);padding:7px 12px;cursor:pointer;background:none;width:100%;margin-bottom:7px;transition:color .15s,border-color .15s;}
-        .hub-sbtn:hover{color:var(--accent);border-color:var(--accent);}
-        .hub-sub-hed{font-family:'Libre Baskerville',Georgia,serif;font-size:15px;font-weight:700;color:var(--ink2);margin-bottom:4px;}
-        .hub-sub-dek{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
-        .hub-sub-fields{display:flex;gap:8px;max-width:440px;}
-        .hub-sub-in{flex:1;background:transparent;border:none;border-bottom:1px solid var(--rule);padding:8px 0;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--ink);outline:none;min-width:0;}
-        .hub-sub-in:focus{border-color:var(--accent);}
-        .hub-sub-in::placeholder{color:var(--dim);}
-        .hub-sub-btn{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--ink2);color:var(--bg);border:none;padding:10px 18px;cursor:pointer;white-space:nowrap;}
-        .hub-sub-note{font-size:14px;color:var(--dim);margin-top:7px;}
         @media(max-width:768px){
           .hub-grid-journalism,.hub-grid-community,.hub-grid-intelligence{grid-template-columns:1fr!important;}
         }
         @media(max-width:700px){
           .hub-grid{grid-template-columns:1fr 1fr;}
           .hub-arch-inner{grid-template-columns:1fr;gap:20px;}
-          .hub-four{grid-template-columns:1fr 1fr;}
         }
         @media(max-width:450px){
           .hub-grid{grid-template-columns:1fr!important;}
-          .hub-four{grid-template-columns:1fr 1fr;}
         }
       `}</style>
 
@@ -243,89 +219,7 @@ export default function NapaServeHub() {
         </div>
       </div>
 
-      {/* FOOTER */}
-      <footer className="hub-footer">
-        <div className="hub-f-inner">
-          <div style={{ marginBottom: 32, paddingBottom: 24, borderBottom: "1px solid var(--rule)" }}>
-            <div className="hub-f-wm">NapaServe</div>
-            <div className="hub-f-tag">Community intelligence for Napa County · A Valley Works Collaborative · VW Labs project</div>
-          </div>
-          <div className="hub-four" style={{ marginBottom: 28, paddingBottom: 28, borderBottom: "1px solid var(--rule)" }}>
-            <div>
-              <div className="hub-sm-head">Intelligence</div>
-              <Link to="/dashboard" className="hub-sm-link">Community Pulse</Link>
-              <Link to="/evaluator" className="hub-sm-link">Project Evaluator</Link>
-              <a href="/agent.html" className="hub-sm-link">Research Agent</a>
-              <Link to="/evaluator" className="hub-sm-link">Structural Compass</Link>
-            </div>
-            <div>
-              <div className="hub-sm-head">Journalism</div>
-              <Link to="/news" className="hub-sm-link">Napa Valley Features</Link>
-              <Link to="/archive" className="hub-sm-link">NVF Archive Search</Link>
-              <Link to="/archive" className="hub-sm-link">Series index</Link>
-              <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link" aria-label="Sonoma Co. Features, opens in new tab">Sonoma Co. Features ↗</a>
-              <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="hub-sm-link" aria-label="Lake Co. Features, opens in new tab">Lake Co. Features ↗</a>
-            </div>
-            <div>
-              <div className="hub-sm-head">Community</div>
-              <Link to="/events" className="hub-sm-link">Event Finder</Link>
-              <Link to="/events" className="hub-sm-link">Submit an event</Link>
-              <Link to="/valley-works" className="hub-sm-link">Valley Works</Link>
-              <Link to="/vw-labs" className="hub-sm-link">VW Labs</Link>
-            </div>
-            <div>
-              <div className="hub-sm-head">Platform</div>
-              <Link to="/about" className="hub-sm-link">About NapaServe</Link>
-              <Link to="/about#how-to-use" className="hub-sm-link">How to use this site</Link>
-              <Link to="/about#disclaimer" className="hub-sm-link">Disclaimer</Link>
-              <a href="mailto:napaserve@gmail.com" className="hub-sm-link">Contact us</a>
-            </div>
-          </div>
-          <div className="hub-four" style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid var(--rule)", alignItems: "start" }}>
-            <div>
-              <div className="hub-col-lbl">Follow</div>
-              <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }} aria-label="Bluesky, opens in new tab">
-                <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8C10.8 8.4 7.8 4.2 5.4 2.4 3.6 1.2 2.4 2.4 2.4 4.2c0 1.2.6 5.4.9 6.6.9 3.3 4.2 4.2 7.2 3.6-3 .6-6 1.8-6.6 5.4-.3 1.8.6 3.6 2.4 3.6 3 0 5.7-3.6 5.7-3.6s2.7 3.6 5.7 3.6c1.8 0 2.7-1.8 2.4-3.6-.6-3.6-3.6-4.8-6.6-5.4 3 .6 6.3-.3 7.2-3.6.3-1.2.9-5.4.9-6.6 0-1.8-1.2-3-3-1.8C16.2 4.2 13.2 8.4 12 10.8z"/></svg>
-                Bluesky ↗
-              </a>
-              <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" className="hub-sbtn" style={{ textDecoration: "none" }} aria-label="Substack, opens in new tab">
-                <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.5H2V8h20V5.5zM2 10.5V21l10-5.5 10 5.5V10.5H2zM22 2H2v2h20V2z"/></svg>
-                Substack ↗
-              </a>
-            </div>
-            <div style={{ gridColumn: "span 3" }}>
-              <div className="hub-col-lbl">Newsletter</div>
-              <div className="hub-sub-hed">Stay informed on Napa County.</div>
-              <div className="hub-sub-dek">Original reporting, economic updates and civic intelligence from Napa Valley Features — delivered when it matters.</div>
-              <div className="hub-sub-fields">
-                <input className="hub-sub-in" type="text" placeholder="Your name" aria-label="Your name" value={subName} onChange={e => setSubName(e.target.value)} style={{ marginBottom: 6 }} />
-                <input className="hub-sub-in" type="email" placeholder="Your email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} />
-                <button className="hub-sub-btn" disabled={subStatus === "loading"} onClick={async () => {
-                  setSubStatus("loading");
-                  try {
-                    const res = await fetch("https://misty-bush-fc93.tfcarl.workers.dev/api/subscribe", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ name: subName, email }),
-                    });
-                    if (!res.ok) throw new Error("insert failed");
-                    setSubStatus("success");
-                    setSubName("");
-                    setEmail("");
-                  } catch { setSubStatus("error"); }
-                }}>{subStatus === "loading" ? "Subscribing…" : "Subscribe"}</button>
-              </div>
-              {subStatus === "success" && <div style={{ fontSize: 14, color: "#2E7D32", marginTop: 6 }}>Welcome to NapaServe. We'll be in touch.</div>}
-              {subStatus === "error" && <div style={{ fontSize: 14, color: "#C62828", marginTop: 6 }}>Something went wrong. Email us at napaserve@gmail.com</div>}
-              <div className="hub-sub-note">Join the NapaServe community. No spam, unsubscribe anytime.</div>
-            </div>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-            <div style={{ fontSize: 14, color: "var(--dim)" }}>© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</div>
-            <div style={{ fontSize: 14, color: "var(--muted)" }}>napaserve@gmail.com</div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
