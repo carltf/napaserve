@@ -8,18 +8,22 @@
  *   POST /api/poll-search         — embed query → nvf_poll_search() → matching polls
  *   GET  /api/fred               — FRED API proxy → macro indicators
  *   POST /api/submit-event       — community event submission → community_events
- *   POST /api/bluesky-publish    — post Under the Hood article to BlueSky
+ *   POST /api/bluesky-publish    — post Under the Hood article to BlueSky (admin-only)
  *   GET  /api/article-polls      — fetch polls + vote counts for an article
  *   POST /api/article-poll-vote  — submit a vote for an article poll
+ *   POST /api/admin-auth         — validate admin password, return session token
+ *   POST /api/admin-verify       — verify session token is valid
  *
  * Env vars (Bindings):
- *   SUPABASE_URL       (plaintext)
- *   SUPABASE_ANON_KEY  (secret)
- *   VOYAGE_API_KEY     (secret)
- *   ANTHROPIC_API_KEY  (secret)
- *   FRED_API_KEY       (secret)
- *   BLUESKY_HANDLE      (plaintext)
+ *   SUPABASE_URL         (plaintext)
+ *   SUPABASE_ANON_KEY    (secret)
+ *   VOYAGE_API_KEY       (secret)
+ *   ANTHROPIC_API_KEY    (secret)
+ *   FRED_API_KEY         (secret)
+ *   BLUESKY_HANDLE       (plaintext)
  *   BLUESKY_APP_PASSWORD (secret)
+ *   ADMIN_PASSWORD       (secret)
+ *   ADMIN_SESSION_SECRET (secret)
  */
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
@@ -49,7 +53,7 @@ function corsHeaders(request) {
   return {
     "Access-Control-Allow-Origin": resolveOrigin(request),
     "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-Admin-Token",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin",
   };
@@ -70,6 +74,43 @@ function json(data, status = 200, request) {
 
 function err(msg, status = 400, request) {
   return json({ error: msg }, status, request);
+}
+
+// ─── Admin auth helpers ──────────────────────────────────────────────────────
+
+async function generateToken(secret) {
+  const timestamp = Date.now().toString();
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const msgData = encoder.encode(timestamp);
+  const key = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, msgData);
+  const hex = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `${timestamp}.${hex}`;
+}
+
+async function verifyToken(token, secret) {
+  try {
+    const [timestamp, hex] = token.split('.');
+    if (!timestamp || !hex) return false;
+    const age = Date.now() - parseInt(timestamp);
+    if (age > 8 * 60 * 60 * 1000) return false; // 8 hour expiry
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(secret);
+    const msgData = encoder.encode(timestamp);
+    const key = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    const sig = await crypto.subtle.sign('HMAC', key, msgData);
+    const expected = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+    return hex === expected;
+  } catch {
+    return false;
+  }
+}
+
+async function requireAdminToken(request, env) {
+  const token = request.headers.get('X-Admin-Token');
+  if (!token) return false;
+  return verifyToken(token, env.ADMIN_SESSION_SECRET);
 }
 
 // ─── Voyage AI embedding ──────────────────────────────────────────────────────
@@ -456,6 +497,9 @@ async function handleBlueSkyPublish(request, env) {
   let body;
   try { body = await request.json(); } catch { return err("Invalid JSON body", 400, request); }
 
+  const authorized = await requireAdminToken(request, env);
+  if (!authorized) return err('Unauthorized', 401, request);
+
   const { headline, deck, slug, publication, imageData, imageMimeType } = body;
   if (!headline || !slug || !publication) return err("headline, slug, and publication required", 400, request);
 
@@ -525,6 +569,24 @@ async function handleBlueSkyPublish(request, env) {
     console.error("BlueSky publish failed:", e);
     return err(`BlueSky publish failed: ${e.message}`, 502, request);
   }
+}
+
+// ─── Admin auth handlers ─────────────────────────────────────────────────────
+
+async function handleAdminAuth(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return err('Invalid JSON body', 400, request); }
+  const { password } = body;
+  if (!password || password !== env.ADMIN_PASSWORD) {
+    return err('Invalid password', 401, request);
+  }
+  const token = await generateToken(env.ADMIN_SESSION_SECRET);
+  return json({ success: true, token }, 200, request);
+}
+
+async function handleAdminVerify(request, env) {
+  const valid = await requireAdminToken(request, env);
+  return json({ valid }, 200, request);
 }
 
 // ─── Article polls ───────────────────────────────────────────────────────────
@@ -676,6 +738,14 @@ export default {
 
     if (url.pathname === "/api/article-poll-vote" && request.method === "POST") {
       return handleArticlePollVote(request, env);
+    }
+
+    if (url.pathname === "/api/admin-auth" && request.method === "POST") {
+      return handleAdminAuth(request, env);
+    }
+
+    if (url.pathname === "/api/admin-verify" && request.method === "POST") {
+      return handleAdminVerify(request, env);
     }
 
     return new Response("Not found", { status: 404 });

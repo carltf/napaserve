@@ -5,7 +5,7 @@ const NAV_GROUPS = [
   { label: "Journalism", desc: "Original reporting and searchable archives", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }, { t: "Under the Hood", h: "/under-the-hood" }] },
   { label: "Community", desc: "Events, workforce and civic innovation", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }, { t: "VW Labs", h: "/vw-labs" }] },
   { label: "Intelligence", desc: "Data, analysis and AI-assisted research", links: [{ t: "Community Pulse", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "Research Agent", h: "/agent.html" }] },
-  { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "/about#contact" }] },
+  { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "/about#contact" }, { t: "Admin", h: "/admin", muted: true }] },
 ];
 
 export default function NavBar() {
@@ -70,7 +70,7 @@ export default function NavBar() {
                 {g.links.map((l, li) => {
                   const isActive = l.h === current || (l.h !== "/" && current.startsWith(l.h.split("#")[0]));
                   return (
-                    <button key={li} onClick={() => go(l.h)} style={{ display: "block", width: "100%", textAlign: "left", fontSize: 13, fontWeight: 600, color: isActive ? "#8B5E3C" : "#7A6A50", background: isActive ? "#EDE8DE" : "transparent", padding: "8px 20px", border: "none", cursor: "pointer", fontFamily: "'Source Sans 3',sans-serif" }}>{l.t}</button>
+                    <button key={li} onClick={() => go(l.h)} style={{ display: "block", width: "100%", textAlign: "left", fontSize: 13, fontWeight: l.muted ? 400 : 600, color: isActive ? "#8B5E3C" : l.muted ? "#8B7355" : "#7A6A50", background: isActive ? "#EDE8DE" : "transparent", padding: "8px 20px", border: "none", cursor: "pointer", fontFamily: "'Source Sans 3',sans-serif" }}>{l.t}</button>
                   );
                 })}
               </div>

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
-import BlueSkyPublisher from "./components/BlueSkyPublisher";
 
 // ─── theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -433,14 +432,6 @@ export default function UnderTheHood() {
         <p style={prose}>
           For consumers, the dynamics are mixed. A lighter harvest and lower grape prices can eventually translate to more accessible wine at retail {"\u2014"} but that benefit moves slowly through the supply chain, and only if growers remain solvent long enough to plant and tend future vintages. The more immediate market signal is a shift toward lighter white varieties: Sauvignon Blanc tonnage increased 22,000 tons statewide in 2025 and Pinot Gris rose 8,000 tons, even as red varieties contracted sharply. Audra Cooper, vice president at Turrentine, described the season as representing {"\u201C"}continued challenges for growers and wineries that were strikingly apparent at harvest.{"\u201D"}
         </p>
-
-        {/* bluesky */}
-        <BlueSkyPublisher
-          headline="Napa Cabernet Prices Break the Growth Curve"
-          deck="The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years — the first such decline in the modern data series. This interactive edition includes six data visualizations and live reader polls."
-          slug="napa-cab-2025"
-          publication="Napa Valley Features"
-        />
 
         {/* polls */}
         <PollsSection />
