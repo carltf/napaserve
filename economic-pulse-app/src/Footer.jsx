@@ -53,7 +53,6 @@ export default function Footer() {
               <Link to="/dashboard" className="ns-footer-link" style={navLink}>Community Pulse</Link>
               <Link to="/evaluator" className="ns-footer-link" style={navLink}>Project Evaluator</Link>
               <a href="/agent.html" className="ns-footer-link" style={navLink}>Research Agent</a>
-              <Link to="/evaluator" className="ns-footer-link" style={navLink}>Structural Compass</Link>
             </div>
             <div>
               <div style={sectionHead}>Journalism</div>
@@ -66,7 +65,7 @@ export default function Footer() {
             <div>
               <div style={sectionHead}>Community</div>
               <Link to="/events" className="ns-footer-link" style={navLink}>Event Finder</Link>
-              <Link to="/events" className="ns-footer-link" style={navLink}>Submit an event</Link>
+              <Link to="/events#submit" className="ns-footer-link" style={navLink}>Submit an event</Link>
               <Link to="/valley-works" className="ns-footer-link" style={navLink}>Valley Works</Link>
               <Link to="/vw-labs" className="ns-footer-link" style={navLink}>VW Labs</Link>
             </div>

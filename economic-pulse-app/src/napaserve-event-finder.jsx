@@ -215,7 +215,11 @@ function EventMap({ pins }) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export default function EventFinder() {
-  const [tab, setTab] = useState("search");
+  const [tab, setTab] = useState(() => window.location.hash === "#submit" ? "submit" : "search");
+
+  useEffect(() => {
+    if (window.location.hash === "#submit") setTab("submit");
+  }, []);
 
   // Search state
   const [town, setTown] = useState("all");
@@ -538,7 +542,7 @@ export default function EventFinder() {
         </>)}
 
         {/* ═══════════ SUBMIT TAB ═══════════ */}
-        {tab === "submit" && (<>
+        {tab === "submit" && (<div id="submit">
           {submitted ? (
             <div style={{ background: "rgba(91,138,90,0.1)", border: "1px solid rgba(91,138,90,0.3)", padding: "40px 28px", textAlign: "center" }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>✓</div>
@@ -745,7 +749,7 @@ export default function EventFinder() {
               </p>
             </div>
           )}
-        </>)}
+        </div>)}
 
       </div>
       <Footer />
