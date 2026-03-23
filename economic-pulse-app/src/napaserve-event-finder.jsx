@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
 
@@ -215,12 +216,32 @@ function EventMap({ pins }) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export default function EventFinder() {
+  const location = useLocation();
+
   const [tab, setTab] = useState(() => {
     if (typeof window !== 'undefined' && window.location.hash === '#submit') {
       return 'submit';
     }
     return 'search';
   });
+
+  // Switch tab when React Router location.hash changes (e.g. <Link to="/events#submit">)
+  useEffect(() => {
+    if (location.hash === '#submit') {
+      setTab('submit');
+    }
+  }, [location.hash]);
+
+  // Listen for browser hashchange events (back/forward navigation)
+  useEffect(() => {
+    const onHashChange = () => {
+      if (window.location.hash === '#submit') {
+        setTab('submit');
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   // Search state
   const [town, setTown] = useState("all");
