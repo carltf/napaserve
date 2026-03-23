@@ -229,6 +229,8 @@ export default function EventFinder() {
   useEffect(() => {
     if (location.hash === '#submit') {
       setTab('submit');
+    } else {
+      setTab('search');
     }
   }, [location.hash]);
 
