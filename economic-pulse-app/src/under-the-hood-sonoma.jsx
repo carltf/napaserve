@@ -358,7 +358,7 @@ export default function UnderTheHoodSonoma() {
             {/* ── Chart 1: Overall trend ────────────────────────────── */}
             <Section eyebrow="Chart 1" title="Sonoma County — Overall Weighted Average Price per Ton" note="Source: CDFA/USDA-NASS Table 6 — District 3 total, all varieties. 2025 data is preliminary.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-                <ChartCanvas id="chart-overall" downloadName="sonoma-cab-2025-chart-1.png" deps={[sonomaOverall]} buildChart={(ctx) => {
+                <ChartCanvas id="chart-overall" downloadName="chart-1_weighted-avg-price_scf_2025.png" deps={[sonomaOverall]} buildChart={(ctx) => {
                   const labels = sonomaOverall.map(yearLabel);
                   const values = sonomaOverall.map(r => r.value);
                   return new Chart(ctx, {
@@ -421,7 +421,7 @@ export default function UnderTheHoodSonoma() {
             {/* ── Chart 2: Varietal prices ──────────────────────────── */}
             <Section eyebrow="Chart 2" title="Sonoma Varietal Prices — Year over Year" note="Source: CDFA/USDA-NASS Table 6 — District 3 varietal breakdowns.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-                <ChartCanvas id="chart-varietal" downloadName="sonoma-cab-2025-chart-2.png" deps={[sonomaVarietals]} buildChart={(ctx) => {
+                <ChartCanvas id="chart-varietal" downloadName="chart-2_yoy-price-change_scf_2025.png" deps={[sonomaVarietals]} buildChart={(ctx) => {
                   const datasets = displayVarietals.map((varietal, vi) => {
                     const rows = sonomaVarietals
                       .filter(r => r.dimension.includes(`varietal|${varietal}`))
@@ -467,7 +467,7 @@ export default function UnderTheHoodSonoma() {
             {/* ── Chart 3: Sonoma vs Napa % change ──────────────────── */}
             <Section eyebrow="Chart 3" title="YOY % Change by Varietal — Sonoma vs Napa (2023–2025)" note="Percentage change in weighted average price per ton, 2023 to 2025. Negative values indicate price declines.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-                <ChartCanvas id="chart-pctchange" downloadName="sonoma-cab-2025-chart-3.png" deps={[]} buildChart={(ctx) => {
+                <ChartCanvas id="chart-pctchange" downloadName="chart-3_prices-by-variety_scf_2025.png" deps={[]} buildChart={(ctx) => {
                   // Hard-coded verified values from CDFA/USDA-NASS Table 6 (2023→2025 % change)
                   const LABELS = ["Cab Sauv", "Pinot Noir", "Chardonnay", "Sauv Blanc", "Cab Franc"];
                   const sonomaData = [-9.4, -1.6, -5.1, -7.3, 3.4];
@@ -519,7 +519,7 @@ export default function UnderTheHoodSonoma() {
             {/* ── Chart 4: Napa / Sonoma ratio ──────────────────────── */}
             <Section eyebrow="Chart 4" title="Napa-to-Sonoma Price Ratio" note="A ratio above 1.0 means Napa grapes command a premium over Sonoma. Higher values indicate a wider price gap.">
               <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-                <ChartCanvas id="chart-ratio" downloadName="sonoma-cab-2025-chart-4.png" deps={[sonomaOverall, napaOverall]} buildChart={(ctx) => {
+                <ChartCanvas id="chart-ratio" downloadName="chart-4_key-metrics_scf_2025.png" deps={[sonomaOverall, napaOverall]} buildChart={(ctx) => {
                   const sMap = {};
                   sonomaOverall.forEach(r => { sMap[yearLabel(r)] = r.value; });
                   const nMap = {};
