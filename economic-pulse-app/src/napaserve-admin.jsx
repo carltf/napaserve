@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import WordExporter from "./components/WordExporter";
 
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 
@@ -39,6 +40,175 @@ const ARTICLES = [
     slug: "lake-county-cab-2025",
   },
 ];
+
+// ─── Full article data for Word export ─────────────────────────────────────
+
+const EXPORT_DATA = {
+  "napa-cab-2025": {
+    headline: "Napa Cabernet Prices Break the Growth Curve",
+    publication: "Napa Valley Features",
+    slug: "napa-cab-2025",
+    dateline: "NAPA, Calif.",
+    body: [
+      "NAPA, Calif. \u2014 The weighted average price of Napa County cabernet sauvignon reached $9,235 per ton in 2023, the highest on record. Two years later it stands at $8,933.",
+      "The decline is modest \u2014 roughly 3.3% from the peak. In the context of Napa\u2019s long economic trajectory, however, the shift carries far larger implications. For nearly five decades, growers, wineries and lenders built their expectations around a growth curve that steadily pushed cabernet prices higher. Depending on which historical period is used as a benchmark, the weighted average price of Napa cabernet in 2025 would be expected to fall somewhere between $10,100 and $11,800 per ton.",
+      "Instead, the preliminary crush data show prices moving in the opposite direction for two consecutive years \u2014 the first sustained decline in the modern era of Napa viticulture.",
+      "The gap between those two paths \u2014 the trajectory the market expected and the one now appearing in the data \u2014 reveals a structural shift that could reshape vineyard economics across Napa Valley.",
+      "California wineries crushed 2.62 million tons of grapes in 2025 \u2014 the lightest crop since 1999 and 23% below the five-year average. Total red wine production declined 9% and white wine production declined 6%. The total crop value statewide fell 16% from the prior year to $2.414 billion, according to Turrentine Brokerage, which characterized the vintage as one of the most challenging for the wine industry since Prohibition.",
+      "The volume decline was driven by a combination of weather, acreage removals and a persistent lack of demand that left significant tonnage uncontracted and unharvested. An estimated 57,000 acres were removed statewide in 2025, with considerably more left unpicked.",
+      "\u201CThe 2025 vintage highlights the industry\u2019s directional shift of declining production and an overall restructure of the industry,\u201D said Audra Cooper, vice president at Turrentine Brokerage. \u201CBetween a cooler growing season, reduced vineyard inputs, and multiple rain events which led to excessive late-season disease pressure and combined with soft demand, 2025\u2019s challenges were relentless.\u201D",
+      "For Napa Valley specifically, Cabernet Sauvignon tonnage came in at roughly 77,000 tons \u2014 just a 1.3% decline from 2024, smaller than many in the industry had predicted. The price, however, continued lower.",
+      "Since the late 1970s, following enactment of California\u2019s Clare Berryhill Grape Crush Act of 1976, the California Department of Food and Agriculture has published annual grape crush data in cooperation with USDA\u2019s National Agricultural Statistics Service. Napa cabernet prices have followed one of the most consistent upward trajectories in American agriculture.",
+      "In 1976 the weighted average price of Napa cabernet was $461 per ton. By the early 2000s it had climbed above $3,000. Two decades later it exceeded $9,000. The rise was not perfectly smooth. Prices slowed during recessions and fluctuated with harvest conditions \u2014 most notably in 2020, when the pandemic and a devastating wildfire season pushed the average to $6,260 \u2014 but the broader direction remained unmistakable.",
+      "Over time the curve became a defining feature of Napa Valley\u2019s agricultural economy. Growers planted vineyards assuming the trend would continue. Wineries structured long-term grape contracts around rising fruit costs. Banks financed vineyard development using projections that incorporated the same trajectory.",
+      "Across multiple historical periods, Napa cabernet prices expanded at a compound annual growth rate between 4.7% and 6.9%. The long-run rate from 1976 to 2023 was 6.6% per year. The more recent period from 2011 to 2019 ran at 6.9% annually. Even the conservative modern period from 2000 to 2023 compounded at 4.75% per year. These rates reflect different historical windows \u2014 each a reasonable benchmark depending on when a grower planted, borrowed or signed a contract.",
+      "Those are not abstract statistics. They are the numbers embedded in loan covenants, vineyard appraisals and long-term supply contracts across the valley.",
+      "The weighted average price of Napa County cabernet sauvignon peaked at $9,235 per ton in 2023. It slipped to $9,146 in 2024 and to $8,933 in 2025. Two consecutive years of decline have not occurred in the modern crush report era.",
+      "If the historical price trajectory is projected forward from the 2023 peak using any of the growth rates observed in prior expansion periods, the expected price of Napa cabernet in 2025 would fall well above current levels.",
+      "Using the long-run 1976-2023 growth rate of 6.6%, the projected 2025 price would be approximately $10,492 per ton. Using the recent 2011-2019 rate of 6.9%, the projection rises to roughly $11,847. Even the most conservative projection, using the 2000-2023 rate of 4.75%, produces an expected price of about $10,134.",
+      "The actual 2025 price of $8,933 falls $1,200 to $2,900 per ton below where any of those trajectories would predict \u2014 an expectation gap of 13% to 33% depending on the benchmark used.",
+      "For a vineyard block producing three tons per acre, the difference between the 2023 peak and the 2025 price represents roughly $900 in lost gross revenue per acre. Multiplied across thousands of vineyard acres, the scale of the shift becomes clearer. As we detailed in \u201CUnder the Hood: The Dismal Math of Napa\u2019s Skipped Acres\u201D (November 2025), even modest per-acre revenue shifts propagate through wages, suppliers and local government revenues over a multi-year period.",
+      "Another indicator warrants attention: the highest price paid for any individual lot of Napa cabernet sauvignon.",
+      "During the expansion years, the maximum price paid rose alongside the weighted average, reinforcing the expectation that the top of the market would continue appreciating. The record price reached $69,125 per ton in 2024. In 2025 it retreated to $67,200 \u2014 matching the 2023 record rather than surpassing it.",
+      "Taken alone, a single-year movement in the maximum price is not conclusive. But the flattening of the maximum price at the same moment the weighted average has begun declining suggests the speculative premium at the top of the market may be losing momentum alongside the broader average. As we highlighted in \u201CNapa Valley Grape Prices See Continued Surge in 2023\u201D (February 2024), outlier transactions \u2014 lots trading above $60,000 per ton \u2014 represented a small share of total tonnage but exerted an outsized influence on market sentiment and vineyard valuations.",
+      "If those transactions no longer set new records, that signal is worth watching.",
+      "For years the Napa grape market contained mechanisms that helped sustain the long-term price trajectory even when demand softened. Growers and wineries often shared a common incentive to protect the county\u2019s reported average price. When supply temporarily exceeded demand, fruit was sometimes left unpicked rather than sold at prices that might drag down the weighted average in the crush report. That approach helped preserve the appearance of stability during earlier cycles.",
+      "The 2024 harvest report, which we explored in \u201CUnder the Hood: 2024 Harvest Report Reveals a Market Splitting in Two\u201D (February 2025), revealed a market already bifurcating: ultra-premium buyers remained engaged while mid-tier demand contracted sharply. Cabernet sauvignon tonnage fell 23% even as the weighted average price held near the 2023 peak \u2014 a signal that supply constraints, not demand strength, were doing much of the work to sustain reported prices.",
+      "The 2025 data confirm the floor is giving way. The weighted average has now declined for two consecutive years despite Napa tonnage holding relatively steady.",
+      "The contracts that once locked in Napa\u2019s premium are now contested terrain. A Napa Valley grower with nearly three decades of experience, who requested anonymity, said wineries have recently begun walking away from long-standing agreements \u2014 in some cases deals that had been in place for years. The grower said he is now preparing to pursue legal action against several buyers.",
+      "\u201CIf they think they can just walk away,\u201D he said, \u201Cthen we\u2019ll see them in court.\u201D",
+      "The 2025 preliminary crush report allows a direct comparison of weighted average grower returns across five key varietals in three North Coast districts: Lake County (District 2), Sonoma County (District 3) and Napa County (District 4).",
+      "For Cabernet Sauvignon, the gap remains wide. Napa growers received a weighted average of $8,933 per ton in 2025 \u2014 3.2 times the Sonoma average of $2,772 and 7.6 times the Lake County average of $1,171.",
+      "Pinot Noir tells a different story. Sonoma County growers received $3,817 per ton for Pinot Noir in 2025 \u2014 roughly a third more than the Napa average of $2,867 for the same variety. Napa\u2019s brand premium, which is deeply embedded in the Cabernet market, does not extend uniformly across varietals. The market has already made its judgment: Sonoma owns Pinot Noir.",
+      "The Lake County Chardonnay figure deserves particular attention: it fell from $965 per ton in 2023 to $288 in 2025 \u2014 a collapse of roughly 70% in two years, illustrating the severity of the pressure facing lower-tier appellations. Industry analysts note this figure may be influenced by thin volume and intra-company transfer pricing; the final report due April 30 may revise it.",
+      "One important caveat: Turrentine Brokerage\u2019s North Coast analyst noted that district average prices in the crush report are not representative of spot market prices for new contracts for the second consecutive year. The district averages blend older multi-year contracts signed at higher prices with new deals negotiated in current market conditions.",
+      "All five Napa varietals examined declined from their 2023 levels to 2025, with the exception of Cabernet Franc, which rose 4.7% \u2014 a figure that reflects a thin market where a handful of transactions at very high prices can swing the district average, not broad-based strengthening. Cabernet Sauvignon fell 3.3%, Pinot Noir fell 2.4%, Sauvignon Blanc fell 0.7% and Chardonnay fell 0.4%.",
+      "The chart below breaks down the price change by varietal from 2023 to 2025.",
+      "The changing price trajectory arrives at a moment when vineyard economics are already under severe pressure.",
+      "Labor, farming inputs and financing costs have all increased in recent years, narrowing margins for many growers. As we showed in \u201CUnder the Hood: The Dismal Math of Napa\u2019s Skipped Acres\u201D (November 2025), the economic impact of leaving vineyards unfarmed or pulling them out extends far beyond the grower\u2019s ledger. At a typical Napa yield of three tons per acre and a price near $8,933, each acre generates roughly $26,800 in gross revenue before harvest and hauling costs. A $1,000 decline in the per-ton price reduces that by $3,000 per acre \u2014 a meaningful shift when multiplied across hundreds or thousands of acres.",
+      "The per-acre math compounds through the broader economy. Each dollar of Napa grape value supports roughly $10.30 in local economic activity when traced through wineries, suppliers, tourism and household spending. A sustained price decline does not simply reduce grower income \u2014 it attenuates a multiplier that runs through the county\u2019s entire economic structure.",
+      "Napa\u2019s 2023 GDP was approximately $14.2 billion. Wine and grapes influence an estimated 75% of that. In that context, the price trajectory of a single varietal carries consequences that reach well beyond the farm gate.",
+      "The overproduction context amplifies the concern. As we detailed in \u201CUnder the Hood: Wine Overproduction Scenarios Suggest Tougher Days Ahead\u201D (October 2025), even under the most optimistic scenarios for demand recovery and supply adjustment, California\u2019s wine industry faces the prospect of meaningful surplus through the end of the decade. The bulk wine market \u2014 which Turrentine Brokerage estimates carries close to 40 million gallons of inventory \u2014 continues to suppress grape demand at the source.",
+      "For decades Napa Valley\u2019s vineyard economy expanded under the assumption that the historical price curve would continue, even accelerate. Several forces are now challenging that assumption simultaneously.",
+      "Wine consumption has softened. Younger consumers are drinking less wine than previous generations. A recent 2025 Gallup poll found that only 54% of U.S. adults drink alcohol, the lowest level Gallup has recorded in its nearly 90 years of tracking alcohol consumption. Per-capita wine consumption and total wine consumption are now declining together for the first time in modern history \u2014 ending the demographic cushion that once allowed producers to absorb soft years without structural damage.",
+      "The capital that fueled vineyard expansion during the 2010s has become more expensive. Interest rates rose, and the easy financing that underpinned land valuations built on expected price appreciation is no longer available on the same terms. Recent vineyard sales in Napa have drawn buyers framing land as a hedge against dollar volatility \u2014 not a bet on local wine demand.",
+      "At the same time, the contracts that once locked in Napa\u2019s premium are now under pressure. Some wineries are walking away from agreements that growers say were binding. The legal battles now brewing in the valley represent a direct confrontation between two sets of assumptions \u2014 the growers\u2019 assumption that the contracts and the prices they reflected were durable, and the wineries\u2019 calculation that the market has changed enough to justify exit.",
+      "The growers who took on debt, expanded acreage or planted new blocks under the historical growth assumptions are now facing a gap between what those assumptions implied and what the market is delivering. That gap, measured in dollars per ton and extrapolated across acres and years, is not a rounding error. It is the difference between a viable operation and a distressed one.",
+      "Taken together, these forces point to a market that has entered a different phase of its economic cycle \u2014 one where the growth curve that shaped Napa Valley for nearly half a century can no longer be taken for granted.",
+      "The statewide picture offers context. California crushed 2.62 million tons in 2025 \u2014 8% below 2024 and 23% below the five-year average of 3.6 million tons, the lightest harvest since 1999. For the wine industry overall, that reduction in supply is welcome. \u201CThe decrease in tons is still very positive news for the industry overall,\u201D said Steve Fredricks, president of Turrentine Brokerage, in a March 13, 2026 market assessment. But Turrentine\u2019s own North Coast analyst flagged a critical caveat: published district averages overstate what growers negotiating new contracts actually receive. Napa Valley was a relative outlier: Cabernet Sauvignon tonnage declined only 1.3% from 2024, less than the industry had expected, and Napa maintained the highest district average price in California at $6,767 per ton. But even in Napa, Turrentine\u2019s North Coast analyst noted that district averages are not representative of spot market prices for new contracts.",
+      "For consumers, the dynamics are mixed. A lighter harvest and lower grape prices can eventually translate to more accessible wine at retail \u2014 but that benefit moves slowly through the supply chain, and only if growers remain solvent long enough to plant and tend future vintages. The more immediate market signal is a shift toward lighter white varieties: Sauvignon Blanc tonnage increased 22,000 tons statewide in 2025 and Pinot Gris rose 8,000 tons, even as red varieties contracted sharply. Audra Cooper, vice president at Turrentine, described the season as representing \u201Ccontinued challenges for growers and wineries that were strikingly apparent at harvest.\u201D",
+    ],
+    pullQuote: "The 2025 preliminary weighted average return of $8,933 per ton marks the first back-to-back annual decline in the modern data series.",
+    links: [
+      { label: "Interactive article", url: "https://napaserve.org/under-the-hood/napa-cab-2025" },
+      { label: "2025 Preliminary Crush Report", url: "https://www.cdfa.ca.gov/statistics/pdfs/2025PreliminaryCrushReport.pdf" },
+      { label: "Turrentine Brokerage market commentary", url: "https://www.winebusiness.com/news/article/273456" },
+    ],
+    captions: [
+      { number: 1, title: "Weighted Average Price, Napa County Cabernet Sauvignon (1976\u20132025)", description: "Price per ton from 1976 through 2025 preliminary, showing the first two-year consecutive decline in the modern data series", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 4" },
+      { number: 2, title: "Year-Over-Year Price Change, Napa Cabernet Sauvignon", description: "Annual percentage change in weighted average grower return per ton", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 4" },
+      { number: 3, title: "Harvest Volume, Napa County Cabernet Sauvignon (tons crushed)", description: "Total tons crushed annually showing 2025 decline", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 4" },
+      { number: 4, title: "Price vs. Volume Scatter, Napa Cabernet Sauvignon", description: "Relationship between annual tons crushed and weighted average price per ton", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 4" },
+      { number: 5, title: "Napa County Grape Prices by Variety (2023\u20132025)", description: "Weighted average price per ton across five major varietals", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 4" },
+      { number: 6, title: "Stat Box \u2014 Key 2025 Metrics", description: "Summary statistics panel showing 2025 preliminary weighted average, peak year comparison and volume figures", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 4" },
+    ],
+    sources: [
+      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026.",
+      "Fredricks, Steve. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
+      "Klier, Christian. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026.",
+      "Cooper, Audra. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
+      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026.",
+    ],
+  },
+  "sonoma-cab-2025": {
+    headline: "Sonoma Grape Prices Fall for a Second Year",
+    publication: "Sonoma County Features",
+    slug: "sonoma-cab-2025",
+    dateline: "SANTA ROSA, Calif.",
+    body: [
+      "Sonoma County\u2019s weighted average grape price fell for the second consecutive year in 2025, driven by declines in Cabernet Sauvignon and several key varietals. The charts below draw directly from CDFA crush report data to show how Sonoma\u2019s wine-grape economy is shifting \u2014 and how it compares to neighboring Napa County.",
+      "SANTA ROSA, Calif. \u2014 Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report \u2014 down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.",
+      "The decline is broad-based but not uniform. Cabernet Sauvignon and Sauvignon Blanc took the steepest hits in percentage terms, while Pinot Noir \u2014 Sonoma\u2019s flagship cool-climate grape \u2014 held up comparatively well.",
+      "Cabernet Sauvignon, which commands the highest per-ton price among Sonoma red varietals, fell from $3,061 in 2023 to $2,773 in 2025 \u2014 a cumulative drop of nearly $289 per ton, or 9.4%. In a county where Cab anchors the premium tier, that slide reverberates through tasting-room margins and grape-purchase contracts alike.",
+      "Pinot Noir, by contrast, dipped just 1.6% over the same two-year window \u2014 from $3,881 to $3,818. It remains the county\u2019s highest-priced varietal overall, reflecting the enduring strength of Russian River Valley and Sonoma Coast appellations for cool-climate Pinot.",
+      "Chardonnay edged down from $2,560 to $2,429 (\u22125.1%), while Sauvignon Blanc fell from $2,054 to $1,904 (\u22127.3%). Of the major white varietals, Sauvignon Blanc saw the sharpest percentage decline \u2014 possibly reflecting oversupply pressure from Lake County and other value-oriented districts.",
+      "The chart below shows how each varietal performed across the two-year period.",
+      "Napa County\u2019s overall weighted average also fell \u2014 from $7,029 in 2023 to $6,768 in 2025, a decline of 3.7%. But Napa\u2019s slide is shallower in percentage terms than Sonoma\u2019s 7.2% cumulative decline over the same window. Both counties are adjusting to a cooler market after the pandemic-era price surge, but Napa\u2019s brand premium provides a wider cushion.",
+      "The year-over-year chart below puts the two counties side by side. In 2024, Sonoma fell 1.6% while Napa dropped 1.3%. In 2025, the gap widened: Sonoma declined 5.7% versus Napa\u2019s 2.5%. The disparity suggests that mid-tier pricing regions face steeper pressure when the market softens.",
+      "The Napa-to-Sonoma price ratio has climbed from 2.36x in 2023 to 2.45x in 2025. In dollar terms, Napa grapes now command roughly $4,006 more per ton than Sonoma\u2019s \u2014 up from $4,054 in 2023 on an absolute basis, but representing a growing proportional gap as Sonoma\u2019s base price erodes faster.",
+      "For growers deciding where to invest, the ratio is a shorthand for brand premium. A higher ratio suggests that the \u201CNapa Valley\u201D appellation captures more consumer willingness-to-pay relative to \u201CSonoma County.\u201D That gap has structural implications for land values, replanting decisions and the long-term competitiveness of Sonoma\u2019s grape market.",
+      "The statewide picture offers context. California crushed 2.62 million tons in 2025 \u2014 8% below 2024 and 23% below the five-year average of 3.6 million tons, the lightest harvest since 1999. For the wine industry overall, that reduction in supply is welcome. \u201CThe decrease in tons is still very positive news for the industry overall,\u201D said Steve Fredricks, president of Turrentine Brokerage, in a March 13, 2026 market assessment. But Turrentine\u2019s own North Coast analyst flagged a critical caveat: published district averages overstate what growers negotiating new contracts actually receive. For Sonoma County chardonnay, the published district average of $2,370 contrasts with spot market prices closer to $800 per ton \u2014 a gap of more than 65%.",
+      "For consumers, the dynamics are mixed. A lighter harvest and lower grape prices can eventually translate to more accessible wine at retail \u2014 but that benefit moves slowly through the supply chain, and only if growers remain solvent long enough to plant and tend future vintages. The more immediate market signal is a shift toward lighter white varieties: Sauvignon Blanc tonnage increased 22,000 tons statewide in 2025 and Pinot Gris rose 8,000 tons, even as red varieties contracted sharply. Audra Cooper, vice president at Turrentine, described the season as representing \u201Ccontinued challenges for growers and wineries that were strikingly apparent at harvest.\u201D",
+      "The 2025 figures are preliminary. The CDFA\u2019s final crush report \u2014 expected in late April 2026 \u2014 often revises district-level averages by a few percentage points as late-reported contracts filter in. That said, the direction of the trend is unlikely to reverse: Sonoma grape prices are adjusting downward.",
+      "Several factors bear watching. First, tonnage: a smaller 2025 harvest could concentrate value and soften the price decline on a per-ton basis. Second, inventory levels in the bulk market \u2014 if wineries are sitting on unsold wine, contract prices for the 2026 vintage could face further pressure. Third, the ongoing acreage reduction across Sonoma, as some growers pull vines in response to lower returns and rising costs. That supply correction, if it continues, could eventually support prices \u2014 but not overnight.",
+      "We will update this article when the final 2025 crush report is published and revise the charts accordingly. All data powering these charts is served live from the NapaServe Community Data Commons, so the numbers will update automatically when new data is loaded.",
+    ],
+    pullQuote: "Sonoma County\u2019s overall weighted average grape price has declined for two consecutive years \u2014 a pattern not seen since the early 2000s restructuring of the North Coast wine economy.",
+    links: [
+      { label: "Interactive article", url: "https://napaserve.org/under-the-hood/sonoma-cab-2025" },
+      { label: "2025 Preliminary Crush Report", url: "https://www.cdfa.ca.gov/statistics/pdfs/2025PreliminaryCrushReport.pdf" },
+    ],
+    captions: [
+      { number: 1, title: "Weighted Average Price, Sonoma County Cabernet Sauvignon (2015\u20132025)", description: "Price per ton showing two-year consecutive decline", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 3" },
+      { number: 2, title: "Year-Over-Year Price Change, Sonoma Cabernet Sauvignon", description: "Annual percentage change in weighted average grower return", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 3" },
+      { number: 3, title: "Sonoma County Grape Prices by Variety (2023\u20132025)", description: "Weighted average price per ton across major varietals", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 3" },
+      { number: 4, title: "Stat Box \u2014 Key 2025 Metrics", description: "Summary statistics panel for Sonoma County 2025 grape prices", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 3" },
+    ],
+    sources: [
+      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026.",
+      "Fredricks, Steve. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
+      "Klier, Christian. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026.",
+      "Cooper, Audra. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
+      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026.",
+    ],
+  },
+  "lake-county-cab-2025": {
+    headline: "Lake County Grape Prices Have Fallen 38% in Two Years",
+    publication: "Lake County Features",
+    slug: "lake-county-cab-2025",
+    dateline: "LAKEPORT, Calif.",
+    body: [
+      "LAKEPORT, Calif. \u2014 The 2025 preliminary grape crush report, published by the California Department of Food and Agriculture in cooperation with USDA\u2019s National Agricultural Statistics Service, shows Lake County\u2019s district-wide weighted average price falling to $1,165.52 per ton \u2014 down 5.7% from 2024 and 37.9% below the 2023 figure of $1,877.76.",
+      "That two-year decline is the steepest of the three North Coast districts examined in this series. Napa County\u2019s overall average fell 3.7% over the same period. Sonoma County\u2019s fell 7.2%. Lake County\u2019s fell nearly five times faster than Napa\u2019s and more than five times faster than Sonoma\u2019s.",
+      "The data point to something more than a soft market. They suggest a structural withdrawal of buyers \u2014 particularly for red wine grapes \u2014 that is reordering the economics of Lake County viticulture faster than growers or lenders may have anticipated.",
+      "No varietal tells Lake County\u2019s 2025 story more starkly than chardonnay. In 2023, Lake County growers received $964.97 per ton for chardonnay \u2014 already well below the Sonoma average of $2,559.87 and the Napa average of $3,690.32, but a viable price point for lower-cost operations.",
+      "In 2024, the chardonnay price rose sharply to $1,241.12 per ton \u2014 a 28.6% increase that suggested a possible recovery in buyer interest. That signal proved misleading. In 2025, the weighted average collapsed to $287.65 per ton \u2014 a single-year decline of 76.8%, the most severe of any varietal in any North Coast district in the three-year dataset.",
+      "At $287.65 per ton, the chardonnay average approaches \u2014 and in many operations may fall below \u2014 the cost of harvest and hauling alone. For growers who contracted at 2024 prices or made planting decisions based on that year\u2019s improvement, the 2025 figure represents a severe and potentially unrecoverable loss.",
+      "Cabernet sauvignon fell 49.6% over two years, from $2,322.04 to $1,171.26 per ton. At roughly $1,171 per ton, Lake County cab sauv commands just 15.4% of the Napa price and 42.2% of the Sonoma price for the same varietal. The appellation discount is not a gradual differential \u2014 it is a structural reality that shapes what Lake County growers can plant, borrow and plan around.",
+      "Pinot noir declined 39.6%, from $2,230.73 to $1,347.39 per ton. Unlike Sonoma, where pinot noir is the county\u2019s strongest card and commands a premium over Napa, Lake County pinot noir sits well below both neighbors. Sonoma received $3,817.65 per ton for pinot noir in 2025 \u2014 2.8 times the Lake County figure.",
+      "Sauvignon blanc is the relative bright spot \u2014 the only varietal that declined by less than 20% over the two-year period, falling 16% from $1,424.21 to $1,195.73. The variety remains a thin market in Lake County by tonnage, but its relative resilience is worth noting.",
+      "Cabernet franc declined 23.2%, from $2,352.49 to $1,807.31. The variety showed strength in both Napa and Sonoma \u2014 rising 4.7% and 3.4% respectively \u2014 but Lake County did not participate in that trend.",
+      "The chart below shows the percentage change by varietal compared with Sonoma County over the same period.",
+      "The fourth chart in this series places Lake County in the context of all three North Coast districts. The price gaps are large enough to reshape how buyers, lenders and growers in each county approach the same crop.",
+      "For cabernet sauvignon, Napa County growers received 7.6 times what Lake County growers received in 2025. For chardonnay \u2014 the most extreme case \u2014 Napa received 12.8 times the Lake County price and Sonoma received 8.4 times. These are not marginal differences. They reflect fundamentally different market positions.",
+      "For Lake County growers, the comparison is not simply discouraging \u2014 it is clarifying. The market has signaled which appellations command sustained buyer interest and which do not. At current price levels, the economics of planting or maintaining vineyards in Lake County depend heavily on cost structure, water access, existing contract terms and the specific varietal mix of each operation.",
+      "The statewide picture offers context. California crushed 2.62 million tons in 2025 \u2014 8% below 2024 and 23% below the five-year average of 3.6 million tons, the lightest harvest since 1999. For the wine industry overall, that reduction in supply is welcome. \u201CThe decrease in tons is still very positive news for the industry overall,\u201D said Steve Fredricks, president of Turrentine Brokerage, in a March 13, 2026 market assessment. But Turrentine\u2019s own North Coast analyst flagged a critical caveat: published district averages overstate what growers negotiating new contracts actually receive. For Sonoma County chardonnay, the published district average of $2,370 contrasts with spot market prices closer to $800 per ton \u2014 a gap of more than 65%. The same disconnect between published averages and actual spot market prices applies in Lake County, where the district average already sits well below neighboring appellations.",
+      "For consumers, the dynamics are mixed. A lighter harvest and lower grape prices can eventually translate to more accessible wine at retail \u2014 but that benefit moves slowly through the supply chain, and only if growers remain solvent long enough to plant and tend future vintages. The more immediate market signal is a shift toward lighter white varieties: Sauvignon Blanc tonnage increased 22,000 tons statewide in 2025 and Pinot Gris rose 8,000 tons, even as red varieties contracted sharply. Audra Cooper, vice president at Turrentine, described the season as representing \u201Ccontinued challenges for growers and wineries that were strikingly apparent at harvest.\u201D",
+      "The CDFA weighted average figures blend multi-year contracts signed at earlier price levels with new deals negotiated in current market conditions. Turrentine Brokerage has noted for the second consecutive year that district averages are not representative of spot market prices for new contracts. The published averages overstate what growers entering or renegotiating agreements are likely to receive.",
+      "The broader context compounds the concern. California\u2019s 2025 harvest was the lightest since 1999, down 23% from the five-year average. An estimated 57,000 acres were removed statewide. In Lake County, where margins are already compressed, the decision to leave fruit unpicked or remove vines entirely represents a calculation that the cost of farming exceeds the return available in today\u2019s market.",
+      "What the crush report cannot show is how many Lake County acres are being quietly idled, how many contracts are under legal dispute and how many growers are approaching the limits of what their lenders will carry. Those figures will emerge in other data \u2014 foreclosure filings, vineyard sales, labor employment numbers \u2014 over the months ahead.",
+      "For now, the crush data establish the baseline: Lake County\u2019s weighted average grape price has declined nearly 38% in two years, the most severe contraction of any North Coast district in the period examined. The county\u2019s wine-grape economy has entered a different phase, and the data suggest that phase has not yet run its course.",
+    ],
+    pullQuote: "Lake County\u2019s weighted average grape price has dropped 38% since 2023 \u2014 the steepest two-year decline of any North Coast wine region in the modern data series.",
+    links: [
+      { label: "Interactive article", url: "https://napaserve.org/under-the-hood/lake-county-cab-2025" },
+      { label: "2025 Preliminary Crush Report", url: "https://www.cdfa.ca.gov/statistics/pdfs/2025PreliminaryCrushReport.pdf" },
+    ],
+    captions: [
+      { number: 1, title: "Weighted Average Price, Lake County Cabernet Sauvignon (2015\u20132025)", description: "Price per ton showing steep two-year decline", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 6" },
+      { number: 2, title: "Year-Over-Year Price Change, Lake County Cabernet Sauvignon", description: "Annual percentage change in weighted average grower return", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 6" },
+      { number: 3, title: "Lake County Grape Prices by Variety (2023\u20132025)", description: "Weighted average price per ton across major varietals including 70% chardonnay collapse", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 6" },
+      { number: 4, title: "Stat Box \u2014 Key 2025 Metrics", description: "Summary statistics panel for Lake County 2025 grape prices", source: "CDFA-USDA-NASS Grape Crush Reports, Table 6, District 6" },
+    ],
+    sources: [
+      "CDFA/USDA-NASS. 2025 Preliminary Crush Report. California Department of Food and Agriculture, March 2026.",
+      "Fredricks, Steve. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
+      "Klier, Christian. Turrentine Brokerage North Coast market commentary. Wine Business Monthly, March 13, 2026.",
+      "Cooper, Audra. Turrentine Brokerage market commentary. Wine Business Monthly, March 13, 2026.",
+      "Proctor, Glenn. Ciatti Company market commentary. San Francisco Chronicle, March 13, 2026.",
+    ],
+  },
+};
 
 function formatPostText(publication, headline, deck, slug) {
   const url = `napaserve.org/under-the-hood/${slug}`;
@@ -168,6 +338,12 @@ function ArticleCard({ article, token }) {
           <button onClick={() => { setState("idle"); setErrorMsg(null); }} style={{ ...btnBase, background: T.accent, color: "#fff" }}>
             Try again
           </button>
+        </div>
+      )}
+
+      {EXPORT_DATA[article.slug] && (
+        <div style={{ marginTop: 10 }}>
+          <WordExporter article={EXPORT_DATA[article.slug]} />
         </div>
       )}
 
