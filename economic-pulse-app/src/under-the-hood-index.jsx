@@ -92,14 +92,6 @@ function dedupeArticles(rows) {
   });
 }
 
-function firstSentence(text) {
-  if (!text) return "";
-  const sentences = text.match(/[A-Z][^.!?]*[.!?]/g) || [];
-  const good = sentences.find(s => s.trim().length >= 40);
-  if (good) return good.trim().length > 200 ? good.trim().slice(0, 200).trimEnd() + "\u2026" : good.trim();
-  return text.slice(0, 150).trimEnd() + "...";
-}
-
 /* ── Poll card ────────────────────────────────────────────────────────────── */
 function PollCard({ poll }) {
   const rawOpts = typeof poll.options_json === "string"
@@ -139,8 +131,6 @@ function PollCard({ poll }) {
    MAIN COMPONENT
    ══════════════════════════════════════════════════════════════════════════════ */
 export default function UnderTheHoodIndex() {
-  const [recentArticles, setRecentArticles] = useState([]);
-  const [recentSummaries, setRecentSummaries] = useState({});
   const [allArticles, setAllArticles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState(null);
@@ -149,46 +139,7 @@ export default function UnderTheHoodIndex() {
   const [archiveView, setArchiveView] = useState("year");
   const [topicArticles, setTopicArticles] = useState({});
 
-  // 1. Fetch recent 3 articles
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_polls?select=post_title,substack_url,published_at&post_title=ilike.%25under%20the%20hood%25&order=published_at.desc&limit=50`,
-          { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
-        );
-        if (res.ok) {
-          const rows = dedupeArticles(await res.json());
-          setRecentArticles(rows.slice(0, 3));
-        }
-      } catch { /* silent */ }
-    })();
-  }, []);
-
-  // 2. Fetch summaries for recent articles via RAG
-  useEffect(() => {
-    if (recentArticles.length === 0) return;
-    recentArticles.forEach(async (a) => {
-      try {
-        const res = await fetch(RAG_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: a.post_title, matchCount: 1 }),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const chunks = (data.results || data.matches || data || [])
-            .filter(c => (c.title || c.post_title || "").toLowerCase().includes("under the hood"));
-          if (chunks.length > 0) {
-            const text = chunks[0].content || chunks[0].text || chunks[0].chunk_text || "";
-            setRecentSummaries(prev => ({ ...prev, [a.post_title]: firstSentence(text) }));
-          }
-        }
-      } catch { /* silent */ }
-    });
-  }, [recentArticles]);
-
-  // 3. Fetch full archive (up to 300)
+  // 1. Fetch full archive (up to 300)
   useEffect(() => {
     (async () => {
       try {
@@ -474,35 +425,32 @@ export default function UnderTheHoodIndex() {
           </div>
         </div>
 
-        {/* ── 6. RECENT ARTICLES with RAG summaries ──────────────── */}
-        {recentArticles.length > 0 && (
-          <div style={{ marginBottom: 40 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: T.muted, textTransform: "uppercase", marginBottom: 14 }}>
-              Recent Under the Hood
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {recentArticles.map((a, i) => (
-                <div key={i} style={{ background: T.surface, border: "1px solid rgba(44,24,16,0.1)", padding: "20px 22px" }}>
-                  <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, lineHeight: 1.35, marginBottom: 6 }}>
-                    {stripPrefix(a.post_title)}
-                  </div>
-                  <div style={{ fontSize: 13, color: T.muted, marginBottom: recentSummaries[a.post_title] ? 6 : 10 }}>{fmtDate(a.published_at)}</div>
-                  {recentSummaries[a.post_title] && (
-                    <p style={{ fontSize: 14, color: T.muted, lineHeight: 1.5, margin: "0 0 10px" }}>
-                      {recentSummaries[a.post_title]}
-                    </p>
-                  )}
-                  <a
-                    href={a.substack_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.gold, textDecoration: "none" }}
-                  >Read on Substack \u2192</a>
-                </div>
-              ))}
-            </div>
+        {/* ── 6. RECENT UNDER THE HOOD ARTICLES ──────────────── */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: T.muted, textTransform: "uppercase", marginBottom: 14 }}>
+            Recent Under the Hood
           </div>
-        )}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {[
+              { title: "Napa Cabernet Prices Break the Growth Curve", pub: "Napa Valley Features", date: "March 19, 2026", href: "/under-the-hood/napa-cab-2025" },
+              { title: "Sonoma Grape Prices Fall for a Second Year", pub: "Sonoma County Features", date: "March 21, 2026", href: "/under-the-hood/sonoma-cab-2025" },
+              { title: "Lake County Grape Prices Have Fallen 38% in Two Years", pub: "Lake County Features", date: "March 21, 2026", href: "/under-the-hood/lake-county-cab-2025" },
+            ].map((a, i) => (
+              <div key={i} style={{ background: T.surface, border: "1px solid rgba(44,24,16,0.1)", padding: "20px 22px" }}>
+                <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, lineHeight: 1.35, marginBottom: 6 }}>
+                  {a.title}
+                </div>
+                <div style={{ fontSize: 13, color: T.muted, marginBottom: 10 }}>{a.pub} · {a.date}</div>
+                <a
+                  href={a.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.gold, textDecoration: "none" }}
+                >Read on Substack →</a>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* ── 7. READER PULSE ────────────────────────────────────── */}
         {readerPolls.length > 0 && (
