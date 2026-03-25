@@ -1,10 +1,17 @@
 """
-Seed article polls for Sonoma and Lake County Under the Hood articles.
+Seed article polls for Under the Hood articles.
 Inserts rows into napaserve_article_polls via Supabase.
 Requires SUPABASE_KEY environment variable.
+
+Usage:
+  python seed_article_polls.py                  # insert all polls
+  python seed_article_polls.py --dry-run        # print what would be inserted
+  python seed_article_polls.py --slug napa-gdp-2024              # only this slug
+  python seed_article_polls.py --slug napa-gdp-2024 --dry-run    # preview one slug
 """
 
 import os
+import sys
 import json
 import urllib.request
 
@@ -33,22 +40,39 @@ POLLS = [
     },
     # ── Napa GDP 2024 ─────────────────────────────────────────
     {
+        "id": 10,
         "article_slug": "napa-gdp-2024",
         "sort_order": 1,
-        "question": "The gap between Napa\u2019s nominal and real GDP tells me the local economy is...",
-        "options": ["Stronger than it looks", "About as expected", "Weaker than it looks", "Not sure"],
+        "question": "Prices in Napa are ~29% higher than 2017. How has that affected you?",
+        "options": ["Costs far outpace my income", "It\u2019s noticeable but manageable", "I\u2019ve kept pace with rising costs", "I\u2019ve left or am considering leaving", "Not affected / doesn\u2019t apply"],
     },
     {
+        "id": 11,
         "article_slug": "napa-gdp-2024",
         "sort_order": 2,
-        "question": "How concerned are you about the wine industry\u2019s impact on the county\u2019s tax base?",
-        "options": ["Very concerned", "Somewhat concerned", "Not very concerned", "Not at all concerned"],
+        "question": "Have rising costs changed how you spend in Napa?",
+        "options": ["Yes \u2014 I spend significantly less", "Yes \u2014 I\u2019ve cut specific categories", "Somewhat \u2014 small adjustments only", "No \u2014 my spending hasn\u2019t changed", "I don\u2019t live or spend in Napa"],
     },
     {
+        "id": 12,
         "article_slug": "napa-gdp-2024",
         "sort_order": 3,
-        "question": "What should Napa County prioritize given these economic trends?",
-        "options": ["Diversify the economy", "Double down on premium wine", "Expand tourism", "Let the market adjust"],
+        "question": "Do Napa wages keep up with the local cost of living?",
+        "options": ["No \u2014 wages are far behind", "No \u2014 wages lag but it\u2019s manageable", "About even for most workers", "Yes \u2014 wages are competitive here", "Not sure / depends on the sector"],
+    },
+    {
+        "id": 13,
+        "article_slug": "napa-gdp-2024",
+        "sort_order": 4,
+        "question": "Will Napa\u2019s service and hospitality jobs recover to pre-2019 trend levels?",
+        "options": ["Yes, within a few years", "Possibly, but it\u2019ll take years", "No \u2014 the break is permanent", "Only for high-end positions", "Not sure"],
+    },
+    {
+        "id": 14,
+        "article_slug": "napa-gdp-2024",
+        "sort_order": 5,
+        "question": "How prepared is Napa County for declining wine tax revenue?",
+        "options": ["Very prepared \u2014 plans are in place", "Somewhat prepared", "Not very prepared", "Not prepared at all", "I don\u2019t know enough to say"],
     },
     # ── Lake County ─────────────────────────────────────────
     {
@@ -72,7 +96,38 @@ POLLS = [
 ]
 
 
+def delete_by_slug(slug, headers):
+    """Delete all existing rows for a given article_slug."""
+    url = f"{SUPABASE_URL}/rest/v1/{TABLE}?article_slug=eq.{slug}"
+    req = urllib.request.Request(url, headers={**headers, "Prefer": "return=representation"}, method="DELETE")
+    try:
+        with urllib.request.urlopen(req) as resp:
+            deleted = json.loads(resp.read())
+            count = len(deleted) if isinstance(deleted, list) else 0
+            print(f"DEL slug={slug}  removed={count}")
+            return count
+    except urllib.error.HTTPError as e:
+        err = e.read().decode()
+        print(f"DEL ERR slug={slug}  {e.code}: {err}")
+        return 0
+
+
 def main():
+    dry_run = "--dry-run" in sys.argv
+    slug_filter = None
+    if "--slug" in sys.argv:
+        idx = sys.argv.index("--slug")
+        if idx + 1 < len(sys.argv):
+            slug_filter = sys.argv[idx + 1]
+
+    polls = [p for p in POLLS if slug_filter is None or p["article_slug"] == slug_filter]
+
+    if dry_run:
+        print(f"DRY RUN — {len(polls)} poll(s) would be seeded:")
+        for p in polls:
+            print(f"  slug={p['article_slug']}  order={p['sort_order']}  id={p.get('id','auto')}  q={p['question'][:60]}...")
+        return
+
     key = os.environ.get("SUPABASE_KEY")
     if not key:
         print("ERROR: SUPABASE_KEY environment variable is not set.")
@@ -83,16 +138,22 @@ def main():
         "apikey": key,
         "Authorization": f"Bearer {key}",
         "Content-Type": "application/json",
-        "Prefer": "return=representation",
     }
 
-    for poll in POLLS:
+    # Delete existing rows for targeted slugs before inserting
+    slugs_to_delete = set(p["article_slug"] for p in polls)
+    for slug in sorted(slugs_to_delete):
+        delete_by_slug(slug, headers)
+
+    # Insert new rows
+    for poll in polls:
         body = json.dumps(poll).encode("utf-8")
-        req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+        req = urllib.request.Request(url, data=body, headers={**headers, "Prefer": "return=representation"}, method="POST")
         try:
             with urllib.request.urlopen(req) as resp:
                 result = json.loads(resp.read())
-                print(f"OK  slug={poll['article_slug']}  order={poll['sort_order']}  id={result[0]['id'] if result else '?'}")
+                row_id = result[0]["id"] if isinstance(result, list) and result else "?"
+                print(f"OK  slug={poll['article_slug']}  order={poll['sort_order']}  id={row_id}")
         except urllib.error.HTTPError as e:
             err = e.read().decode()
             print(f"ERR slug={poll['article_slug']}  order={poll['sort_order']}  {e.code}: {err}")
