@@ -13,6 +13,8 @@
  *   POST /api/article-poll-vote  — submit a vote for an article poll
  *   POST /api/admin-auth         — validate admin password, return session token
  *   POST /api/admin-verify       — verify session token is valid
+ *   POST /api/send-welcome       — send welcome email to new subscriber
+ *   POST /api/send-digest-preview — send weekly digest preview to info@napaserve.com (admin only)
  *
  * Env vars (Bindings):
  *   SUPABASE_URL         (plaintext)
@@ -24,6 +26,7 @@
  *   BLUESKY_APP_PASSWORD (secret)
  *   ADMIN_PASSWORD       (secret)
  *   ADMIN_SESSION_SECRET (secret)
+ *   RESEND_API_KEY       (secret)
  */
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
@@ -359,7 +362,87 @@ async function handlePollSearch(request, env) {
   }
 }
 
-// ─── Subscribe handler ───────────────────────────────────────────────────────
+// ─── Resend email helper ─────────────────────────────────────────────────────
+
+async function sendEmail({ to, subject, html }, env) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+    },
+    body: JSON.stringify({
+      from: 'NapaServe <info@napaserve.com>',
+      to,
+      subject,
+      html,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Resend error ${res.status}: ${body}`);
+  }
+  return res.json();
+}
+
+// ─── Welcome email handler ──────────────────────────────────────────────────
+
+async function handleSendWelcome(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return err('Invalid JSON body', 400, request); }
+
+  const { name, email } = body;
+  if (!email || !email.includes('@')) return err('Valid email required', 400, request);
+
+  try {
+    const template = await fetch('https://napaserve.org/emails/welcome-email.html');
+    let html = await template.text();
+
+    const displayName = name && name.trim() ? name.trim() : 'there';
+    html = html.replace(/\{\{NAME\}\}/g, displayName);
+
+    await sendEmail({
+      to: email,
+      subject: 'Welcome to NapaServe \u2014 Community Intelligence for Napa County',
+      html,
+    }, env);
+
+    return json({ success: true }, 200, request);
+  } catch (e) {
+    console.error('Welcome email failed:', e);
+    return err(`Welcome email failed: ${e.message}`, 502, request);
+  }
+}
+
+// ─── Digest preview handler ─────────────────────────────────────────────────
+
+async function handleSendDigestPreview(request, env) {
+  const authorized = await requireAdminToken(request, env);
+  if (!authorized) return err('Unauthorized', 401, request);
+
+  try {
+    const template = await fetch('https://napaserve.org/emails/weekly-digest.html');
+    let html = await template.text();
+
+    const date = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    html = html.replace(/\{\{DATE\}\}/g, date);
+
+    await sendEmail({
+      to: 'info@napaserve.com',
+      subject: `[PREVIEW] NapaServe Weekly Digest \u2014 ${date}`,
+      html,
+    }, env);
+
+    return json({ success: true, message: 'Preview sent to info@napaserve.com' }, 200, request);
+  } catch (e) {
+    console.error('Digest preview failed:', e);
+    return err(`Digest preview failed: ${e.message}`, 502, request);
+  }
+}
+
+// ─── Subscribe handler ──────────────────────────────────────────────────────
 
 async function handleSubscribe(request, env) {
   let body;
@@ -389,6 +472,18 @@ async function handleSubscribe(request, env) {
       const text = await res.text();
       throw new Error(`Supabase insert error ${res.status}: ${text}`);
     }
+
+    // Fire welcome email (non-blocking — don't fail subscribe if email fails)
+    try {
+      await handleSendWelcome(new Request(request.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name || '', email }),
+      }), env);
+    } catch (e) {
+      console.error('Welcome email failed after subscribe:', e);
+    }
+
     return json({ success: true }, 200, request);
   } catch (e) {
     console.error("Subscribe failed:", e);
@@ -746,6 +841,14 @@ export default {
 
     if (url.pathname === "/api/admin-verify" && request.method === "POST") {
       return handleAdminVerify(request, env);
+    }
+
+    if (url.pathname === "/api/send-welcome" && request.method === "POST") {
+      return handleSendWelcome(request, env);
+    }
+
+    if (url.pathname === "/api/send-digest-preview" && request.method === "POST") {
+      return handleSendDigestPreview(request, env);
     }
 
     return new Response("Not found", { status: 404 });
