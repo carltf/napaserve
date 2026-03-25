@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
@@ -463,7 +464,7 @@ export default function UnderTheHoodGDP() {
         {/* ── Article text: intro ──────────────────────────────────── */}
         <div style={{ marginBottom: 36 }}>
           <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-            NAPA, Calif. — The number most often cited to describe Napa County's economy is its gross domestic product: $14.59 billion in 2024, up from $10.75 billion in 2016. That is a 35.8% increase over eight years, a figure that implies a valley growing steadily richer. Adjusted for inflation, the same economy grew 4.6%. Of the apparent $3.84 billion in GDP growth since 2016, roughly 87 cents of every dollar was inflation. Real output — the actual volume of goods and services produced — barely moved.
+            NAPA, Calif. — The number most often cited to describe Napa County's economy is its <a href="https://fred.stlouisfed.org/series/GDPALL06055" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>gross domestic product</a>: $14.59 billion in 2024, up from $10.75 billion in 2016. That is a 35.8% increase over eight years, a figure that implies a valley growing steadily richer. Adjusted for inflation, the same economy grew 4.6%. Of the apparent $3.84 billion in GDP growth since 2016, roughly 87 cents of every dollar was inflation. Real output — the actual volume of goods and services produced — barely moved.
           </p>
           <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
             That gap is not a statistical footnote. It is the economy's most important single data point, and it reshapes how every other indicator in this column should be read.
@@ -543,7 +544,7 @@ export default function UnderTheHoodGDP() {
               });
             }} />
           </div>
-          <p style={{ fontSize: 12, color: T.muted, margin: "10px 0 0", lineHeight: 1.5 }}>Source: Bureau of Economic Analysis via FRED — GDPALL06055 (nominal), REALGDPALL06055 (real, chained 2017 dollars).</p>
+          <p style={{ fontSize: 12, color: T.muted, margin: "10px 0 0", lineHeight: 1.5 }}>Source: Bureau of Economic Analysis via FRED — <a href="https://fred.stlouisfed.org/series/GDPALL06055" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>GDPALL06055</a> (nominal), <a href="https://fred.stlouisfed.org/series/REALGDPALL06055" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>REALGDPALL06055</a> (real, chained 2017 dollars).</p>
         </div>
 
         {/* ── Stat boxes ─────────────────────────────────────────── */}
@@ -566,7 +567,7 @@ export default function UnderTheHoodGDP() {
         </div>
 
         <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-          This pattern tracks closely with what this column described in "Under the Hood: Two Reports, One Warning — The Collapse That Looks Like Premiumization" (January 2026) at the product level. There, rising average bottle prices masked falling shipment volumes, creating the appearance of a resilient market. Here, rising price levels across the county's entire economic base create the appearance of a growing economy. The mechanism is the same: inflation does the arithmetic while real activity stagnates.
+          This pattern tracks closely with what this column described in <a href="https://napavalleyfocus.substack.com/p/under-the-hood-two-reports-one-warning" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>"Under the Hood: Two Reports, One Warning — The Collapse That Looks Like Premiumization"</a> (January 2026) at the product level. There, rising average bottle prices masked falling shipment volumes, creating the appearance of a resilient market. Here, rising price levels across the county's entire economic base create the appearance of a growing economy. The mechanism is the same: inflation does the arithmetic while real activity stagnates.
         </p>
 
         {/* ── The Wine Industry as Structural Load-Bearer ─────────── */}
@@ -575,7 +576,7 @@ export default function UnderTheHoodGDP() {
           Understanding what is at stake requires understanding how deeply the wine industry is embedded in everything that funds and employs Napa County.
         </p>
         <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-          The most comprehensive recent assessment is the Insel &amp; Company economic impact study commissioned by Napa Valley Vintners, published in May 2025 using 2022 data. Its findings establish the structural baseline. The wine and grape industry accounted for 55,875 full-time equivalent jobs in Napa County in 2022 — 72% of the county's total employment of 77,788. It generated $3.82 billion in wages, representing 73.7% of all labor compensation received in the county. It produced $507 million in county and local tax revenue, including $156 million in property taxes — 27% of all property tax collected countywide.
+          The most comprehensive recent assessment is the <a href="https://napavintners.com/downloads/ECONOMIC-IMPACT-REPORT-NVV-2022.pdf" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Insel &amp; Company economic impact study</a> commissioned by Napa Valley Vintners, published in May 2025 using 2022 data. Its findings establish the structural baseline. The wine and grape industry accounted for 55,875 full-time equivalent jobs in Napa County in 2022 — 72% of the county's total employment of 77,788. It generated $3.82 billion in wages, representing 73.7% of all labor compensation received in the county. It produced $507 million in county and local tax revenue, including $156 million in property taxes — 27% of all property tax collected countywide.
         </p>
         <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
           The county does not have a wine industry alongside other industries. Wine is the industry, and the other sectors — hospitality, retail, professional services, logistics — are in large part its downstream expression.
@@ -606,7 +607,7 @@ export default function UnderTheHoodGDP() {
         {/* ── The Jobs Engine ─────────────────────────────────────── */}
         <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "40px 0 16px", lineHeight: 1.3 }}>The Jobs Engine</h2>
         <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-          Employment data from the Bureau of Labor Statistics tracks leisure and hospitality employment in Napa County back to 1990. The trajectory through 2019 told a clear story of growth. From the post-financial crisis trough in 2009 — when the sector employed about 9,000 workers — employment climbed steadily to a peak of 14,300 in June 2019, adding roughly 5,300 jobs over a decade. That pace, sustained over ten years, implied a sector still expanding to meet rising demand.
+          <a href="https://fred.stlouisfed.org/series/NAPA906LEIHN" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Employment data from the Bureau of Labor Statistics</a> tracks leisure and hospitality employment in Napa County back to 1990. The trajectory through 2019 told a clear story of growth. From the post-financial crisis trough in 2009 — when the sector employed about 9,000 workers — employment climbed steadily to a peak of 14,300 in June 2019, adding roughly 5,300 jobs over a decade. That pace, sustained over ten years, implied a sector still expanding to meet rising demand.
         </p>
         <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 24px" }}>
           Since June 2019, net change in leisure and hospitality employment: approximately {"\u2212"}200 jobs. Six years of essentially zero net growth, against a backdrop of nominal GDP that rose 27% over the same period.
@@ -662,11 +663,11 @@ export default function UnderTheHoodGDP() {
               });
             }} />
           </div>
-          <p style={{ fontSize: 12, color: T.muted, margin: "10px 0 0", lineHeight: 1.5 }}>Source: Bureau of Labor Statistics, Leisure and Hospitality Employment, Napa MSA (NAPA906LEIHN).</p>
+          <p style={{ fontSize: 12, color: T.muted, margin: "10px 0 0", lineHeight: 1.5 }}>Source: Bureau of Labor Statistics, Leisure and Hospitality Employment, Napa MSA (<a href="https://fred.stlouisfed.org/series/NAPA906LEIHN" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>NAPA906LEIHN</a>).</p>
         </div>
 
         <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-          The projection from the prior decade's growth rate makes the break visible. If the 2009–2019 trend had continued, leisure and hospitality employment in Napa County would stand near 18,900 today. It stands at 14,100. The gap — roughly 4,800 jobs relative to prior trend — is not a temporary shortfall waiting to be recovered. It reflects a structural break in the relationship between economic activity and employment that this column first documented in "Under the Hood: More Rooms Have Equaled Fewer Jobs in Napa County" (August 2025). More rooms were built, more nominal dollars flowed through the economy, and the jobs engine stalled anyway.
+          The projection from the prior decade's growth rate makes the break visible. If the 2009–2019 trend had continued, leisure and hospitality employment in Napa County would stand near 18,900 today. It stands at 14,100. The gap — roughly 4,800 jobs relative to prior trend — is not a temporary shortfall waiting to be recovered. It reflects a structural break in the relationship between economic activity and employment that this column first documented in <a href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-have-equaled" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>"Under the Hood: More Rooms Have Equaled Fewer Jobs in Napa County"</a> (August 2025). More rooms were built, more nominal dollars flowed through the economy, and the jobs engine stalled anyway.
         </p>
 
         {/* ── The Inflation Squeeze ───────────────────────────────── */}
@@ -765,7 +766,7 @@ export default function UnderTheHoodGDP() {
         <ContractionCalculator />
 
         <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-          Property tax warrants separate attention. Wine-related properties generated $156 million in property tax in 2022 — 27% of all county property tax. Seven of the ten largest property taxpayers in the county that year were wine or vineyard properties that had recently changed ownership or undergone significant construction. As established in "Under the Hood: 2025 Napa Grape Prices Slip After a Record High" (March 2026), vineyard valuations built on the historical price-appreciation curve are now under pressure. Sales of premium vineyards at lower prices — or delays in ownership transfers that would trigger Proposition 13 reassessments — directly compress a revenue stream the county has long counted on.
+          Property tax warrants separate attention. Wine-related properties generated $156 million in property tax in 2022 — 27% of all county property tax. Seven of the ten largest property taxpayers in the county that year were wine or vineyard properties that had recently changed ownership or undergone significant construction. As established in <Link to="/under-the-hood/napa-cab-2025" style={{ color: T.accent }}>"Under the Hood: 2025 Napa Grape Prices Slip After a Record High"</Link> (March 2026), vineyard valuations built on the historical price-appreciation curve are now under pressure. Sales of premium vineyards at lower prices — or delays in ownership transfers that would trigger Proposition 13 reassessments — directly compress a revenue stream the county has long counted on.
         </p>
 
         {/* ── The Broader Picture ─────────────────────────────────── */}
@@ -802,7 +803,7 @@ export default function UnderTheHoodGDP() {
             What the data do show is the structural precondition: an economy whose nominal size substantially exceeds its real output, whose primary industry is under multi-year demand pressure, whose jobs engine has stalled and whose tax base is built on the valuations and activity levels of that same industry.
           </p>
           <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-            The question Napa's planners, policymakers and business leaders face is not whether adjustment is coming. The prior installments in this series — from the unharvested acres analysis in November 2025 to the grape price trajectory in March 2026 to the capacity and capital contraction documented last week — establish that it is already underway. The question is how much of that adjustment is legible in the data that drive planning decisions, and how much is still hidden inside a nominal GDP figure that tells a story the real economy stopped living eight years ago.
+            The question Napa's planners, policymakers and business leaders face is not whether adjustment is coming. The prior installments in this series — from the <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-dismal-math-of" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>unharvested acres analysis</a> in November 2025 to the <Link to="/under-the-hood/napa-cab-2025" style={{ color: T.accent }}>grape price trajectory</Link> in March 2026 to the capacity and capital contraction documented last week — establish that it is already underway. The question is how much of that adjustment is legible in the data that drive planning decisions, and how much is still hidden inside a nominal GDP figure that tells a story the real economy stopped living eight years ago.
           </p>
         </div>
 
@@ -875,10 +876,10 @@ export default function UnderTheHoodGDP() {
         <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 20 }}>
           <h3 style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, margin: "0 0 10px" }}>Methodology</h3>
           <p style={{ fontSize: 14, color: T.muted, lineHeight: 1.7 }}>
-            GDP data is sourced from the Bureau of Economic Analysis via the Federal Reserve Economic Data (FRED) database. Nominal GDP uses series GDPALL06055; real GDP uses series REALGDPALL06055, reported in chained 2017 dollars. The implicit price deflator is calculated as the ratio of nominal to real GDP, indexed to 2017 = 100.
+            GDP data is sourced from the Bureau of Economic Analysis via the Federal Reserve Economic Data (FRED) database. Nominal GDP uses series <a href="https://fred.stlouisfed.org/series/GDPALL06055" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>GDPALL06055</a>; real GDP uses series <a href="https://fred.stlouisfed.org/series/REALGDPALL06055" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>REALGDPALL06055</a>, reported in chained 2017 dollars. The implicit price deflator is calculated as the ratio of nominal to real GDP, indexed to 2017 = 100.
           </p>
           <p style={{ fontSize: 14, color: T.muted, lineHeight: 1.7, marginTop: 10 }}>
-            Employment data is sourced from the Bureau of Labor Statistics, series NAPA906LEIHN (Leisure and Hospitality Employment, Napa MSA). The 2009–2019 trend projection uses the compound annual growth rate (CAGR) of actual employment over that period, applied forward from the 2019 level.
+            Employment data is sourced from the Bureau of Labor Statistics, series <a href="https://fred.stlouisfed.org/series/NAPA906LEIHN" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>NAPA906LEIHN</a> (Leisure and Hospitality Employment, Napa MSA). The 2009–2019 trend projection uses the compound annual growth rate (CAGR) of actual employment over that period, applied forward from the 2019 level.
           </p>
           <p style={{ fontSize: 14, color: T.muted, lineHeight: 1.7, marginTop: 10 }}>
             Wine industry economic impact data is from "The Economic Impact of Napa County's Wine and Grape Industry," prepared by Insel &amp; Company for Napa Valley Vintners, published May 2025, using 2022 data. Contraction scenarios apply proportional scaling to the 2022 baseline and are illustrative, not forecasts. Property tax estimates are proportional and do not account for Proposition 13 reassessment limitations.
