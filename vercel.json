@@ -16,6 +16,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/unsubscribe", "destination": "https://misty-bush-fc93.tfcarl.workers.dev/api/unsubscribe" },
     { "source": "/((?!agent\\.html|embed-events\\.html).*)", "destination": "/index.html" }
   ]
 }
