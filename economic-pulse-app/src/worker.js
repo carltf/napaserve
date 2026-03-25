@@ -15,6 +15,7 @@
  *   POST /api/admin-verify       — verify session token is valid
  *   POST /api/send-welcome       — send welcome email to new subscriber
  *   POST /api/send-digest-preview — send weekly digest preview to info@napaserve.com (admin only)
+ *   GET  /api/unsubscribe        — unsubscribe a subscriber by ?email=
  *
  * Env vars (Bindings):
  *   SUPABASE_URL         (plaintext)
@@ -400,6 +401,7 @@ async function handleSendWelcome(request, env) {
 
     const displayName = name && name.trim() ? name.trim() : 'there';
     html = html.replace(/\{\{NAME\}\}/g, displayName);
+    html = html.replace(/\{\{EMAIL\}\}/g, encodeURIComponent(email));
 
     await sendEmail({
       to: email,
@@ -489,6 +491,58 @@ async function handleSubscribe(request, env) {
     console.error("Subscribe failed:", e);
     return err(`Subscribe failed: ${e.message}`, 502, request);
   }
+}
+
+// ─── Unsubscribe handler ─────────────────────────────────────────────────────
+
+async function handleUnsubscribe(request, env) {
+  const url = new URL(request.url);
+  const email = url.searchParams.get("email");
+  if (!email || !email.includes("@")) {
+    return new Response("Missing or invalid email.", { status: 400, headers: { "Content-Type": "text/html" } });
+  }
+
+  try {
+    const res = await fetch(
+      `${env.SUPABASE_URL}/rest/v1/napaserve_subscribers?email=eq.${encodeURIComponent(email)}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+          apikey: env.SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ unsubscribed_at: new Date().toISOString() }),
+      }
+    );
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Supabase PATCH error ${res.status}: ${body}`);
+    }
+  } catch (e) {
+    console.error("Unsubscribe failed:", e);
+    return new Response("Something went wrong. Please try again.", { status: 500, headers: { "Content-Type": "text/html" } });
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Unsubscribed — NapaServe</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background-color:#F5F0E8;font-family:Arial,Helvetica,sans-serif;color:#2C1810;display:flex;justify-content:center;align-items:center;min-height:100vh;">
+<div style="text-align:center;max-width:480px;padding:48px 24px;">
+  <h1 style="font-family:'Libre Baskerville',Georgia,serif;font-size:28px;font-weight:700;color:#2C1810;margin:0 0 16px;">You've been unsubscribed</h1>
+  <p style="font-size:16px;line-height:1.6;color:#2C1810;margin:0 0 32px;">You'll no longer receive emails from NapaServe.</p>
+  <a href="https://napaserve.org" style="font-size:14px;color:#8B5E3C;text-decoration:none;font-weight:600;">← Back to napaserve.org</a>
+</div>
+</body>
+</html>`;
+
+  return new Response(html, { status: 200, headers: { "Content-Type": "text/html" } });
 }
 
 // ─── Submit event handler ────────────────────────────────────────────────────
@@ -849,6 +903,10 @@ export default {
 
     if (url.pathname === "/api/send-digest-preview" && request.method === "POST") {
       return handleSendDigestPreview(request, env);
+    }
+
+    if (url.pathname === "/api/unsubscribe" && request.method === "GET") {
+      return handleUnsubscribe(request, env);
     }
 
     return new Response("Not found", { status: 404 });
