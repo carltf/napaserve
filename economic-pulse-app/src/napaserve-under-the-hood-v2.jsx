@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
 
@@ -336,6 +337,51 @@ export default function UnderTheHood() {
   const prose   = { fontFamily:"'Source Sans 3', sans-serif", fontSize:17, color:T.ink, lineHeight:1.75, margin:"0 0 18px 0" };
   const heading = { fontFamily:"'Libre Baskerville', serif", fontSize:22, fontWeight:700, color:T.ink, margin:"40px 0 16px 0" };
   const h2style = { fontFamily:"'Libre Baskerville', serif", fontSize:20, fontWeight:700, color:T.ink, margin:"0 0 16px 0" };
+  const extLink = { color: T.accent };
+
+  /* ── JSX body overrides for sections needing inline links ──────────────── */
+  const BODY_JSX = {
+    crush: (<>
+      <p style={prose}>California wineries crushed 2.62 million tons of grapes in 2025 — the lightest crop since 1999 and 23% below the five-year average. Total red wine production declined 9% and white wine production declined 6%. The total crop value statewide fell 16% from the prior year to $2.414 billion, according to <a href="https://www.winebusiness.com/content/file/2025_Crush_Report_Press_Release(1).pdf" target="_blank" rel="noopener noreferrer" style={extLink}>Turrentine Brokerage</a>, which characterized the vintage as one of the most challenging for the wine industry since Prohibition.</p>
+      <p style={prose}>The volume decline was driven by a combination of weather, acreage removals and a persistent lack of demand that left significant tonnage uncontracted and unharvested. An estimated 57,000 acres were removed statewide in 2025, with considerably more left unpicked.</p>
+      <p style={prose}>{"\u201C"}The 2025 vintage highlights the industry{"\u2019"}s directional shift of declining production and an overall restructure of the industry,{"\u201D"} said Audra Cooper, vice president at Turrentine Brokerage. {"\u201C"}Between a cooler growing season, reduced vineyard inputs, and multiple rain events which led to excessive late-season disease pressure and combined with soft demand, 2025{"\u2019"}s challenges were relentless.{"\u201D"}</p>
+      <p style={prose}>For Napa Valley specifically, Cabernet Sauvignon tonnage came in at roughly 77,000 tons — just a 1.3% decline from 2024, smaller than many in the industry had predicted. The price, however, continued lower.</p>
+    </>),
+    curve: (<>
+      <p style={prose}>Since the late 1970s, following enactment of California{"\u2019"}s Clare Berryhill Grape Crush Act of 1976, the California Department of Food and Agriculture has published <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Grape_Crush/index.php" target="_blank" rel="noopener noreferrer" style={extLink}>annual grape crush data</a> in cooperation with USDA{"\u2019"}s National Agricultural Statistics Service. Napa cabernet prices have followed one of the most consistent upward trajectories in American agriculture.</p>
+      <p style={prose}>In 1976 the weighted average price of Napa cabernet was $461 per ton. By the early 2000s it had climbed above $3,000. Two decades later it exceeded $9,000. The rise was not perfectly smooth. Prices slowed during recessions and fluctuated with harvest conditions — most notably in 2020, when the pandemic and a devastating wildfire season pushed the average to $6,260 — but the broader direction remained unmistakable.</p>
+      <p style={prose}>Over time the curve became a defining feature of Napa Valley{"\u2019"}s agricultural economy. Growers planted vineyards assuming the trend would continue. Wineries structured long-term grape contracts around rising fruit costs. Banks financed vineyard development using projections that incorporated the same trajectory.</p>
+      <p style={prose}>Across multiple historical periods, Napa cabernet prices expanded at a compound annual growth rate between 4.7% and 6.9%. The long-run rate from 1976 to 2023 was 6.6% per year. The more recent period from 2011 to 2019 ran at 6.9% annually. Even the conservative modern period from 2000 to 2023 compounded at 4.75% per year. These rates reflect different historical windows — each a reasonable benchmark depending on when a grower planted, borrowed or signed a contract.</p>
+      <p style={prose}>Those are not abstract statistics. They are the numbers embedded in loan covenants, vineyard appraisals and long-term supply contracts across the valley.</p>
+    </>),
+    gap: (<>
+      <p style={prose}>The weighted average price of Napa County cabernet sauvignon peaked at $9,235 per ton in 2023. It slipped to $9,146 in 2024 and to $8,933 in 2025. Two consecutive years of decline have not occurred in the modern crush report era.</p>
+      <p style={prose}>If the historical price trajectory is projected forward from the 2023 peak using any of the growth rates observed in prior expansion periods, the expected price of Napa cabernet in 2025 would fall well above current levels.</p>
+      <p style={prose}>Using the long-run 1976-2023 growth rate of 6.6%, the projected 2025 price would be approximately $10,492 per ton. Using the recent 2011-2019 rate of 6.9%, the projection rises to roughly $11,847. Even the most conservative projection, using the 2000-2023 rate of 4.75%, produces an expected price of about $10,134.</p>
+      <p style={prose}>The actual 2025 price of $8,933 falls $1,200 to $2,900 per ton below where any of those trajectories would predict — an expectation gap of 13% to 33% depending on the benchmark used.</p>
+      <p style={prose}>For a vineyard block producing three tons per acre, the difference between the 2023 peak and the 2025 price represents roughly $900 in lost gross revenue per acre. Multiplied across thousands of vineyard acres, the scale of the shift becomes clearer. As we detailed in <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-dismal-math-of" target="_blank" rel="noopener noreferrer" style={extLink}>{"\u201C"}Under the Hood: The Dismal Math of Napa{"\u2019"}s Skipped Acres{"\u201D"}</a> (November 2025), even modest per-acre revenue shifts propagate through wages, suppliers and local government revenues over a multi-year period.</p>
+    </>),
+    max: (<>
+      <p style={prose}>Another indicator warrants attention: the highest price paid for any individual lot of Napa cabernet sauvignon.</p>
+      <p style={prose}>During the expansion years, the maximum price paid rose alongside the weighted average, reinforcing the expectation that the top of the market would continue appreciating. The record price reached $69,125 per ton in 2024. In 2025 it retreated to $67,200 — matching the 2023 record rather than surpassing it.</p>
+      <p style={prose}>Taken alone, a single-year movement in the maximum price is not conclusive. But the flattening of the maximum price at the same moment the weighted average has begun declining suggests the speculative premium at the top of the market may be losing momentum alongside the broader average. As we highlighted in <a href="https://napavalleyfocus.substack.com/p/napa-valley-grape-prices-see-continued" target="_blank" rel="noopener noreferrer" style={extLink}>{"\u201C"}Napa Valley Grape Prices See Continued Surge in 2023{"\u201D"}</a> (February 2024), outlier transactions — lots trading above $60,000 per ton — represented a small share of total tonnage but exerted an outsized influence on market sentiment and vineyard valuations.</p>
+      <p style={prose}>If those transactions no longer set new records, that signal is worth watching.</p>
+    </>),
+    market: (<>
+      <p style={prose}>For years the Napa grape market contained mechanisms that helped sustain the long-term price trajectory even when demand softened. Growers and wineries often shared a common incentive to protect the county{"\u2019"}s reported average price. When supply temporarily exceeded demand, fruit was sometimes left unpicked rather than sold at prices that might drag down the weighted average in the crush report. That approach helped preserve the appearance of stability during earlier cycles.</p>
+      <p style={prose}>The 2024 harvest report, which we explored in <a href="https://napavalleyfocus.substack.com/p/under-the-hood-2024-harvest-report" target="_blank" rel="noopener noreferrer" style={extLink}>{"\u201C"}Under the Hood: 2024 Harvest Report Reveals a Market Splitting in Two{"\u201D"}</a> (February 2025), revealed a market already bifurcating: ultra-premium buyers remained engaged while mid-tier demand contracted sharply. Cabernet sauvignon tonnage fell 23% even as the weighted average price held near the 2023 peak — a signal that supply constraints, not demand strength, were doing much of the work to sustain reported prices.</p>
+      <p style={prose}>The 2025 data confirm the floor is giving way. The weighted average has now declined for two consecutive years despite Napa tonnage holding relatively steady.</p>
+      <p style={prose}>The contracts that once locked in Napa{"\u2019"}s premium are now contested terrain. A Napa Valley grower with nearly three decades of experience, who requested anonymity, said wineries have recently begun walking away from long-standing agreements — in some cases deals that had been in place for years. The grower said he is now preparing to pursue legal action against several buyers.</p>
+      <p style={prose}>{"\u201C"}If they think they can just walk away,{"\u201D"} he said, {"\u201C"}then we{"\u2019"}ll see them in court.{"\u201D"}</p>
+    </>),
+    economics: (<>
+      <p style={prose}>The changing price trajectory arrives at a moment when vineyard economics are already under severe pressure.</p>
+      <p style={prose}>Labor, farming inputs and financing costs have all increased in recent years, narrowing margins for many growers. As we showed in {"\u201C"}Under the Hood: The Dismal Math of Napa{"\u2019"}s Skipped Acres{"\u201D"} (November 2025), the economic impact of leaving vineyards unfarmed or pulling them out extends far beyond the grower{"\u2019"}s ledger. At a typical Napa yield of three tons per acre and a price near $8,933, each acre generates roughly $26,800 in gross revenue before harvest and hauling costs. A $1,000 decline in the per-ton price reduces that by $3,000 per acre — a meaningful shift when multiplied across hundreds or thousands of acres.</p>
+      <p style={prose}>The per-acre math compounds through the broader economy. Each dollar of Napa grape value supports roughly $10.30 in local economic activity when traced through wineries, suppliers, tourism and household spending. A sustained price decline does not simply reduce grower income — it attenuates a multiplier that runs through the county{"\u2019"}s entire economic structure.</p>
+      <p style={prose}>Napa{"\u2019"}s 2023 GDP was approximately $14.2 billion. Wine and grapes influence an estimated 75% of that. In that context, the price trajectory of a single varietal carries consequences that reach well beyond the farm gate.</p>
+      <p style={prose}>The overproduction context amplifies the concern. As we detailed in <a href="https://napavalleyfocus.substack.com/p/1-wine-overproduction-the-math-of" target="_blank" rel="noopener noreferrer" style={extLink}>{"\u201C"}Under the Hood: Wine Overproduction Scenarios Suggest Tougher Days Ahead{"\u201D"}</a> (October 2025), even under the most optimistic scenarios for demand recovery and supply adjustment, California{"\u2019"}s wine industry faces the prospect of meaningful surplus through the end of the decade. The bulk wine market — which Turrentine Brokerage estimates carries close to 40 million gallons of inventory — continues to suppress grape demand at the source.</p>
+    </>),
+  };
 
   return (
     <div style={{ background:T.bg, minHeight:"100vh" }}>
@@ -376,7 +422,7 @@ export default function UnderTheHood() {
         {SECTIONS.map(section => (
           <div key={section.id}>
             {section.heading && <h2 style={heading}>{section.heading}</h2>}
-            {section.body.split("\n\n").map((para, i) => (
+            {BODY_JSX[section.id] || section.body.split("\n\n").map((para, i) => (
               <p key={i} style={prose}>{para}</p>
             ))}
             {section.id === "varietal-change" && (

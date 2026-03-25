@@ -348,7 +348,7 @@ export default function UnderTheHoodSonoma() {
             <div style={{ marginBottom: 36 }}>
               <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "40px 0 16px", lineHeight: 1.3 }}>The Overall Trend: Down for the Second Straight Year</h2>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 12px" }}>
-                SONOMA COUNTY, Calif. — Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the preliminary CDFA crush report — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
+                SONOMA COUNTY, Calif. — Sonoma County grapes fetched a district-wide weighted average of $2,761 per ton in 2025, according to the <a href="https://www.nass.usda.gov/Statistics_by_State/California/Publications/Grape_Crush/index.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>preliminary CDFA crush report</a> — down from $2,927 in 2024 and $2,975 in 2023. That is a 5.7% decline year-over-year, compounding a 1.6% drop the year before. Over two years the county has shed roughly $214 per ton in average grower returns.
               </p>
               <p style={{ fontFamily: serif, fontSize: 16, color: T.ink, lineHeight: 1.75, margin: "0 0 24px" }}>
                 The decline is broad-based but not uniform. Cabernet Sauvignon and Sauvignon Blanc took the steepest hits in percentage terms, while Pinot Noir — Sonoma's flagship cool-climate grape — held up comparatively well.
