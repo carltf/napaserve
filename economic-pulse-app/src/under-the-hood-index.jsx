@@ -35,6 +35,13 @@ const SECTIONS = [
     desc: "Data-driven analysis of Napa County's economy, wine industry, housing and workforce.",
     tiles: [
       {
+        title: "Napa\u2019s Economy Looks Bigger Than It Is",
+        date: "March 2026",
+        tag: "Napa Valley Features",
+        href: "/under-the-hood/napa-gdp-2024",
+        live: true,
+      },
+      {
         title: "2025 Napa Grape Prices Slip After a Record High",
         date: "March 19, 2026",
         tag: "Napa Valley Features",
@@ -435,6 +442,7 @@ export default function UnderTheHoodIndex() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {[
+              { title: "Napa\u2019s Economy Looks Bigger Than It Is", pub: "Napa Valley Features", date: "March 2026", href: "/under-the-hood/napa-gdp-2024" },
               { title: "Napa Cabernet Prices Break the Growth Curve", pub: "Napa Valley Features", date: "March 19, 2026", href: "/under-the-hood/napa-cab-2025" },
               { title: "Sonoma Grape Prices Fall for a Second Year", pub: "Sonoma County Features", date: "March 21, 2026", href: "/under-the-hood/sonoma-cab-2025" },
               { title: "Lake County Grape Prices Have Fallen 38% in Two Years", pub: "Lake County Features", date: "March 21, 2026", href: "/under-the-hood/lake-county-cab-2025" },

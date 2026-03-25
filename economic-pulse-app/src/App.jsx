@@ -12,6 +12,7 @@ import UnderTheHoodIndex from "./under-the-hood-index";
 import UnderTheHoodArticle from "./napaserve-under-the-hood-v2";
 import UnderTheHoodSonoma from "./under-the-hood-sonoma";
 import UnderTheHoodLake from "./under-the-hood-lake";
+import UnderTheHoodGDP from "./under-the-hood-gdp-2024";
 import NapaServeAdmin from "./napaserve-admin";
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/under-the-hood/napa-cab-2025" element={<UnderTheHoodArticle />} />
         <Route path="/under-the-hood/sonoma-cab-2025" element={<UnderTheHoodSonoma />} />
         <Route path="/under-the-hood/lake-county-cab-2025" element={<UnderTheHoodLake />} />
+        <Route path="/under-the-hood/napa-gdp-2024" element={<UnderTheHoodGDP />} />
         <Route path="/about" element={<About />} />
         <Route path="/admin" element={<NapaServeAdmin />} />
       </Routes>

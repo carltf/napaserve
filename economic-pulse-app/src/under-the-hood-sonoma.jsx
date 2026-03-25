@@ -607,6 +607,12 @@ export default function UnderTheHoodSonoma() {
 
             <div style={{ marginBottom: 36 }}>
               <div style={{ marginBottom: 12 }}>
+                <a href="/under-the-hood/napa-gdp-2024" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
+                  {"\"Napa\u2019s Economy Looks Bigger Than It Is\""}
+                </a>
+                <span style={{ fontSize: 14, color: T.muted }}> — Napa Valley Features</span>
+              </div>
+              <div style={{ marginBottom: 12 }}>
                 <a href="/under-the-hood/napa-cab-2025" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
                   "2025 Napa Grape Prices Slip After a Record High"
                 </a>

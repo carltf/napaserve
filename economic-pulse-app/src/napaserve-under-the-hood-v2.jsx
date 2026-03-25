@@ -310,6 +310,7 @@ const RELATED = [
   { title:"Napa Valley Grape Prices See Continued Surge in 2023", date:"Feb. 12, 2024", url:"https://napavalleyfocus.substack.com/p/napa-valley-grape-prices-see-continued" },
   { title:"Sonoma Grape Prices Fall for a Second Year as Cab Sauv Leads the Decline", date:"Sonoma County Features", url:"/under-the-hood/sonoma-cab-2025" },
   { title:"Lake County Grape Prices Have Fallen 38% in Two Years — and Chardonnay Has Nearly Vanished", date:"Lake County Features", url:"/under-the-hood/lake-county-cab-2025" },
+  { title:"Napa\u2019s Economy Looks Bigger Than It Is", date:"Napa Valley Features", url:"/under-the-hood/napa-gdp-2024" },
 ];
 
 const SOURCES = [

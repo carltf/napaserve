@@ -957,6 +957,12 @@ export default function UnderTheHoodLake() {
             </a>
             <span style={{ fontSize: "14px", color: T.muted }}> — Sonoma County Features</span>
           </div>
+          <div style={{ marginBottom: 12 }}>
+            <a href="/under-the-hood/napa-gdp-2024" style={{ fontFamily: FONTS.heading, fontSize: "15px", fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: "1.4" }}>
+              {"\u201CNapa\u2019s Economy Looks Bigger Than It Is\u201D"}
+            </a>
+            <span style={{ fontSize: "14px", color: T.muted }}> — Napa Valley Features</span>
+          </div>
         </div>
 
         {/* Archive Search */}

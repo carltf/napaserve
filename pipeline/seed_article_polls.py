@@ -31,6 +31,25 @@ POLLS = [
         "question": "For wineries, what is the biggest risk in the next 12 months?",
         "options": ["Slipping DTC sales", "Excess inventory", "Grape costs too high", "Big discounts to move wine", "Other (leave comment below)"],
     },
+    # ── Napa GDP 2024 ─────────────────────────────────────────
+    {
+        "article_slug": "napa-gdp-2024",
+        "sort_order": 1,
+        "question": "The gap between Napa\u2019s nominal and real GDP tells me the local economy is...",
+        "options": ["Stronger than it looks", "About as expected", "Weaker than it looks", "Not sure"],
+    },
+    {
+        "article_slug": "napa-gdp-2024",
+        "sort_order": 2,
+        "question": "How concerned are you about the wine industry\u2019s impact on the county\u2019s tax base?",
+        "options": ["Very concerned", "Somewhat concerned", "Not very concerned", "Not at all concerned"],
+    },
+    {
+        "article_slug": "napa-gdp-2024",
+        "sort_order": 3,
+        "question": "What should Napa County prioritize given these economic trends?",
+        "options": ["Diversify the economy", "Double down on premium wine", "Expand tourism", "Let the market adjust"],
+    },
     # ── Lake County ─────────────────────────────────────────
     {
         "article_slug": "lake-county-cab-2025",
