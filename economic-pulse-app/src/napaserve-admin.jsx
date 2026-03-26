@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import WordExporter from "./components/WordExporter";
@@ -496,6 +497,7 @@ function ArticleCard({ article, token }) {
 // ─── Main Admin Page ──────────────────────────────────────────────────────────
 
 export default function NapaServeAdmin() {
+  const navigate = useNavigate();
   const [locked, setLocked] = useState(true);
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState("");
@@ -515,6 +517,7 @@ export default function NapaServeAdmin() {
         if (data.valid) {
           setToken(stored);
           setLocked(false);
+          sessionStorage.setItem("nvf_admin", "true");
         } else {
           sessionStorage.removeItem("admin_token");
         }
@@ -535,6 +538,7 @@ export default function NapaServeAdmin() {
       const data = await res.json();
       if (data.success) {
         sessionStorage.setItem("admin_token", data.token);
+        sessionStorage.setItem("nvf_admin", "true");
         setToken(data.token);
         setLocked(false);
       } else {
@@ -547,6 +551,7 @@ export default function NapaServeAdmin() {
 
   function handleLogout() {
     sessionStorage.removeItem("admin_token");
+    sessionStorage.removeItem("nvf_admin");
     setToken(null);
     setLocked(true);
     setPassword("");
@@ -622,6 +627,42 @@ export default function NapaServeAdmin() {
         </div>
 
         <div style={{ borderTop: `1px solid ${T.border}`, margin: "24px 0 32px" }} />
+
+        {/* Admin Tool Cards */}
+        <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: T.gold, marginBottom: 6 }}>
+          Admin Tools
+        </div>
+        <p style={{ fontFamily: font, fontSize: 14, color: T.muted, margin: "0 0 20px" }}>
+          Internal tools for NapaServe operations
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20, marginBottom: 40 }}>
+          {/* Weekly Digest card */}
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: "24px 20px" }}>
+            <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: T.gold, marginBottom: 8 }}>Weekly Digest</div>
+            <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, marginBottom: 8 }}>The Napa Valley Weekender</div>
+            <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.5, margin: "0 0 16px" }}>
+              Review, format and send the weekly Weekender email to subscribers.
+            </p>
+            <button onClick={() => navigate("/events/digest")} style={{
+              fontFamily: font, fontSize: 13, fontWeight: 600, color: "#fff",
+              background: T.accent, border: "none", padding: "8px 20px", cursor: "pointer",
+            }}>
+              Open Digest Tool
+            </button>
+          </div>
+
+          {/* Placeholder for future tools */}
+          <div style={{ background: T.surface, border: `1px dashed ${T.border}`, padding: "24px 20px", opacity: 0.5 }}>
+            <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, marginBottom: 8 }}>Coming Soon</div>
+            <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.muted, marginBottom: 8 }}>Event Moderation</div>
+            <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.5, margin: 0 }}>
+              Review and approve community-submitted events.
+            </p>
+          </div>
+        </div>
+
+        <div style={{ borderTop: `1px solid ${T.border}`, margin: "0 0 32px" }} />
 
         {/* BlueSky Publisher section */}
         <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: T.gold, marginBottom: 6 }}>

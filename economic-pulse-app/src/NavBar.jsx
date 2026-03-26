@@ -5,7 +5,7 @@ const NAV_GROUPS = [
   { label: "Journalism", desc: "Original reporting and searchable archives", links: [{ t: "Napa Valley Features", h: "/news" }, { t: "NVF Archive Search", h: "/archive" }, { t: "Under the Hood", h: "/under-the-hood" }] },
   { label: "Community", desc: "Events, workforce and civic innovation", links: [{ t: "Event Finder", h: "/events" }, { t: "Valley Works", h: "/valley-works" }, { t: "VW Labs", h: "/vw-labs" }] },
   { label: "Intelligence", desc: "Data, analysis and AI-assisted research", links: [{ t: "Community Pulse", h: "/dashboard" }, { t: "Project Evaluator", h: "/evaluator" }, { t: "Research Agent", h: "/agent.html" }] },
-  { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "/about#contact" }, { t: "Admin", h: "/admin", muted: true }] },
+  { label: "Platform", desc: "About NapaServe and how to reach us", links: [{ t: "About NapaServe", h: "/about" }, { t: "Contact", h: "/about#contact" }] },
 ];
 
 export default function NavBar() {

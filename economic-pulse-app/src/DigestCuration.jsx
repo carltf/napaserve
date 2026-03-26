@@ -1,8 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-
-const ADMIN_PASS = "nvf2026";
 
 const T = {
   bg: "#F5F0E8",
@@ -44,60 +43,7 @@ function groupByTown(events) {
 }
 
 export default function DigestCuration() {
-  const [authed, setAuthed] = useState(() => typeof window !== "undefined" && sessionStorage.getItem("nvf_admin") === "true");
-  const [passInput, setPassInput] = useState("");
-  const [passError, setPassError] = useState(false);
-
-  const checkPass = () => {
-    if (passInput === ADMIN_PASS) {
-      sessionStorage.setItem("nvf_admin", "true");
-      setAuthed(true);
-      setPassError(false);
-    } else {
-      setPassError(true);
-    }
-  };
-
-  if (!authed) {
-    return (
-      <>
-        <NavBar />
-        <div style={{ background: T.bg, minHeight: "100vh", fontFamily: font, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ maxWidth: 360, width: "100%", padding: "0 20px" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.gold, marginBottom: 8 }}>Napa Valley Features</div>
-            <h1 style={{ fontFamily: serif, fontSize: 24, fontWeight: 700, color: T.ink, margin: "0 0 8px" }}>Digest Admin</h1>
-            <p style={{ fontSize: 14, color: T.muted, margin: "0 0 20px", lineHeight: 1.5 }}>Enter the password to access the weekly digest tools.</p>
-            <input
-              type="password"
-              value={passInput}
-              onChange={e => { setPassInput(e.target.value); setPassError(false); }}
-              onKeyDown={e => e.key === "Enter" && checkPass()}
-              placeholder="Password"
-              style={{
-                width: "100%", boxSizing: "border-box", padding: "10px 14px",
-                fontFamily: font, fontSize: 15, color: T.ink,
-                background: T.surface, border: `1px solid ${passError ? "#C62828" : T.rule}`,
-                outline: "none", marginBottom: 12,
-              }}
-            />
-            {passError && <div style={{ fontSize: 13, color: "#C62828", marginBottom: 12 }}>Incorrect password.</div>}
-            <button
-              onClick={checkPass}
-              style={{
-                width: "100%", background: T.ink, color: T.bg, border: "none", padding: "10px 24px",
-                fontSize: 13, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase",
-                cursor: "pointer", fontFamily: font,
-              }}
-            >
-              Sign In
-            </button>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
-
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [draftId, setDraftId] = useState(null);
@@ -308,6 +254,13 @@ export default function DigestCuration() {
       setSending(false);
     }
   };
+
+  // Auth gate — redirect to /admin if not authenticated
+  useEffect(() => {
+    if (sessionStorage.getItem("nvf_admin") !== "true") {
+      navigate("/admin");
+    }
+  }, [navigate]);
 
   const selectedCount = Object.values(included).filter(Boolean).length;
   const townGroups = groupByTown(events);
