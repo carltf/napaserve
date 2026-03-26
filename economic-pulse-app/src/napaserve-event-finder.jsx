@@ -30,6 +30,7 @@ const CATEGORIES = [
   { value: "nightlife", label: "Nightlife" },
   { value: "movies", label: "Movies" },
   { value: "theatre", label: "Theatre & Performance" },
+  { value: "astronomy", label: "Night Sky" },
 ];
 
 function todayStr() {
@@ -65,6 +66,9 @@ function fmtTimeAP(t) {
 function fmtPriceAP(ev) {
   if (ev.is_free) return "Free.";
   if (ev.price_info) return ev.price_info.endsWith(".") ? ev.price_info : ev.price_info + ".";
+  // Reception heuristic: receptions at galleries are almost always free
+  const text = ((ev.title || "") + " " + (ev.description || "")).toLowerCase();
+  if (/\b(reception|opening reception|closing reception)\b/.test(text)) return "Free.";
   return "Price not provided.";
 }
 function townLabel(t) {
@@ -305,11 +309,39 @@ export default function EventFinder() {
   const search = useCallback(async () => {
     setLoading(true); setError(null); setResults(null);
     try {
-      const params = new URLSearchParams({ town, type, start: startDate, end: endDate, limit: "10" });
-      const res = await fetch(`${SEARCH_API}/api/search?${params}`);
-      const data = await res.json();
-      if (!data.ok) throw new Error("Search returned an error");
-      setResults(data);
+      if (type === "astronomy") {
+        // Query astronomical_events directly from Supabase
+        const url = `${SUPABASE_URL}/rest/v1/astronomical_events`
+          + `?select=id,title,description,event_date,end_date,peak_time,viewing_notes,is_notable`
+          + `&event_date=gte.${startDate}&event_date=lte.${endDate}`
+          + `&order=event_date.asc&limit=10`;
+        const res = await fetch(url, {
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+        });
+        if (!res.ok) throw new Error("Night Sky search failed");
+        const data = await res.json();
+        // Map to the same shape as search API results
+        setResults({
+          ok: true,
+          results: data.map(ev => ({
+            header: ev.title,
+            body: [
+              fmtDateAP(ev.event_date),
+              ev.end_date && ev.end_date !== ev.event_date ? ` through ${fmtDateAP(ev.end_date)}` : "",
+              ev.peak_time ? `. Peak viewing: ${ev.peak_time}` : "",
+              ev.description ? `. ${ev.description}` : "",
+              ev.viewing_notes ? ` ${ev.viewing_notes}` : "",
+            ].filter(Boolean).join(""),
+            _sky: true,
+          })),
+        });
+      } else {
+        const params = new URLSearchParams({ town, type, start: startDate, end: endDate, limit: "10" });
+        const res = await fetch(`${SEARCH_API}/api/search?${params}`);
+        const data = await res.json();
+        if (!data.ok) throw new Error("Search returned an error");
+        setResults(data);
+      }
     } catch (err) {
       setError(err.message || "Search failed. Event sources may be temporarily unavailable.");
     } finally { setLoading(false); }
@@ -440,8 +472,8 @@ export default function EventFinder() {
                     <div style={{ fontSize: 13, color: "#8B7355", marginBottom: 4 }}>{fmtPriceAP(ev)}</div>
                     {(ev.website_url || ev.ticket_url) && (
                       <div style={{ fontSize: 13, marginBottom: 4 }}>
-                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "#8B5E3C", textDecoration: "none" }}>
-                          {ev.ticket_url ? "Get tickets" : "For more information visit their website"}.
+                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "#8B5E3C", textDecoration: "underline", textUnderlineOffset: 2 }}>
+                          {ev.ticket_url ? "Get tickets." : "For more information visit their website."}
                         </a>
                       </div>
                     )}
@@ -477,7 +509,7 @@ export default function EventFinder() {
                       {ev.venue_name && <div style={{ fontSize: 12, color: "#8B7355", marginBottom: 2 }}>{ev.venue_name}</div>}
                       <div style={{ fontSize: 12, color: "#8B7355", marginBottom: 4 }}>{fmtPriceAP(ev)}</div>
                       {(ev.website_url || ev.ticket_url) ? (
-                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B5E3C", textDecoration: "none" }}>
+                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B5E3C", textDecoration: "underline", textUnderlineOffset: 2 }}>
                           Visit their website.
                         </a>
                       ) : null}
