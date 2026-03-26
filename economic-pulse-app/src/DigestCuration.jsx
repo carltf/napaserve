@@ -60,6 +60,7 @@ export default function DigestCuration() {
   const [hasMore, setHasMore] = useState(false);
   const [totalEvents, setTotalEvents] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [fetchExhausted, setFetchExhausted] = useState(false);
   const formatAbort = useRef(null);
 
   const formatEventAsync = useCallback(async (ev) => {
@@ -113,6 +114,8 @@ export default function DigestCuration() {
       setEvents(loadedEvents);
       setHasMore(data.hasMore || false);
       setTotalEvents(data.total || loadedEvents.length);
+      // If we got fewer events than we asked for, there are no more to load
+      setFetchExhausted(loadedEvents.length < eventLimit);
       const inc = {};
       for (const ev of loadedEvents) inc[ev.id] = true;
       setIncluded(inc);
@@ -169,6 +172,7 @@ export default function DigestCuration() {
       const loadedEvents = data.events || [];
       setHasMore(data.hasMore || false);
       setTotalEvents(data.total || loadedEvents.length);
+      setFetchExhausted(loadedEvents.length < newLimit);
 
       // Find new events that weren't in the previous set
       const existingIds = new Set(events.map(e => e.id));
@@ -392,7 +396,8 @@ export default function DigestCuration() {
                               </>
                             )}
 
-                            {ev.website_url && (
+                            {/* Website URL only shown in raw fallback, not after formatting */}
+                            {!ev.formatted && ev.website_url && (
                               <a
                                 href={ev.website_url}
                                 target="_blank"
@@ -410,11 +415,11 @@ export default function DigestCuration() {
                   </div>
                 ))}
 
-                {/* Load more button */}
-                {(hasMore || totalEvents > events.length) && (
+                {/* Load more button — show if we have >=3 events, haven't exhausted the pool, and limit < 25 */}
+                {events.length >= 3 && !fetchExhausted && eventLimit < 25 && (
                   <div style={{ textAlign: "center", marginTop: 16 }}>
                     <button
-                      onClick={() => { console.log("Load more clicked, current limit:", eventLimit, "total:", totalEvents); loadMore(); }}
+                      onClick={loadMore}
                       disabled={loadingMore}
                       style={{
                         background: "#fff", border: "1px solid #e5e0d8", padding: "10px 24px",
@@ -422,7 +427,7 @@ export default function DigestCuration() {
                         fontFamily: font,
                       }}
                     >
-                      {loadingMore ? "Loading\u2026" : `Load more events (showing ${events.length} of ${totalEvents})`}
+                      {loadingMore ? "Loading\u2026" : `Load more events (showing ${events.length}${totalEvents > events.length ? ` of ${totalEvents}` : ""})`}
                     </button>
                   </div>
                 )}
@@ -490,7 +495,7 @@ export default function DigestCuration() {
                     {sending ? "Sending\u2026" : `Send to Subscribers (${selectedCount} events)`}
                   </button>
                   <button
-                    onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setSkyEvents([]); setSkyIncluded({}); setAiIntro(""); setSent(false); setEventLimit(5); setHasMore(false); }}
+                    onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setSkyEvents([]); setSkyIncluded({}); setAiIntro(""); setSent(false); setEventLimit(5); setHasMore(false); setFetchExhausted(false); }}
                     style={{ background: "none", border: `1px solid ${T.rule}`, padding: "10px 20px", fontSize: 13, color: T.muted, cursor: "pointer", fontFamily: font }}
                   >
                     Start Over

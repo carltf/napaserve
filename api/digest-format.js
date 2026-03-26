@@ -19,7 +19,18 @@ const KNOWN_VENUES = {
   'american canyon community center': '100 Benton Way',
   'st. helena public library': '1492 Library Ln.',
   'napa main library': '580 Coombs St.',
+  'st. helena historical society heritage center': '1255 Oak Ave.',
+  'heritage center': '1255 Oak Ave.',
+  'steve rogers gallery': '1338 Lincoln Ave.',
 };
+
+// Venues where receptions are always free
+const FREE_RECEPTION_VENUES = new Set([
+  'steve rogers gallery',
+]);
+
+// Words that indicate a venue name, not a street address
+const VENUE_NAME_WORDS = /\b(center|hall|gallery|theater|theatre|church|studio|museum|library|park|school|inn|hotel|resort|winery|cellar|tasting room)\b/i;
 
 export default async function handler(req, res) {
   // CORS headers on every response
@@ -53,11 +64,20 @@ export default async function handler(req, res) {
     const enriched = { ...ev };
     const hasSupa = SUPABASE_URL && SUPABASE_KEY;
 
-    // Collect what we need to search for via web (batch into one search call)
-    const needsAddressSearch = !enriched.address && !lookupKnownVenue(enriched.venue_name);
-    const needsPriceSearch = !enriched.price_info && enriched.is_free !== true && enriched.is_free !== false;
-    const needsWebsiteSearch = !enriched.website_url;
-    let needsContactSearch = !enriched.organizer_contact;
+    // ADDRESS VALIDATION — if address looks like a venue name (no street number), clear it
+    if (enriched.address && !(/^\d/.test(enriched.address.trim())) && VENUE_NAME_WORDS.test(enriched.address)) {
+      enriched.address = null;
+    }
+
+    // PRICE HEURISTIC — receptions at galleries are almost always free
+    const titleAndDesc = ((enriched.title || '') + ' ' + (enriched.description || '')).toLowerCase();
+    const isReception = /\b(reception|opening reception|closing reception)\b/.test(titleAndDesc);
+    if (isReception && !enriched.price_info && enriched.is_free !== true && enriched.is_free !== false) {
+      const venueKey = (enriched.venue_name || '').toLowerCase().trim();
+      if (FREE_RECEPTION_VENUES.has(venueKey) || /\bgallery\b/i.test(enriched.venue_name || '')) {
+        enriched.is_free = true;
+      }
+    }
 
     // 1. ADDRESS — known venues first
     if (!enriched.address) {
