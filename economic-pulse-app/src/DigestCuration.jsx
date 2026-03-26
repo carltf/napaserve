@@ -390,7 +390,10 @@ export default function DigestCuration() {
                                 fontSize: 13, color: T.ink, lineHeight: 1.55,
                                 whiteSpace: "pre-wrap", marginTop: 4,
                               }}>
-                                {ev.formatted}
+                                {ev.formatted
+                                  .replace(/for\s+more\s+information\s+visit\s+their\s+website\s*(\([^)]*\))?\s*\.?\s*/gi, "")
+                                  .replace(/visit\s+their\s+website\s*\.?\s*/gi, "")
+                                  .trim()}
                               </div>
                             ) : (
                               <>

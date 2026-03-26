@@ -109,10 +109,10 @@ function parseEventBody(body) {
   // Decode unicode escape sequences (e.g. \u2026 → …)
   body = body.replace(/\\u([0-9a-fA-F]{4})/g, (_, code) => String.fromCharCode(parseInt(code, 16)));
 
-  // Clean the body text: remove URLs and their surrounding parens/labels
+  // Clean the body text: remove URLs, "visit their website" phrases, and surrounding parens
   let text = body
-    .replace(/For more information visit their website\s*\(https?:\/\/[^\s)]+\/?\)\.\s*/gi, "")
-    .replace(/Visit their website\.\s*/gi, "")
+    .replace(/for\s+more\s+information\s+visit\s+their\s+website\s*(\([^)]*\))?\s*\.?\s*/gi, "")
+    .replace(/visit\s+their\s+website\s*\.?\s*/gi, "")
     .replace(/\(https?:\/\/[^\s)]+\)/g, "")
     .replace(/https?:\/\/[^\s)]+/g, "")
     // Strip false midnight times: ", 12 a.m." or ", 12:00 a.m." (scraper default when time unknown)
