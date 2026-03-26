@@ -407,14 +407,14 @@ export default function DigestCuration() {
                 ))}
 
                 {/* Load more button */}
-                {hasMore && (
+                {(hasMore || totalEvents > events.length) && (
                   <div style={{ textAlign: "center", marginTop: 16 }}>
                     <button
-                      onClick={loadMore}
+                      onClick={() => { console.log("Load more clicked, current limit:", eventLimit, "total:", totalEvents); loadMore(); }}
                       disabled={loadingMore}
                       style={{
-                        background: "none", border: `1px solid ${T.rule}`, padding: "10px 24px",
-                        fontSize: 13, fontWeight: 600, color: T.accent, cursor: loadingMore ? "wait" : "pointer",
+                        background: "#fff", border: "1px solid #e5e0d8", padding: "10px 24px",
+                        fontSize: 13, fontWeight: 600, color: T.ink, cursor: loadingMore ? "wait" : "pointer",
                         fontFamily: font,
                       }}
                     >

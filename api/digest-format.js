@@ -13,6 +13,8 @@ export default async function handler(req, res) {
   }
 
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_KEY = process.env.SUPABASE_KEY;
   if (!ANTHROPIC_API_KEY) {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
   }
@@ -87,74 +89,131 @@ Output only the finished listing. No notes, no labels, no explanation.`;
 
     let formatted = data.content?.[0]?.text || '';
 
-    // Step 2: If address is missing, use web search to enrich
+    // Step 2: If address is missing, try to enrich
     const needsEnrichment = formatted.includes('Venue address not provided');
 
     if (needsEnrichment && (ev.venue_name || ev.title)) {
-      const searchQuery = [ev.venue_name, ev.title, 'Napa County California address']
-        .filter(Boolean).join(' ');
+      let foundAddress = null;
+      let foundPhone = null;
+      let foundEmail = null;
 
-      try {
-        const enrichRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': ANTHROPIC_API_KEY,
-            'anthropic-version': '2025-03-26',
-          },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 300,
-            tools: [{
-              type: 'web_search_20250305',
-              name: 'web_search',
-              max_uses: 2,
-            }],
-            messages: [{
-              role: 'user',
-              content: `Search for the street address, phone number, and email for: ${searchQuery}
+      // 2a: Check known Napa Valley venues (hardcoded)
+      const KNOWN_VENUES = {
+        'brannan center': '1407 Lincoln Ave.',
+        'the brannan center': '1407 Lincoln Ave.',
+        'lincoln theater': '1312 Lincoln Ave.',
+        'lincoln theatre': '1312 Lincoln Ave.',
+        'napa valley opera house': '1030 Main St.',
+        'uptown theatre': '1350 Third St.',
+        'blue note napa': '1030 Main St.',
+        'oxbow public market': '610 1st St.',
+        'cia at copia': '500 1st St.',
+        'napa valley expo': '575 Third St.',
+      };
+
+      const venueKey = (ev.venue_name || '').toLowerCase().trim();
+      if (KNOWN_VENUES[venueKey]) {
+        foundAddress = KNOWN_VENUES[venueKey];
+      }
+
+      // 2b: If not in known venues, check community_events DB for same venue_name with address
+      if (!foundAddress && ev.venue_name && SUPABASE_URL && SUPABASE_KEY) {
+        try {
+          const lookupUrl = `${SUPABASE_URL}/rest/v1/community_events`
+            + `?venue_name=eq.${encodeURIComponent(ev.venue_name)}`
+            + `&address=not.is.null`
+            + `&select=address`
+            + `&limit=1`;
+
+          const lookupRes = await fetch(lookupUrl, {
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (lookupRes.ok) {
+            const rows = await lookupRes.json();
+            if (rows.length > 0 && rows[0].address) {
+              foundAddress = rows[0].address;
+            }
+          }
+        } catch (dbErr) {
+          console.error('Venue DB lookup error (non-fatal):', dbErr);
+        }
+      }
+
+      // 2c: If still no address, use web search
+      if (!foundAddress) {
+        const searchQuery = [ev.venue_name, ev.title, 'Napa County California address']
+          .filter(Boolean).join(' ');
+
+        try {
+          const enrichRes = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': ANTHROPIC_API_KEY,
+              'anthropic-version': '2025-03-26',
+            },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 300,
+              tools: [{
+                type: 'web_search_20250305',
+                name: 'web_search',
+                max_uses: 2,
+              }],
+              messages: [{
+                role: 'user',
+                content: `Search for the street address, phone number, and email for: ${searchQuery}
 
 Return ONLY a JSON object with these fields (use null if not found):
 {"address": "street address only, no city/state/zip", "phone": "phone number", "email": "email address"}
 
 Do not include any other text.`,
-            }],
-          }),
-        });
+              }],
+            }),
+          });
 
-        const enrichData = await enrichRes.json();
+          const enrichData = await enrichRes.json();
 
-        // Extract text from response (may have multiple content blocks with web search)
-        let enrichText = '';
-        if (enrichData.content) {
-          for (const block of enrichData.content) {
-            if (block.type === 'text') {
-              enrichText += block.text;
+          let enrichText = '';
+          if (enrichData.content) {
+            for (const block of enrichData.content) {
+              if (block.type === 'text') {
+                enrichText += block.text;
+              }
             }
           }
-        }
 
-        // Parse the JSON response
-        const jsonMatch = enrichText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const found = JSON.parse(jsonMatch[0]);
-          if (found.address && found.address !== 'null') {
-            formatted = formatted.replace('Venue address not provided.', found.address);
+          const jsonMatch = enrichText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const found = JSON.parse(jsonMatch[0]);
+            if (found.address && found.address !== 'null') foundAddress = found.address;
+            if (found.phone && found.phone !== 'null') foundPhone = found.phone;
+            if (found.email && found.email !== 'null') foundEmail = found.email;
           }
-          // Append phone/email to the contact line if found
-          const extras = [];
-          if (found.phone && found.phone !== 'null') extras.push(found.phone);
-          if (found.email && found.email !== 'null') extras.push(found.email);
-          if (extras.length > 0) {
-            const contactLine = 'For more information visit their website.';
-            const enrichedContact = `For more information visit their website or call ${extras.join(' or email ')}.`;
-            if (formatted.includes(contactLine)) {
-              formatted = formatted.replace(contactLine, enrichedContact);
-            }
-          }
+        } catch (enrichErr) {
+          console.error('Enrichment search error (non-fatal):', enrichErr);
         }
-      } catch (enrichErr) {
-        console.error('Enrichment search error (non-fatal):', enrichErr);
+      }
+
+      // Apply enrichment to formatted text
+      if (foundAddress) {
+        formatted = formatted.replace('Venue address not provided.', foundAddress);
+      }
+
+      const extras = [];
+      if (foundPhone) extras.push(foundPhone);
+      if (foundEmail) extras.push(foundEmail);
+      if (extras.length > 0) {
+        const contactLine = 'For more information visit their website.';
+        const enrichedContact = `For more information visit their website or call ${extras.join(' or email ')}.`;
+        if (formatted.includes(contactLine)) {
+          formatted = formatted.replace(contactLine, enrichedContact);
+        }
       }
     }
 
