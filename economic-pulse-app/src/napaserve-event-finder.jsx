@@ -112,6 +112,7 @@ function parseEventBody(body) {
   // Clean the body text: remove URLs and their surrounding parens/labels
   let text = body
     .replace(/For more information visit their website\s*\(https?:\/\/[^\s)]+\/?\)\.\s*/gi, "")
+    .replace(/Visit their website\.\s*/gi, "")
     .replace(/\(https?:\/\/[^\s)]+\)/g, "")
     .replace(/https?:\/\/[^\s)]+/g, "")
     // Strip false midnight times: ", 12 a.m." or ", 12:00 a.m." (scraper default when time unknown)
@@ -130,6 +131,14 @@ function linkLabel(url) {
   if (/facebook\.com/i.test(url)) return "Facebook";
   if (/instagram\.com/i.test(url)) return "Instagram";
   return "More Info";
+}
+// Extract the best link URL from a DB event row, falling back to description text
+function eventLink(ev) {
+  if (ev.website_url) return { url: ev.website_url, label: "More Info" };
+  if (ev.ticket_url) return { url: ev.ticket_url, label: "Get Tickets" };
+  const m = ((ev.description || "") + " " + (ev.source_url || "")).match(/https?:\/\/[^\s)]+/);
+  if (m) return { url: m[0], label: "More Info" };
+  return null;
 }
 const inputBase = {
   width: "100%", padding: "10px 12px", fontSize: 14, fontFamily: "'Source Sans 3',sans-serif",
@@ -729,13 +738,13 @@ export default function EventFinder() {
                     </div>
                     {ev.description && <div style={{ fontSize: 13, color: "#2C1810", lineHeight: 1.5, marginBottom: 6 }}>{ev.description.length > 120 ? ev.description.slice(0, 120) + "\u2026" : ev.description}</div>}
                     <div style={{ fontSize: 13, color: "#8B7355", marginBottom: 4 }}>{fmtPriceAP(ev)}</div>
-                    {(ev.website_url || ev.ticket_url) && (
+                    {(() => { const lnk = eventLink(ev); return lnk ? (
                       <div style={{ fontSize: 13, marginBottom: 4 }}>
-                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "#8B5E3C", textDecoration: "underline", textUnderlineOffset: 2 }}>
-                          {ev.ticket_url ? "Get tickets." : "For more information visit their website."}
+                        <a href={lnk.url} target="_blank" rel="noopener noreferrer" style={{ color: "#8B5E3C", textDecoration: "underline", textUnderlineOffset: 2 }}>
+                          {lnk.label}
                         </a>
                       </div>
-                    )}
+                    ) : null; })()}
                     {ev.address && <div style={{ fontSize: 12, color: "#8B7355" }}>{ev.address}</div>}
                   </div>
                 ))}
@@ -768,11 +777,11 @@ export default function EventFinder() {
                       </div>
                       {ev.venue_name && <div style={{ fontSize: 12, color: "#8B7355", marginBottom: 2 }}>{ev.venue_name}</div>}
                       <div style={{ fontSize: 12, color: "#8B7355", marginBottom: 4 }}>{fmtPriceAP(ev)}</div>
-                      {(ev.website_url || ev.ticket_url) ? (
-                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B5E3C", textDecoration: "underline", textUnderlineOffset: 2 }}>
-                          Visit their website.
+                      {(() => { const lnk = eventLink(ev); return lnk ? (
+                        <a href={lnk.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B5E3C", textDecoration: "underline", textUnderlineOffset: 2 }}>
+                          {lnk.label}
                         </a>
-                      ) : null}
+                      ) : null; })()}
                       {ev.address && <div style={{ fontSize: 11, color: "#8B7355", marginTop: 4 }}>{ev.address}</div>}
                     </div>
                   );
