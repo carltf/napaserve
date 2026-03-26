@@ -405,18 +405,25 @@ export default function DigestCuration() {
                               </>
                             )}
 
-                            {/* Website URL only shown in raw fallback, not after formatting */}
-                            {!ev.formatted && ev.website_url && (
-                              <a
-                                href={ev.website_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={e => e.stopPropagation()}
-                                style={{ fontSize: 12, color: T.accent, textDecoration: "none", marginTop: 3, display: "inline-block" }}
-                              >
-                                {ev.website_url.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]} &#8599;
-                              </a>
-                            )}
+                            {/* Best available URL: website_url → ticket_url → source_url → regex from description */}
+                            {!ev.formatted && (() => {
+                              const bestUrl = ev.website_url || ev.ticket_url
+                                || (ev.source_url && /^https?:\/\//.test(ev.source_url) ? ev.source_url : null)
+                                || ((ev.description || "").match(/https?:\/\/[^\s)]+/) || [])[0]
+                                || null;
+                              if (!bestUrl) return null;
+                              return (
+                                <a
+                                  href={bestUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={e => e.stopPropagation()}
+                                  style={{ fontSize: 12, color: T.accent, textDecoration: "none", marginTop: 3, display: "inline-block" }}
+                                >
+                                  {bestUrl.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]} &#8599;
+                                </a>
+                              );
+                            })()}
                           </div>
                         </div>
                       );

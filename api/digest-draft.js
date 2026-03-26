@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   const select = [
     'id', 'title', 'description', 'event_date', 'start_time', 'end_time',
     'venue_name', 'address', 'town', 'category',
-    'price_info', 'is_free', 'is_recurring', 'website_url', 'ticket_url',
+    'price_info', 'is_free', 'is_recurring', 'website_url', 'ticket_url', 'source_url',
   ].join(',');
 
   const queryUrl = `${SUPABASE_URL}/rest/v1/community_events`

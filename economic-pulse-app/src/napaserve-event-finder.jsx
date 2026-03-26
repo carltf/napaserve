@@ -132,12 +132,15 @@ function linkLabel(url) {
   if (/instagram\.com/i.test(url)) return "Instagram";
   return "More Info";
 }
-// Extract the best link URL from a DB event row, falling back to description text
+// Extract the best link URL from a DB event row or result object
+// Priority: website_url → ticket_url → source_url (http only) → regex from description → bestUrl
 function eventLink(ev) {
   if (ev.website_url) return { url: ev.website_url, label: "More Info" };
   if (ev.ticket_url) return { url: ev.ticket_url, label: "Get Tickets" };
-  const m = ((ev.description || "") + " " + (ev.source_url || "")).match(/https?:\/\/[^\s)]+/);
+  if (ev.source_url && /^https?:\/\//.test(ev.source_url)) return { url: ev.source_url, label: "More Info" };
+  const m = (ev.description || "").match(/https?:\/\/[^\s)]+/);
   if (m) return { url: m[0], label: "More Info" };
+  if (ev.bestUrl) return { url: ev.bestUrl, label: "More Info" };
   return null;
 }
 const inputBase = {
@@ -343,6 +346,11 @@ export default function EventFinder() {
   }
   function dbEventToResult(ev) {
     const badge = ev.source === "community" ? "(N) " : "";
+    // Find the best URL from the DB row itself
+    const dbUrl = ev.website_url || ev.ticket_url
+      || (ev.source_url && /^https?:\/\//.test(ev.source_url) ? ev.source_url : null)
+      || ((ev.description || "").match(/https?:\/\/[^\s)]+/) || [])[0]
+      || null;
     const bodyParts = [
       fmtDateAP(ev.event_date),
       ev.end_date && ev.end_date !== ev.event_date ? ` through ${fmtDateAP(ev.end_date)}` : "",
@@ -353,8 +361,7 @@ export default function EventFinder() {
       ". ",
       fmtPriceAP(ev),
       ev.description ? ` ${ev.description}` : "",
-      ev.website_url ? ` (${ev.website_url})` : "",
-      ev.ticket_url ? ` (${ev.ticket_url})` : "",
+      dbUrl ? ` (${dbUrl})` : "",
     ];
     return {
       header: badge + ev.title,
@@ -364,6 +371,7 @@ export default function EventFinder() {
       _dbTitle: ev.title,
       _dbDate: ev.event_date || "",
       _dbPriceInfo: ev.price_info || "",
+      bestUrl: dbUrl,
     };
   }
   // Deduplicate DB events: same title + same event_date → keep the one with more info
@@ -537,15 +545,15 @@ export default function EventFinder() {
               usedScraperIdx.add(idx);
               console.log(`[EventFinder] Dedup: DB "${dbR._dbTitle}" matches scraper[${idx}] "${se.header}" — suppressing scraper copy`);
               // If DB result has no URLs, pull them from the scraper match
-              const hasUrl = /https?:\/\//.test(dbR.body);
-              if (!hasUrl && se.body) {
+              if (!dbR.bestUrl && se.body) {
                 const scraperUrls = [];
                 const urlRe = /\(?(https?:\/\/[^\s)]+)\)?/g;
                 let um;
                 while ((um = urlRe.exec(se.body)) !== null) scraperUrls.push(um[1]);
                 if (scraperUrls.length > 0) {
                   dbR.body = dbR.body + " " + scraperUrls.map(u => `(${u})`).join(" ");
-                  console.log(`[EventFinder] Link enrich: DB "${dbR._dbTitle}" got ${scraperUrls.length} URL(s) from scraper`);
+                  dbR.bestUrl = scraperUrls[0];
+                  console.log(`[EventFinder] Link enrich: DB "${dbR._dbTitle}" got ${scraperUrls.length} URL(s) from scraper → bestUrl=${scraperUrls[0]}`);
                 }
               }
             }
