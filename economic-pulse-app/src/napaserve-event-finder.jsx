@@ -43,6 +43,35 @@ function plusDays(ymd, n) {
 function fmtDateNice(ymd) {
   return new Date(ymd + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
+// AP-style date: "Saturday, March 28"
+function fmtDateAP(ymd) {
+  if (!ymd) return "";
+  const d = new Date(ymd + "T12:00:00");
+  return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+}
+// AP-style time: "10 a.m." or "6:30 p.m."
+function fmtTimeAP(t) {
+  if (!t) return "";
+  const m = t.match(/^(\d{1,2}):?(\d{2})?\s*(AM|PM|a\.m\.|p\.m\.)?$/i);
+  if (!m) return t;
+  let hr = parseInt(m[1], 10);
+  const min = m[2] || "00";
+  let period = (m[3] || "").replace(/\./g, "").toLowerCase();
+  if (!period) { period = hr >= 12 ? "pm" : "am"; if (hr > 12) hr -= 12; if (hr === 0) hr = 12; }
+  else { if (period === "pm" && hr > 12) hr -= 12; if (period === "am" && hr === 0) hr = 12; }
+  const suffix = period === "pm" ? "p.m." : "a.m.";
+  return min === "00" ? `${hr} ${suffix}` : `${hr}:${min} ${suffix}`;
+}
+function fmtPriceAP(ev) {
+  if (ev.is_free) return "Free.";
+  if (ev.price_info) return ev.price_info.endsWith(".") ? ev.price_info : ev.price_info + ".";
+  return "Price not provided.";
+}
+function townLabel(t) {
+  if (!t) return "";
+  const m = { "st-helena": "St. Helena", "american-canyon": "American Canyon" };
+  return m[t] || t.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
 
 const QUICK_DATES = [
   { label: "Today", get: () => ({ s: todayStr(), e: todayStr() }) },
@@ -397,19 +426,26 @@ export default function EventFinder() {
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#8B7355", marginBottom: 10 }}>Featured Events</div>
               <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
                 {featuredEvents.map((ev, i) => (
-                  <div key={ev.id || i} style={{ minWidth: 240, maxWidth: 280, flex: "0 0 auto", background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", borderLeft: "3px solid #C4A050", padding: "16px 18px" }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#C4A050", marginBottom: 6 }}>Featured</div>
-                    <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 8 }}>{ev.title}</div>
-                    <div style={{ fontSize: 14, color: "#7A6A50", marginBottom: 4 }}>
-                      {ev.event_date && fmtDateNice(ev.event_date)}
-                      {ev.town && <span style={{ marginLeft: 8, color: "#8B7355" }}>{ev.town}</span>}
+                  <div key={ev.id || i} style={{ minWidth: 240, maxWidth: 300, flex: "0 0 auto", background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", borderLeft: "3px solid #C4A050", padding: "16px 18px" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#C4A050", marginBottom: 4 }}>
+                      {ev.is_recurring ? "(R) Featured" : "(N) Featured"}
                     </div>
-                    {ev.category && <div style={{ fontSize: 14, color: "#8B7355", textTransform: "capitalize", marginBottom: 8 }}>{ev.category.replace(/_/g, " ")}</div>}
+                    <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 15, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 6 }}>{ev.title}</div>
+                    <div style={{ fontSize: 13, color: "#7A6A50", marginBottom: 4, lineHeight: 1.5 }}>
+                      {fmtDateAP(ev.event_date)}
+                      {ev.start_time ? `, ${fmtTimeAP(ev.start_time)}` : ""}
+                      {ev.end_time ? ` to ${fmtTimeAP(ev.end_time)}` : ""}
+                    </div>
+                    {ev.description && <div style={{ fontSize: 13, color: "#2C1810", lineHeight: 1.5, marginBottom: 6 }}>{ev.description.length > 120 ? ev.description.slice(0, 120) + "\u2026" : ev.description}</div>}
+                    <div style={{ fontSize: 13, color: "#8B7355", marginBottom: 4 }}>{fmtPriceAP(ev)}</div>
                     {(ev.website_url || ev.ticket_url) && (
-                      <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" aria-label={`${ev.title}, opens in new tab`} style={{ display: "inline-block", fontSize: 11, fontWeight: 600, color: "#8B5E3C", textDecoration: "none", border: "1px solid rgba(139,105,20,0.25)", padding: "5px 12px", borderRadius: 4 }}>
-                        {ev.ticket_url ? "Get Tickets ↗" : "More Info ↗"}
-                      </a>
+                      <div style={{ fontSize: 13, marginBottom: 4 }}>
+                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "#8B5E3C", textDecoration: "none" }}>
+                          {ev.ticket_url ? "Get tickets" : "For more information visit their website"}.
+                        </a>
+                      </div>
                     )}
+                    {ev.address && <div style={{ fontSize: 12, color: "#8B7355" }}>{ev.address}</div>}
                   </div>
                 ))}
               </div>
@@ -423,19 +459,31 @@ export default function EventFinder() {
             {upcomingEvents.length > 0 ? (
               <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
                 {upcomingEvents.map((ev, i) => {
-                  const url = ev.ticket_url || ev.website_url;
-                  const card = (
-                    <div style={{ minWidth: 200, maxWidth: 240, flex: "0 0 auto", background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "14px 16px" }}>
-                      <div style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#C4A050", marginBottom: 4 }}>{ev.event_date ? new Date(ev.event_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 6 }}>{ev.title}</div>
-                      {ev.town && <div style={{ fontSize: 14, color: "#7A6A50", marginBottom: 4, textTransform: "capitalize" }}>{ev.town.replace(/-/g, " ")}</div>}
-                      {ev.category && <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#8B7355", border: "1px solid rgba(44,24,16,0.12)", padding: "2px 7px" }}>{ev.category.replace(/_/g, " ")}</span>}
-                      {!url && <div style={{ fontSize: 14, color: "#8B7355", marginTop: 6 }}>No link available</div>}
+                  const tag = ev.is_recurring ? "(R)" : "(N)";
+                  return (
+                    <div key={ev.id || i} style={{ minWidth: 220, maxWidth: 280, flex: "0 0 auto", background: "#F5F0E8", border: "1px solid rgba(139,105,20,0.15)", padding: "14px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: ev.is_recurring ? "#8B7355" : "#C4A050" }}>{tag}</span>
+                        <span style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: "#C4A050" }}>
+                          {ev.event_date ? new Date(ev.event_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "#2C1810", lineHeight: 1.3, marginBottom: 4 }}>{ev.title}</div>
+                      <div style={{ fontSize: 12, color: "#7A6A50", marginBottom: 4 }}>
+                        {fmtDateAP(ev.event_date)}
+                        {ev.start_time ? `, ${fmtTimeAP(ev.start_time)}` : ""}
+                        {ev.end_time ? ` to ${fmtTimeAP(ev.end_time)}` : ""}
+                      </div>
+                      {ev.venue_name && <div style={{ fontSize: 12, color: "#8B7355", marginBottom: 2 }}>{ev.venue_name}</div>}
+                      <div style={{ fontSize: 12, color: "#8B7355", marginBottom: 4 }}>{fmtPriceAP(ev)}</div>
+                      {(ev.website_url || ev.ticket_url) ? (
+                        <a href={ev.ticket_url || ev.website_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#8B5E3C", textDecoration: "none" }}>
+                          Visit their website.
+                        </a>
+                      ) : null}
+                      {ev.address && <div style={{ fontSize: 11, color: "#8B7355", marginTop: 4 }}>{ev.address}</div>}
                     </div>
                   );
-                  return url
-                    ? <a key={ev.id || i} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${ev.title}, opens in new tab`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>{card}</a>
-                    : <div key={ev.id || i}>{card}</div>;
                 })}
               </div>
             ) : (
