@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import WordExporter from "./components/WordExporter";
+import EventIntake from "./EventIntake";
 
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 
@@ -652,15 +653,10 @@ export default function NapaServeAdmin() {
             </button>
           </div>
 
-          {/* Placeholder for future tools */}
-          <div style={{ background: T.surface, border: `1px dashed ${T.border}`, padding: "24px 20px", opacity: 0.5 }}>
-            <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, marginBottom: 8 }}>Coming Soon</div>
-            <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.muted, marginBottom: 8 }}>Event Moderation</div>
-            <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.5, margin: 0 }}>
-              Review and approve community-submitted events.
-            </p>
-          </div>
         </div>
+
+        {/* Event Intake */}
+        <EventIntake />
 
         <div style={{ borderTop: `1px solid ${T.border}`, margin: "0 0 32px" }} />
 
