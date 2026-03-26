@@ -1,3 +1,5 @@
+const TOWN_ORDER = ['valley-wide', 'american-canyon', 'calistoga', 'napa', 'st-helena', 'yountville'];
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -52,8 +54,8 @@ export default async function handler(req, res) {
     const eventsRes = await fetch(
       `${SUPABASE_URL}/rest/v1/community_events`
         + `?id=in.(${eventIds.join(',')})`
-        + `&select=id,title,description,event_date,start_time,end_time,venue_name,town,category,website_url`
-        + `&order=event_date.asc,start_time.asc`,
+        + `&select=id,title,description,event_date,start_time,end_time,venue_name,address,town,category,price_info,is_free,is_recurring,website_url,ticket_url`
+        + `&order=town.asc,event_date.asc,start_time.asc`,
       {
         headers: {
           'apikey': SUPABASE_KEY,
@@ -83,16 +85,22 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No active subscribers' });
     }
 
-    // Group events by category
-    const grouped = {};
+    // Group events by town in defined order
+    const byTown = {};
     for (const ev of events) {
-      const cat = ev.category || 'community';
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(ev);
+      const t = ev.town || 'napa';
+      if (!byTown[t]) byTown[t] = [];
+      byTown[t].push(ev);
     }
 
+    const townKeys = Object.keys(byTown).sort((a, b) => {
+      const ai = TOWN_ORDER.indexOf(a);
+      const bi = TOWN_ORDER.indexOf(b);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+
     // Build email HTML
-    const emailHtml = buildDigestEmail(aiIntro, grouped, draft.date_range_start, draft.date_range_end);
+    const emailHtml = buildDigestEmail(aiIntro, byTown, townKeys, draft.date_range_start, draft.date_range_end);
 
     // Format date range for subject line
     const startFmt = formatDateShort(draft.date_range_start);
@@ -107,10 +115,10 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify(
         subscribers.map(sub => ({
-          from: 'NapaServe <digest@napaserve.org>',
+          from: 'Napa Valley Features <digest@napaserve.org>',
           to: sub.email,
-          subject: `This Week in Napa County — ${startFmt} to ${endFmt}`,
-          html: emailHtml.replace('{{NAME}}', sub.name || 'Neighbor'),
+          subject: `The Napa Valley Weekender \u2014 ${startFmt} to ${endFmt}`,
+          html: emailHtml.replace(/\{\{NAME\}\}/g, sub.name || 'Neighbor').replace(/\{\{EMAIL\}\}/g, encodeURIComponent(sub.email)),
         }))
       ),
     });
@@ -161,39 +169,51 @@ function formatDateShort(dateStr) {
 function formatEventDate(dateStr) {
   if (!dateStr) return '';
   const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 }
 
 function townDisplay(town) {
-  if (!town) return '';
+  if (!town) return 'Napa';
+  const names = { 'valley-wide': 'Valley-Wide', 'american-canyon': 'American Canyon', 'st-helena': 'St. Helena' };
+  if (names[town]) return names[town];
   return town.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function buildDigestEmail(aiIntro, grouped, dateStart, dateEnd) {
+function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd) {
   const startFmt = formatDateShort(dateStart);
   const endFmt = formatDateShort(dateEnd);
 
   let eventsHtml = '';
-  for (const [category, events] of Object.entries(grouped)) {
-    const catLabel = category.charAt(0).toUpperCase() + category.slice(1);
+  for (const town of townKeys) {
+    const townLabel = townDisplay(town);
+    const events = byTown[town];
+
+    // Town section header
     eventsHtml += `
-      <tr><td style="padding:24px 0 8px 0;">
-        <div style="font-family:Georgia,'Times New Roman',serif;font-size:18px;font-weight:700;color:#2C1810;border-bottom:2px solid #C4A050;padding-bottom:6px;">${catLabel}</div>
-      </td></tr>`;
+    <tr><td style="padding:28px 0 10px 0;">
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;color:#2C1810;border-bottom:2px solid #C4A050;padding-bottom:8px;">${esc(townLabel)}</div>
+    </td></tr>`;
 
     for (const ev of events) {
-      const dateLine = [formatEventDate(ev.event_date), ev.start_time, ev.end_time ? `\u2013 ${ev.end_time}` : ''].filter(Boolean).join(' ');
-      const locationLine = [ev.venue_name, townDisplay(ev.town)].filter(Boolean).join(', ');
-      const desc = ev.description ? ev.description.split('.')[0] + '.' : '';
+      const tag = ev.is_recurring ? '(R)' : '(N)';
+      const tagColor = ev.is_recurring ? '#8B7355' : '#C4A050';
+      const dateLine = [formatEventDate(ev.event_date), ev.start_time, ev.end_time ? `\u2013 ${ev.end_time}` : ''].filter(Boolean).join(' \u00b7 ');
+      const venueLine = ev.venue_name || '';
+      const desc = ev.description || '';
+      const priceLine = ev.price_info ? ev.price_info : (ev.is_free ? 'Free' : '');
 
       eventsHtml += `
-      <tr><td style="padding:12px 0;border-bottom:1px solid rgba(44,24,16,0.08);">
-        <div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;color:#2C1810;margin-bottom:4px;">${escapeHtml(ev.title)}</div>
-        <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:4px;">${escapeHtml(dateLine)}</div>
-        ${locationLine ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:6px;">${escapeHtml(locationLine)}</div>` : ''}
-        ${desc ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2C1810;line-height:1.5;margin-bottom:6px;">${escapeHtml(desc)}</div>` : ''}
-        ${ev.website_url ? `<a href="${escapeHtml(ev.website_url)}" target="_blank" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B5E3C;text-decoration:none;font-weight:600;">More info \u2192</a>` : ''}
-      </td></tr>`;
+    <tr><td style="padding:14px 0 14px 0;border-bottom:1px solid rgba(44,24,16,0.08);">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;margin-bottom:4px;">
+        <span style="font-weight:700;color:${tagColor};font-size:12px;letter-spacing:0.04em;">${tag}</span>
+        <span style="font-weight:700;color:#2C1810;margin-left:4px;">${esc(ev.title)}</span>
+      </div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:4px;">${esc(dateLine)}${venueLine ? ' \u00b7 ' + esc(venueLine) : ''}</div>
+      ${desc ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2C1810;line-height:1.55;margin-bottom:6px;">${esc(desc)}</div>` : ''}
+      ${priceLine ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:6px;">${esc(priceLine)}</div>` : ''}
+      ${ev.website_url ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;margin-bottom:4px;"><a href="${esc(ev.website_url)}" target="_blank" style="color:#8B5E3C;text-decoration:none;">For more information visit their website. \u2192</a></div>` : ''}
+      ${ev.address ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8B7355;">${esc(ev.address)}</div>` : ''}
+    </td></tr>`;
     }
   }
 
@@ -202,7 +222,7 @@ function buildDigestEmail(aiIntro, grouped, dateStart, dateEnd) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NapaServe Weekly Events Digest</title>
+<title>The Napa Valley Weekender</title>
 </head>
 <body style="margin:0;padding:0;background-color:#F5F0E8;font-family:Arial,Helvetica,sans-serif;color:#2C1810;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
 
@@ -211,22 +231,21 @@ function buildDigestEmail(aiIntro, grouped, dateStart, dateEnd) {
 
 <!-- Header -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F0E8;border-bottom:3px solid #C4A050;">
-<tr><td align="center" style="padding:20px 24px 16px;">
-  <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;letter-spacing:0.2em;color:#2C1810;font-weight:700;text-transform:uppercase;">NAPASERVE</div>
-  <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8B7355;margin-top:4px;">Community Intelligence for Napa County</div>
+<tr><td align="center" style="padding:24px 24px 20px;">
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.25em;color:#C4A050;font-weight:700;text-transform:uppercase;margin-bottom:8px;">NAPA VALLEY FEATURES</div>
+  <div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;color:#2C1810;line-height:1.2;">The Napa Valley Weekender</div>
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8B7355;margin-top:6px;">${esc(startFmt)} \u2013 ${esc(endFmt)}</div>
 </td></tr>
 </table>
 
 <!-- Content -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#F5F0E8;">
-<tr><td style="padding:40px 32px;">
+<tr><td style="padding:32px 32px 40px;">
 
-  <h1 style="font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:#2C1810;margin:0 0 8px 0;line-height:1.2;">This Week in Napa County</h1>
-  <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:24px;">${escapeHtml(startFmt)} \u2013 ${escapeHtml(endFmt)}</div>
+  <!-- AI intro with dateline -->
+  <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#2C1810;line-height:1.65;margin:0 0 32px 0;">${esc(aiIntro)}</p>
 
-  <p style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#2C1810;line-height:1.6;margin:0 0 8px 0;">Hi {{NAME}},</p>
-  <p style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#2C1810;line-height:1.6;margin:0 0 32px 0;">${escapeHtml(aiIntro)}</p>
-
+  <!-- Events by town -->
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     ${eventsHtml}
   </table>
@@ -234,7 +253,7 @@ function buildDigestEmail(aiIntro, grouped, dateStart, dateEnd) {
   <!-- CTA -->
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:32px;">
   <tr><td align="center" style="padding:20px 0;">
-    <a href="https://napaserve.org/events" target="_blank" style="display:inline-block;background-color:#2C1810;color:#F5F0E8;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;padding:12px 28px;">Browse All Events</a>
+    <a href="https://napaserve.org/events" target="_blank" style="display:inline-block;background-color:#2C1810;color:#F5F0E8;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:12px 28px;">Browse All Events on NapaServe</a>
   </td></tr>
   </table>
 
@@ -244,9 +263,10 @@ function buildDigestEmail(aiIntro, grouped, dateStart, dateEnd) {
 <!-- Footer -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F0E8;border-top:1px solid rgba(44,24,16,0.12);">
 <tr><td align="center" style="padding:24px 32px;">
-  <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8B7355;line-height:1.6;">
-    Community intelligence for Napa County<br>
-    A Valley Works Collaborative \u00b7 VW Labs project<br><br>
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8B7355;line-height:1.7;">
+    <em>Note: Always confirm details at source.</em><br><br>
+    Napa Valley Features \u00b7 A Valley Works Collaborative publication<br>
+    Community intelligence for Napa County<br><br>
     <a href="https://napaserve.org/api/unsubscribe?email={{EMAIL}}" style="color:#8B5E3C;text-decoration:underline;">Unsubscribe</a>
   </div>
 </td></tr>
@@ -258,7 +278,7 @@ function buildDigestEmail(aiIntro, grouped, dateStart, dateEnd) {
 </html>`;
 }
 
-function escapeHtml(str) {
+function esc(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

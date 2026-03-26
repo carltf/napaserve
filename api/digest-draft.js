@@ -1,3 +1,5 @@
+const TOWN_ORDER = ['valley-wide', 'american-canyon', 'calistoga', 'napa', 'st-helena', 'yountville'];
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -22,14 +24,14 @@ export default async function handler(req, res) {
     const today = new Date().toISOString().slice(0, 10);
     const endDate = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
 
-    // Fetch approved events in the next 14 days
+    // Fetch approved events in the next 14 days, ordered by town then date
     const eventsUrl = `${SUPABASE_URL}/rest/v1/community_events`
-      + `?select=id,title,description,event_date,start_time,end_time,venue_name,town,category,price_info,is_free,website_url`
+      + `?select=id,title,description,event_date,start_time,end_time,venue_name,address,town,category,price_info,is_free,is_recurring,website_url,ticket_url`
       + `&status=eq.approved`
       + `&event_date=gte.${today}`
       + `&event_date=lte.${endDate}`
-      + `&order=event_date.asc,start_time.asc`
-      + `&limit=100`;
+      + `&order=town.asc,event_date.asc,start_time.asc`
+      + `&limit=60`;
 
     const eventsRes = await fetch(eventsUrl, {
       headers: {
@@ -45,26 +47,48 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Failed to fetch events' });
     }
 
-    const events = await eventsRes.json();
+    let allEvents = await eventsRes.json();
 
-    if (events.length === 0) {
+    if (allEvents.length === 0) {
       return res.status(200).json({ draft_id: null, ai_intro: null, events: [], message: 'No approved events in the next 14 days' });
     }
 
-    // Group by category for the AI prompt
-    const grouped = {};
+    // Deduplicate on title + event_date (keep first occurrence)
+    const seen = new Set();
+    allEvents = allEvents.filter(ev => {
+      const key = `${(ev.title || '').toLowerCase().trim()}|${ev.event_date}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    // Limit to 20 events total
+    const events = allEvents.slice(0, 20);
+
+    // Group by town for the AI prompt, using defined order
+    const byTown = {};
     for (const ev of events) {
-      const cat = ev.category || 'community';
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(ev);
+      const t = ev.town || 'napa';
+      if (!byTown[t]) byTown[t] = [];
+      byTown[t].push(ev);
     }
 
-    const eventSummary = Object.entries(grouped).map(([cat, evs]) => {
-      const lines = evs.map(e => `  - ${e.title} (${e.event_date}, ${e.town})`).join('\n');
-      return `${cat.charAt(0).toUpperCase() + cat.slice(1)}:\n${lines}`;
+    const townKeys = Object.keys(byTown).sort((a, b) => {
+      const ai = TOWN_ORDER.indexOf(a);
+      const bi = TOWN_ORDER.indexOf(b);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+
+    const eventSummary = townKeys.map(town => {
+      const label = townDisplay(town);
+      const lines = byTown[town].map(e => {
+        const tag = e.is_recurring ? '(R)' : '(N)';
+        return `  ${tag} ${e.title} — ${e.event_date}${e.venue_name ? ', ' + e.venue_name : ''}`;
+      }).join('\n');
+      return `${label}:\n${lines}`;
     }).join('\n\n');
 
-    // Call Claude for AI intro
+    // Call Claude for AI intro in Weekender voice
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -77,7 +101,14 @@ export default async function handler(req, res) {
         max_tokens: 300,
         messages: [{
           role: 'user',
-          content: `You are writing the opening paragraph for a weekly community events email digest for NapaServe, a community intelligence platform for Napa County, California. Write in the Napa Valley Features editorial voice — warm, local, conversational, and specific to the actual events listed below. Reference specific events, venues, or themes from the list. 2-3 sentences only. No subject line, no sign-off — just the intro paragraph.
+          content: `You are writing the opening paragraph for the Napa Valley Features Weekender, a weekly events email for Napa County, California.
+
+Format rules:
+- Start with "NAPA VALLEY, Calif. \u2014" as an AP-style dateline
+- 2-3 sentences after the dateline, warm and local, in the style of: "Welcome to the Napa Valley Features Weekender, your guide to local events and experiences. Each Friday we deliver a Scan and Plan format organized by town..."
+- Reference specific events, venues, or towns from the list below
+- NEVER use these words: curate, civic, discover, explore
+- Keep it conversational, like a trusted local neighbor sharing what's happening this week
 
 Events for ${today} through ${endDate}:
 
@@ -133,6 +164,13 @@ ${eventSummary}`,
     console.error('digest-draft error:', err);
     return res.status(500).json({ error: err.message || 'Unknown error' });
   }
+}
+
+function townDisplay(town) {
+  if (!town) return 'Napa';
+  const names = { 'valley-wide': 'Valley-Wide', 'american-canyon': 'American Canyon', 'st-helena': 'St. Helena' };
+  if (names[town]) return names[town];
+  return town.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
 export const config = {

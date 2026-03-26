@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 
@@ -14,6 +14,8 @@ const T = {
 const font = "'Source Sans 3','Source Sans Pro',sans-serif";
 const serif = "'Libre Baskerville',Georgia,serif";
 
+const TOWN_ORDER = ["valley-wide", "american-canyon", "calistoga", "napa", "st-helena", "yountville"];
+
 function formatDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr + "T00:00:00");
@@ -21,8 +23,22 @@ function formatDate(dateStr) {
 }
 
 function townDisplay(town) {
-  if (!town) return "";
+  if (!town) return "Napa";
+  const names = { "valley-wide": "Valley-Wide", "american-canyon": "American Canyon", "st-helena": "St. Helena" };
+  if (names[town]) return names[town];
   return town.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+function groupByTown(events) {
+  const byTown = {};
+  for (const ev of events) {
+    const t = ev.town || "napa";
+    if (!byTown[t]) byTown[t] = [];
+    byTown[t].push(ev);
+  }
+  const ordered = TOWN_ORDER.filter(t => byTown[t]);
+  const rest = Object.keys(byTown).filter(t => !TOWN_ORDER.includes(t)).sort();
+  return [...ordered, ...rest].map(t => ({ town: t, events: byTown[t] }));
 }
 
 export default function DigestCuration() {
@@ -98,6 +114,7 @@ export default function DigestCuration() {
   };
 
   const selectedCount = Object.values(included).filter(Boolean).length;
+  const townGroups = groupByTown(events);
 
   return (
     <>
@@ -107,10 +124,10 @@ export default function DigestCuration() {
 
           {/* Header */}
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.muted, marginBottom: 8 }}>Email Digest</div>
-            <h1 style={{ fontFamily: serif, fontSize: 28, fontWeight: 700, color: T.ink, margin: 0, lineHeight: 1.2 }}>Weekly Digest Curation</h1>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.gold, marginBottom: 8 }}>Napa Valley Features</div>
+            <h1 style={{ fontFamily: serif, fontSize: 28, fontWeight: 700, color: T.ink, margin: 0, lineHeight: 1.2 }}>The Napa Valley Weekender</h1>
             <p style={{ fontSize: 15, color: T.muted, marginTop: 8, lineHeight: 1.5 }}>
-              Generate an AI-drafted intro, curate events, and send the weekly digest to subscribers.
+              Review upcoming events, edit the intro, and send the weekly digest to subscribers.
             </p>
           </div>
 
@@ -153,7 +170,7 @@ export default function DigestCuration() {
                 <textarea
                   value={aiIntro}
                   onChange={e => setAiIntro(e.target.value)}
-                  rows={4}
+                  rows={5}
                   style={{
                     width: "100%", boxSizing: "border-box", padding: "12px 14px",
                     fontFamily: font, fontSize: 15, color: T.ink, lineHeight: 1.6,
@@ -163,9 +180,9 @@ export default function DigestCuration() {
                 />
               </div>
 
-              {/* Events list */}
+              {/* Events grouped by town */}
               <div style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                   <div style={{ fontSize: 15, fontWeight: 700, color: T.ink }}>
                     Events ({selectedCount} of {events.length} selected)
                   </div>
@@ -175,33 +192,69 @@ export default function DigestCuration() {
                   </div>
                 </div>
 
-                {events.map(ev => (
-                  <div
-                    key={ev.id}
-                    onClick={() => toggleEvent(ev.id)}
-                    style={{
-                      display: "flex", alignItems: "flex-start", gap: 12,
-                      padding: "12px 14px", marginBottom: 4, cursor: "pointer",
-                      background: included[ev.id] ? T.surface : "transparent",
-                      border: `1px solid ${included[ev.id] ? T.rule : "transparent"}`,
-                      transition: "background .15s",
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={!!included[ev.id]}
-                      onChange={() => toggleEvent(ev.id)}
-                      style={{ marginTop: 3, accentColor: T.accent, flexShrink: 0 }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 15, fontWeight: 600, color: T.ink }}>{ev.title}</div>
-                      <div style={{ fontSize: 13, color: T.muted, marginTop: 2 }}>
-                        {formatDate(ev.event_date)}
-                        {ev.start_time ? ` \u00b7 ${ev.start_time}` : ""}
-                        {ev.town ? ` \u00b7 ${townDisplay(ev.town)}` : ""}
-                      </div>
-                      <div style={{ fontSize: 12, color: T.accent, marginTop: 2, textTransform: "capitalize" }}>{ev.category}</div>
+                {townGroups.map(({ town, events: townEvents }) => (
+                  <div key={town} style={{ marginBottom: 20 }}>
+                    {/* Town header */}
+                    <div style={{
+                      fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink,
+                      borderBottom: `2px solid ${T.gold}`, paddingBottom: 6, marginBottom: 8,
+                    }}>
+                      {townDisplay(town)}
                     </div>
+
+                    {townEvents.map(ev => {
+                      const tag = ev.is_recurring ? "(R)" : "(N)";
+                      const tagColor = ev.is_recurring ? T.muted : T.gold;
+                      return (
+                        <div
+                          key={ev.id}
+                          onClick={() => toggleEvent(ev.id)}
+                          style={{
+                            display: "flex", alignItems: "flex-start", gap: 12,
+                            padding: "10px 14px", marginBottom: 2, cursor: "pointer",
+                            background: included[ev.id] ? T.surface : "transparent",
+                            border: `1px solid ${included[ev.id] ? T.rule : "transparent"}`,
+                            transition: "background .15s",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!included[ev.id]}
+                            onChange={() => toggleEvent(ev.id)}
+                            style={{ marginTop: 3, accentColor: T.accent, flexShrink: 0 }}
+                          />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 15, marginBottom: 2 }}>
+                              <span style={{ fontWeight: 700, color: tagColor, fontSize: 12, letterSpacing: ".04em" }}>{tag}</span>
+                              <span style={{ fontWeight: 600, color: T.ink, marginLeft: 4 }}>{ev.title}</span>
+                            </div>
+                            <div style={{ fontSize: 13, color: T.muted }}>
+                              {formatDate(ev.event_date)}
+                              {ev.start_time ? ` \u00b7 ${ev.start_time}` : ""}
+                              {ev.end_time ? `\u2013${ev.end_time}` : ""}
+                              {ev.venue_name ? ` \u00b7 ${ev.venue_name}` : ""}
+                            </div>
+                            {ev.address && (
+                              <div style={{ fontSize: 12, color: T.muted, marginTop: 1 }}>{ev.address}</div>
+                            )}
+                            {(ev.price_info || ev.is_free) && (
+                              <div style={{ fontSize: 12, color: T.muted, marginTop: 1 }}>{ev.price_info || "Free"}</div>
+                            )}
+                            {ev.website_url && (
+                              <a
+                                href={ev.website_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={e => e.stopPropagation()}
+                                style={{ fontSize: 12, color: T.accent, textDecoration: "none", marginTop: 2, display: "inline-block" }}
+                              >
+                                {ev.website_url.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]} &#8599;
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
