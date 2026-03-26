@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { draft_id, ai_intro: overrideIntro, event_ids: overrideEventIds, sky_event_ids: overrideSkyEventIds } = req.body || {};
+    const { draft_id, ai_intro: overrideIntro, event_ids: overrideEventIds, sky_event_ids: overrideSkyEventIds, formatted_events: overrideFormatted } = req.body || {};
 
     if (!draft_id) {
       return res.status(400).json({ error: 'Missing draft_id' });
@@ -68,6 +68,15 @@ export default async function handler(req, res) {
     const events = await eventsRes.json();
     if (!events.length && skyEventIds.length === 0) {
       return res.status(400).json({ error: 'No events found for the provided IDs' });
+    }
+
+    // Attach formatted text if provided
+    if (overrideFormatted && typeof overrideFormatted === 'object') {
+      for (const ev of events) {
+        if (overrideFormatted[ev.id]) {
+          ev.formatted = overrideFormatted[ev.id];
+        }
+      }
     }
 
     // Fetch sky events if any
@@ -217,14 +226,23 @@ function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd, skyEven
     </td></tr>`;
 
     for (const ev of events) {
-      const tag = ev.is_recurring ? '(R)' : '(N)';
-      const tagColor = ev.is_recurring ? '#8B7355' : '#C4A050';
-      const dateLine = [formatEventDate(ev.event_date), ev.start_time, ev.end_time ? `\u2013 ${ev.end_time}` : ''].filter(Boolean).join(' \u00b7 ');
-      const venueLine = ev.venue_name || '';
-      const desc = ev.description || '';
-      const priceLine = ev.price_info ? ev.price_info : (ev.is_free ? 'Free' : '');
+      if (ev.formatted) {
+        // Use Weekender-formatted text from Claude
+        const formattedHtml = esc(ev.formatted).replace(/\n/g, '<br>').replace(/•/g, '&bull;');
+        eventsHtml += `
+    <tr><td style="padding:14px 0 14px 0;border-bottom:1px solid rgba(44,24,16,0.08);">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2C1810;line-height:1.65;">${formattedHtml}</div>
+    </td></tr>`;
+      } else {
+        // Fallback to raw field formatting
+        const tag = ev.is_recurring ? '(R)' : '(N)';
+        const tagColor = ev.is_recurring ? '#8B7355' : '#C4A050';
+        const dateLine = [formatEventDate(ev.event_date), ev.start_time, ev.end_time ? `\u2013 ${ev.end_time}` : ''].filter(Boolean).join(' \u00b7 ');
+        const venueLine = ev.venue_name || '';
+        const desc = ev.description || '';
+        const priceLine = ev.price_info ? ev.price_info : (ev.is_free ? 'Free' : '');
 
-      eventsHtml += `
+        eventsHtml += `
     <tr><td style="padding:14px 0 14px 0;border-bottom:1px solid rgba(44,24,16,0.08);">
       <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;margin-bottom:4px;">
         <span style="font-weight:700;color:${tagColor};font-size:12px;letter-spacing:0.04em;">${tag}</span>
@@ -236,6 +254,7 @@ function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd, skyEven
       ${ev.website_url ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;margin-bottom:4px;"><a href="${esc(ev.website_url)}" target="_blank" style="color:#8B5E3C;text-decoration:none;">For more information visit their website. \u2192</a></div>` : ''}
       ${ev.address ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8B7355;">${esc(ev.address)}</div>` : ''}
     </td></tr>`;
+      }
     }
   }
 

@@ -111,7 +111,13 @@ export default function DigestCuration() {
       const res = await fetch("/api/digest-send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ draft_id: draftId, ai_intro: aiIntro, event_ids: selectedIds, sky_event_ids: selectedSkyIds }),
+        body: JSON.stringify({
+          draft_id: draftId,
+          ai_intro: aiIntro,
+          event_ids: selectedIds,
+          sky_event_ids: selectedSkyIds,
+          formatted_events: events.reduce((acc, ev) => { if (ev.formatted) acc[ev.id] = ev.formatted; return acc; }, {}),
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send digest");
@@ -261,6 +267,16 @@ export default function DigestCuration() {
                               >
                                 {ev.website_url.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]} &#8599;
                               </a>
+                            )}
+                            {ev.formatted && (
+                              <div style={{
+                                background: "#f5f0e8", border: "1px solid #e5e0d8",
+                                padding: 8, marginTop: 6, fontSize: 13,
+                                fontFamily: "'Source Sans 3','Source Sans Pro',sans-serif",
+                                color: T.ink, lineHeight: 1.55, whiteSpace: "pre-wrap",
+                              }}>
+                                {ev.formatted}
+                              </div>
                             )}
                           </div>
                         </div>
