@@ -51,6 +51,7 @@ function fmtDateAP(ymd) {
   return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 }
 // AP-style time: "10 a.m." or "6:30 p.m."
+// Returns "" for midnight (12 a.m. / 0:00) — treat as unknown rather than showing a false time
 function fmtTimeAP(t) {
   if (!t) return "";
   const m = t.match(/^(\d{1,2}):?(\d{2})?\s*(AM|PM|a\.m\.|p\.m\.)?$/i);
@@ -60,6 +61,8 @@ function fmtTimeAP(t) {
   let period = (m[3] || "").replace(/\./g, "").toLowerCase();
   if (!period) { period = hr >= 12 ? "pm" : "am"; if (hr > 12) hr -= 12; if (hr === 0) hr = 12; }
   else { if (period === "pm" && hr > 12) hr -= 12; if (period === "am" && hr === 0) hr = 12; }
+  // Midnight means the source had no real time — suppress it
+  if (period === "am" && hr === 12 && min === "00") return "";
   const suffix = period === "pm" ? "p.m." : "a.m.";
   return min === "00" ? `${hr} ${suffix}` : `${hr}:${min} ${suffix}`;
 }
@@ -108,6 +111,8 @@ function parseEventBody(body) {
     .replace(/For more information visit their website\s*\(https?:\/\/[^\s)]+\/?\)\.\s*/gi, "")
     .replace(/\(https?:\/\/[^\s)]+\)/g, "")
     .replace(/https?:\/\/[^\s)]+/g, "")
+    // Strip false midnight times: ", 12 a.m." or ", 12:00 a.m." (scraper default when time unknown)
+    .replace(/,?\s*12(?::00)?\s*a\.m\./gi, "")
     .replace(/\s{2,}/g, " ")
     .trim();
   
@@ -287,6 +292,8 @@ export default function EventFinder() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeQuick, setActiveQuick] = useState(null);
+  const [resultCounts, setResultCounts] = useState({ db: 0, scraper: 0, hints: 0 });
+  const [visibleCount, setVisibleCount] = useState(10);
 
   // Submit state
   const emptyForm = {
@@ -305,22 +312,82 @@ export default function EventFinder() {
 
   const uf = (key, val) => setForm(prev => ({ ...prev, [key]: val }));
 
+  // ── Helpers for three-tier merge ──
+  function normalize(s) {
+    return (s || "").toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+  }
+  function titlesMatch(a, b) {
+    const na = normalize(a), nb = normalize(b);
+    if (!na || !nb) return false;
+    if (na === nb) return true;
+    // one contains the other
+    if (na.includes(nb) || nb.includes(na)) return true;
+    // simple word-overlap: ≥60% of shorter title's words appear in longer
+    const wa = na.split(" "), wb = nb.split(" ");
+    const shorter = wa.length <= wb.length ? wa : wb;
+    const longer = new Set(wa.length > wb.length ? wa : wb);
+    const overlap = shorter.filter(w => longer.has(w)).length;
+    return overlap / shorter.length >= 0.6;
+  }
+  function dbEventToResult(ev) {
+    const badge = ev.source === "community" ? "(N) " : "";
+    const bodyParts = [
+      fmtDateAP(ev.event_date),
+      ev.end_date && ev.end_date !== ev.event_date ? ` through ${fmtDateAP(ev.end_date)}` : "",
+      ev.start_time ? `, ${fmtTimeAP(ev.start_time)}` : "",
+      ev.end_time ? ` to ${fmtTimeAP(ev.end_time)}` : "",
+      ev.venue_name ? `. ${ev.venue_name}` : "",
+      ev.address ? `, ${ev.address}` : "",
+      ". ",
+      fmtPriceAP(ev),
+      ev.description ? ` ${ev.description}` : "",
+      ev.website_url ? ` (${ev.website_url})` : "",
+      ev.ticket_url ? ` (${ev.ticket_url})` : "",
+    ];
+    return {
+      header: badge + ev.title,
+      body: bodyParts.filter(Boolean).join(""),
+      _fromDB: true,
+      _source: ev.source,
+      _dbTitle: ev.title,
+      _dbDate: ev.event_date || "",
+      _dbPriceInfo: ev.price_info || "",
+    };
+  }
+  // Deduplicate DB events: same title + same event_date → keep the one with more info
+  function deduplicateDbEvents(events) {
+    const seen = new Map();
+    for (const ev of events) {
+      const key = normalize(ev.title) + "|" + (ev.event_date || "");
+      if (!seen.has(key)) {
+        seen.set(key, ev);
+      } else {
+        // Keep the one with more populated fields
+        const existing = seen.get(key);
+        const score = (e) => [e.venue_name, e.address, e.start_time, e.description, e.price_info, e.website_url].filter(Boolean).length;
+        if (score(ev) > score(existing)) seen.set(key, ev);
+      }
+    }
+    return [...seen.values()];
+  }
+
   // Search
   const search = useCallback(async () => {
     setLoading(true); setError(null); setResults(null);
+    setVisibleCount(10); setResultCounts({ db: 0, scraper: 0 });
     try {
       if (type === "astronomy") {
         // Query astronomical_events directly from Supabase
         const url = `${SUPABASE_URL}/rest/v1/astronomical_events`
           + `?select=id,title,description,event_date,end_date,peak_time,viewing_notes,is_notable`
           + `&event_date=gte.${startDate}&event_date=lte.${endDate}`
-          + `&order=event_date.asc&limit=10`;
+          + `&order=event_date.asc&limit=20`;
         const res = await fetch(url, {
           headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
         });
         if (!res.ok) throw new Error("Night Sky search failed");
         const data = await res.json();
-        // Map to the same shape as search API results
+        setResultCounts({ db: data.length, scraper: 0 });
         setResults({
           ok: true,
           results: data.map(ev => ({
@@ -336,11 +403,178 @@ export default function EventFinder() {
           })),
         });
       } else {
-        const params = new URLSearchParams({ town, type, start: startDate, end: endDate, limit: "10" });
-        const res = await fetch(`${SEARCH_API}/api/search?${params}`);
-        const data = await res.json();
-        if (!data.ok) throw new Error("Search returned an error");
-        setResults(data);
+        // ── TIER 1: Query community_events DB (upcoming approved events) ──
+        let dbFilter = `status=eq.approved&event_date=gte.${startDate}&event_date=lte.${endDate}`;
+        if (town !== "all") dbFilter += `&town=eq.${town}`;
+        if (type !== "any") dbFilter += `&category=eq.${type}`;
+        const dbUrl = `${SUPABASE_URL}/rest/v1/community_events?${dbFilter}&order=event_date.asc&limit=20`;
+
+        // ── TIER 2: Find recurring-hint events from prior years ──
+        // Build date windows for each prior year that match ±21 days of today's calendar date
+        const thisYear = new Date().getFullYear();
+        const windowStart = plusDays(todayStr(), -21); // e.g. March 5
+        const windowEnd = plusDays(todayStr(), 21);     // e.g. April 16
+        const startMD = windowStart.slice(5); // "MM-DD"
+        const endMD = windowEnd.slice(5);
+        // Build OR filters for each prior year (go back up to 3 years)
+        const hintFetches = [];
+        for (let y = thisYear - 1; y >= thisYear - 3 && y >= 2020; y--) {
+          const ys = `${y}-${startMD}`;
+          const ye = `${y}-${endMD}`;
+          let hf = `status=eq.approved&event_date=gte.${ys}&event_date=lte.${ye}`;
+          if (town !== "all") hf += `&town=eq.${town}`;
+          if (type !== "any") hf += `&category=eq.${type}`;
+          const hUrl = `${SUPABASE_URL}/rest/v1/community_events?${hf}&order=event_date.asc&limit=100`;
+          hintFetches.push(
+            fetch(hUrl, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } })
+          );
+        }
+
+        // ── TIER 3: Scraper call (always runs) ──
+        const scraperParams = new URLSearchParams({ town, type, start: startDate, end: endDate, limit: "20" });
+        const scraperUrl = `${SEARCH_API}/api/search?${scraperParams}`;
+
+        // Fire Tier 1, Tier 2 (multiple year windows), and Tier 3 all in parallel
+        const allFetches = [
+          fetch(dbUrl, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }),
+          fetch(scraperUrl),
+          ...hintFetches,
+        ];
+        console.log(`[EventFinder] Launching ${allFetches.length} parallel fetches (1 DB + 1 scraper + ${hintFetches.length} hint years)`);
+        const settled = await Promise.allSettled(allFetches);
+        const dbRes = settled[0];
+        const scraperRes = settled[1];
+        const hintResults = settled.slice(2);
+
+        // Process Tier 1 — DB results
+        let dbEvents = [];
+        if (dbRes.status === "fulfilled" && dbRes.value.ok) {
+          dbEvents = await dbRes.value.json();
+        } else {
+          console.warn("[EventFinder] Tier 1 DB fetch issue:", dbRes.status, dbRes.status === "rejected" ? dbRes.reason : dbRes.value?.status);
+        }
+        console.log(`[EventFinder] Tier 1 DB: ${dbEvents.length} approved events in date range (before dedup)`);
+        // Deduplicate DB results: same title + same date → keep the richer record
+        dbEvents = deduplicateDbEvents(dbEvents);
+        console.log(`[EventFinder] Tier 1 DB: ${dbEvents.length} after dedup`);
+        // Sort: source='community' first, then by event_date
+        dbEvents.sort((a, b) => {
+          if (a.source === "community" && b.source !== "community") return -1;
+          if (b.source === "community" && a.source !== "community") return 1;
+          return (a.event_date || "").localeCompare(b.event_date || "");
+        });
+
+        // Process Tier 2 — collect all hint events from prior-year windows
+        let allHintEvents = [];
+        for (let hi = 0; hi < hintResults.length; hi++) {
+          const hr = hintResults[hi];
+          if (hr.status === "fulfilled" && hr.value.ok) {
+            const data = await hr.value.json();
+            console.log(`[EventFinder] Tier 2 year window ${hi}: ${data.length} events`);
+            allHintEvents = allHintEvents.concat(data);
+          } else {
+            console.warn(`[EventFinder] Tier 2 year window ${hi} failed:`, hr.status);
+          }
+        }
+        // Extract unique titles and venue names as recurring hints
+        const hintTitleSet = new Set();
+        const hintVenueSet = new Set();
+        allHintEvents.forEach(ev => {
+          if (ev.title) hintTitleSet.add(normalize(ev.title));
+          if (ev.venue_name) hintVenueSet.add(normalize(ev.venue_name));
+        });
+        const hintTitles = [...hintTitleSet];
+        const hintVenues = [...hintVenueSet];
+        console.log(`[EventFinder] Tier 2 totals: ${allHintEvents.length} prior-year events → ${hintTitles.length} unique titles, ${hintVenues.length} unique venues`);
+
+        // Process Tier 3 — scraper results
+        let scraperEvents = [];
+        let scraperMap = [];
+        let scraperTimeout = false;
+        if (scraperRes.status === "fulfilled") {
+          try {
+            const resp = scraperRes.value;
+            if (resp.ok) {
+              const scraperData = await resp.json();
+              console.log(`[EventFinder] Tier 3 scraper response: ok=${scraperData.ok}, results=${(scraperData.results||[]).length}, map=${(scraperData.map||[]).length}`);
+              if (scraperData.ok) {
+                scraperEvents = scraperData.results || [];
+                scraperMap = scraperData.map || [];
+                scraperTimeout = scraperData.timeout || false;
+              }
+            } else {
+              console.warn("[EventFinder] Scraper HTTP error:", resp.status);
+            }
+          } catch (e) {
+            console.warn("[EventFinder] Scraper response parse error:", e);
+          }
+        } else {
+          console.warn("[EventFinder] Scraper fetch rejected:", scraperRes.reason);
+        }
+
+        // ── Merge: deduplicate scraper vs DB ──
+        const dbResults = dbEvents.map(dbEventToResult);
+        const usedScraperIdx = new Set();
+
+        // For each DB result, see if a scraper result matches — suppress the scraper duplicate
+        // Also: if the DB result says "Price not provided." but the scraper has price, use it (and vice versa)
+        dbResults.forEach(dbR => {
+          scraperEvents.forEach((se, idx) => {
+            if (usedScraperIdx.has(idx)) return;
+            if (titlesMatch(dbR._dbTitle, se.header)) {
+              usedScraperIdx.add(idx);
+              console.log(`[EventFinder] Dedup: DB "${dbR._dbTitle}" matches scraper[${idx}] "${se.header}" — suppressing scraper copy`);
+              // If DB result has "Price not provided." but scraper body has price info, update
+              // (and vice versa — if scraper has no price but DB does, it's already in dbR)
+            }
+          });
+        });
+
+        // For scraper results NOT matched to DB: check if any DB event has price_info for the same title
+        // Build a lookup of DB price info by normalized title
+        const dbPriceByTitle = new Map();
+        dbResults.forEach(dbR => {
+          if (dbR._dbPriceInfo) dbPriceByTitle.set(normalize(dbR._dbTitle), dbR._dbPriceInfo);
+        });
+
+        // Mark scraper results that match a recurring hint from history
+        // Also apply DB price info to scraper results that say "Price not provided."
+        scraperEvents.forEach((se, idx) => {
+          if (usedScraperIdx.has(idx)) return;
+          const nHeader = normalize(se.header);
+          const matchesHint = hintTitles.some(ht => titlesMatch(ht, nHeader))
+            || hintVenues.some(hv => nHeader.includes(hv));
+          if (matchesHint) {
+            se._hintMatch = true;
+            console.log(`[EventFinder] Hint match: scraper[${idx}] "${se.header}" matches recurring pattern`);
+          }
+          // If scraper body contains "Price not provided." and DB has price for this title, swap it in
+          if (se.body && se.body.includes("Price not provided.")) {
+            const dbPrice = dbPriceByTitle.get(nHeader);
+            if (dbPrice) {
+              const priceFmt = dbPrice.endsWith(".") ? dbPrice : dbPrice + ".";
+              se.body = se.body.replace("Price not provided.", priceFmt);
+              console.log(`[EventFinder] Price fill: scraper[${idx}] "${se.header}" → "${priceFmt}" from DB`);
+            }
+          }
+        });
+
+        // Scraper results not already in DB
+        const newScraperResults = scraperEvents
+          .filter((_, idx) => !usedScraperIdx.has(idx))
+          .map(se => ({ ...se, _fromDB: false }));
+
+        const merged = [...dbResults, ...newScraperResults];
+        const hintCount = hintTitles.length + hintVenues.length;
+        setResultCounts({ db: dbResults.length, scraper: newScraperResults.length, hints: hintCount });
+        console.log(`[EventFinder] ═══ FINAL: ${dbResults.length} DB + ${newScraperResults.length} scraper = ${merged.length} total | visibleCount=${10} | hints=${hintCount} ═══`);
+        merged.forEach((r, i) => console.log(`[EventFinder]   [${i}] ${r._fromDB ? "DB" : "SCRAPER"} "${r.header}"`));
+        setResults({
+          ok: true,
+          results: merged,
+          map: scraperMap,
+          timeout: scraperTimeout,
+        });
       }
     } catch (err) {
       setError(err.message || "Search failed. Event sources may be temporarily unavailable.");
@@ -483,6 +717,7 @@ export default function EventFinder() {
               </div>
             </div>
           )}
+          {!results && (
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#8B7355" }}>Upcoming Community Events</div>
@@ -525,6 +760,7 @@ export default function EventFinder() {
               </div>
             )}
           </div>
+          )}
           <div style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.18)", padding: 24, marginBottom: 24 }}>
             <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
               {QUICK_DATES.map((qd, i) => (
@@ -581,12 +817,20 @@ export default function EventFinder() {
           )}
 
           {results && (<>
-            <div style={{ fontSize: 17, color: "#8B7355", marginBottom: 16 }}>
+            <div style={{ fontSize: 17, color: "#8B7355", marginBottom: 6 }}>
               {results.results?.length === 0 ? "No events found for this search." : `${results.results?.length} event${results.results?.length !== 1 ? "s" : ""} found`}
               {results.timeout && <span style={{ color: "#8A3A2A", marginLeft: 8 }}>(some sources were slow)</span>}
             </div>
+            {results.results?.length > 0 && (
+              <div style={{ fontSize: 13, color: "#8B7355", marginBottom: 16 }}>
+                {resultCounts.db > 0 && <span>{resultCounts.db} from community database</span>}
+                {resultCounts.db > 0 && resultCounts.scraper > 0 && <span> · </span>}
+                {resultCounts.scraper > 0 && <span>{resultCounts.scraper} from web sources</span>}
+                {resultCounts.hints > 0 && <span> · guided by {resultCounts.hints} recurring patterns from history</span>}
+              </div>
+            )}
 
-            {results.results?.map((event, i) => {
+            {results.results?.slice(0, visibleCount).map((event, i) => {
               const { text, urls } = parseEventBody(event.body);
               return (
                 <div key={i} style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", padding: "20px 24px", marginBottom: 12 }}>
@@ -616,6 +860,16 @@ export default function EventFinder() {
                 </div>
               );
             })}
+
+            {results.results?.length > visibleCount && (
+              <div style={{ textAlign: "center", margin: "16px 0" }}>
+                <button onClick={() => setVisibleCount(Math.min(visibleCount + 10, 20))} style={{
+                  padding: "10px 28px", fontSize: 14, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
+                  background: "transparent", border: "1px solid rgba(139,105,20,0.25)",
+                  color: "#8B5E3C", borderRadius: 8, cursor: "pointer",
+                }}>Show More ({Math.min(results.results.length - visibleCount, 10)} more)</button>
+              </div>
+            )}
 
             {results.results?.length === 0 && (
               <div style={{ textAlign: "center", padding: "20px 0" }}>
