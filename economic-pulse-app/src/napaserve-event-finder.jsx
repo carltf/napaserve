@@ -520,15 +520,25 @@ export default function EventFinder() {
         const usedScraperIdx = new Set();
 
         // For each DB result, see if a scraper result matches — suppress the scraper duplicate
-        // Also: if the DB result says "Price not provided." but the scraper has price, use it (and vice versa)
+        // Enrich DB result with scraper URLs if DB event has none
         dbResults.forEach(dbR => {
           scraperEvents.forEach((se, idx) => {
             if (usedScraperIdx.has(idx)) return;
             if (titlesMatch(dbR._dbTitle, se.header)) {
               usedScraperIdx.add(idx);
               console.log(`[EventFinder] Dedup: DB "${dbR._dbTitle}" matches scraper[${idx}] "${se.header}" — suppressing scraper copy`);
-              // If DB result has "Price not provided." but scraper body has price info, update
-              // (and vice versa — if scraper has no price but DB does, it's already in dbR)
+              // If DB result has no URLs, pull them from the scraper match
+              const hasUrl = /https?:\/\//.test(dbR.body);
+              if (!hasUrl && se.body) {
+                const scraperUrls = [];
+                const urlRe = /\(?(https?:\/\/[^\s)]+)\)?/g;
+                let um;
+                while ((um = urlRe.exec(se.body)) !== null) scraperUrls.push(um[1]);
+                if (scraperUrls.length > 0) {
+                  dbR.body = dbR.body + " " + scraperUrls.map(u => `(${u})`).join(" ");
+                  console.log(`[EventFinder] Link enrich: DB "${dbR._dbTitle}" got ${scraperUrls.length} URL(s) from scraper`);
+                }
+              }
             }
           });
         });

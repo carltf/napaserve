@@ -19,13 +19,13 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Supabase credentials not configured' });
   }
 
-  // ── Parse limit param (default 5, max 25) ─────────────
-  const rawLimit = parseInt(req.query?.limit || '5', 10);
-  const limit = Math.max(1, Math.min(isNaN(rawLimit) ? 5 : rawLimit, 25));
+  // ── Parse limit param (default 20, max 25) ─────────────
+  const rawLimit = parseInt(req.query?.limit || '20', 10);
+  const limit = Math.max(1, Math.min(isNaN(rawLimit) ? 20 : rawLimit, 25));
 
-  // ── Date range: today through 14 days out ──────────────
+  // ── Date range: today through 30 days out ──────────────
   const today = new Date().toISOString().slice(0, 10);
-  const endDate = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+  const endDate = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
 
   // ── Build Supabase REST query ──────────────────────────
   const select = [
@@ -106,7 +106,7 @@ export default async function handler(req, res) {
         date_range_end: endDate,
         hasMore: false,
         total: 0,
-        message: 'No approved events in the next 14 days',
+        message: 'No approved events in the next 30 days',
       });
     }
 
