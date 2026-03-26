@@ -3,8 +3,8 @@
  * NapaServe Admin — URL-based event intake with Claude extraction + Supabase insert
  *
  * Drop into: economic-pulse-app/src/EventIntake.jsx
- * Requires: api/event-extract.js deployed as Vercel serverless function
- * Requires Vercel env vars: ANTHROPIC_API_KEY, SUPABASE_KEY, VITE_SUPABASE_SERVICE_KEY
+ * Requires: api/event-intake.js deployed as Vercel serverless function
+ * Requires Vercel env vars: ANTHROPIC_API_KEY, SUPABASE_KEY
  *
  * Usage in admin page:
  *   import EventIntake from './EventIntake';
@@ -28,10 +28,6 @@ const T = {
   borderStrong: "rgba(44,24,16,0.3)",
 };
 
-// Supabase — service key exposed as VITE_ var (admin page only, password-protected)
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://csenpchwxxepdvjebsrt.supabase.co";
-const SUPABASE_SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY || "";
-
 // ── Field schema for preview table ───────────────────────────────────────────
 const FIELDS = [
   "title", "description", "event_date", "end_date",
@@ -49,49 +45,21 @@ const FIELD_LABELS = {
   is_recurring: "Recurring?", recurrence_desc: "Recurrence",
 };
 
-// ── Supabase insert ───────────────────────────────────────────────────────────
-async function insertEvents(events) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/community_events`, {
+// ── API calls via /api/event-intake (Vercel serverless) ──────────────────────
+async function extractFromUrl(url) {
+  const res = await fetch("/api/event-intake", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": SUPABASE_SERVICE_KEY,
-      "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`,
-      "Prefer": "return=representation",
-    },
-    body: JSON.stringify(events),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "extract", url }),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Supabase error ${res.status}: ${err}`);
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || `API error ${res.status}`);
   }
   return await res.json();
 }
 
-// ── Fetch page content via CORS proxies ───────────────────────────────────────
-async function tryFetch(url) {
-  const proxies = [
-    `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-    `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  ];
-  for (const proxy of proxies) {
-    try {
-      const r = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
-      if (!r.ok) continue;
-      const data = await r.json();
-      const html = data.contents || data.body || "";
-      if (html.length > 500) {
-        const div = document.createElement("div");
-        div.innerHTML = html;
-        return (div.innerText || div.textContent || "").trim();
-      }
-    } catch (_) { continue; }
-  }
-  return null;
-}
-
-// ── Extract via /api/event-intake (Vercel serverless — no direct Anthropic calls) ──
-async function extractWithClaude(content, url) {
+async function extractFromContent(content, url) {
   const res = await fetch("/api/event-intake", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -108,14 +76,27 @@ async function extractWithClaude(content, url) {
   return data.events;
 }
 
+async function insertEvents(events) {
+  const res = await fetch("/api/event-intake", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "insert", events }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || `API error ${res.status}`);
+  }
+  return await res.json();
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function EventIntake() {
   const [url, setUrl] = useState("");
   const [phase, setPhase] = useState("idle");
-  // phases: idle | fetching | needsPaste | extracting | countdown | preview | inserting | done | error
+  // phases: idle | needsPaste | extracting | countdown | preview | inserting | done | error
   const [pasteText, setPasteText] = useState("");
   const [events, setEvents] = useState([]);
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(30);
   const [insertedCount, setInsertedCount] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
   const countdownRef = useRef(null);
@@ -125,7 +106,7 @@ export default function EventIntake() {
   useEffect(() => {
     if (phase !== "countdown") return;
     cancelledRef.current = false;
-    setCountdown(10);
+    setCountdown(30);
     countdownRef.current = setInterval(() => {
       setCountdown(c => {
         if (c <= 1) {
@@ -147,29 +128,30 @@ export default function EventIntake() {
 
   async function handleSubmit() {
     if (!url.trim()) return;
-    setPhase("fetching");
+    setPhase("extracting");
     setErrorMsg("");
     try {
-      const content = await tryFetch(url.trim());
-      if (!content || content.length < 200) {
+      const data = await extractFromUrl(url.trim());
+      if (data.needsPaste) {
         setPhase("needsPaste");
         return;
       }
-      await runExtraction(content);
-    } catch (_) {
-      setPhase("needsPaste");
+      if (!data.events || !Array.isArray(data.events)) {
+        throw new Error("Unexpected response from event-intake API");
+      }
+      setEvents(data.events);
+      setPhase("countdown");
+    } catch (e) {
+      setPhase("error");
+      setErrorMsg(`Extraction failed: ${e.message}`);
     }
   }
 
   async function handlePasteSubmit() {
     if (!pasteText.trim()) return;
-    await runExtraction(pasteText);
-  }
-
-  async function runExtraction(content) {
     setPhase("extracting");
     try {
-      const extracted = await extractWithClaude(content, url.trim());
+      const extracted = await extractFromContent(pasteText, url.trim());
       setEvents(extracted);
       setPhase("countdown");
     } catch (e) {
@@ -181,9 +163,7 @@ export default function EventIntake() {
   async function doInsert() {
     setPhase("inserting");
     try {
-      await insertEvents(
-        events.map(e => ({ ...e, status: "approved", source: "napaserve_submission" }))
-      );
+      await insertEvents(events);
       setInsertedCount(events.length);
       setPhase("done");
     } catch (e) {
@@ -200,7 +180,7 @@ export default function EventIntake() {
     setEvents([]);
     setPhase("idle");
     setErrorMsg("");
-    setCountdown(10);
+    setCountdown(30);
   }
 
   const btn = (bg, color = "#fff", extra = {}) => ({
@@ -231,42 +211,35 @@ export default function EventIntake() {
           }}>Admin</span>
         </div>
         <p style={{ fontSize: 13, color: T.inkMuted, margin: 0 }}>
-          Paste a URL · Claude extracts event details · 10-second preview · auto-inserts to Supabase
+          Paste a URL · Claude extracts event details · 30-second preview · auto-inserts to Supabase
         </p>
       </div>
 
-      {/* ── IDLE / FETCHING ── */}
-      {(phase === "idle" || phase === "fetching") && (
+      {/* ── IDLE ── */}
+      {phase === "idle" && (
         <div>
           <div style={{ display: "flex", gap: 8 }}>
             <input
               type="url"
               value={url}
               onChange={e => setUrl(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && phase === "idle" && handleSubmit()}
+              onKeyDown={e => e.key === "Enter" && handleSubmit()}
               placeholder="https://www.mobilize.us/nokings/event/901623/"
-              disabled={phase === "fetching"}
               style={{
                 flex: 1, padding: "10px 14px",
                 background: T.bg, border: `1px solid ${T.borderStrong}`,
                 borderRadius: 5, fontSize: 14, color: T.ink, outline: "none",
-                opacity: phase === "fetching" ? 0.6 : 1,
                 fontFamily: "'Source Sans 3', sans-serif",
               }}
             />
             <button
               onClick={handleSubmit}
-              disabled={phase === "fetching" || !url.trim()}
-              style={btn(phase === "fetching" || !url.trim() ? T.inkMuted : T.accent)}
+              disabled={!url.trim()}
+              style={btn(!url.trim() ? T.inkMuted : T.accent)}
             >
-              {phase === "fetching" ? "Fetching…" : "Extract →"}
+              Extract →
             </button>
           </div>
-          {phase === "fetching" && (
-            <p style={{ fontSize: 13, color: T.inkMuted, margin: "10px 0 0" }}>
-              ⏳ Fetching page…
-            </p>
-          )}
         </div>
       )}
 
@@ -334,7 +307,7 @@ export default function EventIntake() {
                   Auto-inserting in{" "}
                   <span style={{
                     fontWeight: 700, fontSize: 16,
-                    color: countdown <= 3 ? T.error : T.accent,
+                    color: countdown <= 5 ? T.error : T.accent,
                     display: "inline-block", minWidth: 18, textAlign: "center",
                   }}>{countdown}</span>s
                 </span>
@@ -371,8 +344,8 @@ export default function EventIntake() {
             }}>
               <div style={{
                 height: "100%", borderRadius: 2,
-                width: `${(countdown / 10) * 100}%`,
-                background: countdown <= 3 ? T.error : T.accent,
+                width: `${(countdown / 30) * 100}%`,
+                background: countdown <= 5 ? T.error : T.accent,
                 transition: "width 1s linear",
               }} />
             </div>

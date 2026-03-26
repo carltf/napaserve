@@ -82,7 +82,33 @@ export default async function handler(req, res) {
 
   // ── ACTION: extract ───────────────────────────────────────────────────────
   if (action === "extract") {
-    if (!content) return res.status(400).json({ error: "Missing content" });
+    let pageContent = content;
+
+    // If a URL is provided and no content was passed, fetch it server-side (no CORS issues)
+    if (!pageContent && url) {
+      try {
+        const pageRes = await fetch(url, {
+          headers: { "User-Agent": "NapaServe-EventIntake/1.0" },
+          signal: AbortSignal.timeout(10000),
+        });
+        if (pageRes.ok) {
+          const html = await pageRes.text();
+          // Strip HTML tags to get plain text
+          pageContent = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+        }
+      } catch (_) {
+        // fetch failed — fall through to needsPaste check
+      }
+    }
+
+    // If content is still missing or too short, tell the frontend to show paste fallback
+    if (!pageContent || pageContent.length < 300) {
+      return res.status(200).json({ needsPaste: true });
+    }
 
     try {
       const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
@@ -95,7 +121,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 2000,
-          messages: [{ role: "user", content: EXTRACTION_PROMPT(content, url || "") }],
+          messages: [{ role: "user", content: EXTRACTION_PROMPT(pageContent, url || "") }],
         }),
       });
 
