@@ -49,8 +49,29 @@ export default async function handler(req, res) {
 
     let allEvents = await eventsRes.json();
 
-    if (allEvents.length === 0) {
-      return res.status(200).json({ draft_id: null, ai_intro: null, events: [], message: 'No approved events in the next 14 days' });
+    // Fetch astronomical events in the next 14 days (including multi-day spans)
+    const skyUrl = `${SUPABASE_URL}/rest/v1/astronomical_events`
+      + `?select=id,title,description,event_date,end_date,peak_time,viewing_notes,is_notable`
+      + `&or=(and(event_date.gte.${today},event_date.lte.${endDate}),and(end_date.not.is.null,event_date.lte.${endDate},end_date.gte.${today}))`
+      + `&order=event_date.asc`;
+
+    const skyRes = await fetch(skyUrl, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    let skyEvents = [];
+    if (skyRes.ok) {
+      skyEvents = await skyRes.json();
+    } else {
+      console.error('Sky events fetch error:', await skyRes.text());
+    }
+
+    if (allEvents.length === 0 && skyEvents.length === 0) {
+      return res.status(200).json({ draft_id: null, ai_intro: null, events: [], skyEvents: [], message: 'No approved events in the next 14 days' });
     }
 
     // Deduplicate on title + event_date (keep first occurrence)
@@ -126,11 +147,14 @@ ${eventSummary}`,
     const aiIntro = claudeData.content?.[0]?.text || '';
     const eventIds = events.map(e => e.id);
 
+    const skyEventIds = skyEvents.map(e => e.id);
+
     // Save draft to email_digests table
     const draftRow = {
       status: 'draft',
       ai_intro: aiIntro,
       event_ids: eventIds,
+      sky_event_ids: skyEventIds,
       date_range_start: today,
       date_range_end: endDate,
     };
@@ -159,6 +183,7 @@ ${eventSummary}`,
       draft_id: draftId,
       ai_intro: aiIntro,
       events,
+      skyEvents,
     });
   } catch (err) {
     console.error('digest-draft error:', err);

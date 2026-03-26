@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { draft_id, ai_intro: overrideIntro, event_ids: overrideEventIds } = req.body || {};
+    const { draft_id, ai_intro: overrideIntro, event_ids: overrideEventIds, sky_event_ids: overrideSkyEventIds } = req.body || {};
 
     if (!draft_id) {
       return res.status(400).json({ error: 'Missing draft_id' });
@@ -45,8 +45,9 @@ export default async function handler(req, res) {
     const draft = drafts[0];
     const aiIntro = overrideIntro || draft.ai_intro;
     const eventIds = overrideEventIds || draft.event_ids;
+    const skyEventIds = overrideSkyEventIds || draft.sky_event_ids || [];
 
-    if (!eventIds || eventIds.length === 0) {
+    if ((!eventIds || eventIds.length === 0) && skyEventIds.length === 0) {
       return res.status(400).json({ error: 'No events selected' });
     }
 
@@ -65,8 +66,28 @@ export default async function handler(req, res) {
     );
 
     const events = await eventsRes.json();
-    if (!events.length) {
+    if (!events.length && skyEventIds.length === 0) {
       return res.status(400).json({ error: 'No events found for the provided IDs' });
+    }
+
+    // Fetch sky events if any
+    let skyEvents = [];
+    if (skyEventIds.length > 0) {
+      const skyRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/astronomical_events`
+          + `?id=in.(${skyEventIds.join(',')})`
+          + `&select=id,title,description,event_date,end_date,peak_time,viewing_notes,is_notable`
+          + `&order=event_date.asc`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+          },
+        }
+      );
+      if (skyRes.ok) {
+        skyEvents = await skyRes.json();
+      }
     }
 
     // Fetch subscribers
@@ -100,7 +121,7 @@ export default async function handler(req, res) {
     });
 
     // Build email HTML
-    const emailHtml = buildDigestEmail(aiIntro, byTown, townKeys, draft.date_range_start, draft.date_range_end);
+    const emailHtml = buildDigestEmail(aiIntro, byTown, townKeys, draft.date_range_start, draft.date_range_end, skyEvents);
 
     // Format date range for subject line
     const startFmt = formatDateShort(draft.date_range_start);
@@ -145,6 +166,7 @@ export default async function handler(req, res) {
         resend_message_id: messageId,
         ai_intro: aiIntro,
         event_ids: eventIds,
+        sky_event_ids: skyEventIds,
       }),
     });
 
@@ -179,7 +201,7 @@ function townDisplay(town) {
   return town.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd) {
+function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd, skyEvents) {
   const startFmt = formatDateShort(dateStart);
   const endFmt = formatDateShort(dateEnd);
 
@@ -250,6 +272,8 @@ function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd) {
     ${eventsHtml}
   </table>
 
+  ${skyEvents && skyEvents.length > 0 ? buildSkySection(skyEvents) : ''}
+
   <!-- CTA -->
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:32px;">
   <tr><td align="center" style="padding:20px 0;">
@@ -276,6 +300,33 @@ function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd) {
 </table>
 </body>
 </html>`;
+}
+
+function buildSkySection(skyEvents) {
+  let html = `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;">
+    <tr><td style="padding:28px 0 10px 0;">
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;color:#C4A050;border-bottom:2px solid #C4A050;padding-bottom:8px;">Night Sky</div>
+    </td></tr>`;
+
+  for (const ev of skyEvents) {
+    const dateLine = [
+      formatEventDate(ev.event_date),
+      ev.end_date && ev.end_date !== ev.event_date ? `\u2013 ${formatEventDate(ev.end_date)}` : '',
+      ev.peak_time ? `Peak: ${ev.peak_time}` : '',
+    ].filter(Boolean).join(' \u00b7 ');
+
+    html += `
+    <tr><td style="padding:14px 0 14px 0;border-bottom:1px solid rgba(44,24,16,0.08);">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#2C1810;margin-bottom:4px;">${esc(ev.title)}</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:4px;">${esc(dateLine)}</div>
+      ${ev.description ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2C1810;line-height:1.55;margin-bottom:6px;">${esc(ev.description)}</div>` : ''}
+      ${ev.viewing_notes ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;font-style:italic;">${esc(ev.viewing_notes)}</div>` : ''}
+    </td></tr>`;
+  }
+
+  html += `</table>`;
+  return html;
 }
 
 function esc(str) {

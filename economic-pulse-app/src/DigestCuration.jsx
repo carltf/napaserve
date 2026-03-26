@@ -48,6 +48,8 @@ export default function DigestCuration() {
   const [aiIntro, setAiIntro] = useState("");
   const [events, setEvents] = useState([]);
   const [included, setIncluded] = useState({});
+  const [skyEvents, setSkyEvents] = useState([]);
+  const [skyIncluded, setSkyIncluded] = useState({});
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [sendResult, setSendResult] = useState(null);
@@ -67,6 +69,10 @@ export default function DigestCuration() {
       const inc = {};
       for (const ev of data.events || []) inc[ev.id] = true;
       setIncluded(inc);
+      setSkyEvents(data.skyEvents || []);
+      const skyInc = {};
+      for (const ev of data.skyEvents || []) skyInc[ev.id] = true;
+      setSkyIncluded(skyInc);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -76,6 +82,10 @@ export default function DigestCuration() {
 
   const toggleEvent = (id) => {
     setIncluded(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleSkyEvent = (id) => {
+    setSkyIncluded(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const selectAll = () => {
@@ -90,7 +100,8 @@ export default function DigestCuration() {
 
   const sendDigest = async () => {
     const selectedIds = Object.entries(included).filter(([, v]) => v).map(([k]) => Number(k));
-    if (selectedIds.length === 0) {
+    const selectedSkyIds = Object.entries(skyIncluded).filter(([, v]) => v).map(([k]) => Number(k));
+    if (selectedIds.length === 0 && selectedSkyIds.length === 0) {
       setError("Select at least one event");
       return;
     }
@@ -100,7 +111,7 @@ export default function DigestCuration() {
       const res = await fetch("/api/digest-send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ draft_id: draftId, ai_intro: aiIntro, event_ids: selectedIds }),
+        body: JSON.stringify({ draft_id: draftId, ai_intro: aiIntro, event_ids: selectedIds, sky_event_ids: selectedSkyIds }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send digest");
@@ -259,6 +270,52 @@ export default function DigestCuration() {
                 ))}
               </div>
 
+              {/* Night Sky section */}
+              {skyEvents.length > 0 && (
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{
+                    fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.gold,
+                    borderBottom: `2px solid ${T.gold}`, paddingBottom: 6, marginBottom: 8,
+                  }}>
+                    Night Sky
+                  </div>
+                  {skyEvents.map(ev => (
+                    <div
+                      key={ev.id}
+                      onClick={() => toggleSkyEvent(ev.id)}
+                      style={{
+                        display: "flex", alignItems: "flex-start", gap: 12,
+                        padding: "10px 14px", marginBottom: 2, cursor: "pointer",
+                        background: skyIncluded[ev.id] ? T.surface : "transparent",
+                        border: `1px solid ${skyIncluded[ev.id] ? T.rule : "transparent"}`,
+                        transition: "background .15s",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={!!skyIncluded[ev.id]}
+                        onChange={() => toggleSkyEvent(ev.id)}
+                        style={{ marginTop: 3, accentColor: T.accent, flexShrink: 0 }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 15, marginBottom: 2 }}>
+                          {ev.is_notable && <span style={{ marginRight: 4 }}>&#11088;</span>}
+                          <span style={{ fontWeight: 600, color: T.ink }}>{ev.title}</span>
+                        </div>
+                        <div style={{ fontSize: 13, color: T.muted }}>
+                          {formatDate(ev.event_date)}
+                          {ev.end_date && ev.end_date !== ev.event_date ? ` \u2013 ${formatDate(ev.end_date)}` : ""}
+                          {ev.peak_time ? ` \u00b7 Peak: ${ev.peak_time}` : ""}
+                        </div>
+                        {ev.viewing_notes && (
+                          <div style={{ fontSize: 12, color: T.muted, fontStyle: "italic", marginTop: 2 }}>{ev.viewing_notes}</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Send button */}
               {!sent && (
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -275,7 +332,7 @@ export default function DigestCuration() {
                     {sending ? "Sending\u2026" : `Send to Subscribers (${selectedCount} events)`}
                   </button>
                   <button
-                    onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setAiIntro(""); setSent(false); }}
+                    onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setSkyEvents([]); setSkyIncluded({}); setAiIntro(""); setSent(false); }}
                     style={{ background: "none", border: `1px solid ${T.rule}`, padding: "10px 20px", fontSize: 13, color: T.muted, cursor: "pointer", fontFamily: font }}
                   >
                     Start Over
