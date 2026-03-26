@@ -53,6 +53,8 @@ export default function DigestCuration() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [sendResult, setSendResult] = useState(null);
+  const [formatting, setFormatting] = useState({});
+  const [formattingAll, setFormattingAll] = useState(false);
 
   const generateDraft = async () => {
     setLoading(true);
@@ -96,6 +98,37 @@ export default function DigestCuration() {
 
   const deselectAll = () => {
     setIncluded({});
+  };
+
+  const formatEvent = async (ev) => {
+    setFormatting(prev => ({ ...prev, [ev.id]: true }));
+    try {
+      const res = await fetch("/api/digest-format", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ev),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Format failed");
+      setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, formatted: data.formatted } : e));
+    } catch (err) {
+      setError(`Format failed for "${ev.title}": ${err.message}`);
+    } finally {
+      setFormatting(prev => ({ ...prev, [ev.id]: false }));
+    }
+  };
+
+  const formatAll = async () => {
+    setFormattingAll(true);
+    setError(null);
+    const unformatted = events.filter(ev => !ev.formatted);
+    for (let i = 0; i < unformatted.length; i++) {
+      await formatEvent(unformatted[i]);
+      if (i < unformatted.length - 1) {
+        await new Promise(r => setTimeout(r, 500));
+      }
+    }
+    setFormattingAll(false);
   };
 
   const sendDigest = async () => {
@@ -206,6 +239,9 @@ export default function DigestCuration() {
                   <div style={{ display: "flex", gap: 8 }}>
                     <button onClick={selectAll} style={{ background: "none", border: `1px solid ${T.rule}`, padding: "5px 12px", fontSize: 12, color: T.muted, cursor: "pointer", fontFamily: font }}>Select all</button>
                     <button onClick={deselectAll} style={{ background: "none", border: `1px solid ${T.rule}`, padding: "5px 12px", fontSize: 12, color: T.muted, cursor: "pointer", fontFamily: font }}>Deselect all</button>
+                    <button onClick={formatAll} disabled={formattingAll} style={{ background: T.accent, border: "none", padding: "5px 12px", fontSize: 12, color: "#fff", cursor: formattingAll ? "wait" : "pointer", fontFamily: font, fontWeight: 600 }}>
+                      {formattingAll ? "Formatting\u2026" : "Format All"}
+                    </button>
                   </div>
                 </div>
 
@@ -268,7 +304,7 @@ export default function DigestCuration() {
                                 {ev.website_url.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]} &#8599;
                               </a>
                             )}
-                            {ev.formatted && (
+                            {ev.formatted ? (
                               <div style={{
                                 background: "#f5f0e8", border: "1px solid #e5e0d8",
                                 padding: 8, marginTop: 6, fontSize: 13,
@@ -277,6 +313,18 @@ export default function DigestCuration() {
                               }}>
                                 {ev.formatted}
                               </div>
+                            ) : (
+                              <button
+                                onClick={e => { e.stopPropagation(); formatEvent(ev); }}
+                                disabled={!!formatting[ev.id]}
+                                style={{
+                                  background: "none", border: `1px solid ${T.rule}`, padding: "3px 10px",
+                                  fontSize: 11, color: T.accent, cursor: formatting[ev.id] ? "wait" : "pointer",
+                                  fontFamily: font, marginTop: 4,
+                                }}
+                              >
+                                {formatting[ev.id] ? "Formatting\u2026" : "Format"}
+                              </button>
                             )}
                           </div>
                         </div>

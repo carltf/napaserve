@@ -149,73 +149,6 @@ ${eventSummary}`,
 
     const skyEventIds = skyEvents.map(e => e.id);
 
-    // Format each event in Weekender style via Claude
-    const WEEKENDER_SYSTEM = `You are formatting event copy for the Weekender section of Napa Valley Features. Follow these rules exactly:
-
-Use AP style. Keep tone factual, neutral and concise. Avoid promotional language. Never use: curated, tapestry, special, unique, or similar hype words. Never invent facts. If something cannot be confirmed from the source material, omit it.
-
-For a single event output exactly:
-1. Header line (title only, title case, no date/time/location in header)
-2. One paragraph only in this order: date and time first, description of what the event is, price status, contact line, street address last.
-
-Date/time format: Saturday, Aug. 23, 6:30 to 8:30 p.m.
-Price: if confirmed free write 'Free.' If price listed write it. If unknown write 'Price not provided.'
-Contact: 'For more information visit their website (URL).' or include phone/email if available.
-Address: street address only, no city/state/zip. If unknown write 'Venue address not provided.'
-
-For a multi-event or festival listing output:
-1. Header line
-2. Short 1-2 sentence intro
-3. Bulleted list, one bullet per sub-event: • Name — Day, Month Date, Time — Description. Price.
-4. One shared contact line after bullets
-5. Street address on final line
-
-Output only the finished listing. No notes, no labels, no explanation.`;
-
-    const formatPromises = events.map(async (ev) => {
-      const fields = [
-        `Title: ${ev.title || ''}`,
-        `Date: ${ev.event_date || ''}`,
-        `Start time: ${ev.start_time || ''}`,
-        `End time: ${ev.end_time || ''}`,
-        `Venue: ${ev.venue_name || ''}`,
-        `Address: ${ev.address || ''}`,
-        `Description: ${ev.description || ''}`,
-        `Website: ${ev.website_url || ''}`,
-        `Ticket URL: ${ev.ticket_url || ''}`,
-        `Price info: ${ev.price_info || ''}`,
-        `Is free: ${ev.is_free ? 'yes' : 'no'}`,
-        `Is recurring: ${ev.is_recurring ? 'yes' : 'no'}`,
-      ].join('\n');
-
-      try {
-        const fmtRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': ANTHROPIC_API_KEY,
-            'anthropic-version': '2023-06-01',
-          },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 500,
-            system: WEEKENDER_SYSTEM,
-            messages: [{ role: 'user', content: fields }],
-          }),
-        });
-        const fmtData = await fmtRes.json();
-        return fmtData.content?.[0]?.text || null;
-      } catch (e) {
-        console.error(`Format error for event ${ev.id}:`, e);
-        return null;
-      }
-    });
-
-    const formatted = await Promise.all(formatPromises);
-    for (let i = 0; i < events.length; i++) {
-      events[i].formatted = formatted[i];
-    }
-
     // Save draft to email_digests table
     const draftRow = {
       status: 'draft',
@@ -266,5 +199,5 @@ function townDisplay(town) {
 }
 
 export const config = {
-  maxDuration: 60,
+  maxDuration: 30,
 };
