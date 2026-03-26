@@ -766,9 +766,9 @@ export default function EventFinder() {
               {QUICK_DATES.map((qd, i) => (
                 <button key={i} onClick={() => applyQuick(qd, i)} style={{
                   padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
-                  background: activeQuick === i ? "#2C1810" : "transparent",
-                  color: activeQuick === i ? "#F5F0E8" : "#A89880",
-                  border: activeQuick === i ? "none" : "1px solid rgba(139,105,20,0.2)",
+                  background: activeQuick === i ? "#8B5E3C" : "transparent",
+                  color: activeQuick === i ? "#F5F0E8" : "#8B5E3C",
+                  border: activeQuick === i ? "none" : "1px solid rgba(139,94,60,0.35)",
                   borderRadius: 6, cursor: "pointer", transition: "all 0.2s",
                 }}>{qd.label}</button>
               ))}
