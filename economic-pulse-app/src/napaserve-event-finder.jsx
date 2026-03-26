@@ -132,12 +132,22 @@ function linkLabel(url) {
   if (/instagram\.com/i.test(url)) return "Instagram";
   return "More Info";
 }
+// Ensure a URL has a protocol prefix
+function ensureHttp(url) {
+  if (!url) return null;
+  if (/^https?:\/\//.test(url)) return url;
+  if (/^www\./.test(url) || /\.\w{2,}/.test(url)) return "https://" + url;
+  return null;
+}
 // Extract the best link URL from a DB event row or result object
 // Priority: website_url → ticket_url → source_url (http only) → regex from description → bestUrl
 function eventLink(ev) {
-  if (ev.website_url) return { url: ev.website_url, label: "More Info" };
-  if (ev.ticket_url) return { url: ev.ticket_url, label: "Get Tickets" };
-  if (ev.source_url && /^https?:\/\//.test(ev.source_url)) return { url: ev.source_url, label: "More Info" };
+  const web = ensureHttp(ev.website_url);
+  if (web) return { url: web, label: "More Info" };
+  const tix = ensureHttp(ev.ticket_url);
+  if (tix) return { url: tix, label: "Get Tickets" };
+  const src = ensureHttp(ev.source_url);
+  if (src) return { url: src, label: "More Info" };
   const m = (ev.description || "").match(/https?:\/\/[^\s)]+/);
   if (m) return { url: m[0], label: "More Info" };
   if (ev.bestUrl) return { url: ev.bestUrl, label: "More Info" };
@@ -347,8 +357,7 @@ export default function EventFinder() {
   function dbEventToResult(ev) {
     const badge = ev.source === "community" ? "(N) " : "";
     // Find the best URL from the DB row itself
-    const dbUrl = ev.website_url || ev.ticket_url
-      || (ev.source_url && /^https?:\/\//.test(ev.source_url) ? ev.source_url : null)
+    const dbUrl = ensureHttp(ev.website_url) || ensureHttp(ev.ticket_url) || ensureHttp(ev.source_url)
       || ((ev.description || "").match(/https?:\/\/[^\s)]+/) || [])[0]
       || null;
     const bodyParts = [

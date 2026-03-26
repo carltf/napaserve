@@ -384,7 +384,7 @@ export default function DigestCuration() {
                             </div>
 
                             {isFormatting ? (
-                              <div style={{ fontSize: 13, color: T.muted, fontStyle: "italic", padding: "4px 0" }}>Formatting\u2026</div>
+                              <div style={{ fontSize: 13, color: T.muted, fontStyle: "italic", padding: "4px 0" }}>{"Formatting\u2026"}</div>
                             ) : ev.formatted ? (
                               <div style={{
                                 fontSize: 13, color: T.ink, lineHeight: 1.55,
@@ -407,8 +407,14 @@ export default function DigestCuration() {
 
                             {/* Best available URL: website_url → ticket_url → source_url → regex from description */}
                             {!ev.formatted && (() => {
-                              const bestUrl = ev.website_url || ev.ticket_url
-                                || (ev.source_url && /^https?:\/\//.test(ev.source_url) ? ev.source_url : null)
+                              const ensureUrl = (u) => {
+                                if (!u) return null;
+                                if (/^https?:\/\//.test(u)) return u;
+                                if (/^www\./.test(u) || /\.\w{2,}/.test(u)) return "https://" + u;
+                                return null;
+                              };
+                              const bestUrl = ensureUrl(ev.website_url) || ensureUrl(ev.ticket_url)
+                                || ensureUrl(ev.source_url)
                                 || ((ev.description || "").match(/https?:\/\/[^\s)]+/) || [])[0]
                                 || null;
                               if (!bestUrl) return null;
