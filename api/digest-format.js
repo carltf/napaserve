@@ -83,6 +83,4 @@ Output only the finished listing. No notes, no labels, no explanation.`;
   }
 }
 
-export const config = {
-  maxDuration: 30,
-};
+export const maxDuration = 30;

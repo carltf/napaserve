@@ -55,6 +55,8 @@ export default function DigestCuration() {
   const [sendResult, setSendResult] = useState(null);
   const [formatting, setFormatting] = useState({});
   const [formattingAll, setFormattingAll] = useState(false);
+  const [generatingIntro, setGeneratingIntro] = useState(false);
+  const [dateRange, setDateRange] = useState({ start: "", end: "" });
 
   const generateDraft = async () => {
     setLoading(true);
@@ -62,19 +64,49 @@ export default function DigestCuration() {
     setSent(false);
     setSendResult(null);
     try {
+      // Step 1: fetch events from Supabase (fast, no Claude)
       const res = await fetch("/api/digest-draft", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to generate draft");
       setDraftId(data.draft_id);
-      setAiIntro(data.ai_intro || "");
-      setEvents(data.events || []);
+      const loadedEvents = data.events || [];
+      setEvents(loadedEvents);
       const inc = {};
-      for (const ev of data.events || []) inc[ev.id] = true;
+      for (const ev of loadedEvents) inc[ev.id] = true;
       setIncluded(inc);
       setSkyEvents(data.skyEvents || []);
       const skyInc = {};
       for (const ev of data.skyEvents || []) skyInc[ev.id] = true;
       setSkyIncluded(skyInc);
+      setDateRange({ start: data.date_range_start || "", end: data.date_range_end || "" });
+
+      // Step 2: generate AI intro separately (Claude call)
+      if (loadedEvents.length > 0) {
+        setGeneratingIntro(true);
+        try {
+          const introRes = await fetch("/api/digest-intro", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              events: loadedEvents,
+              date_range_start: data.date_range_start,
+              date_range_end: data.date_range_end,
+            }),
+          });
+          const introData = await introRes.json();
+          if (introRes.ok && introData.ai_intro) {
+            setAiIntro(introData.ai_intro);
+          } else {
+            setAiIntro("");
+            console.warn("AI intro generation failed:", introData.error);
+          }
+        } catch (introErr) {
+          setAiIntro("");
+          console.warn("AI intro generation error:", introErr);
+        } finally {
+          setGeneratingIntro(false);
+        }
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -215,17 +247,21 @@ export default function DigestCuration() {
               <div style={{ marginBottom: 32 }}>
                 <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: T.ink, marginBottom: 8, fontFamily: font }}>
                   AI Intro
-                  <span style={{ fontWeight: 400, color: T.muted, marginLeft: 8 }}>Edit before sending</span>
+                  <span style={{ fontWeight: 400, color: T.muted, marginLeft: 8 }}>
+                    {generatingIntro ? "Generating\u2026" : "Edit before sending"}
+                  </span>
                 </label>
                 <textarea
-                  value={aiIntro}
+                  value={generatingIntro ? "Generating AI intro\u2026" : aiIntro}
                   onChange={e => setAiIntro(e.target.value)}
+                  disabled={generatingIntro}
                   rows={5}
                   style={{
                     width: "100%", boxSizing: "border-box", padding: "12px 14px",
-                    fontFamily: font, fontSize: 15, color: T.ink, lineHeight: 1.6,
+                    fontFamily: font, fontSize: 15, color: generatingIntro ? T.muted : T.ink, lineHeight: 1.6,
                     background: T.surface, border: `1px solid ${T.rule}`,
                     resize: "vertical", outline: "none",
+                    fontStyle: generatingIntro ? "italic" : "normal",
                   }}
                 />
               </div>

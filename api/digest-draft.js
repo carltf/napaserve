@@ -10,13 +10,9 @@ export default async function handler(req, res) {
 
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_KEY = process.env.SUPABASE_KEY;
-  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return res.status(500).json({ error: 'Supabase credentials not configured' });
-  }
-  if (!ANTHROPIC_API_KEY) {
-    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
   }
 
   try {
@@ -71,7 +67,7 @@ export default async function handler(req, res) {
     }
 
     if (allEvents.length === 0 && skyEvents.length === 0) {
-      return res.status(200).json({ draft_id: null, ai_intro: null, events: [], skyEvents: [], message: 'No approved events in the next 14 days' });
+      return res.status(200).json({ events: [], skyEvents: [], date_range_start: today, date_range_end: endDate, message: 'No approved events in the next 14 days' });
     }
 
     // Deduplicate on title + event_date (keep first occurrence)
@@ -86,73 +82,13 @@ export default async function handler(req, res) {
     // Limit to 20 events total
     const events = allEvents.slice(0, 20);
 
-    // Group by town for the AI prompt, using defined order
-    const byTown = {};
-    for (const ev of events) {
-      const t = ev.town || 'napa';
-      if (!byTown[t]) byTown[t] = [];
-      byTown[t].push(ev);
-    }
-
-    const townKeys = Object.keys(byTown).sort((a, b) => {
-      const ai = TOWN_ORDER.indexOf(a);
-      const bi = TOWN_ORDER.indexOf(b);
-      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-    });
-
-    const eventSummary = townKeys.map(town => {
-      const label = townDisplay(town);
-      const lines = byTown[town].map(e => {
-        const tag = e.is_recurring ? '(R)' : '(N)';
-        return `  ${tag} ${e.title} — ${e.event_date}${e.venue_name ? ', ' + e.venue_name : ''}`;
-      }).join('\n');
-      return `${label}:\n${lines}`;
-    }).join('\n\n');
-
-    // Call Claude for AI intro in Weekender voice
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 300,
-        messages: [{
-          role: 'user',
-          content: `You are writing the opening paragraph for the Napa Valley Features Weekender, a weekly events email for Napa County, California.
-
-Format rules:
-- Start with "NAPA VALLEY, Calif. \u2014" as an AP-style dateline
-- 2-3 sentences after the dateline, warm and local, in the style of: "Welcome to the Napa Valley Features Weekender, your guide to local events and experiences. Each Friday we deliver a Scan and Plan format organized by town..."
-- Reference specific events, venues, or towns from the list below
-- NEVER use these words: curate, civic, discover, explore
-- Keep it conversational, like a trusted local neighbor sharing what's happening this week
-
-Events for ${today} through ${endDate}:
-
-${eventSummary}`,
-        }],
-      }),
-    });
-
-    const claudeData = await claudeRes.json();
-    if (claudeData.error) {
-      console.error('Claude API error:', claudeData.error);
-      return res.status(502).json({ error: 'AI intro generation failed' });
-    }
-
-    const aiIntro = claudeData.content?.[0]?.text || '';
+    // Save draft to email_digests table
     const eventIds = events.map(e => e.id);
-
     const skyEventIds = skyEvents.map(e => e.id);
 
-    // Save draft to email_digests table
     const draftRow = {
       status: 'draft',
-      ai_intro: aiIntro,
+      ai_intro: '',
       event_ids: eventIds,
       sky_event_ids: skyEventIds,
       date_range_start: today,
@@ -181,9 +117,10 @@ ${eventSummary}`,
 
     return res.status(200).json({
       draft_id: draftId,
-      ai_intro: aiIntro,
       events,
       skyEvents,
+      date_range_start: today,
+      date_range_end: endDate,
     });
   } catch (err) {
     console.error('digest-draft error:', err);
@@ -191,13 +128,4 @@ ${eventSummary}`,
   }
 }
 
-function townDisplay(town) {
-  if (!town) return 'Napa';
-  const names = { 'valley-wide': 'Valley-Wide', 'american-canyon': 'American Canyon', 'st-helena': 'St. Helena' };
-  if (names[town]) return names[town];
-  return town.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
-export const config = {
-  maxDuration: 30,
-};
+export const maxDuration = 10;
