@@ -106,6 +106,9 @@ function parseEventBody(body) {
     urls.push(match[1]);
   }
   
+  // Decode unicode escape sequences (e.g. \u2026 → …)
+  body = body.replace(/\\u([0-9a-fA-F]{4})/g, (_, code) => String.fromCharCode(parseInt(code, 16)));
+
   // Clean the body text: remove URLs and their surrounding parens/labels
   let text = body
     .replace(/For more information visit their website\s*\(https?:\/\/[^\s)]+\/?\)\.\s*/gi, "")
@@ -548,13 +551,25 @@ export default function EventFinder() {
             se._hintMatch = true;
             console.log(`[EventFinder] Hint match: scraper[${idx}] "${se.header}" matches recurring pattern`);
           }
-          // If scraper body contains "Price not provided." and DB has price for this title, swap it in
+          // If scraper body contains "Price not provided." — try DB match first, then extract inline price
           if (se.body && se.body.includes("Price not provided.")) {
             const dbPrice = dbPriceByTitle.get(nHeader);
             if (dbPrice) {
               const priceFmt = dbPrice.endsWith(".") ? dbPrice : dbPrice + ".";
               se.body = se.body.replace("Price not provided.", priceFmt);
               console.log(`[EventFinder] Price fill: scraper[${idx}] "${se.header}" → "${priceFmt}" from DB`);
+            } else {
+              // Fallback: extract inline price mentions from the body text itself
+              const priceRe = /(\$[\d,]+(?:\.\d{2})?|\bfree\b|\bno cover\b|\bcomplimentary\b|\bfree admission\b)/i;
+              const inlineMatch = se.body.match(priceRe);
+              if (inlineMatch) {
+                let extracted = inlineMatch[1];
+                // Capitalize nicely
+                if (/free|complimentary|no cover/i.test(extracted)) extracted = "Free";
+                const priceFmt = extracted.endsWith(".") ? extracted : extracted + ".";
+                se.body = se.body.replace("Price not provided.", priceFmt);
+                console.log(`[EventFinder] Price extract: scraper[${idx}] "${se.header}" → "${priceFmt}" from body text`);
+              }
             }
           }
         });
