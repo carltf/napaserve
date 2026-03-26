@@ -19,6 +19,10 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Supabase credentials not configured' });
   }
 
+  // ── Parse limit param (default 5, max 25) ─────────────
+  const rawLimit = parseInt(req.query?.limit || '5', 10);
+  const limit = Math.max(1, Math.min(isNaN(rawLimit) ? 5 : rawLimit, 25));
+
   // ── Date range: today through 14 days out ──────────────
   const today = new Date().toISOString().slice(0, 10);
   const endDate = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
@@ -65,8 +69,9 @@ export default async function handler(req, res) {
       return true;
     });
 
-    // Limit to 20 events
-    const events = deduped.slice(0, 20);
+    // Apply limit
+    const events = deduped.slice(0, limit);
+    const hasMore = deduped.length > limit;
 
     // ── Fetch sky events (non-blocking — skip if table missing) ──
     let skyEvents = [];
@@ -99,6 +104,8 @@ export default async function handler(req, res) {
         skyEvents: [],
         date_range_start: today,
         date_range_end: endDate,
+        hasMore: false,
+        total: 0,
         message: 'No approved events in the next 14 days',
       });
     }
@@ -140,6 +147,8 @@ export default async function handler(req, res) {
       skyEvents,
       date_range_start: today,
       date_range_end: endDate,
+      hasMore,
+      total: deduped.length,
     });
   } catch (err) {
     console.error('Fetch error:', err);

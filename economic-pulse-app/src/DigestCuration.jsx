@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 
@@ -54,9 +54,48 @@ export default function DigestCuration() {
   const [sent, setSent] = useState(false);
   const [sendResult, setSendResult] = useState(null);
   const [formatting, setFormatting] = useState({});
-  const [formattingAll, setFormattingAll] = useState(false);
   const [generatingIntro, setGeneratingIntro] = useState(false);
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [eventLimit, setEventLimit] = useState(5);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalEvents, setTotalEvents] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const formatAbort = useRef(null);
+
+  const formatEventAsync = useCallback(async (ev) => {
+    setFormatting(prev => ({ ...prev, [ev.id]: true }));
+    try {
+      const res = await fetch("/api/digest-format", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ev),
+      });
+      const data = await res.json();
+      if (res.ok && data.formatted) {
+        setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, formatted: data.formatted } : e));
+      }
+    } catch (err) {
+      console.warn(`Format failed for "${ev.title}":`, err);
+    } finally {
+      setFormatting(prev => ({ ...prev, [ev.id]: false }));
+    }
+  }, []);
+
+  const autoFormatAll = useCallback(async (eventsToFormat) => {
+    for (let i = 0; i < eventsToFormat.length; i++) {
+      await formatEventAsync(eventsToFormat[i]);
+      if (i < eventsToFormat.length - 1) {
+        await new Promise(r => setTimeout(r, 300));
+      }
+    }
+  }, [formatEventAsync]);
+
+  const fetchDraft = async (limit) => {
+    const res = await fetch(`/api/digest-draft?limit=${limit}`, { method: "POST" });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to generate draft");
+    return data;
+  };
 
   const generateDraft = async () => {
     setLoading(true);
@@ -64,13 +103,12 @@ export default function DigestCuration() {
     setSent(false);
     setSendResult(null);
     try {
-      // Step 1: fetch events from Supabase (fast, no Claude)
-      const res = await fetch("/api/digest-draft", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to generate draft");
+      const data = await fetchDraft(eventLimit);
       setDraftId(data.draft_id);
       const loadedEvents = data.events || [];
       setEvents(loadedEvents);
+      setHasMore(data.hasMore || false);
+      setTotalEvents(data.total || loadedEvents.length);
       const inc = {};
       for (const ev of loadedEvents) inc[ev.id] = true;
       setIncluded(inc);
@@ -80,7 +118,12 @@ export default function DigestCuration() {
       setSkyIncluded(skyInc);
       setDateRange({ start: data.date_range_start || "", end: data.date_range_end || "" });
 
-      // Step 2: generate AI intro separately (Claude call)
+      // Auto-format all events
+      if (loadedEvents.length > 0) {
+        autoFormatAll(loadedEvents);
+      }
+
+      // Generate AI intro separately
       if (loadedEvents.length > 0) {
         setGeneratingIntro(true);
         try {
@@ -98,11 +141,9 @@ export default function DigestCuration() {
             setAiIntro(introData.ai_intro);
           } else {
             setAiIntro("");
-            console.warn("AI intro generation failed:", introData.error);
           }
         } catch (introErr) {
           setAiIntro("");
-          console.warn("AI intro generation error:", introErr);
         } finally {
           setGeneratingIntro(false);
         }
@@ -111,6 +152,46 @@ export default function DigestCuration() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    const newLimit = eventLimit + 5;
+    setLoadingMore(true);
+    setError(null);
+    try {
+      const data = await fetchDraft(newLimit);
+      setEventLimit(newLimit);
+      const loadedEvents = data.events || [];
+      setHasMore(data.hasMore || false);
+      setTotalEvents(data.total || loadedEvents.length);
+
+      // Find new events that weren't in the previous set
+      const existingIds = new Set(events.map(e => e.id));
+      const newEvents = loadedEvents.filter(e => !existingIds.has(e.id));
+
+      // Merge: keep formatted versions for existing, add new
+      setEvents(prev => {
+        const prevMap = {};
+        for (const e of prev) prevMap[e.id] = e;
+        return loadedEvents.map(e => prevMap[e.id] || e);
+      });
+
+      const inc = {};
+      for (const ev of loadedEvents) inc[ev.id] = included[ev.id] !== undefined ? included[ev.id] : true;
+      setIncluded(inc);
+
+      // Auto-format only the new events
+      if (newEvents.length > 0) {
+        autoFormatAll(newEvents);
+      }
+
+      // Update draft_id
+      if (data.draft_id) setDraftId(data.draft_id);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -130,37 +211,6 @@ export default function DigestCuration() {
 
   const deselectAll = () => {
     setIncluded({});
-  };
-
-  const formatEvent = async (ev) => {
-    setFormatting(prev => ({ ...prev, [ev.id]: true }));
-    try {
-      const res = await fetch("/api/digest-format", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ev),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Format failed");
-      setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, formatted: data.formatted } : e));
-    } catch (err) {
-      setError(`Format failed for "${ev.title}": ${err.message}`);
-    } finally {
-      setFormatting(prev => ({ ...prev, [ev.id]: false }));
-    }
-  };
-
-  const formatAll = async () => {
-    setFormattingAll(true);
-    setError(null);
-    const unformatted = events.filter(ev => !ev.formatted);
-    for (let i = 0; i < unformatted.length; i++) {
-      await formatEvent(unformatted[i]);
-      if (i < unformatted.length - 1) {
-        await new Promise(r => setTimeout(r, 500));
-      }
-    }
-    setFormattingAll(false);
   };
 
   const sendDigest = async () => {
@@ -270,14 +320,11 @@ export default function DigestCuration() {
               <div style={{ marginBottom: 24 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                   <div style={{ fontSize: 15, fontWeight: 700, color: T.ink }}>
-                    Events ({selectedCount} of {events.length} selected)
+                    Events ({selectedCount} of {events.length} selected{totalEvents > events.length ? ` \u00b7 ${totalEvents} total available` : ""})
                   </div>
                   <div style={{ display: "flex", gap: 8 }}>
                     <button onClick={selectAll} style={{ background: "none", border: `1px solid ${T.rule}`, padding: "5px 12px", fontSize: 12, color: T.muted, cursor: "pointer", fontFamily: font }}>Select all</button>
                     <button onClick={deselectAll} style={{ background: "none", border: `1px solid ${T.rule}`, padding: "5px 12px", fontSize: 12, color: T.muted, cursor: "pointer", fontFamily: font }}>Deselect all</button>
-                    <button onClick={formatAll} disabled={formattingAll} style={{ background: T.accent, border: "none", padding: "5px 12px", fontSize: 12, color: "#fff", cursor: formattingAll ? "wait" : "pointer", fontFamily: font, fontWeight: 600 }}>
-                      {formattingAll ? "Formatting\u2026" : "Format All"}
-                    </button>
                   </div>
                 </div>
 
@@ -294,6 +341,7 @@ export default function DigestCuration() {
                     {townEvents.map(ev => {
                       const tag = ev.is_recurring ? "(R)" : "(N)";
                       const tagColor = ev.is_recurring ? T.muted : T.gold;
+                      const isFormatting = !!formatting[ev.id];
                       return (
                         <div
                           key={ev.id}
@@ -317,50 +365,39 @@ export default function DigestCuration() {
                               <span style={{ fontWeight: 700, color: tagColor, fontSize: 12, letterSpacing: ".04em" }}>{tag}</span>
                               <span style={{ fontWeight: 600, color: T.ink, marginLeft: 4 }}>{ev.title}</span>
                             </div>
-                            <div style={{ fontSize: 13, color: T.muted }}>
-                              {formatDate(ev.event_date)}
-                              {ev.start_time ? ` \u00b7 ${ev.start_time}` : ""}
-                              {ev.end_time ? `\u2013${ev.end_time}` : ""}
-                              {ev.venue_name ? ` \u00b7 ${ev.venue_name}` : ""}
-                            </div>
-                            {ev.address && (
-                              <div style={{ fontSize: 12, color: T.muted, marginTop: 1 }}>{ev.address}</div>
+
+                            {isFormatting ? (
+                              <div style={{ fontSize: 13, color: T.muted, fontStyle: "italic", padding: "4px 0" }}>Formatting\u2026</div>
+                            ) : ev.formatted ? (
+                              <div style={{
+                                fontSize: 13, color: T.ink, lineHeight: 1.55,
+                                whiteSpace: "pre-wrap", marginTop: 4,
+                              }}>
+                                {ev.formatted}
+                              </div>
+                            ) : (
+                              <>
+                                <div style={{ fontSize: 13, color: T.muted }}>
+                                  {formatDate(ev.event_date)}
+                                  {ev.start_time ? ` \u00b7 ${ev.start_time}` : ""}
+                                  {ev.end_time ? `\u2013${ev.end_time}` : ""}
+                                  {ev.venue_name ? ` \u00b7 ${ev.venue_name}` : ""}
+                                </div>
+                                {ev.address && <div style={{ fontSize: 12, color: T.muted, marginTop: 1 }}>{ev.address}</div>}
+                                {(ev.price_info || ev.is_free) && <div style={{ fontSize: 12, color: T.muted, marginTop: 1 }}>{ev.price_info || "Free"}</div>}
+                              </>
                             )}
-                            {(ev.price_info || ev.is_free) && (
-                              <div style={{ fontSize: 12, color: T.muted, marginTop: 1 }}>{ev.price_info || "Free"}</div>
-                            )}
+
                             {ev.website_url && (
                               <a
                                 href={ev.website_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={e => e.stopPropagation()}
-                                style={{ fontSize: 12, color: T.accent, textDecoration: "none", marginTop: 2, display: "inline-block" }}
+                                style={{ fontSize: 12, color: T.accent, textDecoration: "none", marginTop: 3, display: "inline-block" }}
                               >
                                 {ev.website_url.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]} &#8599;
                               </a>
-                            )}
-                            {ev.formatted ? (
-                              <div style={{
-                                background: "#f5f0e8", border: "1px solid #e5e0d8",
-                                padding: 8, marginTop: 6, fontSize: 13,
-                                fontFamily: "'Source Sans 3','Source Sans Pro',sans-serif",
-                                color: T.ink, lineHeight: 1.55, whiteSpace: "pre-wrap",
-                              }}>
-                                {ev.formatted}
-                              </div>
-                            ) : (
-                              <button
-                                onClick={e => { e.stopPropagation(); formatEvent(ev); }}
-                                disabled={!!formatting[ev.id]}
-                                style={{
-                                  background: "none", border: `1px solid ${T.rule}`, padding: "3px 10px",
-                                  fontSize: 11, color: T.accent, cursor: formatting[ev.id] ? "wait" : "pointer",
-                                  fontFamily: font, marginTop: 4,
-                                }}
-                              >
-                                {formatting[ev.id] ? "Formatting\u2026" : "Format"}
-                              </button>
                             )}
                           </div>
                         </div>
@@ -368,6 +405,23 @@ export default function DigestCuration() {
                     })}
                   </div>
                 ))}
+
+                {/* Load more button */}
+                {hasMore && (
+                  <div style={{ textAlign: "center", marginTop: 16 }}>
+                    <button
+                      onClick={loadMore}
+                      disabled={loadingMore}
+                      style={{
+                        background: "none", border: `1px solid ${T.rule}`, padding: "10px 24px",
+                        fontSize: 13, fontWeight: 600, color: T.accent, cursor: loadingMore ? "wait" : "pointer",
+                        fontFamily: font,
+                      }}
+                    >
+                      {loadingMore ? "Loading\u2026" : `Load more events (showing ${events.length} of ${totalEvents})`}
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Night Sky section */}
@@ -432,7 +486,7 @@ export default function DigestCuration() {
                     {sending ? "Sending\u2026" : `Send to Subscribers (${selectedCount} events)`}
                   </button>
                   <button
-                    onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setSkyEvents([]); setSkyIncluded({}); setAiIntro(""); setSent(false); }}
+                    onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setSkyEvents([]); setSkyIncluded({}); setAiIntro(""); setSent(false); setEventLimit(5); setHasMore(false); }}
                     style={{ background: "none", border: `1px solid ${T.rule}`, padding: "10px 20px", fontSize: 13, color: T.muted, cursor: "pointer", fontFamily: font }}
                   >
                     Start Over

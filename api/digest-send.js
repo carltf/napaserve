@@ -228,7 +228,14 @@ function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd, skyEven
     for (const ev of events) {
       if (ev.formatted) {
         // Use Weekender-formatted text from Claude
-        const formattedHtml = esc(ev.formatted).replace(/\n/g, '<br>').replace(/•/g, '&bull;');
+        let formattedHtml = esc(ev.formatted).replace(/\n/g, '<br>').replace(/•/g, '&bull;');
+        // Convert "visit their website" to a hyperlink if website_url exists
+        if (ev.website_url) {
+          formattedHtml = formattedHtml.replace(
+            /visit their website/gi,
+            `<a href="${esc(ev.website_url)}" target="_blank" style="color:#8B5E3C;text-decoration:none;">visit their website</a>`
+          );
+        }
         eventsHtml += `
     <tr><td style="padding:14px 0 14px 0;border-bottom:1px solid rgba(44,24,16,0.08);">
       <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2C1810;line-height:1.65;">${formattedHtml}</div>
@@ -251,7 +258,7 @@ function buildDigestEmail(aiIntro, byTown, townKeys, dateStart, dateEnd, skyEven
       <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:4px;">${esc(dateLine)}${venueLine ? ' \u00b7 ' + esc(venueLine) : ''}</div>
       ${desc ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2C1810;line-height:1.55;margin-bottom:6px;">${esc(desc)}</div>` : ''}
       ${priceLine ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8B7355;margin-bottom:6px;">${esc(priceLine)}</div>` : ''}
-      ${ev.website_url ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;margin-bottom:4px;"><a href="${esc(ev.website_url)}" target="_blank" style="color:#8B5E3C;text-decoration:none;">For more information visit their website. \u2192</a></div>` : ''}
+      ${ev.website_url ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;margin-bottom:4px;">For more information <a href="${esc(ev.website_url)}" target="_blank" style="color:#8B5E3C;text-decoration:none;">visit their website</a>.</div>` : ''}
       ${ev.address ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8B7355;">${esc(ev.address)}</div>` : ''}
     </td></tr>`;
       }
