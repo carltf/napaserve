@@ -72,7 +72,11 @@ export default function DigestCuration() {
       });
       const data = await res.json();
       if (res.ok && data.formatted) {
-        setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, formatted: data.formatted } : e));
+        setEvents(prev => prev.map(e => e.id === ev.id ? {
+          ...e,
+          formatted: data.formatted,
+          website_url: data.enriched_website_url || e.website_url,
+        } : e));
       }
     } catch (err) {
       console.warn(`Format failed for "${ev.title}":`, err);

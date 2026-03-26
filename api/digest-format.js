@@ -1,3 +1,26 @@
+// Known Napa Valley venue addresses (street only, no city/state)
+const KNOWN_VENUES = {
+  'brannan center': '1407 Lincoln Ave.',
+  'the brannan center': '1407 Lincoln Ave.',
+  'lincoln theater': '1312 Lincoln Ave.',
+  'lincoln theatre': '1312 Lincoln Ave.',
+  'napa valley opera house': '1030 Main St.',
+  'uptown theatre': '1350 Third St.',
+  'uptown theater': '1350 Third St.',
+  'blue note napa': '1030 Main St.',
+  'oxbow public market': '610 1st St.',
+  'cia at copia': '500 1st St.',
+  'napa valley expo': '575 Third St.',
+  'napa valley college': '2277 Napa-Vallejo Hwy.',
+  'veterans memorial park': '801 Main St.',
+  'napa county fairgrounds': '575 Third St.',
+  'yountville community center': '6516 Washington St.',
+  'calistoga community center': '1307 Washington St.',
+  'american canyon community center': '100 Benton Way',
+  'st. helena public library': '1492 Library Ln.',
+  'napa main library': '580 Coombs St.',
+};
+
 export default async function handler(req, res) {
   // CORS headers on every response
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,6 +48,148 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing event data' });
     }
 
+    // ── ENRICHMENT PHASE — resolve unknowns before formatting ──
+
+    const enriched = { ...ev };
+    const hasSupa = SUPABASE_URL && SUPABASE_KEY;
+
+    // Collect what we need to search for via web (batch into one search call)
+    const needsAddressSearch = !enriched.address && !lookupKnownVenue(enriched.venue_name);
+    const needsPriceSearch = !enriched.price_info && enriched.is_free !== true && enriched.is_free !== false;
+    const needsWebsiteSearch = !enriched.website_url;
+    let needsContactSearch = !enriched.organizer_contact;
+
+    // 1. ADDRESS — known venues first
+    if (!enriched.address) {
+      const known = lookupKnownVenue(enriched.venue_name);
+      if (known) enriched.address = known;
+    }
+
+    // 2. DB LOOKUPS — address, contact from community_events
+    if (hasSupa && enriched.venue_name && (!enriched.address || !enriched.organizer_contact)) {
+      try {
+        const dbUrl = `${SUPABASE_URL}/rest/v1/community_events`
+          + `?venue_name=ilike.${encodeURIComponent(enriched.venue_name)}`
+          + `&select=address,organizer_contact,website_url`
+          + `&address=not.is.null`
+          + `&limit=1`;
+
+        const dbRes = await fetch(dbUrl, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (dbRes.ok) {
+          const rows = await dbRes.json();
+          if (rows.length > 0) {
+            if (!enriched.address && rows[0].address) enriched.address = rows[0].address;
+            if (!enriched.organizer_contact && rows[0].organizer_contact) enriched.organizer_contact = rows[0].organizer_contact;
+            if (!enriched.website_url && rows[0].website_url) enriched.website_url = rows[0].website_url;
+          }
+        }
+      } catch (dbErr) {
+        console.error('DB enrichment lookup (non-fatal):', dbErr);
+      }
+    }
+
+    // 3. WEB SEARCH — for anything still missing
+    const stillNeedsAddress = !enriched.address;
+    const stillNeedsPrice = !enriched.price_info && enriched.is_free !== true && enriched.is_free !== false;
+    const stillNeedsWebsite = !enriched.website_url;
+    const stillNeedsContact = !enriched.organizer_contact;
+
+    if (stillNeedsAddress || stillNeedsPrice || stillNeedsWebsite || stillNeedsContact) {
+      try {
+        const searchParts = [];
+        if (stillNeedsAddress) searchParts.push('street address');
+        if (stillNeedsPrice) searchParts.push('ticket price or if free');
+        if (stillNeedsWebsite) searchParts.push('official website URL');
+        if (stillNeedsContact) searchParts.push('phone number and email');
+
+        const city = enriched.town
+          ? enriched.town.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+          : 'Napa';
+        const searchTarget = [enriched.venue_name, enriched.title, city, 'California']
+          .filter(Boolean).join(' ');
+
+        const enrichRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': ANTHROPIC_API_KEY,
+            'anthropic-version': '2025-03-26',
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 400,
+            tools: [{
+              type: 'web_search_20250305',
+              name: 'web_search',
+              max_uses: 3,
+            }],
+            messages: [{
+              role: 'user',
+              content: `Search for the following details about this event/venue: ${searchTarget}
+
+I need: ${searchParts.join(', ')}.
+${enriched.website_url ? `The event website is ${enriched.website_url} — check it for price info if needed.` : ''}
+
+Return ONLY a JSON object with these fields (use null for anything not found):
+{
+  "address": "street address only, no city/state/zip, or null",
+  "price": "ticket price or 'Free' or null",
+  "website": "official website URL or null",
+  "phone": "phone number or null",
+  "email": "email address or null"
+}
+
+Do not include any other text.`,
+            }],
+          }),
+        });
+
+        const enrichData = await enrichRes.json();
+
+        let enrichText = '';
+        if (enrichData.content) {
+          for (const block of enrichData.content) {
+            if (block.type === 'text') enrichText += block.text;
+          }
+        }
+
+        const jsonMatch = enrichText.match(/\{[\s\S]*?\}/);
+        if (jsonMatch) {
+          const found = JSON.parse(jsonMatch[0]);
+          if (stillNeedsAddress && found.address && found.address !== 'null') {
+            enriched.address = found.address;
+          }
+          if (stillNeedsPrice && found.price && found.price !== 'null') {
+            if (found.price.toLowerCase() === 'free') {
+              enriched.is_free = true;
+            } else {
+              enriched.price_info = found.price;
+            }
+          }
+          if (stillNeedsWebsite && found.website && found.website !== 'null') {
+            enriched.website_url = found.website;
+          }
+          if (stillNeedsContact) {
+            const parts = [];
+            if (found.phone && found.phone !== 'null') parts.push(found.phone);
+            if (found.email && found.email !== 'null') parts.push(found.email);
+            if (parts.length > 0) enriched.organizer_contact = parts.join(', ');
+          }
+        }
+      } catch (searchErr) {
+        console.error('Web search enrichment (non-fatal):', searchErr);
+      }
+    }
+
+    // ── FORMAT PHASE — send enriched data to Claude ──
+
     const WEEKENDER_SYSTEM = `You are formatting event copy for the Weekender section of Napa Valley Features. Follow these rules exactly:
 
 Use AP style. Keep tone factual, neutral and concise. Avoid promotional language. Never use: curated, tapestry, special, unique, or similar hype words. Never invent facts. If something cannot be confirmed from the source material, omit it.
@@ -37,9 +202,12 @@ Date/time format: Saturday, Aug. 23, 6:30 to 8:30 p.m.
 Price rules:
 - If confirmed free, write "Free."
 - If a specific price is listed, write it.
-- If price info is empty/unknown AND is_free is not explicitly true, do NOT write "Price not provided." Instead write nothing about price and append this note on its own line: "Price not confirmed — check website."
-Contact: Always write "For more information visit their website." — never print a raw URL inline. The URL will be linked separately by the email template.
-Address: street address only, no city/state/zip. If unknown write "Venue address not provided."
+- If price is genuinely unknown after all research, write "Price not provided."
+Contact rules:
+- If website is available, write "For more information visit their website." — never print a raw URL inline.
+- If phone or email is available, append it: "For more information visit their website or call (707) 555-1234."
+- If no website AND no phone/email, omit the contact line entirely.
+Address: street address only, no city/state/zip. If genuinely unknown write "Venue address not provided."
 
 For a multi-event or festival listing output:
 1. Header line
@@ -51,21 +219,21 @@ For a multi-event or festival listing output:
 Output only the finished listing. No notes, no labels, no explanation.`;
 
     const fields = [
-      `Title: ${ev.title || ''}`,
-      `Date: ${ev.event_date || ''}`,
-      `Start time: ${ev.start_time || ''}`,
-      `End time: ${ev.end_time || ''}`,
-      `Venue: ${ev.venue_name || ''}`,
-      `Address: ${ev.address || ''}`,
-      `Description: ${ev.description || ''}`,
-      `Website: ${ev.website_url || ''}`,
-      `Ticket URL: ${ev.ticket_url || ''}`,
-      `Price info: ${ev.price_info || ''}`,
-      `Is free: ${ev.is_free === true ? 'yes' : ev.is_free === false ? 'no' : 'unknown'}`,
-      `Is recurring: ${ev.is_recurring ? 'yes' : 'no'}`,
+      `Title: ${enriched.title || ''}`,
+      `Date: ${enriched.event_date || ''}`,
+      `Start time: ${enriched.start_time || ''}`,
+      `End time: ${enriched.end_time || ''}`,
+      `Venue: ${enriched.venue_name || ''}`,
+      `Address: ${enriched.address || ''}`,
+      `Description: ${enriched.description || ''}`,
+      `Website: ${enriched.website_url || ''}`,
+      `Ticket URL: ${enriched.ticket_url || ''}`,
+      `Price info: ${enriched.price_info || ''}`,
+      `Is free: ${enriched.is_free === true ? 'yes' : enriched.is_free === false ? 'no' : 'unknown'}`,
+      `Is recurring: ${enriched.is_recurring ? 'yes' : 'no'}`,
+      `Phone/Email: ${enriched.organizer_contact || ''}`,
     ].join('\n');
 
-    // Step 1: Format the event
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -87,143 +255,24 @@ Output only the finished listing. No notes, no labels, no explanation.`;
       return res.status(502).json({ error: 'Formatting failed' });
     }
 
-    let formatted = data.content?.[0]?.text || '';
+    const formatted = data.content?.[0]?.text || '';
 
-    // Step 2: If address is missing, try to enrich
-    const needsEnrichment = formatted.includes('Venue address not provided');
-
-    if (needsEnrichment && (ev.venue_name || ev.title)) {
-      let foundAddress = null;
-      let foundPhone = null;
-      let foundEmail = null;
-
-      // 2a: Check known Napa Valley venues (hardcoded)
-      const KNOWN_VENUES = {
-        'brannan center': '1407 Lincoln Ave.',
-        'the brannan center': '1407 Lincoln Ave.',
-        'lincoln theater': '1312 Lincoln Ave.',
-        'lincoln theatre': '1312 Lincoln Ave.',
-        'napa valley opera house': '1030 Main St.',
-        'uptown theatre': '1350 Third St.',
-        'blue note napa': '1030 Main St.',
-        'oxbow public market': '610 1st St.',
-        'cia at copia': '500 1st St.',
-        'napa valley expo': '575 Third St.',
-      };
-
-      const venueKey = (ev.venue_name || '').toLowerCase().trim();
-      if (KNOWN_VENUES[venueKey]) {
-        foundAddress = KNOWN_VENUES[venueKey];
-      }
-
-      // 2b: If not in known venues, check community_events DB for same venue_name with address
-      if (!foundAddress && ev.venue_name && SUPABASE_URL && SUPABASE_KEY) {
-        try {
-          const lookupUrl = `${SUPABASE_URL}/rest/v1/community_events`
-            + `?venue_name=eq.${encodeURIComponent(ev.venue_name)}`
-            + `&address=not.is.null`
-            + `&select=address`
-            + `&limit=1`;
-
-          const lookupRes = await fetch(lookupUrl, {
-            headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': `Bearer ${SUPABASE_KEY}`,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (lookupRes.ok) {
-            const rows = await lookupRes.json();
-            if (rows.length > 0 && rows[0].address) {
-              foundAddress = rows[0].address;
-            }
-          }
-        } catch (dbErr) {
-          console.error('Venue DB lookup error (non-fatal):', dbErr);
-        }
-      }
-
-      // 2c: If still no address, use web search
-      if (!foundAddress) {
-        const searchQuery = [ev.venue_name, ev.title, 'Napa County California address']
-          .filter(Boolean).join(' ');
-
-        try {
-          const enrichRes = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': ANTHROPIC_API_KEY,
-              'anthropic-version': '2025-03-26',
-            },
-            body: JSON.stringify({
-              model: 'claude-sonnet-4-20250514',
-              max_tokens: 300,
-              tools: [{
-                type: 'web_search_20250305',
-                name: 'web_search',
-                max_uses: 2,
-              }],
-              messages: [{
-                role: 'user',
-                content: `Search for the street address, phone number, and email for: ${searchQuery}
-
-Return ONLY a JSON object with these fields (use null if not found):
-{"address": "street address only, no city/state/zip", "phone": "phone number", "email": "email address"}
-
-Do not include any other text.`,
-              }],
-            }),
-          });
-
-          const enrichData = await enrichRes.json();
-
-          let enrichText = '';
-          if (enrichData.content) {
-            for (const block of enrichData.content) {
-              if (block.type === 'text') {
-                enrichText += block.text;
-              }
-            }
-          }
-
-          const jsonMatch = enrichText.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            const found = JSON.parse(jsonMatch[0]);
-            if (found.address && found.address !== 'null') foundAddress = found.address;
-            if (found.phone && found.phone !== 'null') foundPhone = found.phone;
-            if (found.email && found.email !== 'null') foundEmail = found.email;
-          }
-        } catch (enrichErr) {
-          console.error('Enrichment search error (non-fatal):', enrichErr);
-        }
-      }
-
-      // Apply enrichment to formatted text
-      if (foundAddress) {
-        formatted = formatted.replace('Venue address not provided.', foundAddress);
-      }
-
-      const extras = [];
-      if (foundPhone) extras.push(foundPhone);
-      if (foundEmail) extras.push(foundEmail);
-      if (extras.length > 0) {
-        const contactLine = 'For more information visit their website.';
-        const enrichedContact = `For more information visit their website or call ${extras.join(' or email ')}.`;
-        if (formatted.includes(contactLine)) {
-          formatted = formatted.replace(contactLine, enrichedContact);
-        }
-      }
-    }
-
-    return res.status(200).json({ formatted });
+    return res.status(200).json({
+      formatted,
+      enriched_website_url: enriched.website_url || null,
+    });
   } catch (err) {
     console.error('digest-format error:', err);
     return res.status(502).json({ error: 'Failed to format event' });
   }
 }
 
+function lookupKnownVenue(venueName) {
+  if (!venueName) return null;
+  const key = venueName.toLowerCase().trim();
+  return KNOWN_VENUES[key] || null;
+}
+
 export const config = {
-  maxDuration: 45,
+  maxDuration: 60,
 };
