@@ -14,6 +14,8 @@ const T = {
   border:  "#D4C9B8",
 };
 
+const PUBLISHED = false;
+
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 const ARTICLE_SLUG = "napa-supply-chain-2026";
 
@@ -426,7 +428,7 @@ function Chart3_EnergyPriceShock() {
         scales: {
           x: { ticks: { color: C.secondary, font: { size: 9, family: sans }, maxRotation: 0 }, grid: { color: C.grid } },
           y: { position: "left", ticks: { color: C.secondary, font: { size: 10, family: sans }, callback: v => "$" + v }, grid: { color: C.grid }, title: { display: true, text: "Brent ($/bbl)", color: C.secondary, font: { size: 10 } } },
-          y2: { position: "right", ticks: { color: C.tan, font: { size: 10, family: sans }, callback: v => "\u20AC" + v }, grid: { display: false }, title: { display: true, text: "EU gas (\u20AC/MWh)", color: C.tan, font: { size: 10 } } },
+          y2: { position: "right", ticks: { color: C.tan, font: { size: 10, family: sans }, callback: v => "€" + v }, grid: { display: false }, title: { display: true, text: "EU gas (€/MWh)", color: C.tan, font: { size: 10 } } },
         },
       },
       plugins: [watermarkPlugin],
@@ -441,11 +443,11 @@ function Chart3_EnergyPriceShock() {
       </div>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px solid " + C.blue, verticalAlign: "middle" }} />Brent crude ($/bbl, left)</span>
-        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px dashed " + C.tan, verticalAlign: "middle" }} />European gas (\u20AC/MWh, right)</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px dashed " + C.tan, verticalAlign: "middle" }} />European gas (€/MWh, right)</span>
       </div>
       <div style={{ position: "relative", width: "100%", height: 300 }}><canvas ref={ref} /></div>
       <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
-        Source: Wikipedia, 2026 Strait of Hormuz crisis; World Economic Forum trade update (March 2026). Brent peaked $126/bbl. EU gas doubled from ~\u20AC30 to above \u20AC60/MWh within days of Qatar Ras Laffan force majeure (March 4, 2026).
+        Source: Wikipedia, 2026 Strait of Hormuz crisis; World Economic Forum trade update (March 2026). Brent peaked $126/bbl. EU gas doubled from ~€30 to above €60/MWh within days of Qatar Ras Laffan force majeure (March 4, 2026).
       </p>
       <button onClick={() => downloadChartPng(ref, "chart-3_energy-price-shock_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
@@ -718,9 +720,40 @@ function ScenarioCalculator() {
           <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.tan }}>{fmtMoney(totalWages)}</div>
           <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Wage pressure /yr</div>
         </div>
-        <div style={{ ...statBoxStyle, background: "#EDE8DE" }}>
-          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.green }}>{fmtMoney(gapWidening)}</div>
-          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Added nominal/real GDP gap</div>
+        <div style={{ ...statBoxStyle, background: "#EDE8DE", padding: 16, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          {(() => {
+            const shockPct = Math.min(gapWidening / (COUNTY_GDP * 0.52) * 100, 12);
+            const realPct = Math.max(13 - shockPct, 1);
+            const inflationDeg = 87 / 100 * 360;
+            const shockDeg = shockPct / 100 * 360;
+            const polarToCartesian = (cx, cy, r, angleDeg) => {
+              const rad = (angleDeg - 90) * Math.PI / 180;
+              return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+            };
+            const arcPath = (cx, cy, r, startDeg, endDeg) => {
+              const s = polarToCartesian(cx, cy, r, startDeg);
+              const e = polarToCartesian(cx, cy, r, endDeg);
+              const large = endDeg - startDeg > 180 ? 1 : 0;
+              return `M ${cx} ${cy} L ${s.x} ${s.y} A ${r} ${r} 0 ${large} 1 ${e.x} ${e.y} Z`;
+            };
+            const r = 48;
+            const cx = 50;
+            const cy = 50;
+            return (
+              <>
+                <svg width={100} height={100} viewBox="0 0 100 100" style={{ display: "block", marginBottom: 8 }}>
+                  <circle cx={cx} cy={cy} r={r} fill="none" stroke="#D4C4A8" strokeWidth={1} />
+                  <path d={arcPath(cx, cy, r, 0, inflationDeg)} fill="#C4956A" />
+                  <path d={arcPath(cx, cy, r, inflationDeg, inflationDeg + shockDeg)} fill="#C05050" />
+                  <path d={arcPath(cx, cy, r, inflationDeg + shockDeg, 360)} fill="#5A6E3A" />
+                </svg>
+                <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginBottom: 4 }}>OF EVERY APPARENT $1</div>
+                <div style={{ fontFamily: serif, fontSize: 13, color: C.ink, textAlign: "center", lineHeight: 1.5 }}>
+                  87¢ inflation before shock · +{Math.round(shockPct)}¢ from this shock · {Math.max(Math.round(13 - shockPct), 1)}¢ real output
+                </div>
+              </>
+            );
+          })()}
         </div>
       </div>
 
@@ -748,16 +781,16 @@ function ScenarioCalculator() {
 
 const SECTIONS = [
   { id: "intro", heading: null, body: "A vineyard manager prices diesel for a week of tractor work. A winery waits on a part for a cooling system. A packaging order gets harder to quote. A hotel manager watches booking patterns for signs that visitors are pulling back.\n\nThose are routine decisions in Napa Valley. They no longer sit inside a routine global economy.\n\nThe current shock begins in a place many readers know by name but may not fully grasp as a system: the Strait of Hormuz. On Feb. 28, coordinated U.S.-Israeli airstrikes on Iran triggered a sequence of events that has brought the global economy to the edge of one of its worst energy crises in decades. Iran\u2019s Islamic Revolutionary Guard Corps declared the strait closed, tanker traffic ground to a near halt, and oil prices surged faster than during any other conflict in recent history. Brent crude exceeded $100 per barrel March 8 for the first time in four years, reaching a peak of $126. The IEA\u2019s executive director described the current situation as worse than the combined oil crises of 1973 and 1979. UNCTAD documented the most immediate maritime impact: traffic through the strait fell from roughly 110 ships a day to fewer than 10 \u2014 a decline of more than 94% \u2014 according to Lloyd\u2019s List Intelligence and Windward Maritime AI data through March 20.", chart: null },
-  { id: "hormuz", heading: "What Moves Through the Strait", body: "The strait is not only an oil story. That is the essential premise for understanding why Napa is exposed.\n\nThe Hormuz passage carries roughly 20% of all global seaborne oil trade and approximately 20% of global LNG, according to UNCTAD and IEA data. It also carries liquefied petroleum gas, refined products, fertilizers and the chemical inputs that flow downstream into industrial production worldwide. Qatar\u2019s Ras Laffan facility \u2014 one of the world\u2019s largest LNG export terminals \u2014 declared force majeure on all LNG shipments March 4 after Iranian attacks on its infrastructure, removing roughly 20% of the world\u2019s LNG supply from the market in a single day. European natural gas prices roughly doubled within days, from about \u20AC30 per megawatt-hour to above \u20AC60. Asian LNG spot prices surged more sharply. Dry bulk transits through the strait are down 91%, with approximately 280 vessels trapped in the region, according to Kpler vessel tracking data.\n\nThat matters locally even if Napa businesses do not buy LNG directly. Natural gas stress moves through electricity costs, industrial heat, fertilizers, chemicals and the production chain for materials that vineyards, wineries, hotels and restaurants rely on. It also reaches Napa indirectly through visitor-origin economies in Europe and Asia, where households and businesses are absorbing the same energy squeeze. The same conflict that raises input costs here weakens spending power there.", chart: { component: Chart1_HormuzTraffic, title: "Hormuz Strait Tanker Traffic Collapse", caption: "Source: Lloyd's List Intelligence; Windward Maritime AI (March 20, 2026). Traffic fell from ~110 ships/day to fewer than 10 — a 94.2% decline. ~2,000 vessels stranded nearby. Source: IMO Secretary-General statement; NPR (March 23, 2026)." } },
+  { id: "hormuz", heading: "What Moves Through the Strait", body: "The strait is not only an oil story. That is the essential premise for understanding why Napa is exposed.\n\nThe Hormuz passage carries roughly 20% of all global seaborne oil trade and approximately 20% of global LNG, according to UNCTAD and IEA data. It also carries liquefied petroleum gas, refined products, fertilizers and the chemical inputs that flow downstream into industrial production worldwide. Qatar\u2019s Ras Laffan facility \u2014 one of the world\u2019s largest LNG export terminals \u2014 declared force majeure on all LNG shipments March 4 after Iranian attacks on its infrastructure, removing roughly 20% of the world\u2019s LNG supply from the market in a single day. European natural gas prices roughly doubled within days, from about €30 per megawatt-hour to above €60. Asian LNG spot prices surged more sharply. Dry bulk transits through the strait are down 91%, with approximately 280 vessels trapped in the region, according to Kpler vessel tracking data.\n\nThat matters locally even if Napa businesses do not buy LNG directly. Natural gas stress moves through electricity costs, industrial heat, fertilizers, chemicals and the production chain for materials that vineyards, wineries, hotels and restaurants rely on. It also reaches Napa indirectly through visitor-origin economies in Europe and Asia, where households and businesses are absorbing the same energy squeeze. The same conflict that raises input costs here weakens spending power there.", chart: { component: Chart1_HormuzTraffic, title: "Hormuz Strait Tanker Traffic Collapse", caption: "Source: Lloyd's List Intelligence; Windward Maritime AI (March 20, 2026). Traffic fell from ~110 ships/day to fewer than 10 — a 94.2% decline. ~2,000 vessels stranded nearby. Source: IMO Secretary-General statement; NPR (March 23, 2026)." } },
   { id: "downstream", heading: "How the Shock Travels Downstream", body: "The chain from chokepoint to vineyard runs through several transmission layers, not just pump prices.\n\nOil and refined products are the most visible layer. Diesel powers tractors, trucks and generators. Freight rates for oil tankers have surged alongside war risk insurance premiums and marine fuel costs, increasing shipping costs across supply chains. But oil is the surface.\n\nNatural gas feeds industrial production across multiple sectors at a level most readers do not track. When Qatar\u2019s Ras Laffan went offline, the ripple moved immediately into materials that have nothing obvious to do with energy. Aluminum is one example. In March, Hydro reported that its Qatalum joint venture in Qatar began a controlled shutdown after gas supply was suspended. Within days the company said reduced gas would continue and Qatalum would maintain production at about 60% of capacity. That is a clean illustration of how a gas shock becomes a materials shock. The problem is not energy scarcity alone. It is downstream industrial output.\n\nHelium is another example \u2014 a case study in how deep the chain runs. Helium is used in semiconductor manufacturing because it provides a stable inert atmosphere and improves heat transfer. Supply disruptions can jeopardize manufacturing in consumer electronics and related sectors, according to the U.S. Geological Survey. Chips now sit inside nearly every modern system: vehicles, appliances, logistics platforms, communications infrastructure. When helium supply tightens, the constraint does not announce itself at the pump. It shows up quarters later in lead times, component costs and equipment availability.\n\nFertilizers and agricultural chemicals complete the picture. The Middle East Gulf accounts for 16% to 18% of global seaborne fertilizer exports, according to Kpler. In Napa, that exposure shows up less as a single dramatic shortage than as one more layer of cost pressure running through vineyard operations. Nearly half the world\u2019s traded sulfur supply \u2014 a base input for phosphate fertilizers and industrial chemical manufacturing \u2014 is currently stranded on the Persian Gulf side of the strait, according to CRU Group.\n\nManufacturing trade friction adds a parallel layer. On March 11, the Office of the U.S. Trade Representative opened new Section 301 investigations into structural excess capacity in manufacturing sectors \u2014 a signal that trade friction tied to China is rising again at precisely the moment energy and shipping systems are under strain. For Napa, that means more uncertainty around pumps, fittings, refrigeration components, warehouse materials, fabricated parts and the small industrial goods that make a premium agricultural region run on time.", chart: { component: Chart2_CommodityBeforeAfter, title: "Commodity Prices: Before vs. After the Disruption", caption: "Sources: UNCTAD Strait of Hormuz Disruptions report (March 10, 2026); IEA Middle East and Global Energy Markets; Kpler vessel tracking (March 2026). Current flows estimated from reported 94% tanker transit decline and commodity-specific disruption data. LNG near-zero reflects Qatar Ras Laffan force majeure (March 4, 2026)." } },
-  { id: "tourism", heading: "The Tourism Channel", body: "Then Napa gets hit again through travel.\n\nThe energy and transport pressures affecting producers also affect visitors. European and Asian travelers \u2014 among Napa\u2019s most valuable \u2014 are absorbing higher fuel costs, gas-market stress and more uncertain travel conditions. These are not abstract geopolitical statistics. They describe the energy budgets of the households and businesses that produce the international visitors Napa depends on for discretionary spending.\n\nThat does not mean visitor traffic collapses in a straight line. It means the tourism channel becomes more fragile at precisely the moment the production channel becomes more expensive. In a place where the economic model depends on both agriculture and hospitality, that is the double hit.\n\nShocks of this scale also carry a longer tail than the headlines imply. Shipping routes do not normalize overnight. Insurance costs can stay elevated for months. Industrial facilities do not return to full output in a single step. Iran\u2019s de facto blockade has already produced a selective, permission-based transit regime \u2014 what shipping industry experts have dubbed the \u201CTehran toll booth\u201D \u2014 that Iran appears to be turning into a longer-term instrument of geopolitical leverage, according to reporting by Al Jazeera and NBC News as of March 26.", chart: { component: Chart3_EnergyPriceShock, title: "Energy Price Shock Transmission to Napa Valley", caption: "Source: Wikipedia, 2026 Strait of Hormuz crisis; World Economic Forum trade update (March 2026). Brent crude peaked at $126/bbl. European gas roughly doubled from ~\u20AC30/MWh to above \u20AC60/MWh within days of Qatar's Ras Laffan force majeure (March 4, 2026)." } },
+  { id: "tourism", heading: "The Tourism Channel", body: "Then Napa gets hit again through travel.\n\nThe energy and transport pressures affecting producers also affect visitors. European and Asian travelers \u2014 among Napa\u2019s most valuable \u2014 are absorbing higher fuel costs, gas-market stress and more uncertain travel conditions. These are not abstract geopolitical statistics. They describe the energy budgets of the households and businesses that produce the international visitors Napa depends on for discretionary spending.\n\nThat does not mean visitor traffic collapses in a straight line. It means the tourism channel becomes more fragile at precisely the moment the production channel becomes more expensive. In a place where the economic model depends on both agriculture and hospitality, that is the double hit.\n\nShocks of this scale also carry a longer tail than the headlines imply. Shipping routes do not normalize overnight. Insurance costs can stay elevated for months. Industrial facilities do not return to full output in a single step. Iran\u2019s de facto blockade has already produced a selective, permission-based transit regime \u2014 what shipping industry experts have dubbed the \u201CTehran toll booth\u201D \u2014 that Iran appears to be turning into a longer-term instrument of geopolitical leverage, according to reporting by Al Jazeera and NBC News as of March 26.", chart: { component: Chart3_EnergyPriceShock, title: "Energy Price Shock Transmission to Napa Valley", caption: "Source: Wikipedia, 2026 Strait of Hormuz crisis; World Economic Forum trade update (March 2026). Brent crude peaked at $126/bbl. European gas roughly doubled from ~€30/MWh to above €60/MWh within days of Qatar's Ras Laffan force majeure (March 4, 2026)." } },
   { id: "napa-impact", heading: "Less Cushion Than the Numbers Suggest", body: "That longer tail matters because Napa County is not entering this shock from a position of unusual strength.\n\nAs documented in \u201CUnder the Hood: Napa\u2019s Economy Looks Bigger Than It Is,\u201D nominal GDP reached $14.59 billion in 2024, up 35.8% since 2016. Adjusted for inflation, the same economy grew 4.6%. Of the apparent $3.84 billion in growth over that period, roughly 87 cents of every dollar reflected inflation rather than real output. At the same time, the county\u2019s jobs engine has stalled. Leisure and hospitality employment is essentially flat since 2019 despite continued nominal expansion \u2014 and if the 2009\u20132019 growth trend had continued, that sector would employ roughly 4,800 more workers today than it actually does. In a county where a contracting wine industry accounts for 72% of all jobs and 74% of all wages, another round of pressure on fuel, natural gas, freight, manufacturing and travel is not just a story about higher costs. It is a story about employment, wages and the tax base that funds public services.\n\nAnother wave of supply-chain disruption could widen the same disconnect Napa is already living with: the gap between what the economy appears to be producing in current dollars and what it is actually producing after inflation. Revenues can rise on paper while real output, hiring power and local resilience lag behind. In a county built on both agriculture and tourism, that is not a short-term inconvenience. It is a structural risk that the nominal numbers have been obscuring for years.\n\nWhat happens in Hormuz does not stay in Hormuz. It can show up in a diesel invoice, a delayed part, a more expensive bottling run, a cautious traveler, a softer booking calendar and a wider gap between nominal prosperity and real economic strength. That is the supply-chain story Napa now has to reckon with.", chart: { component: Chart4_NapaGdpEmploymentGap, title: "Napa GDP and Employment: The Widening Gap", caption: "Source: Bureau of Economic Analysis via FRED (GDPALL06055 nominal; REALGDPALL06055 real, chained 2017 dollars); Bureau of Labor Statistics (NAPA906LEIHN). Wine industry employment and wage figures: Insel & Company for Napa Valley Vintners, May 2025 (2022 data)." } },
   { id: "calculator", heading: "Run Your Own Scenario", body: "Use the calculator below to model how the Hormuz supply shock \u2014 layered on top of an already-contracting wine industry \u2014 could compound pressure on Napa County jobs, wages and the gap between nominal and real GDP. Adjust input cost increases, visitor spend decline and duration to explore the range of outcomes.", chart: null, calculator: true },
 ];
 
 const RELATED = [
-  { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "Napa Valley Features", url: "/under-the-hood/napa-gdp-2024" },
-  { title: "Napa Cabernet Prices Break the Growth Curve", date: "Napa Valley Features", url: "/under-the-hood/napa-cab-2025" },
+  { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "Napa Valley Features", url: "/under-the-hood/napa-gdp-2024", substack: "https://napavalleyfocus.substack.com/p/napas-economy-looks-bigger-than-it-is" },
+  { title: "Napa Cabernet Prices Break the Growth Curve", date: "Napa Valley Features", url: "/under-the-hood/napa-cab-2025", substack: "https://napavalleyfocus.substack.com/p/napa-cabernet-prices-break-the-growth" },
 ];
 
 const SOURCES = [
@@ -790,6 +823,20 @@ export default function UnderTheHoodSupplyChain() {
   const prose   = { fontFamily: "'Source Sans 3', sans-serif", fontSize: 17, color: T.ink, lineHeight: 1.75, margin: "0 0 18px 0" };
   const heading = { fontFamily: "'Libre Baskerville', serif", fontSize: 22, fontWeight: 700, color: T.ink, margin: "40px 0 16px 0" };
   const h2style = { fontFamily: "'Libre Baskerville', serif", fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 16px 0" };
+
+  if (!PUBLISHED) {
+    return (
+      <div style={{ background: "#F5F0E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
+        <NavBar />
+        <div style={{ fontFamily: "'Source Code Pro', monospace", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#C4A050", marginBottom: 16 }}>
+          NAPA VALLEY FEATURES · UNDER THE HOOD
+        </div>
+        <h1 style={{ fontFamily: "'Libre Baskerville', Georgia, serif", fontSize: 32, fontWeight: 700, color: "#2C1810", margin: "0 0 12px 0" }}>Coming soon</h1>
+        <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 16, color: "#5C4033", margin: 0 }}>This article is being prepared. Check back shortly.</p>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div style={{ background: T.bg, minHeight: "100vh" }}>
@@ -852,11 +899,17 @@ export default function UnderTheHoodSupplyChain() {
         <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
           <h2 style={h2style}>Related Coverage From Napa Valley Features</h2>
           {RELATED.map(item => (
-            <Link key={item.title} to={item.url}
-              style={{ display: "block", padding: "16px 0", borderBottom: `1px solid ${T.border}`, textDecoration: "none" }}>
-              <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 15, color: T.accent, fontWeight: 600, margin: "0 0 4px 0" }}>{item.title}</p>
-              <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>{item.date}</p>
-            </Link>
+            <div key={item.title} style={{ padding: "16px 0", borderBottom: `1px solid ${T.border}` }}>
+              <Link to={item.url} style={{ textDecoration: "none", display: "block" }}>
+                <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 15, color: T.accent, fontWeight: 600, margin: "0 0 4px 0" }}>{item.title}</p>
+                <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>{item.date}</p>
+              </Link>
+              {item.substack && (
+                <a href={item.substack} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 12, color: "#8B5E3C", textDecoration: "none", display: "inline-block", marginTop: 6 }}>
+                  Read on Substack →
+                </a>
+              )}
+            </div>
           ))}
         </div>
 
@@ -882,7 +935,7 @@ export default function UnderTheHoodSupplyChain() {
             This article was reported and written by Tim Carl for Napa Valley Features. Charts and interactive elements built for the NapaServe Community Data Commons. Data sources and methodology are listed above.
           </p>
           <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 12, color: T.muted, marginTop: 10, lineHeight: 1.5 }}>
-            Questions, corrections or tips? Contact <a href="/about#contact" style={{ color: T.accent }}>the newsroom</a>.
+            Questions, corrections or tips? Contact <a href="mailto:info@napaserve.com" style={{ color: T.accent }}>the newsroom</a>.
           </p>
         </div>
 
