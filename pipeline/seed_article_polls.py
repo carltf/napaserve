@@ -93,6 +93,25 @@ POLLS = [
         "question": "For wineries, what is the biggest risk in the next 12 months?",
         "options": ["Slipping DTC sales", "Excess inventory", "Grape costs too high", "Big discounts to move wine", "Other (leave comment below)"],
     },
+    # ── Supply Chain 2026 ─────────────────────────────────────
+    {
+        "article_slug": "napa-supply-chain-2026",
+        "sort_order": 1,
+        "question": "How much do you expect Napa input costs to rise?",
+        "options": ["Less than 5%", "5% to 10%", "10% to 20%", "More than 20%", "Too early to tell"],
+    },
+    {
+        "article_slug": "napa-supply-chain-2026",
+        "sort_order": 2,
+        "question": "How long will Hormuz disruptions last?",
+        "options": ["Weeks \u2014 resolved by June", "3 to 6 months", "6 to 12 months", "More than a year", "Unsure"],
+    },
+    {
+        "article_slug": "napa-supply-chain-2026",
+        "sort_order": 3,
+        "question": "What concerns you most for Napa's economy?",
+        "options": ["Higher fuel and freight costs", "Fewer international visitors", "Wine industry already fragile", "All of the above", "Not concerned"],
+    },
 ]
 
 
@@ -123,9 +142,12 @@ def main():
     polls = [p for p in POLLS if slug_filter is None or p["article_slug"] == slug_filter]
 
     if dry_run:
-        print(f"DRY RUN — {len(polls)} poll(s) would be seeded:")
-        for p in polls:
-            print(f"  slug={p['article_slug']}  order={p['sort_order']}  id={p.get('id','auto')}  q={p['question'][:60]}...")
+        filtered = [p for p in POLLS if slug_filter is None or p["article_slug"] == slug_filter]
+        print(f"DRY RUN — {len(filtered)} poll(s) would be seeded:")
+        for p in filtered:
+            print(f"  order={p['sort_order']}  question={p['question']}")
+            for i, opt in enumerate(p['options']):
+                print(f"    [{i}] {opt}")
         return
 
     key = os.environ.get("SUPABASE_KEY")
