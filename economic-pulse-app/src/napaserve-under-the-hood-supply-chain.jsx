@@ -201,63 +201,545 @@ function ChartBox({ title, caption, children }) {
   );
 }
 
-// ─── chart placeholders ───────────────────────────────────────────────────────
-// TODO: Replace with Chart.js implementations from Features Copy Editor session
+// ─── shared chart styles ──────────────────────────────────────────────────────
+const C = {
+  bg: "#FAF6F0",
+  border: "#D4C4A8",
+  grid: "#DDD8CC",
+  ink: "#2C1810",
+  secondary: "#5C4033",
+  gold: "#C4A050",
+  accent: "#8B5E3C",
+  blue: "#4A7BA7",
+  red: "#C05050",
+  tan: "#C4956A",
+  green: "#5A6E3A",
+};
+const mono = "'Source Code Pro', monospace";
+const sans = "'Source Sans 3', sans-serif";
+const serif = "'Libre Baskerville', Georgia, serif";
 
+function downloadChartPng(canvasRef, filename) {
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const off = document.createElement("canvas");
+  off.width = canvas.width;
+  off.height = canvas.height + 28;
+  const ctx = off.getContext("2d");
+  ctx.fillStyle = C.bg;
+  ctx.fillRect(0, 0, off.width, off.height);
+  ctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.font = "10px 'Source Code Pro', monospace";
+  ctx.fillStyle = "#8B7355";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom";
+  ctx.fillText("napaserve.org", off.width - 12, off.height - 8);
+  ctx.restore();
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = off.toDataURL("image/png");
+  link.click();
+}
+
+const dlBtnStyle = {
+  marginTop: 8, padding: "4px 12px", fontSize: 11,
+  fontFamily: mono, letterSpacing: "0.08em", color: "#8B7355",
+  background: "transparent", border: "1px solid #D4C4A8",
+  borderRadius: 3, cursor: "pointer", display: "block",
+};
+
+const statBoxStyle = {
+  background: "#EDE8DE", borderRadius: 6, padding: "14px 16px", textAlign: "center", flex: 1,
+};
+
+const watermarkPlugin = {
+  id: "watermark",
+  afterDraw(chart) {
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.font = "10px 'Source Code Pro', monospace";
+    ctx.fillStyle = "#8B7355";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("napaserve.org", chart.width - 10, chart.height - 6);
+    ctx.restore();
+  },
+};
+
+// ─── CHART 1: Hormuz Strait Tanker Traffic Collapse ──────────────────────────
 function Chart1_HormuzTraffic() {
-  // Chart 1: Hormuz Strait tanker traffic collapse
-  // Download filename: chart-1_hormuz-traffic-collapse_nvf_2026.png
-  return (
-    <div style={{ background: T.bg, border: `1px dashed ${T.border}`, borderRadius: 6, padding: 32, textAlign: "center", color: T.muted, fontFamily: "'Source Sans 3', sans-serif", fontSize: 14 }}>
-      Chart 1: Hormuz Strait Tanker Traffic Collapse — placeholder
-    </div>
-  );
-}
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!window.Chart || !ref.current) return;
+    const labels = ["Feb 20","Feb 24","Feb 27","Feb 28","Mar 1","Mar 2","Mar 4","Mar 8","Mar 12","Mar 16","Mar 20","Mar 26"];
+    const data = [110,108,105,55,8,2,3,5,6,8,7,5];
+    const ch = new window.Chart(ref.current, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          data,
+          borderColor: C.blue,
+          backgroundColor: "rgba(196,168,100,0.13)",
+          fill: true,
+          tension: 0.3,
+          borderWidth: 2.5,
+          pointRadius: data.map((_, i) => i === 3 ? 6 : 3.5),
+          pointBackgroundColor: data.map((_, i) => i === 3 ? C.red : C.blue),
+          pointBorderColor: "#fff",
+          pointBorderWidth: 1.5,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.parsed.y + " ships/day" } } },
+        scales: {
+          x: { ticks: { color: C.secondary, font: { size: 10, family: sans } }, grid: { color: C.grid } },
+          y: { min: 0, max: 130, ticks: { color: C.secondary, font: { size: 10, family: sans } }, grid: { color: C.grid }, title: { display: true, text: "ships/day", color: C.secondary, font: { size: 10, family: sans } } },
+        },
+      },
+      plugins: [watermarkPlugin],
+    });
+    return () => ch.destroy();
+  }, []);
 
-function Chart2_CommodityBeforeAfter() {
-  // Chart 2: Commodity prices before vs. after disruption
-  // Download filename: chart-2_commodity-before-after_nvf_2026.png
   return (
-    <div style={{ background: T.bg, border: `1px dashed ${T.border}`, borderRadius: 6, padding: 32, textAlign: "center", color: T.muted, fontFamily: "'Source Sans 3', sans-serif", fontSize: 14 }}>
-      Chart 2: Commodity Prices Before vs. After — placeholder
-    </div>
-  );
-}
-
-function Chart3_EnergyPriceShock() {
-  // Chart 3: Energy price shock transmission
-  // Download filename: chart-3_energy-price-shock_nvf_2026.png
-  return (
-    <div style={{ background: T.bg, border: `1px dashed ${T.border}`, borderRadius: 6, padding: 32, textAlign: "center", color: T.muted, fontFamily: "'Source Sans 3', sans-serif", fontSize: 14 }}>
-      Chart 3: Energy Price Shock Transmission — placeholder
-    </div>
-  );
-}
-
-function Chart4_NapaGdpEmploymentGap() {
-  // Chart 4: Napa GDP vs. employment gap
-  // Download filename: chart-4_napa-gdp-employment-gap_nvf_2026.png
-  return (
-    <div style={{ background: T.bg, border: `1px dashed ${T.border}`, borderRadius: 6, padding: 32, textAlign: "center", color: T.muted, fontFamily: "'Source Sans 3', sans-serif", fontSize: 14 }}>
-      Chart 4: Napa GDP and Employment Gap — placeholder
-    </div>
-  );
-}
-
-// ─── scenario calculator placeholder ──────────────────────────────────────────
-// TODO: Implement interactive calculator with 3 sliders and 3 outputs (jobs/wages/GDP gap)
-
-function ScenarioCalculator() {
-  return (
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 32, margin: "32px 0" }}>
-      <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 8px 0" }}>Interactive Tool</p>
-      <h3 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 18, fontWeight: 700, color: T.ink, margin: "0 0 12px 0" }}>Supply Shock Scenario Calculator</h3>
-      <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 14, color: T.muted, margin: "0 0 20px 0" }}>
-        Adjust assumptions to see how a Hormuz disruption could affect Napa Valley.
-      </p>
-      <div style={{ background: T.bg, border: `1px dashed ${T.border}`, borderRadius: 6, padding: 32, textAlign: "center", color: T.muted, fontFamily: "'Source Sans 3', sans-serif", fontSize: 14 }}>
-        Scenario Calculator — 3 sliders, 3 outputs (jobs, wages, GDP gap) — placeholder
+    <>
+      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
+        CHART 1 — HORMUZ STRAIT
       </div>
+      <div style={{ position: "relative", width: "100%", height: 300 }}><canvas ref={ref} /></div>
+      <div style={{ display: "flex", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
+        <div style={statBoxStyle}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.ink }}>~110</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Pre-war daily transits</div>
+        </div>
+        <div style={statBoxStyle}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.red }}>4–5</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Current daily transits</div>
+        </div>
+        <div style={statBoxStyle}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.tan }}>~2,000</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Vessels stranded nearby</div>
+        </div>
+      </div>
+      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
+        Source: Lloyd's List Intelligence; Windward Maritime AI (March 20, 2026) — 94.2% decline. IMO Secretary-General statement; NPR (March 23, 2026).
+      </p>
+      <button onClick={() => downloadChartPng(ref, "chart-1_hormuz-traffic-collapse_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+    </>
+  );
+}
+
+// ─── CHART 2: Commodity Before vs. After ─────────────────────────────────────
+function Chart2_CommodityBeforeAfter() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!window.Chart || !ref.current) return;
+    const labels = ["Crude oil\n(mb/day)","LNG\n(bcm/mo)","LPG\n(mt/mo)","Fertilizers\n(mt/mo)","Dry bulk\n(mt/day)"];
+    const normal = [20, 9.3, 5.2, 4.1, 1.8];
+    const current = [1.2, 0.5, 0.5, 0.6, 0.16];
+    const pctLost = [94, 95, 90, 85, 91];
+
+    const pctLabelPlugin = {
+      id: "pctLabels",
+      afterDatasetsDraw(chart) {
+        const ctx = chart.ctx;
+        const meta = chart.getDatasetMeta(1);
+        ctx.save();
+        ctx.font = "bold 11px 'Source Sans 3', sans-serif";
+        ctx.fillStyle = C.red;
+        ctx.textAlign = "center";
+        meta.data.forEach((bar, i) => {
+          ctx.fillText("\u2212" + pctLost[i] + "%", bar.x, bar.y - 8);
+        });
+        ctx.restore();
+      },
+    };
+
+    const ch = new window.Chart(ref.current, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          { label: "Normal flow", data: normal, backgroundColor: C.blue, borderRadius: 3 },
+          { label: "Current flow", data: current, backgroundColor: C.red, borderRadius: 3 },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.dataset.label + ": " + c.parsed.y } } },
+        scales: {
+          x: { ticks: { color: C.secondary, font: { size: 10, family: sans }, maxRotation: 0 }, grid: { color: C.grid } },
+          y: { ticks: { color: C.secondary, font: { size: 10, family: sans } }, grid: { color: C.grid }, min: 0 },
+        },
+      },
+      plugins: [watermarkPlugin, pctLabelPlugin],
+    });
+    return () => ch.destroy();
+  }, []);
+
+  return (
+    <>
+      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
+        CHART 2 — BEFORE VS. AFTER
+      </div>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: C.blue }} />Normal daily flow (pre-war)</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: C.red }} />Current estimated flow (March 2026)</span>
+      </div>
+      <div style={{ position: "relative", width: "100%", height: 320 }}><canvas ref={ref} /></div>
+      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
+        Sources: UNCTAD Strait of Hormuz Disruptions report (March 10, 2026); IEA; Kpler (March 2026). Current flows estimated from 94% tanker transit decline and commodity-specific disruption reports.
+      </p>
+      <button onClick={() => downloadChartPng(ref, "chart-2_commodity-before-after_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+    </>
+  );
+}
+
+// ─── CHART 3: Energy Price Shock ─────────────────────────────────────────────
+function Chart3_EnergyPriceShock() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!window.Chart || !ref.current) return;
+    const labels = ["Nov 2025","Dec 2025","Jan 2026","Feb 1–27","Mar 1","Mar 4\nQatar FM","Mar 8\n$100+","Mar peak\n$126","Mar 27"];
+    const brent = [72,75,78,82,90,98,104,126,112];
+    const gas = [28,30,29,30,38,62,72,80,74];
+    const ch = new window.Chart(ref.current, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "Brent crude ($/bbl)", data: brent, borderColor: C.blue, backgroundColor: "transparent", tension: 0.3, borderWidth: 2.5, pointRadius: 3.5, pointBackgroundColor: C.blue, pointBorderColor: "#fff", pointBorderWidth: 1, yAxisID: "y" },
+          { label: "European gas (€/MWh)", data: gas, borderColor: C.tan, backgroundColor: "transparent", tension: 0.3, borderWidth: 2, borderDash: [5, 4], pointRadius: 3.5, pointBackgroundColor: C.tan, pointBorderColor: "#fff", pointBorderWidth: 1, yAxisID: "y2" },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: C.secondary, font: { size: 9, family: sans }, maxRotation: 0 }, grid: { color: C.grid } },
+          y: { position: "left", ticks: { color: C.secondary, font: { size: 10, family: sans }, callback: v => "$" + v }, grid: { color: C.grid }, title: { display: true, text: "Brent ($/bbl)", color: C.secondary, font: { size: 10 } } },
+          y2: { position: "right", ticks: { color: C.tan, font: { size: 10, family: sans }, callback: v => "\u20AC" + v }, grid: { display: false }, title: { display: true, text: "EU gas (\u20AC/MWh)", color: C.tan, font: { size: 10 } } },
+        },
+      },
+      plugins: [watermarkPlugin],
+    });
+    return () => ch.destroy();
+  }, []);
+
+  return (
+    <>
+      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
+        CHART 3 — ENERGY PRICE SHOCK
+      </div>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px solid " + C.blue, verticalAlign: "middle" }} />Brent crude ($/bbl, left)</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px dashed " + C.tan, verticalAlign: "middle" }} />European gas (\u20AC/MWh, right)</span>
+      </div>
+      <div style={{ position: "relative", width: "100%", height: 300 }}><canvas ref={ref} /></div>
+      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
+        Source: Wikipedia, 2026 Strait of Hormuz crisis; World Economic Forum trade update (March 2026). Brent peaked $126/bbl. EU gas doubled from ~\u20AC30 to above \u20AC60/MWh within days of Qatar Ras Laffan force majeure (March 4, 2026).
+      </p>
+      <button onClick={() => downloadChartPng(ref, "chart-3_energy-price-shock_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+    </>
+  );
+}
+
+// ─── CHART 4: Napa GDP and Employment Gap ────────────────────────────────────
+function Chart4_NapaGdpEmploymentGap() {
+  const refA = useRef(null);
+  const refB = useRef(null);
+
+  // 4A — Nominal vs Real GDP
+  useEffect(() => {
+    if (!window.Chart || !refA.current) return;
+    const labels = ["2016","2017","2018","2019","2020","2021","2022","2023","2024"];
+    const nominal = [10.75,11.12,11.42,11.57,11.07,12.78,12.74,13.97,14.59];
+    const real = [10.82,11.00,11.11,11.09,10.35,11.46,11.05,11.19,11.31];
+
+    const gapFillPlugin = {
+      id: "gdpGapFill",
+      afterDatasetsDraw(chart) {
+        const metaNom = chart.getDatasetMeta(0);
+        const metaReal = chart.getDatasetMeta(1);
+        if (!metaNom.data.length || !metaReal.data.length) return;
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.fillStyle = "rgba(196,168,100,0.18)";
+        ctx.beginPath();
+        for (let i = 0; i < metaNom.data.length; i++) {
+          const pt = metaNom.data[i];
+          if (i === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
+        for (let i = metaReal.data.length - 1; i >= 0; i--) {
+          ctx.lineTo(metaReal.data[i].x, metaReal.data[i].y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      },
+    };
+
+    const ch = new window.Chart(refA.current, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "Nominal GDP ($B)", data: nominal, borderColor: C.blue, backgroundColor: "transparent", tension: 0.3, borderWidth: 2.5, pointRadius: 3.5, pointBackgroundColor: C.blue, pointBorderColor: "#fff", pointBorderWidth: 1 },
+          { label: "Real GDP ($B, 2017$)", data: real, borderColor: C.green, backgroundColor: "transparent", tension: 0.3, borderWidth: 2.5, pointRadius: 3.5, pointBackgroundColor: C.green, pointBorderColor: "#fff", pointBorderWidth: 1 },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: C.secondary, font: { size: 10, family: sans } }, grid: { color: C.grid } },
+          y: { min: 9.5, ticks: { color: C.secondary, font: { size: 10, family: sans }, callback: v => "$" + v + "B" }, grid: { color: C.grid } },
+        },
+      },
+      plugins: [watermarkPlugin, gapFillPlugin],
+    });
+    return () => ch.destroy();
+  }, []);
+
+  // 4B — Leisure & Hospitality Employment
+  useEffect(() => {
+    if (!window.Chart || !refB.current) return;
+    const labels = ["2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"];
+    const actual = [9.0,9.9,10.8,11.2,11.6,12.2,12.8,12.9,13.3,13.9,14.3,8.9,11.2,13.5,13.9,14.0,14.1];
+    const trend = [9.0,9.5,10.2,10.8,11.5,12.1,12.8,13.4,14.1,14.7,15.4,16.0,16.6,17.3,17.9,18.5,18.9];
+
+    const empGapPlugin = {
+      id: "empGapFill",
+      afterDatasetsDraw(chart) {
+        const metaActual = chart.getDatasetMeta(0);
+        const metaTrend = chart.getDatasetMeta(1);
+        if (!metaActual.data.length || !metaTrend.data.length) return;
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.fillStyle = "rgba(196,140,120,0.18)";
+        ctx.beginPath();
+        const startIdx = 10; // 2019
+        ctx.moveTo(metaActual.data[startIdx].x, metaActual.data[startIdx].y);
+        for (let i = startIdx; i < metaActual.data.length; i++) {
+          ctx.lineTo(metaActual.data[i].x, metaActual.data[i].y);
+        }
+        for (let i = metaTrend.data.length - 1; i >= startIdx; i--) {
+          ctx.lineTo(metaTrend.data[i].x, metaTrend.data[i].y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      },
+    };
+
+    const ch = new window.Chart(refB.current, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "Actual employment", data: actual, borderColor: C.blue, backgroundColor: "transparent", tension: 0.3, borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: C.blue, pointBorderColor: "#fff", pointBorderWidth: 1 },
+          { label: "2009–2019 trend", data: trend, borderColor: C.tan, backgroundColor: "transparent", tension: 0.3, borderWidth: 2, borderDash: [5, 4], pointRadius: 0 },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: C.secondary, font: { size: 10, family: sans } }, grid: { color: C.grid } },
+          y: { min: 7, ticks: { color: C.secondary, font: { size: 10, family: sans }, callback: v => v + "k" }, grid: { color: C.grid } },
+        },
+      },
+      plugins: [watermarkPlugin, empGapPlugin],
+    });
+    return () => ch.destroy();
+  }, []);
+
+  return (
+    <>
+      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
+        CHART 4 — NAPA'S ECONOMIC CUSHION
+      </div>
+
+      {/* 4A: GDP */}
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px solid " + C.blue }} />Nominal GDP ($B)</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px solid " + C.green }} />Real GDP ($B, 2017$)</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 12, height: 12, background: "rgba(196,168,100,0.18)", border: "1px solid #D4C4A8" }} />Inflation gap</span>
+      </div>
+      <div style={{ position: "relative", width: "100%", height: 280 }}><canvas ref={refA} /></div>
+
+      <div style={{ display: "flex", gap: 12, marginTop: 16, marginBottom: 28, flexWrap: "wrap" }}>
+        <div style={statBoxStyle}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.blue }}>35.8%</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Nominal GDP growth 2016–2024</div>
+        </div>
+        <div style={statBoxStyle}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.green }}>4.6%</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Real GDP growth 2016–2024</div>
+        </div>
+        <div style={statBoxStyle}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.tan }}>87¢</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Of every $1 growth was inflation</div>
+        </div>
+      </div>
+
+      {/* 4B: Employment */}
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px solid " + C.blue }} />Actual employment (thousands)</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px dashed " + C.tan }} />2009–2019 trend</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 12, height: 12, background: "rgba(196,140,120,0.18)", border: "1px solid #D4C4A8" }} />Employment gap</span>
+      </div>
+      <div style={{ position: "relative", width: "100%", height: 280 }}><canvas ref={refB} /></div>
+
+      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
+        Source: BEA via FRED (GDPALL06055, REALGDPALL06055); BLS (NAPA906LEIHN). Wine industry = 72% of county jobs, 74% of wages. Source: Insel & Company for Napa Valley Vintners, May 2025 (2022 data).
+      </p>
+      <button onClick={() => downloadChartPng(refA, "chart-4_napa-gdp-employment-gap_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+    </>
+  );
+}
+
+// ─── Scenario Calculator ─────────────────────────────────────────────────────
+function ScenarioCalculator() {
+  const [costSlider, setCostSlider] = useState(10);
+  const [visitSlider, setVisitSlider] = useState(10);
+  const [durSlider, setDurSlider] = useState(2);
+
+  const BASE_JOBS = 55875;
+  const BASE_WAGES = 3820;
+  const HOSP_SPEND = 1200;
+  const WINE_MARGIN = 0.18;
+  const WINE_CONTRACTION = 1.08;
+  const NOM_PASS = 0.60;
+  const COUNTY_GDP = 14590;
+  const DUR = { 1: 0.25, 2: 0.5, 3: 1.0 };
+
+  const cost = costSlider / 100;
+  const visit = visitSlider / 100;
+  const dur = DUR[durSlider];
+  const wineJobs = BASE_JOBS * cost * WINE_MARGIN * 0.55 * dur;
+  const hospJobs = HOSP_SPEND * visit * 0.40 * dur;
+  const totalJobs = Math.round((wineJobs + hospJobs) * WINE_CONTRACTION);
+  const wineWages = wineJobs * 68;
+  const hospWages = hospJobs * 42;
+  const totalWages = Math.round((wineWages + hospWages) / 1000);
+  const gapWidening = Math.round(COUNTY_GDP * 0.52 * cost * NOM_PASS * dur);
+
+  const fmtJobs = v => v >= 1000 ? (v / 1000).toFixed(1) + "k" : String(v);
+  const fmtMoney = v => v >= 1000 ? "$" + (v / 1000).toFixed(1) + "B" : "$" + v + "M";
+
+  const durLabels = { 1: "3 months", 2: "6 months", 3: "12 months" };
+
+  const sliderTrack = {
+    width: "100%", height: 4, appearance: "none", WebkitAppearance: "none",
+    background: "#D4C4A8", borderRadius: 2, outline: "none", cursor: "pointer",
+  };
+
+  const presetActive = { background: C.accent, color: "#fff", border: "1px solid " + C.accent, borderRadius: 4, padding: "4px 12px", fontSize: 12, fontFamily: sans, fontWeight: 600, cursor: "pointer" };
+  const presetInactive = { background: "transparent", color: C.secondary, border: "1px solid #C4A882", borderRadius: 4, padding: "4px 12px", fontSize: 12, fontFamily: sans, fontWeight: 400, cursor: "pointer" };
+
+  return (
+    <div style={{ background: "#FAF6F0", border: "1px solid #D4C4A8", borderRadius: 8, padding: 28, margin: "32px 0" }}>
+      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 6 }}>
+        INTERACTIVE · SCENARIO CALCULATOR
+      </div>
+      <h3 style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, margin: "0 0 8px 0" }}>
+        Napa Valley Supply Shock Impact Estimator
+      </h3>
+      <p style={{ fontFamily: sans, fontSize: 14, color: C.secondary, margin: "0 0 16px 0", lineHeight: 1.5 }}>
+        Adjust three variables to explore how the Hormuz supply shock compounds with Napa's pre-existing economic fragility.
+      </p>
+
+      {/* Context box */}
+      <div style={{ background: "#EDE8DE", borderRadius: 6, padding: "12px 16px", marginBottom: 20 }}>
+        <p style={{ fontFamily: sans, fontSize: 12, color: C.secondary, margin: 0, lineHeight: 1.6 }}>
+          Pre-shock baseline (Insel & Company, 2022): 55,875 wine-related jobs · $3.82B wages · 72% of county employment. GDP gap already present: 87¢ of every dollar of apparent growth since 2016 was inflation.
+        </p>
+      </div>
+
+      {/* Slider 1: Input cost */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 600, color: C.ink, marginBottom: 6 }}>
+          Input cost increase (fuel, freight, parts): <span style={{ color: C.accent, fontWeight: 700 }}>+{costSlider}%</span>
+        </div>
+        <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+          {[5, 10, 20, 30].map(v => (
+            <button key={v} onClick={() => setCostSlider(v)} style={costSlider === v ? presetActive : presetInactive}>+{v}%</button>
+          ))}
+        </div>
+        <style>{`input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:${C.accent};cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.2)}input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:${C.accent};cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.2)}`}</style>
+        <input type="range" min={0} max={30} step={1} value={costSlider} onChange={e => setCostSlider(Number(e.target.value))} style={sliderTrack} />
+      </div>
+
+      {/* Slider 2: Visitor spend */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 600, color: C.ink, marginBottom: 6 }}>
+          Visitor spend decline: <span style={{ color: C.accent, fontWeight: 700 }}>{"\u2212"}{visitSlider}%</span>
+        </div>
+        <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+          {[5, 10, 15, 25].map(v => (
+            <button key={v} onClick={() => setVisitSlider(v)} style={visitSlider === v ? presetActive : presetInactive}>{"\u2212"}{v}%</button>
+          ))}
+        </div>
+        <input type="range" min={0} max={25} step={1} value={visitSlider} onChange={e => setVisitSlider(Number(e.target.value))} style={sliderTrack} />
+      </div>
+
+      {/* Slider 3: Duration */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 600, color: C.ink, marginBottom: 6 }}>
+          Duration of shock: <span style={{ color: C.accent, fontWeight: 700 }}>{durLabels[durSlider]}</span>
+        </div>
+        <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+          {[1, 2, 3].map(v => (
+            <button key={v} onClick={() => setDurSlider(v)} style={durSlider === v ? presetActive : presetInactive}>{durLabels[v]}</button>
+          ))}
+        </div>
+        <input type="range" min={1} max={3} step={1} value={durSlider} onChange={e => setDurSlider(Number(e.target.value))} style={sliderTrack} />
+      </div>
+
+      {/* Output stat boxes */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
+        <div style={{ ...statBoxStyle, background: "#EDE8DE" }}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.red }}>{fmtJobs(totalJobs)}</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Jobs at additional risk</div>
+        </div>
+        <div style={{ ...statBoxStyle, background: "#EDE8DE" }}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.tan }}>{fmtMoney(totalWages)}</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Wage pressure /yr</div>
+        </div>
+        <div style={{ ...statBoxStyle, background: "#EDE8DE" }}>
+          <div style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.green }}>{fmtMoney(gapWidening)}</div>
+          <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Added nominal/real GDP gap</div>
+        </div>
+      </div>
+
+      {/* Result narrative */}
+      <div style={{ background: "#EDE8DE", borderRadius: 6, padding: "14px 18px", marginBottom: 16 }}>
+        <p style={{ fontFamily: serif, fontSize: 13, color: C.ink, lineHeight: 1.8, margin: 0 }}>
+          At a <span style={{ color: C.red, fontWeight: 700 }}>+{costSlider}%</span> input cost increase and <span style={{ color: C.red, fontWeight: 700 }}>{"\u2212"}{visitSlider}%</span> visitor decline sustained for <strong>{durLabels[durSlider]}</strong>, the model estimates <span style={{ color: C.red, fontWeight: 700 }}>{fmtJobs(totalJobs)}</span> additional jobs at risk, <span style={{ color: C.red, fontWeight: 700 }}>{fmtMoney(totalWages)}</span> in annualized wage pressure, and a <span style={{ color: C.green, fontWeight: 700 }}>{fmtMoney(gapWidening)}</span> widening of the gap between nominal and real GDP — layered on top of the structural fragility Napa was already carrying before the Hormuz shock.
+          {costSlider >= 20 && visitSlider >= 15 && (
+            <span> At these combined levels, the pressure approaches the 2020 COVID-fire double shock — but without the federal stimulus cushion that partially offset that year's damage.</span>
+          )}
+        </p>
+      </div>
+
+      <p style={{ fontFamily: sans, fontSize: 11, fontStyle: "italic", color: C.secondary, margin: "0 0 10px 0", lineHeight: 1.5 }}>
+        Property tax assessments do not automatically decline under Proposition 13. Actual revenue impacts depend on ownership changes and reassessment timing.
+      </p>
+      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, margin: 0, lineHeight: 1.5 }}>
+        Methodology: Figures scaled from 2022 Insel & Company baseline (NVV). Cost shock at 18% avg operating margin. Visitor spend from estimated $1.2B annual L&H spend. Duration: 3mo=0.25×, 6mo=0.5×, 12mo=1.0×. GDP gap at 60% nominal pass-through. Pre-existing wine contraction factor 1.08×.
+      </p>
     </div>
   );
 }
