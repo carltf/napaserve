@@ -824,17 +824,19 @@ export default function UnderTheHoodSupplyChain() {
   const heading = { fontFamily: "'Libre Baskerville', serif", fontSize: 22, fontWeight: 700, color: T.ink, margin: "40px 0 16px 0" };
   const h2style = { fontFamily: "'Libre Baskerville', serif", fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 16px 0" };
 
-  if (!PUBLISHED) {
+  const isPreview = typeof window !== 'undefined' && window.location.search.includes('preview=true');
+
+  if (!PUBLISHED && !isPreview) {
     return (
-      <div style={{ background: "#F5F0E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <>
         <NavBar />
-        <div style={{ fontFamily: "'Source Code Pro', monospace", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#C4A050", marginBottom: 16 }}>
-          NAPA VALLEY FEATURES · UNDER THE HOOD
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px', fontFamily: "'Source Sans 3', sans-serif", background: '#F5F0E8' }}>
+          <div style={{ fontFamily: "'Source Code Pro', monospace", fontSize: '11px', letterSpacing: '.08em', textTransform: 'uppercase', color: '#C4A050' }}>NAPA VALLEY FEATURES · UNDER THE HOOD</div>
+          <div style={{ fontFamily: "'Libre Baskerville', Georgia, serif", fontSize: '22px', fontWeight: 700, color: '#2C1810', textAlign: 'center' }}>Coming soon</div>
+          <div style={{ fontSize: '15px', fontWeight: 300, color: '#5C4033' }}>This article is being prepared. Check back shortly.</div>
         </div>
-        <h1 style={{ fontFamily: "'Libre Baskerville', Georgia, serif", fontSize: 32, fontWeight: 700, color: "#2C1810", margin: "0 0 12px 0" }}>Coming soon</h1>
-        <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 16, color: "#5C4033", margin: 0 }}>This article is being prepared. Check back shortly.</p>
         <Footer />
-      </div>
+      </>
     );
   }
 
