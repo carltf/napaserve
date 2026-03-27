@@ -118,7 +118,7 @@ export default function VWLabsPage() {
               </div>
             ))}
           </div>
-          <a href="mailto:valleyworkscollaborative@gmail.com" style={{ display: "inline-block", fontSize: 12, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", background: `linear-gradient(135deg,#8B6914,${T.gold})`, color: "#1C120C", padding: "10px 20px", textDecoration: "none", border: "none" }}>
+          <a href="mailto:info@napaserve.com" style={{ display: "inline-block", fontSize: 12, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", background: `linear-gradient(135deg,#8B6914,${T.gold})`, color: "#1C120C", padding: "10px 20px", textDecoration: "none", border: "none" }}>
             Submit a Proposal →
           </a>
         </div>

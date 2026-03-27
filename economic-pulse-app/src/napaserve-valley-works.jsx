@@ -158,7 +158,7 @@ export default function ValleyWorksPage() {
           <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
             <div>
               <div style={{ fontSize: 12, fontWeight: 600, color: "#8B5E3C", marginBottom: 4 }}>Contact</div>
-              <a href="mailto:valleyworkscollaborative@gmail.com" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>valleyworkscollaborative@gmail.com</a>
+              <a href="mailto:info@napaserve.com" style={{ fontSize: 14, color: "#8B5E3C", textDecoration: "none", fontFamily: "'Source Sans 3',sans-serif" }}>info@napaserve.com</a>
               <div style={{ fontSize: 14, color: "#7A6A50", marginTop: 2 }}>(707) 661-9465</div>
             </div>
             <div>

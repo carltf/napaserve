@@ -74,7 +74,7 @@ export default function Footer() {
               <Link to="/about" className="ns-footer-link" style={navLink}>About NapaServe</Link>
               <Link to="/about#how-to-use" className="ns-footer-link" style={navLink}>How to use this site</Link>
               <Link to="/about#disclaimer" className="ns-footer-link" style={navLink}>Disclaimer</Link>
-              <a href="mailto:napaserve@gmail.com" className="ns-footer-link" style={navLink}>Contact us</a>
+              <a href="mailto:info@napaserve.com" className="ns-footer-link" style={navLink}>Contact us</a>
             </div>
           </div>
 
@@ -114,7 +114,7 @@ export default function Footer() {
                 }} style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", background: T.ink, color: T.bg, border: "none", padding: "10px 18px", cursor: "pointer", whiteSpace: "nowrap", fontFamily: font }}>{subStatus === "loading" ? "Subscribing\u2026" : "Subscribe"}</button>
               </div>
               {subStatus === "success" && <div style={{ fontSize: 14, color: "#2E7D32", marginTop: 6, fontFamily: font }}>Welcome to NapaServe. We'll be in touch.</div>}
-              {subStatus === "error" && <div style={{ fontSize: 14, color: "#C62828", marginTop: 6, fontFamily: font }}>Something went wrong. Email us at napaserve@gmail.com</div>}
+              {subStatus === "error" && <div style={{ fontSize: 14, color: "#C62828", marginTop: 6, fontFamily: font }}>Something went wrong. Email us at info@napaserve.com</div>}
               <div style={{ fontSize: 14, color: T.dim, fontFamily: font, marginTop: 7 }}>Join the NapaServe community. No spam, unsubscribe anytime.</div>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function Footer() {
           {/* Copyright */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
             <div style={{ fontSize: 14, color: T.dim, fontFamily: font }}>© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</div>
-            <div style={{ fontSize: 14, color: T.muted, fontFamily: font }}>napaserve@gmail.com</div>
+            <a href="mailto:info@napaserve.com" style={{ fontSize: 14, color: '#8B7355', textDecoration: 'none', fontFamily: font }}>info@napaserve.com</a>
           </div>
         </div>
       </footer>

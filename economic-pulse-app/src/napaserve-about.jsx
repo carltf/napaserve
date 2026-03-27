@@ -183,13 +183,15 @@ export default function AboutNapaServe() {
             Journalism in the NVF archive reflects the reporting and editorial judgment of Napa Valley Features at the time of publication. It may not reflect current conditions. Archive search results are ranked by semantic similarity, not editorial judgment.
           </P>
 
-          <H>Contact</H>
-          <P>
-            Questions, corrections, or feedback: <a href="mailto:napaserve@gmail.com" style={{ color: T.accent }}>napaserve@gmail.com</a>
-          </P>
-          <P style={{ fontSize: 14, color: T.dim }}>
-            NapaServe · A Valley Works Collaborative · VW Labs project · Napa County, CA · Not affiliated with Napa County government.
-          </P>
+          <div id="contact">
+            <H>Contact</H>
+            <P>
+              Questions, corrections, or feedback: <a href="mailto:info@napaserve.com" style={{ color: T.accent }}>info@napaserve.com</a>
+            </P>
+            <P style={{ fontSize: 14, color: T.dim }}>
+              NapaServe · A Valley Works Collaborative · VW Labs project · Napa County, CA · Not affiliated with Napa County government.
+            </P>
+          </div>
         </Section>
 
       </div>

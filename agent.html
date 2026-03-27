@@ -473,7 +473,7 @@
         <a href="/about" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">About NapaServe</a>
         <a href="/about#how-to-use" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">How to use this site</a>
         <a href="/about#disclaimer" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Disclaimer</a>
-        <a href="mailto:napaserve@gmail.com" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Contact us</a>
+        <a href="mailto:info@napaserve.com" style="display:block;font-size:14px;color:#7A6A50;padding:3px 0;">Contact us</a>
       </div>
     </div>
 
@@ -507,7 +507,7 @@
     <!-- Copyright -->
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
       <div style="font-size:14px;color:#8B7355;">© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</div>
-      <div style="font-size:14px;color:#7A6A50;">napaserve@gmail.com</div>
+      <a href="mailto:info@napaserve.com" style="font-size:14px;color:#8B7355;text-decoration:none;">info@napaserve.com</a>
     </div>
   </div>
 </footer>
@@ -532,7 +532,7 @@ function nsfSubscribe() {
     document.getElementById('nsf-sub-email').value = '';
   }).catch(() => {
     msg.style.color = '#C62828';
-    msg.textContent = 'Something went wrong. Email us at napaserve@gmail.com';
+    msg.textContent = 'Something went wrong. Email us at info@napaserve.com';
   }).finally(() => {
     btn.textContent = 'Subscribe';
     btn.disabled = false;
