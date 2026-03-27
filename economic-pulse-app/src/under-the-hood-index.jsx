@@ -334,7 +334,7 @@ export default function UnderTheHoodIndex() {
                     )}
                     {tile.live && (
                       <div style={{ fontSize: 13, color: T.accent, fontWeight: 600, marginTop: 10 }}>
-                        Interactive charts · Live data \u2192
+                        Interactive charts · Live data →
                       </div>
                     )}
                   </div>
