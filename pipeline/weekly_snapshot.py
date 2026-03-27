@@ -118,18 +118,18 @@ def fetch_abc_page_count(url: str, label: str) -> Optional[int]:
         log.info(f"ABC {label}: {count} (from '{{N}} Results' pattern)")
         return count
 
-    # Method 3: Count license entry patterns (LICENSE=NNNNNN in links)
+    # Method 3: Count table rows
+    tr_count = len(re.findall(r'<tr[^>]*>', html)) - 1
+    if tr_count > 100:  # sanity check
+        log.info(f"ABC {label}: {tr_count} (from counting table rows)")
+        return tr_count
+
+    # Method 4: Count license entry patterns (LICENSE=NNNNNN in links) as last resort
     license_links = re.findall(r'LICENSE=(\d{4,})', html)
     if license_links:
         count = len(set(license_links))  # dedupe
         log.info(f"ABC {label}: {count} (from counting LICENSE= links)")
         return count
-
-    # Method 4: Count table rows as last resort
-    tr_count = len(re.findall(r'<tr[^>]*>', html)) - 2
-    if tr_count > 100:  # sanity check
-        log.info(f"ABC {label}: {tr_count} (from counting table rows)")
-        return tr_count
 
     log.warning(f"ABC {label}: Could not extract count from page")
     return None
