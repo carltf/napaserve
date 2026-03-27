@@ -25,6 +25,12 @@ const mono = "monospace";
 const ARTICLES = [
   {
     publication: "Napa Valley Features",
+    headline: "How a Global Supply Shock Reaches Napa Valley",
+    deck: "War around Iran has cut Hormuz tanker traffic 94%. This traces the supply chain from the strait to the Napa farm gate \u2014 and shows why the local economy has less cushion than the numbers suggest.",
+    slug: "napa-supply-chain-2026",
+  },
+  {
+    publication: "Napa Valley Features",
     headline: "Napa Cabernet Prices Break the Growth Curve",
     deck: "The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years \u2014 the first such decline in the modern data series.",
     slug: "napa-cab-2025",
@@ -57,6 +63,15 @@ const h = (text) => ({ type: "header", text });
 const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
+  "napa-supply-chain-2026": {
+    headline: "How a Global Supply Shock Reaches Napa Valley",
+    publication: "Napa Valley Features",
+    slug: "napa-supply-chain-2026",
+    dateline: "NAPA, Calif.",
+    body: [
+      t("PLACEHOLDER: Article body will be added when final prose is ready."),
+    ],
+  },
   "napa-cab-2025": {
     headline: "Napa Cabernet Prices Break the Growth Curve",
     publication: "Napa Valley Features",
