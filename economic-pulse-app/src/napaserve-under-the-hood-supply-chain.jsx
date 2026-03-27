@@ -14,7 +14,7 @@ const T = {
   border:  "#D4C9B8",
 };
 
-const PUBLISHED = false;
+const PUBLISHED = true;
 
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 const ARTICLE_SLUG = "napa-supply-chain-2026";
@@ -747,9 +747,9 @@ function ScenarioCalculator() {
                   <path d={arcPath(cx, cy, r, inflationDeg, inflationDeg + shockDeg)} fill="#C05050" />
                   <path d={arcPath(cx, cy, r, inflationDeg + shockDeg, 360)} fill="#5A6E3A" />
                 </svg>
-                <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginBottom: 4 }}>OF EVERY APPARENT $1</div>
+                <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginBottom: 4 }}>EVERY $1 OF APPARENT GROWTH</div>
                 <div style={{ fontFamily: serif, fontSize: 13, color: C.ink, textAlign: "center", lineHeight: 1.5 }}>
-                  87¢ inflation before shock · +{Math.round(shockPct)}¢ from this shock · {Math.max(Math.round(13 - shockPct), 1)}¢ real output
+                  87¢ already inflation · +{Math.round(shockPct)}¢ this shock · {Math.max(Math.round(13 - shockPct), 1)}¢ real output remaining
                 </div>
               </>
             );
