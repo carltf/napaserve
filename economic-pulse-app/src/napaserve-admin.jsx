@@ -507,7 +507,7 @@ function ArticleCard({ article, token, published = true, onPublished }) {
         {article.deck}
       </p>
 
-      <a href={`https://napaserve.org/under-the-hood/${article.slug}`} target="_blank" rel="noopener noreferrer"
+      <a href={`/under-the-hood/${article.slug}`}
         style={{ fontFamily: mono, fontSize: 11, color: T.muted, textDecoration: "none", display: "block", marginBottom: 16 }}>
         View article {"\u2192"}
       </a>
