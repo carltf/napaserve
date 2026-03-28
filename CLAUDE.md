@@ -1,6 +1,6 @@
 # NapaServe — Claude Code Reference
 
-Last updated: March 20, 2026
+Last updated: March 27, 2026
 
 ## Project Overview
 
@@ -60,13 +60,21 @@ All React pages are inside `economic-pulse-app/src/`:
 | Valley Works | napaserve-valley-works.jsx |
 | VW Labs | napaserve-vw-labs.jsx |
 | About | napaserve-about.jsx |
-| Under the Hood Index | napaserve-under-the-hood-index.jsx |
-| Under the Hood Article | napaserve-under-the-hood-v2.jsx |
+| Under the Hood Index | under-the-hood-index.jsx (dynamic — fetches from /api/articles) |
+| Under the Hood Article (Napa Cab) | napaserve-under-the-hood-v2.jsx |
+| Under the Hood Article (Supply Chain) | napaserve-under-the-hood-supply-chain.jsx |
+| Under the Hood Article (GDP) | under-the-hood-gdp-2024.jsx |
+| Under the Hood Article (Sonoma) | under-the-hood-sonoma.jsx |
+| Under the Hood Article (Lake) | under-the-hood-lake.jsx |
+| Admin | napaserve-admin.jsx (DRAFT/LIVE badges, Publish button) |
 | Shared Footer | Footer.jsx (imported on ALL pages) |
 | Archive | pages/Archive.jsx (ALWAYS this — never src/Archive.jsx) |
 | NavBar | NavBar.jsx |
 | App router | App.jsx |
 | RAG hook | hooks/useRag.js |
+| Draft gate hook | hooks/useDraftGate.js |
+| Draft banner | components/DraftBanner.jsx |
+| Word exporter | components/WordExporter.jsx |
 
 `/under-the-hood` route → index page. `/under-the-hood/napa-cab-2025` → article.
 
@@ -88,7 +96,7 @@ All React pages are inside `economic-pulse-app/src/`:
 
 ---
 
-## Cloudflare Worker Routes (10 total)
+## Cloudflare Worker Routes (16 total)
 
 | Method | Route | Notes |
 |--------|-------|-------|
@@ -100,8 +108,14 @@ All React pages are inside `economic-pulse-app/src/`:
 | GET | /api/fred | 12 FRED macro indicators |
 | POST | /api/subscribe | Newsletter → napaserve_subscribers |
 | POST | /api/submit-event | Event → community_events |
+| POST | /api/bluesky-publish | Post to BlueSky (admin HMAC auth) |
 | GET | /api/article-polls | Fetch polls by ?slug= |
 | POST | /api/article-poll-vote | Submit poll vote |
+| POST | /api/admin-auth | Validate admin password, return session token |
+| POST | /api/admin-verify | Verify session token is valid |
+| GET | /api/articles | List articles (?published=true to filter) |
+| GET | /api/article-status | Article status by ?slug= |
+| POST | /api/publish-article | Set published=true (admin HMAC auth, uses SUPABASE_KEY) |
 
 ---
 
@@ -112,7 +126,8 @@ All React pages are inside `economic-pulse-app/src/`:
 | community_events | Event submissions |
 | economic_pulse_snapshots | Weekly pipeline data. ABC parsing broke ~3/3/26 — rows corrected manually. food_services_employment=7 in old rows = raw FRED thousands (historical artifact). NULL home_value = zillow_backfill.py not run. |
 | napaserve_subscribers | Newsletter signups |
-| napaserve_article_polls | Poll definitions by article_slug — RLS enabled |
+| napaserve_articles | Draft/publish system — slug, title, publication, published, published_at, polls_seeded, admin_cards_added, related_coverage_added |
+| napaserve_article_polls | Poll definitions by article_slug — RLS enabled. Never use hardcoded "id" — causes sequence desync |
 | napaserve_poll_votes | Individual votes — RLS enabled (select + insert only) |
 | nvf_posts | 1,000+ NVF posts |
 | nvf_chunks | 10,033 semantic chunks, voyage-3 |
@@ -153,6 +168,10 @@ No CSS files — inline styles only or @media style tags
 9. Use "Community intelligence" — never "Civic intelligence"
 10. Article polls slug: `napa-cab-2025` — match exactly when seeding
 11. NavBar.jsx uses Theme 02 cream — background rgba(245,240,232,0.97). Never revert to dark theme.
+12. All mailto links use `info@napaserve.com` — napaserve@gmail.com and valleyworkscollaborative@gmail.com are obsolete
+13. sessionStorage admin auth key is `admin_token` (not `adminToken`)
+14. `seed_article_polls.py`: never add hardcoded `"id"` field to new POLLS entries — Supabase auto-assigns, hardcoded ids cause sequence desync
+15. `/api/publish-article` uses `env.SUPABASE_KEY` (service role) — not anon key
 
 ---
 
@@ -242,13 +261,85 @@ No CSS files — inline styles only or @media style tags
 
 ---
 
+## March 27, 2026 Session — Changes Made
+
+### New Article: Under the Hood — How a Global Supply Shock Reaches Napa Valley
+- File: `napaserve-under-the-hood-supply-chain.jsx`
+- Slug: `napa-supply-chain-2026`
+- Route: `/under-the-hood/napa-supply-chain-2026`
+- 4 Chart.js charts (Hormuz traffic, commodity before/after, energy price shock, Napa GDP/employment gap)
+- 1 interactive scenario calculator (3 sliders, 3 outputs + animated SVG dollar coin)
+- All charts use afterDatasetsDraw plugin for gap fills (never use fill: '+0' or '+1')
+- 3 polls seeded (IDs 15–17) via `pipeline/seed_article_polls.py`
+- 12 sourced URLs in Sources section
+- Related coverage links with "Read on Substack →" external links
+- Currently in draft mode (published=false in napaserve_articles)
+
+### Draft/Publish System
+- `napaserve_articles` Supabase table: slug, title, publication, published, published_at, polls_seeded, admin_cards_added, related_coverage_added
+- `useDraftGate` hook (`hooks/useDraftGate.js`): fetches `/api/article-status`, gates article rendering
+- `DraftBanner` component (`components/DraftBanner.jsx`): fixed gold-bordered bar for admin draft preview
+- Three new Worker routes: GET `/api/articles`, GET `/api/article-status`, POST `/api/publish-article`
+- `/api/publish-article` uses `env.SUPABASE_KEY` (service role) for writes
+- Admin.jsx: fetches all articles (including drafts), shows DRAFT/LIVE badges, Publish button
+
+### Under the Hood Index — Dynamic
+- Napa Valley Features tiles now fetched from `/api/articles?published=true` on mount
+- Falls back to hardcoded tiles if fetch fails
+- Sonoma/Lake sections remain static (no DB rows yet)
+- "Recent Under the Hood" section also populated dynamically
+
+### Contact Email Migration
+- All mailto links across all .jsx, .js, .html files changed to `info@napaserve.com`
+- `napaserve@gmail.com` and `valleyworkscollaborative@gmail.com` are obsolete
+- Footer.jsx bottom-right plain-text email → clickable mailto link
+- About page `id="contact"` anchor added for `/about#contact` scroll
+
+### Admin Page Enhancements
+- BlueSky Publisher section fetches all articles from `/api/articles` (no published filter)
+- DRAFT badge (gold pill) on unpublished cards, LIVE (muted green) on published
+- Publish Article button on draft cards — calls POST `/api/publish-article` with HMAC token
+- Reloads article list on successful publish
+- Export data entry added for napa-supply-chain-2026
+
+### Pipeline
+- `seed_article_polls.py` dry-run fixed: prints local POLLS list (not DB query)
+- 3 supply chain polls added (slug: napa-supply-chain-2026, sort_order 1–3)
+- No hardcoded `"id"` on new entries — Supabase auto-assigns
+
+---
+
 ## Under the Hood Articles — Pattern
 
-- Index: `napaserve-under-the-hood-index.jsx` (search, archive, topic browsing, summaries, badges, native article indicators, inline polls, topic view)
-- Article component: `napaserve-under-the-hood-v2.jsx`
-- Article slug: `napa-cab-2025` (kebab-case)
+- Index: `under-the-hood-index.jsx` — dynamic, fetches published articles from `/api/articles?published=true`
+- NVF tiles built from API response; Sonoma/Lake tiles remain static (no DB rows yet)
+- Article slug: kebab-case (e.g. `napa-cab-2025`, `napa-supply-chain-2026`)
+- Draft/publish gate: `useDraftGate(slug)` hook checks `/api/article-status`, returns published/draft/redirect
+- Draft articles visible only to logged-in admins (sessionStorage `admin_token`); others redirected to `/under-the-hood`
+- `DraftBanner` component renders fixed gold bar above NavBar for admin draft preview
 - Polls seeded in `napaserve_article_polls` with matching `article_slug`
 - Charts use Chart.js from Cloudflare CDN (no build dependency)
-- RAG search wired inline at bottom of article
+- RAG search (ArchiveSearch component) wired inline at bottom of article
 - Archive fetch limit: 300 (increased from 200)
 - Hub card shows green LIVE dot when articles are available
+- Admin.jsx: fetches all articles from `/api/articles` (no filter), shows DRAFT/LIVE badges, Publish button on drafts
+
+### Article Poll Registry
+
+| Slug | Poll IDs | Status |
+|------|----------|--------|
+| napa-cab-2025 | 1–3 | Live |
+| sonoma-cab-2025 | 4–6 | Live |
+| lake-county-cab-2025 | 7–9 | Live |
+| napa-gdp-2024 | 10–14 | Live |
+| napa-supply-chain-2026 | 15–17 | Seeded, article in draft |
+
+### Under the Hood Article Files
+
+| Route | File | Slug |
+|-------|------|------|
+| /under-the-hood/napa-cab-2025 | napaserve-under-the-hood-v2.jsx | napa-cab-2025 |
+| /under-the-hood/napa-supply-chain-2026 | napaserve-under-the-hood-supply-chain.jsx | napa-supply-chain-2026 |
+| /under-the-hood/napa-gdp-2024 | under-the-hood-gdp-2024.jsx | napa-gdp-2024 |
+| /under-the-hood/sonoma-cab-2025 | under-the-hood-sonoma.jsx | sonoma-cab-2025 |
+| /under-the-hood/lake-county-cab-2025 | under-the-hood-lake.jsx | lake-county-cab-2025 |
