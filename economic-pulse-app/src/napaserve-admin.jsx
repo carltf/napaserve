@@ -353,12 +353,13 @@ function bskyWebUrl(uri) {
 
 // ─── BlueSky Card ─────────────────────────────────────────────────────────────
 
-function ArticleCard({ article, token }) {
+function ArticleCard({ article, token, published = true, onPublished }) {
   const [state, setState] = useState("idle"); // idle | preview | posting | success | error
   const [postUri, setPostUri] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [publishing, setPublishing] = useState(false);
 
   const postText = formatPostText(article.publication, article.headline, article.deck, article.slug);
 
@@ -419,8 +420,14 @@ function ArticleCard({ article, token }) {
 
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 20 }}>
-      <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, marginBottom: 8 }}>
+      <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
         {article.publication}
+        {!published && (
+          <span style={{ background: "#C4A050", color: "#fff", fontSize: 10, fontFamily: mono, fontWeight: 700, textTransform: "uppercase", padding: "2px 4px", borderRadius: 3, lineHeight: 1 }}>DRAFT</span>
+        )}
+        {published && (
+          <span style={{ color: "#4a6741", fontSize: 10, fontFamily: mono, fontWeight: 700, textTransform: "uppercase", lineHeight: 1 }}>LIVE</span>
+        )}
       </div>
       <h3 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px", lineHeight: 1.3 }}>
         {article.headline}
@@ -436,6 +443,34 @@ function ArticleCard({ article, token }) {
         style={{ fontFamily: mono, fontSize: 11, color: T.muted, textDecoration: "none", display: "block", marginBottom: 16 }}>
         View article {"\u2192"}
       </a>
+
+      {!published && (
+        <button
+          disabled={publishing}
+          onClick={async () => {
+            setPublishing(true);
+            try {
+              const res = await fetch(`${WORKER}/api/publish-article`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Admin-Token": token },
+                body: JSON.stringify({ slug: article.slug }),
+              });
+              const data = await res.json();
+              if (res.ok && data.published) {
+                if (onPublished) onPublished();
+              } else {
+                alert(data.error || "Publish failed");
+              }
+            } catch (e) {
+              alert("Publish failed: " + e.message);
+            }
+            setPublishing(false);
+          }}
+          style={{ ...btnBase, background: T.accent, color: "#fff", display: "block", width: "100%", marginBottom: 10, opacity: publishing ? 0.7 : 1 }}
+        >
+          {publishing ? "Publishing\u2026" : "Publish Article"}
+        </button>
+      )}
 
       {state === "idle" && (
         <button onClick={() => setState("preview")} style={{ ...btnBase, background: T.accent, color: "#fff" }}>
@@ -519,6 +554,16 @@ export default function NapaServeAdmin() {
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState(null);
   const [token, setToken] = useState(null);
+  const [dbArticles, setDbArticles] = useState(null);
+
+  function fetchArticles() {
+    fetch(`${WORKER}/api/articles`)
+      .then(r => r.ok ? r.json() : [])
+      .then(data => setDbArticles(Array.isArray(data) ? data : []))
+      .catch(() => setDbArticles(null));
+  }
+
+  useEffect(() => { fetchArticles(); }, []);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -684,9 +729,18 @@ export default function NapaServeAdmin() {
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
-          {ARTICLES.map(article => (
-            <ArticleCard key={article.slug} article={article} token={token} />
-          ))}
+          {ARTICLES.map(article => {
+            const dbRow = dbArticles && dbArticles.find(a => a.slug === article.slug);
+            return (
+              <ArticleCard
+                key={article.slug}
+                article={article}
+                token={token}
+                published={dbRow ? dbRow.published : true}
+                onPublished={fetchArticles}
+              />
+            );
+          })}
         </div>
       </div>
       <Footer />
