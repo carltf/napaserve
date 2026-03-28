@@ -16,6 +16,7 @@
  *   POST /api/send-welcome       — send welcome email to new subscriber
  *   POST /api/send-digest-preview — send weekly digest preview to info@napaserve.com (admin only)
  *   GET  /api/unsubscribe        — unsubscribe a subscriber by ?email=
+ *   GET  /api/related-articles   — semantic related coverage by ?slug=
  *   GET  /api/articles           — list articles (?published=true to filter)
  *   GET  /api/article-status     — public article status by ?slug=
  *   POST /api/publish-article    — set article published=true (admin-only)
@@ -813,6 +814,51 @@ async function handleArticlePollVote(request, env) {
 
 // ─── Article status / publish ────────────────────────────────────────────────
 
+const TOPIC_SEEDS = {
+  'napa-supply-chain-2026': 'Hormuz supply chain Napa input costs wine industry fuel freight inflation',
+  'napa-gdp-2024': 'Napa County GDP discretionary income living costs economic growth',
+  'napa-cab-2025': 'Napa Valley cabernet sauvignon grape prices crush report 2025',
+  'sonoma-cab-2025': 'Sonoma County cabernet sauvignon grape prices crush report 2025',
+  'lake-county-cab-2025': 'Lake County cabernet sauvignon grape prices crush report 2025',
+};
+
+async function handleRelatedArticles(request, env) {
+  const url = new URL(request.url);
+  const slug = url.searchParams.get("slug");
+  if (!slug) return err("slug required", 400, request);
+
+  const seed = TOPIC_SEEDS[slug];
+  if (!seed) return err("not found", 404, request);
+
+  try {
+    const results = await nvfSearch({ query: seed, matchCount: 10 }, env);
+
+    // Dedupe by post_title, exclude self
+    const seen = new Set();
+    const filtered = [];
+    for (const r of results) {
+      const title = r.post_title || r.title;
+      if (!title) continue;
+      if (seen.has(title)) continue;
+      // Skip if the chunk belongs to the requesting article
+      const postSlug = (r.post_url || "").split("/").pop();
+      if (postSlug === slug) continue;
+      seen.add(title);
+      filtered.push({
+        title,
+        url: r.post_url || null,
+        excerpt: (r.chunk_text || "").slice(0, 200).replace(/\s+/g, " ").trim(),
+      });
+      if (filtered.length >= 5) break;
+    }
+
+    return json({ results: filtered }, 200, request);
+  } catch (e) {
+    console.error("Related articles failed:", e);
+    return err(`Search failed: ${e.message}`, 502, request);
+  }
+}
+
 async function handleArticleStatus(request, env) {
   const url = new URL(request.url);
   const slug = url.searchParams.get("slug");
@@ -978,6 +1024,10 @@ export default {
 
     if (url.pathname === "/api/unsubscribe" && request.method === "GET") {
       return handleUnsubscribe(request, env);
+    }
+
+    if (url.pathname === "/api/related-articles" && request.method === "GET") {
+      return handleRelatedArticles(request, env);
     }
 
     if (url.pathname === "/api/articles" && request.method === "GET") {

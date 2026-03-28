@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import NavBar from "./NavBar";
 import useDraftGate from "./hooks/useDraftGate";
 import DraftBanner from "./components/DraftBanner";
+import RelatedCoverage from "./components/RelatedCoverage";
 
 // ─── theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -907,6 +908,9 @@ export default function UnderTheHoodSupplyChain() {
 
         {/* polls */}
         <PollsSection />
+
+        {/* semantic related coverage from archive */}
+        <RelatedCoverage articleSlug={ARTICLE_SLUG} />
 
         {/* related coverage */}
         <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
