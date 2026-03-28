@@ -16,7 +16,7 @@ export default function useDraftGate(slug) {
         if (data.published) {
           setState({ status: "published", title: data.title });
         } else {
-          const token = typeof window !== "undefined" && sessionStorage.getItem("adminToken");
+          const token = typeof window !== "undefined" && sessionStorage.getItem("admin_token");
           if (token) {
             setState({ status: "draft", title: data.title });
           } else {
