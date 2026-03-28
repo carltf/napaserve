@@ -833,20 +833,20 @@ async function handleRelatedArticles(request, env) {
   try {
     const results = await nvfSearch({ query: seed, matchCount: 10 }, env);
 
-    // Dedupe by post_title, exclude self
+    // Dedupe by title, exclude self
     const seen = new Set();
     const filtered = [];
     for (const r of results) {
-      const title = r.post_title || r.title;
+      const title = r.title;
       if (!title) continue;
       if (seen.has(title)) continue;
       // Skip if the chunk belongs to the requesting article
-      const postSlug = (r.post_url || "").split("/").pop();
+      const postSlug = (r.substack_url || "").split("/").pop();
       if (postSlug === slug) continue;
       seen.add(title);
       filtered.push({
         title,
-        url: r.post_url || null,
+        url: r.substack_url || null,
         excerpt: (r.chunk_text || "").slice(0, 200).replace(/\s+/g, " ").trim(),
       });
       if (filtered.length >= 5) break;
