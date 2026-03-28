@@ -814,25 +814,25 @@ async function handleArticlePollVote(request, env) {
 
 // ─── Article status / publish ────────────────────────────────────────────────
 
-const TOPIC_SEEDS = {
-  'napa-supply-chain-2026': 'Hormuz supply chain Napa input costs wine industry fuel freight inflation',
-  'napa-gdp-2024': 'Napa County GDP discretionary income living costs economic growth',
-  'napa-cab-2025': 'Napa Valley cabernet sauvignon grape prices crush report 2025',
-  'sonoma-cab-2025': 'Sonoma County cabernet sauvignon grape prices crush report 2025',
-  'lake-county-cab-2025': 'Lake County cabernet sauvignon grape prices crush report 2025',
-  'napa-population-2025': 'Napa County population commuter patterns wage structure housing jobs mismatch',
-};
-
 async function handleRelatedArticles(request, env) {
   const url = new URL(request.url);
   const slug = url.searchParams.get("slug");
   if (!slug) return err("slug required", 400, request);
 
-  const seed = TOPIC_SEEDS[slug];
-  if (!seed) return err("not found", 404, request);
+  // Fetch topic_seed from Supabase instead of hardcoded map
+  const sbUrl = `${env.SUPABASE_URL}/rest/v1/napaserve_articles?slug=eq.${slug}&select=topic_seed&limit=1`;
+  const sbRes = await fetch(sbUrl, {
+    headers: {
+      'apikey': env.SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`,
+    },
+  });
+  const sbData = await sbRes.json();
+  const topicSeed = sbData?.[0]?.topic_seed;
+  if (!topicSeed) return err("No topic seed for slug", 404, request);
 
   try {
-    const results = await nvfSearch({ query: seed, matchCount: 10 }, env);
+    const results = await nvfSearch({ query: topicSeed, matchCount: 10 }, env);
 
     // Dedupe by title, exclude self
     const seen = new Set();
