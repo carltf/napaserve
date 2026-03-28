@@ -789,10 +789,6 @@ const SECTIONS = [
   { id: "calculator", heading: "Run Your Own Scenario", body: "Use the calculator below to model how the Hormuz supply shock \u2014 layered on top of an already-contracting wine industry \u2014 could compound pressure on Napa County jobs, wages and the gap between nominal and real GDP. Adjust input cost increases, visitor spend decline and duration to explore the range of outcomes.", chart: null, calculator: true },
 ];
 
-const RELATED = [
-  { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "Napa Valley Features", url: "/under-the-hood/napa-gdp-2024", substack: "https://napavalleyfocus.substack.com/p/napas-economy-looks-bigger-than-it-is" },
-  { title: "Napa Cabernet Prices Break the Growth Curve", date: "Napa Valley Features", url: "/under-the-hood/napa-cab-2025", substack: "https://napavalleyfocus.substack.com/p/napa-cabernet-prices-break-the-growth" },
-];
 
 const SOURCES = [
   { label: "UNCTAD Strait of Hormuz Disruptions report (UNCTAD/OSG/TT/INF/2026/1), March 10, 2026", url: "https://unctad.org/publication/strait-hormuz-disruptions-implications-global-trade-and-development" },
@@ -911,24 +907,6 @@ export default function UnderTheHoodSupplyChain() {
 
         {/* semantic related coverage from archive */}
         <RelatedCoverage articleSlug={ARTICLE_SLUG} />
-
-        {/* related coverage */}
-        <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
-          <h2 style={h2style}>Related Coverage From Napa Valley Features</h2>
-          {RELATED.map(item => (
-            <div key={item.title} style={{ padding: "16px 0", borderBottom: `1px solid ${T.border}` }}>
-              <Link to={item.url} style={{ textDecoration: "none", display: "block" }}>
-                <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 15, color: T.accent, fontWeight: 600, margin: "0 0 4px 0" }}>{item.title}</p>
-                <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>{item.date}</p>
-              </Link>
-              {item.substack && (
-                <a href={item.substack} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 12, color: "#8B5E3C", textDecoration: "none", display: "inline-block", marginTop: 6 }}>
-                  Read on Substack →
-                </a>
-              )}
-            </div>
-          ))}
-        </div>
 
         {/* archive search */}
         <ArchiveSearch />
