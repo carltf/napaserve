@@ -75,20 +75,10 @@ export default function RelatedCoverage({ articleSlug }) {
               >
                 {r.title}
               </a>
-              {r.excerpt && (
-                <p style={{
-                  fontFamily: sans,
-                  fontSize: 14,
-                  color: "#8B7355",
-                  lineHeight: 1.5,
-                  margin: 0,
-                  display: "-webkit-box",
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}>
-                  {r.excerpt}
-                </p>
+              {r.published_at && (
+                <div style={{ fontFamily: sans, fontSize: 12, color: "#8B7355", margin: 0 }}>
+                  {new Date(r.published_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                </div>
               )}
             </div>
           ))}
