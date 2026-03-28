@@ -112,6 +112,25 @@ POLLS = [
         "question": "What concerns you most for Napa's economy?",
         "options": ["Higher fuel and freight costs", "Fewer international visitors", "Wine industry already fragile", "All of the above", "Not concerned"],
     },
+    # ── Napa Population 2025 ──────────────────────────────────────
+    {
+        "article_slug": "napa-population-2025",
+        "sort_order": 1,
+        "question": "What best explains Napa's population pattern?",
+        "options": ["Low wages limit who can stay", "Housing costs are too high", "Jobs are in other counties", "Valley geography limits growth", "Unsure / too many factors"],
+    },
+    {
+        "article_slug": "napa-population-2025",
+        "sort_order": 2,
+        "question": "Is growth in American Canyon good for Napa?",
+        "options": ["Yes, growth is growth", "Only if it serves local workers", "No, it serves the Bay Area", "Depends on what jobs follow", "Unsure"],
+    },
+    {
+        "article_slug": "napa-population-2025",
+        "sort_order": 3,
+        "question": "What should Napa prioritize to reverse trends?",
+        "options": ["Attract higher-wage industries", "Build more workforce housing", "Invest in schools and families", "Survey where residents work", "Unsure / all of the above"],
+    },
 ]
 
 

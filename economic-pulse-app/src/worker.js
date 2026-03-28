@@ -820,6 +820,7 @@ const TOPIC_SEEDS = {
   'napa-cab-2025': 'Napa Valley cabernet sauvignon grape prices crush report 2025',
   'sonoma-cab-2025': 'Sonoma County cabernet sauvignon grape prices crush report 2025',
   'lake-county-cab-2025': 'Lake County cabernet sauvignon grape prices crush report 2025',
+  'napa-population-2025': 'Napa County population commuter patterns wage structure housing jobs mismatch',
 };
 
 async function handleRelatedArticles(request, env) {
