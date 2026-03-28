@@ -847,7 +847,7 @@ async function handleRelatedArticles(request, env) {
       filtered.push({
         title,
         url: r.substack_url || null,
-        excerpt: (r.chunk_text || "").slice(0, 200).replace(/\s+/g, " ").trim(),
+        published_at: r.published_at || null,
       });
       if (filtered.length >= 5) break;
     }
