@@ -16,10 +16,14 @@
  *   POST /api/send-welcome       — send welcome email to new subscriber
  *   POST /api/send-digest-preview — send weekly digest preview to info@napaserve.com (admin only)
  *   GET  /api/unsubscribe        — unsubscribe a subscriber by ?email=
+ *   GET  /api/articles           — list articles (?published=true to filter)
+ *   GET  /api/article-status     — public article status by ?slug=
+ *   POST /api/publish-article    — set article published=true (admin-only)
  *
  * Env vars (Bindings):
  *   SUPABASE_URL         (plaintext)
  *   SUPABASE_ANON_KEY    (secret)
+ *   SUPABASE_KEY  (secret) — service role key for admin writes
  *   VOYAGE_API_KEY       (secret)
  *   ANTHROPIC_API_KEY    (secret)
  *   FRED_API_KEY         (secret)
@@ -807,6 +811,73 @@ async function handleArticlePollVote(request, env) {
   return json({ success: true, counts, total: votes.length }, 200, request);
 }
 
+// ─── Article status / publish ────────────────────────────────────────────────
+
+async function handleArticleStatus(request, env) {
+  const url = new URL(request.url);
+  const slug = url.searchParams.get("slug");
+  if (!slug) return err("slug required", 400, request);
+
+  const res = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/napaserve_articles?slug=eq.${slug}&select=slug,title,published,polls_seeded,admin_cards_added,related_coverage_added`,
+    { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+  );
+  const rows = await res.json();
+  if (!Array.isArray(rows) || rows.length === 0) return err("not found", 404, request);
+  return json(rows[0], 200, request);
+}
+
+async function handlePublishArticle(request, env) {
+  const authorized = await requireAdminToken(request, env);
+  if (!authorized) return err("Unauthorized", 401, request);
+
+  let body;
+  try { body = await request.json(); } catch { return err("Invalid JSON body", 400, request); }
+
+  const { slug } = body;
+  if (!slug) return err("slug required", 400, request);
+
+  const serviceHeaders = {
+    apikey: env.SUPABASE_KEY,
+    Authorization: `Bearer ${env.SUPABASE_KEY}`,
+    "Content-Type": "application/json",
+  };
+
+  // Check current status
+  const checkRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/napaserve_articles?slug=eq.${slug}&select=slug,published`,
+    { headers: serviceHeaders }
+  );
+  const rows = await checkRes.json();
+  if (!Array.isArray(rows) || rows.length === 0) return err("not found", 404, request);
+  if (rows[0].published) return err("already published", 400, request);
+
+  // Update
+  const updateRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/napaserve_articles?slug=eq.${slug}`,
+    {
+      method: "PATCH",
+      headers: { ...serviceHeaders, Prefer: "return=representation" },
+      body: JSON.stringify({ published: true, published_at: new Date().toISOString() }),
+    }
+  );
+  const updated = await updateRes.json();
+  if (!Array.isArray(updated) || updated.length === 0) return err("update failed", 500, request);
+  return json(updated[0], 200, request);
+}
+
+async function handleArticles(request, env) {
+  const url = new URL(request.url);
+  const published = url.searchParams.get("published");
+  let query = `${env.SUPABASE_URL}/rest/v1/napaserve_articles?select=slug,title,publication,published,published_at&order=published_at.desc`;
+  if (published === "true") query += "&published=eq.true";
+  const res = await fetch(query, {
+    headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` },
+  });
+  const rows = await res.json();
+  return json(Array.isArray(rows) ? rows : [], 200, request);
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
@@ -907,6 +978,18 @@ export default {
 
     if (url.pathname === "/api/unsubscribe" && request.method === "GET") {
       return handleUnsubscribe(request, env);
+    }
+
+    if (url.pathname === "/api/articles" && request.method === "GET") {
+      return handleArticles(request, env);
+    }
+
+    if (url.pathname === "/api/article-status" && request.method === "GET") {
+      return handleArticleStatus(request, env);
+    }
+
+    if (url.pathname === "/api/publish-article" && request.method === "POST") {
+      return handlePublishArticle(request, env);
     }
 
     return new Response("Not found", { status: 404 });

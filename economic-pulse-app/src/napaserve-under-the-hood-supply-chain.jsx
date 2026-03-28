@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
+import useDraftGate from "./hooks/useDraftGate";
+import DraftBanner from "./components/DraftBanner";
 
 // ─── theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -13,8 +15,6 @@ const T = {
   muted:   "#8B7355",
   border:  "#D4C9B8",
 };
-
-const PUBLISHED = true;
 
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 const ARTICLE_SLUG = "napa-supply-chain-2026";
@@ -810,7 +810,15 @@ const SOURCES = [
 
 // ─── main component ───────────────────────────────────────────────────────────
 export default function UnderTheHoodSupplyChain() {
+  const navigate = useNavigate();
+  const gate = useDraftGate(ARTICLE_SLUG);
   const [chartReady, setChartReady] = useState(false);
+
+  useEffect(() => {
+    if (gate.status === "redirect") {
+      navigate("/under-the-hood", { replace: true });
+    }
+  }, [gate.status, navigate]);
 
   useEffect(() => {
     if (window.Chart) { setChartReady(true); return; }
@@ -834,24 +842,17 @@ export default function UnderTheHoodSupplyChain() {
     </>),
   };
 
-  const isPreview = typeof window !== 'undefined' && window.location.search.includes('preview=true');
-
-  if (!PUBLISHED && !isPreview) {
+  if (gate.status === "loading" || gate.status === "redirect") {
     return (
-      <>
-        <NavBar />
-        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px', fontFamily: "'Source Sans 3', sans-serif", background: '#F5F0E8' }}>
-          <div style={{ fontFamily: "'Source Code Pro', monospace", fontSize: '11px', letterSpacing: '.08em', textTransform: 'uppercase', color: '#C4A050' }}>NAPA VALLEY FEATURES · UNDER THE HOOD</div>
-          <div style={{ fontFamily: "'Libre Baskerville', Georgia, serif", fontSize: '22px', fontWeight: 700, color: '#2C1810', textAlign: 'center' }}>Coming soon</div>
-          <div style={{ fontSize: '15px', fontWeight: 300, color: '#5C4033' }}>This article is being prepared. Check back shortly.</div>
-        </div>
-        <Footer />
-      </>
+      <div style={{ background: "#F5F0E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Source Sans 3', sans-serif", fontSize: 14, color: "#8B7355" }}>
+        Loading...
+      </div>
     );
   }
 
   return (
     <div style={{ background: T.bg, minHeight: "100vh" }}>
+      {gate.status === "draft" && <DraftBanner />}
       <NavBar />
 
       {/* Masthead */}

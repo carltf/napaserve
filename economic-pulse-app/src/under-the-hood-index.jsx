@@ -28,36 +28,18 @@ const TOPIC_CHIPS = [
   "Community & Culture",
 ];
 
-/* ── Publication sections (hero tiles) ────────────────────────────────────── */
-const SECTIONS = [
-  {
-    label: "Napa Valley Features",
-    desc: "Data-driven analysis of Napa County's economy, wine industry, housing and workforce.",
-    tiles: [
-      {
-        title: "How a Global Supply Shock Reaches Napa Valley",
-        date: "March 2026",
-        tag: "Napa Valley Features",
-        href: "/under-the-hood/napa-supply-chain-2026",
-        live: true,
-      },
-      {
-        title: "Napa\u2019s Economy Looks Bigger Than It Is",
-        date: "March 2026",
-        tag: "Napa Valley Features",
-        href: "/under-the-hood/napa-gdp-2024",
-        live: true,
-      },
-      {
-        title: "2025 Napa Grape Prices Slip After a Record High",
-        date: "March 19, 2026",
-        tag: "Napa Valley Features",
-        href: "/under-the-hood/napa-cab-2025",
-        live: true,
-      },
-    ],
-  },
-  {
+/* ── Slug-to-route map for native UTH articles ────────────────────────────── */
+const SLUG_ROUTES = {
+  "napa-supply-chain-2026": "/under-the-hood/napa-supply-chain-2026",
+  "napa-gdp-2024": "/under-the-hood/napa-gdp-2024",
+  "napa-cab-2025": "/under-the-hood/napa-cab-2025",
+  "sonoma-cab-2025": "/under-the-hood/sonoma-cab-2025",
+  "lake-county-cab-2025": "/under-the-hood/lake-county-cab-2025",
+};
+
+/* ── Static sections for publications without DB rows yet ─────────────────── */
+const STATIC_SECTIONS = {
+  "Sonoma County Features": {
     label: "Sonoma County Features",
     desc: "Original reporting on Sonoma County's agricultural economy and community trends.",
     tiles: [
@@ -70,7 +52,7 @@ const SECTIONS = [
       },
     ],
   },
-  {
+  "Lake County Features": {
     label: "Lake County Features",
     desc: "Coverage of Lake County's agriculture, economy and community.",
     tiles: [
@@ -83,7 +65,32 @@ const SECTIONS = [
       },
     ],
   },
-];
+};
+
+function buildSections(publishedArticles) {
+  const nvfTiles = publishedArticles
+    .filter(a => a.publication === "Napa Valley Features")
+    .map(a => ({
+      title: a.title,
+      date: a.published_at ? new Date(a.published_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "",
+      tag: a.publication,
+      href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
+      live: true,
+    }));
+
+  return [
+    {
+      label: "Napa Valley Features",
+      desc: "Data-driven analysis of Napa County's economy, wine industry, housing and workforce.",
+      tiles: nvfTiles.length > 0 ? nvfTiles : [
+        { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "March 2026", tag: "Napa Valley Features", href: "/under-the-hood/napa-gdp-2024", live: true },
+        { title: "2025 Napa Grape Prices Slip After a Record High", date: "March 19, 2026", tag: "Napa Valley Features", href: "/under-the-hood/napa-cab-2025", live: true },
+      ],
+    },
+    STATIC_SECTIONS["Sonoma County Features"],
+    STATIC_SECTIONS["Lake County Features"],
+  ];
+}
 
 /* ── Helpers ──────────────────────────────────────────────────────────────── */
 function fmtDate(iso) {
@@ -146,12 +153,24 @@ function PollCard({ poll }) {
    ══════════════════════════════════════════════════════════════════════════════ */
 export default function UnderTheHoodIndex() {
   const [allArticles, setAllArticles] = useState([]);
+  const [publishedArticles, setPublishedArticles] = useState([]);
+  const [sectionsLoading, setSectionsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState(null);
   const [searching, setSearching] = useState(false);
   const [readerPolls, setReaderPolls] = useState([]);
   const [archiveView, setArchiveView] = useState("year");
   const [topicArticles, setTopicArticles] = useState({});
+
+  // Fetch published articles from Worker
+  useEffect(() => {
+    fetch(`${RAG_URL.replace("/api/rag-search", "")}/api/articles?published=true`)
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { setPublishedArticles(Array.isArray(data) ? data : []); setSectionsLoading(false); })
+      .catch(() => setSectionsLoading(false));
+  }, []);
+
+  const sections = buildSections(publishedArticles);
 
   // 1. Fetch full archive (up to 300)
   useEffect(() => {
@@ -298,7 +317,7 @@ export default function UnderTheHoodIndex() {
         </p>
 
         {/* ── 3. PUBLICATION SECTIONS (hero tiles) ───────────────── */}
-        {SECTIONS.map((section, si) => (
+        {sections.map((section, si) => (
           <div key={si} style={{ marginBottom: 44 }}>
             <div style={{ borderBottom: `1px solid ${T.rule}`, paddingBottom: 10, marginBottom: 18 }}>
               <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: 0, lineHeight: 1.3 }}>
@@ -448,13 +467,20 @@ export default function UnderTheHoodIndex() {
             Recent Under the Hood
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {[
-              { title: "How a Global Supply Shock Reaches Napa Valley", pub: "Napa Valley Features", date: "March 2026", href: "/under-the-hood/napa-supply-chain-2026" },
-              { title: "Napa\u2019s Economy Looks Bigger Than It Is", pub: "Napa Valley Features", date: "March 2026", href: "/under-the-hood/napa-gdp-2024" },
-              { title: "Napa Cabernet Prices Break the Growth Curve", pub: "Napa Valley Features", date: "March 19, 2026", href: "/under-the-hood/napa-cab-2025" },
-              { title: "Sonoma Grape Prices Fall for a Second Year", pub: "Sonoma County Features", date: "March 21, 2026", href: "/under-the-hood/sonoma-cab-2025" },
-              { title: "Lake County Grape Prices Have Fallen 38% in Two Years", pub: "Lake County Features", date: "March 21, 2026", href: "/under-the-hood/lake-county-cab-2025" },
-            ].map((a, i) => (
+            {(publishedArticles.length > 0
+              ? publishedArticles.map(a => ({
+                  title: a.title,
+                  pub: a.publication,
+                  date: a.published_at ? new Date(a.published_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "",
+                  href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
+                }))
+              : [
+                  { title: "Napa\u2019s Economy Looks Bigger Than It Is", pub: "Napa Valley Features", date: "March 2026", href: "/under-the-hood/napa-gdp-2024" },
+                  { title: "Napa Cabernet Prices Break the Growth Curve", pub: "Napa Valley Features", date: "March 19, 2026", href: "/under-the-hood/napa-cab-2025" },
+                  { title: "Sonoma Grape Prices Fall for a Second Year", pub: "Sonoma County Features", date: "March 21, 2026", href: "/under-the-hood/sonoma-cab-2025" },
+                  { title: "Lake County Grape Prices Have Fallen 38% in Two Years", pub: "Lake County Features", date: "March 21, 2026", href: "/under-the-hood/lake-county-cab-2025" },
+                ]
+            ).map((a, i) => (
               <div key={i} style={{ background: T.surface, border: "1px solid rgba(44,24,16,0.1)", padding: "20px 22px" }}>
                 <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, lineHeight: 1.35, marginBottom: 6 }}>
                   {a.title}
