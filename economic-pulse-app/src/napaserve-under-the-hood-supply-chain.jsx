@@ -823,6 +823,16 @@ export default function UnderTheHoodSupplyChain() {
   const prose   = { fontFamily: "'Source Sans 3', sans-serif", fontSize: 17, color: T.ink, lineHeight: 1.75, margin: "0 0 18px 0" };
   const heading = { fontFamily: "'Libre Baskerville', serif", fontSize: 22, fontWeight: 700, color: T.ink, margin: "40px 0 16px 0" };
   const h2style = { fontFamily: "'Libre Baskerville', serif", fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 16px 0" };
+  const extLink = { color: T.accent, textDecoration: "underline" };
+
+  const BODY_JSX = {
+    "napa-impact": (<>
+      <p style={prose}>That longer tail matters because Napa County is not entering this shock from a position of unusual strength.</p>
+      <p style={prose}>As documented in{' '}<Link to="/under-the-hood/napa-gdp-2024" style={extLink}>{"\u201C"}Under the Hood: Napa{"\u2019"}s Economy Looks Bigger Than It Is,{"\u201D"}</Link> nominal GDP reached $14.59 billion in 2024, up 35.8% since 2016. Adjusted for inflation, the same economy grew 4.6%. Of the apparent $3.84 billion in growth over that period, roughly 87 cents of every dollar reflected inflation rather than real output. At the same time, the county{"\u2019"}s jobs engine has stalled. Leisure and hospitality employment is essentially flat since 2019 despite continued nominal expansion {"\u2014"} and if the 2009{"\u2013"}2019 growth trend had continued, that sector would employ roughly 4,800 more workers today than it actually does. In a county where a contracting wine industry accounts for 72% of all jobs and 74% of all wages, another round of pressure on fuel, natural gas, freight, manufacturing and travel is not just a story about higher costs. It is a story about employment, wages and the tax base that funds public services.</p>
+      <p style={prose}>Another wave of supply-chain disruption could widen the same disconnect Napa is already living with: the gap between what the economy appears to be producing in current dollars and what it is actually producing after inflation. Revenues can rise on paper while real output, hiring power and local resilience lag behind. In a county built on both agriculture and tourism, that is not a short-term inconvenience. It is a structural risk that the nominal numbers have been obscuring for years.</p>
+      <p style={prose}>What happens in Hormuz does not stay in Hormuz. It can show up in a diesel invoice, a delayed part, a more expensive bottling run, a cautious traveler, a softer booking calendar and a wider gap between nominal prosperity and real economic strength. That is the supply-chain story Napa now has to reckon with.</p>
+    </>),
+  };
 
   const isPreview = typeof window !== 'undefined' && window.location.search.includes('preview=true');
 
@@ -879,7 +889,7 @@ export default function UnderTheHoodSupplyChain() {
         {SECTIONS.map(section => (
           <div key={section.id}>
             {section.heading && <h2 style={heading}>{section.heading}</h2>}
-            {section.body.split("\n\n").map((para, i) => (
+            {BODY_JSX[section.id] || section.body.split("\n\n").map((para, i) => (
               <p key={i} style={prose}>{para}</p>
             ))}
             {section.calculator && <ScenarioCalculator />}
