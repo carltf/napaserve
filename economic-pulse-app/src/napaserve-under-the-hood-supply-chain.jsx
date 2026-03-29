@@ -222,7 +222,7 @@ const mono = "'Source Code Pro', monospace";
 const sans = "'Source Sans 3', sans-serif";
 const serif = "'Libre Baskerville', Georgia, serif";
 
-function downloadChartPng(canvasRef, filename) {
+function downloadChartPng(canvasRef, filename, title) {
   const canvas = canvasRef.current;
   if (!canvas) return;
   const off = document.createElement("canvas");
@@ -233,7 +233,15 @@ function downloadChartPng(canvasRef, filename) {
   ctx.fillRect(0, 0, off.width, off.height);
   ctx.drawImage(canvas, 0, 0);
   ctx.save();
-  ctx.globalAlpha = 0.5;
+  ctx.globalAlpha = 1.0;
+  ctx.font = "bold 13px 'Libre Baskerville', Georgia, serif";
+  ctx.fillStyle = "#2C1810";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(title || "", 14, 10);
+  ctx.restore();
+  ctx.save();
+  ctx.globalAlpha = 0.25;
   ctx.font = "10px 'Source Code Pro', monospace";
   ctx.fillStyle = "#8B7355";
   ctx.textAlign = "right";
@@ -305,7 +313,7 @@ function Chart1_HormuzTraffic() {
           y: { min: 0, max: 130, ticks: { color: C.secondary, font: { size: 10, family: sans } }, grid: { color: C.grid }, title: { display: true, text: "ships/day", color: C.secondary, font: { size: 10, family: sans } } },
         },
       },
-      plugins: [watermarkPlugin],
+      plugins: [],
     });
     return () => ch.destroy();
   }, []);
@@ -330,10 +338,7 @@ function Chart1_HormuzTraffic() {
           <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Vessels stranded nearby</div>
         </div>
       </div>
-      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
-        Source: Lloyd's List Intelligence; Windward Maritime AI (March 20, 2026) — 94.2% decline. IMO Secretary-General statement; NPR (March 23, 2026).
-      </p>
-      <button onClick={() => downloadChartPng(ref, "chart-1_hormuz-traffic-collapse_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      <button onClick={() => downloadChartPng(ref, "chart-1_hormuz-traffic-collapse_nvf_2026.png", "Hormuz Strait Tanker Traffic Collapse")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
@@ -382,7 +387,7 @@ function Chart2_CommodityBeforeAfter() {
           y: { ticks: { color: C.secondary, font: { size: 10, family: sans } }, grid: { color: C.grid }, min: 0 },
         },
       },
-      plugins: [watermarkPlugin, pctLabelPlugin],
+      plugins: [pctLabelPlugin],
     });
     return () => ch.destroy();
   }, []);
@@ -397,10 +402,7 @@ function Chart2_CommodityBeforeAfter() {
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: C.red }} />Current estimated flow (March 2026)</span>
       </div>
       <div style={{ position: "relative", width: "100%", height: 320 }}><canvas ref={ref} /></div>
-      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
-        Sources: UNCTAD Strait of Hormuz Disruptions report (March 10, 2026); IEA; Kpler (March 2026). Current flows estimated from 94% tanker transit decline and commodity-specific disruption reports.
-      </p>
-      <button onClick={() => downloadChartPng(ref, "chart-2_commodity-before-after_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      <button onClick={() => downloadChartPng(ref, "chart-2_commodity-before-after_nvf_2026.png", "Commodity Prices: Before vs. After the Disruption")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
@@ -432,7 +434,7 @@ function Chart3_EnergyPriceShock() {
           y2: { position: "right", ticks: { color: C.tan, font: { size: 10, family: sans }, callback: v => "€" + v }, grid: { display: false }, title: { display: true, text: "EU gas (€/MWh)", color: C.tan, font: { size: 10 } } },
         },
       },
-      plugins: [watermarkPlugin],
+      plugins: [],
     });
     return () => ch.destroy();
   }, []);
@@ -447,10 +449,7 @@ function Chart3_EnergyPriceShock() {
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px dashed " + C.tan, verticalAlign: "middle" }} />European gas (€/MWh, right)</span>
       </div>
       <div style={{ position: "relative", width: "100%", height: 300 }}><canvas ref={ref} /></div>
-      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
-        Source: Wikipedia, 2026 Strait of Hormuz crisis; World Economic Forum trade update (March 2026). Brent peaked $126/bbl. EU gas doubled from ~€30 to above €60/MWh within days of Qatar Ras Laffan force majeure (March 4, 2026).
-      </p>
-      <button onClick={() => downloadChartPng(ref, "chart-3_energy-price-shock_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      <button onClick={() => downloadChartPng(ref, "chart-3_energy-price-shock_nvf_2026.png", "Energy Price Shock Transmission")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
@@ -509,7 +508,7 @@ function Chart4_NapaGdpEmploymentGap() {
           y: { min: 9.5, ticks: { color: C.secondary, font: { size: 10, family: sans }, callback: v => "$" + v + "B" }, grid: { color: C.grid } },
         },
       },
-      plugins: [watermarkPlugin, gapFillPlugin],
+      plugins: [gapFillPlugin],
     });
     return () => ch.destroy();
   }, []);
@@ -563,7 +562,7 @@ function Chart4_NapaGdpEmploymentGap() {
           y: { min: 7, ticks: { color: C.secondary, font: { size: 10, family: sans }, callback: v => v + "k" }, grid: { color: C.grid } },
         },
       },
-      plugins: [watermarkPlugin, empGapPlugin],
+      plugins: [empGapPlugin],
     });
     return () => ch.destroy();
   }, []);
@@ -605,10 +604,7 @@ function Chart4_NapaGdpEmploymentGap() {
       </div>
       <div style={{ position: "relative", width: "100%", height: 280 }}><canvas ref={refB} /></div>
 
-      <p style={{ fontFamily: sans, fontSize: 11, color: C.secondary, marginTop: 12, lineHeight: 1.5 }}>
-        Source: BEA via FRED (GDPALL06055, REALGDPALL06055); BLS (NAPA906LEIHN). Wine industry = 72% of county jobs, 74% of wages. Source: Insel & Company for Napa Valley Vintners, May 2025 (2022 data).
-      </p>
-      <button onClick={() => downloadChartPng(refA, "chart-4_napa-gdp-employment-gap_nvf_2026.png")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      <button onClick={() => downloadChartPng(refA, "chart-4_napa-gdp-employment-gap_nvf_2026.png", "Napa GDP and Employment: The Widening Gap")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
@@ -831,6 +827,12 @@ export default function UnderTheHoodSupplyChain() {
   const extLink = { color: T.accent, textDecoration: "underline" };
 
   const BODY_JSX = {
+    "intro": (<>
+      <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: '1rem', fontWeight: 700, color: '#2C1810', marginBottom: '0.25rem' }}>NAPA VALLEY, Calif. —</p>
+      {SECTIONS.find(s => s.id === "intro").body.split("\n\n").map((para, i) => (
+        <p key={i} style={prose}>{para}</p>
+      ))}
+    </>),
     "napa-impact": (<>
       <p style={prose}>That longer tail matters because Napa County is not entering this shock from a position of unusual strength.</p>
       <p style={prose}>As documented in{' '}<Link to="/under-the-hood/napa-gdp-2024" style={extLink}>{"\u201C"}Under the Hood: Napa{"\u2019"}s Economy Looks Bigger Than It Is,{"\u201D"}</Link> nominal GDP reached $14.59 billion in 2024, up 35.8% since 2016. Adjusted for inflation, the same economy grew 4.6%. Of the apparent $3.84 billion in growth over that period, roughly 87 cents of every dollar reflected inflation rather than real output. At the same time, the county{"\u2019"}s jobs engine has stalled. Leisure and hospitality employment is essentially flat since 2019 despite continued nominal expansion {"\u2014"} and if the 2009{"\u2013"}2019 growth trend had continued, that sector would employ roughly 4,800 more workers today than it actually does. In a county where a contracting wine industry accounts for 72% of all jobs and 74% of all wages, another round of pressure on fuel, natural gas, freight, manufacturing and travel is not just a story about higher costs. It is a story about employment, wages and the tax base that funds public services.</p>
