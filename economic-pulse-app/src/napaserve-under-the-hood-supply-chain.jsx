@@ -227,11 +227,11 @@ function downloadChartPng(canvasRef, filename, title) {
   if (!canvas) return;
   const off = document.createElement("canvas");
   off.width = canvas.width;
-  off.height = canvas.height + 28;
+  off.height = canvas.height + 48;
   const ctx = off.getContext("2d");
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, off.width, off.height);
-  ctx.drawImage(canvas, 0, 0);
+  ctx.drawImage(canvas, 0, 32);
   ctx.save();
   ctx.globalAlpha = 1.0;
   ctx.font = "bold 13px 'Libre Baskerville', Georgia, serif";
@@ -827,12 +827,17 @@ export default function UnderTheHoodSupplyChain() {
   const extLink = { color: T.accent, textDecoration: "underline" };
 
   const BODY_JSX = {
-    "intro": (<>
-      <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: '1rem', fontWeight: 700, color: '#2C1810', marginBottom: '0.25rem' }}>NAPA VALLEY, Calif. —</p>
-      {SECTIONS.find(s => s.id === "intro").body.split("\n\n").map((para, i) => (
-        <p key={i} style={prose}>{para}</p>
-      ))}
-    </>),
+    "intro": (() => {
+      const paras = SECTIONS.find(s => s.id === "intro").body.split("\n\n");
+      return (<>
+        <p key={0} style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: '1rem', color: '#2C1810', lineHeight: 1.7 }}>
+          <span style={{ fontWeight: 700 }}>NAPA VALLEY, Calif. —</span> {paras[0]}
+        </p>
+        {paras.slice(1).map((para, i) => (
+          <p key={i + 1} style={prose}>{para}</p>
+        ))}
+      </>);
+    })(),
     "napa-impact": (<>
       <p style={prose}>That longer tail matters because Napa County is not entering this shock from a position of unusual strength.</p>
       <p style={prose}>As documented in{' '}<Link to="/under-the-hood/napa-gdp-2024" style={extLink}>{"\u201C"}Under the Hood: Napa{"\u2019"}s Economy Looks Bigger Than It Is,{"\u201D"}</Link> nominal GDP reached $14.59 billion in 2024, up 35.8% since 2016. Adjusted for inflation, the same economy grew 4.6%. Of the apparent $3.84 billion in growth over that period, roughly 87 cents of every dollar reflected inflation rather than real output. At the same time, the county{"\u2019"}s jobs engine has stalled. Leisure and hospitality employment is essentially flat since 2019 despite continued nominal expansion {"\u2014"} and if the 2009{"\u2013"}2019 growth trend had continued, that sector would employ roughly 4,800 more workers today than it actually does. In a county where a contracting wine industry accounts for 72% of all jobs and 74% of all wages, another round of pressure on fuel, natural gas, freight, manufacturing and travel is not just a story about higher costs. It is a story about employment, wages and the tax base that funds public services.</p>
