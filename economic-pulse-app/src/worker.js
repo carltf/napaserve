@@ -20,6 +20,7 @@
  *   GET  /api/articles           — list articles (?published=true to filter)
  *   GET  /api/article-status     — public article status by ?slug=
  *   POST /api/publish-article    — set article published=true (admin-only)
+ *   GET  /api/events-search      — DB-backed event search → community_events + astronomical_events fallback
  *
  * Env vars (Bindings):
  *   SUPABASE_URL         (plaintext)
@@ -925,6 +926,70 @@ async function handleArticles(request, env) {
   return json(Array.isArray(rows) ? rows : [], 200, request);
 }
 
+// ─── Events search handler ───────────────────────────────────────────────────
+
+async function handleEventsSearch(request, env) {
+  const url = new URL(request.url);
+  const town = url.searchParams.get("town") || null;
+  const category = url.searchParams.get("category") || null;
+  const start = url.searchParams.get("start") || null;
+  const end = url.searchParams.get("end") || null;
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "10", 10), 20);
+
+  try {
+    // Build Supabase query against community_events
+    let query = `${env.SUPABASE_URL}/rest/v1/community_events?select=title,description,event_date,town,category,venue_name,address,website_url,ticket_url,price_info,is_recurring,lat,lng&status=eq.published&order=event_date.asc&limit=${limit}`;
+
+    if (town && town !== "all") {
+      query += `&town=eq.${encodeURIComponent(town)}`;
+    }
+    if (category && category !== "any") {
+      if (category === "night-sky") {
+        // Night sky routes to astronomical_events — handled separately
+        const astroQuery = `${env.SUPABASE_URL}/rest/v1/astronomical_events?select=title,description,event_date,viewing_notes&order=event_date.asc&limit=${limit}`;
+        const astroRes = await fetch(astroQuery, {
+          headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` },
+        });
+        const astroRows = await astroRes.json();
+        return json({ ok: true, count: astroRows.length, results: astroRows, source: "astronomical_events" }, 200, request);
+      }
+      query += `&category=eq.${encodeURIComponent(category)}`;
+    }
+    if (start) {
+      query += `&event_date=gte.${start}`;
+    }
+    if (end) {
+      query += `&event_date=lte.${end}`;
+    }
+
+    const res = await fetch(query, {
+      headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` },
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Supabase query error ${res.status}: ${text}`);
+    }
+
+    const rows = await res.json();
+
+    // If DB returns fewer than requested, flag for scraper fallback in UI
+    const needsFallback = rows.length < limit;
+
+    return json({
+      ok: true,
+      count: rows.length,
+      results: rows,
+      source: "community_events",
+      needs_fallback: needsFallback,
+    }, 200, request);
+
+  } catch (e) {
+    console.error("Events search failed:", e);
+    return err(`Events search failed: ${e.message}`, 502, request);
+  }
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
@@ -1041,6 +1106,10 @@ export default {
 
     if (url.pathname === "/api/publish-article" && request.method === "POST") {
       return handlePublishArticle(request, env);
+    }
+
+    if (url.pathname === "/api/events-search" && request.method === "GET") {
+      return handleEventsSearch(request, env);
     }
 
     return new Response("Not found", { status: 404 });
