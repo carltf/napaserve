@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import RelatedCoverage from "./components/RelatedCoverage";
 
 Chart.register(...registerables);
 
@@ -657,6 +658,7 @@ export default function UnderTheHoodSonoma() {
 
             {/* ── Polls ─────────────────────────────────────────────── */}
             <PollsSection />
+            <RelatedCoverage articleSlug="sonoma-cab-2025" />
 
             {/* ── Methodology ───────────────────────────────────────── */}
             <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 20 }}>

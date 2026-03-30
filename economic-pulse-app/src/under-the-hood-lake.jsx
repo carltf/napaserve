@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import RelatedCoverage from "./components/RelatedCoverage";
 
 Chart.register(...registerables);
 
@@ -996,6 +997,7 @@ export default function UnderTheHoodLake() {
 
         {/* Polls */}
         <PollsSection />
+        <RelatedCoverage articleSlug="lake-county-cab-2025" />
 
         {/* Footer */}
         <div style={s.footer}>

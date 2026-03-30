@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import RelatedCoverage from "./components/RelatedCoverage";
 
 Chart.register(...registerables);
 
@@ -871,6 +872,7 @@ export default function UnderTheHoodGDP() {
 
         {/* ── Polls ─────────────────────────────────────────────── */}
         <PollsSection />
+        <RelatedCoverage articleSlug="napa-gdp-2024" />
 
         {/* ── Methodology ───────────────────────────────────────── */}
         <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 20 }}>

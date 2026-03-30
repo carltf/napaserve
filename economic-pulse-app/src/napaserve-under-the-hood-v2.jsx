@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
+import RelatedCoverage from "./components/RelatedCoverage";
 
 // ─── theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -482,6 +483,7 @@ export default function UnderTheHood() {
 
         {/* polls */}
         <PollsSection />
+        <RelatedCoverage articleSlug="napa-cab-2025" />
 
         {/* related coverage */}
         <div style={{ borderTop:`2px solid ${T.border}`, marginTop:48, paddingTop:32 }}>
