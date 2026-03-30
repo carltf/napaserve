@@ -938,7 +938,7 @@ async function handleEventsSearch(request, env) {
 
   try {
     // Build Supabase query against community_events
-    let query = `${env.SUPABASE_URL}/rest/v1/community_events?select=title,description,event_date,town,category,venue_name,address,website_url,ticket_url,price_info,is_recurring,lat,lng&status=eq.published&order=event_date.asc&limit=${limit}`;
+    let query = `${env.SUPABASE_URL}/rest/v1/community_events?select=title,description,event_date,town,category,venue_name,address,website_url,ticket_url,price_info,is_recurring,lat,lng&status=eq.approved&order=event_date.asc&limit=${limit}`;
 
     if (town && town !== "all") {
       query += `&town=eq.${encodeURIComponent(town)}`;
