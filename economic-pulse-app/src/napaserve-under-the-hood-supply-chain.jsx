@@ -5,6 +5,7 @@ import NavBar from "./NavBar";
 import useDraftGate from "./hooks/useDraftGate";
 import DraftBanner from "./components/DraftBanner";
 import RelatedCoverage from "./components/RelatedCoverage";
+import html2canvas from 'html2canvas';
 
 // ─── theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -222,16 +223,22 @@ const mono = "'Source Code Pro', monospace";
 const sans = "'Source Sans 3', sans-serif";
 const serif = "'Libre Baskerville', Georgia, serif";
 
-function downloadChartPng(canvasRef, filename, title) {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
+async function downloadComponentPng(containerRef, filename, title) {
+  const el = containerRef.current;
+  if (!el) return;
+  const captured = await html2canvas(el, {
+    backgroundColor: C.bg,
+    scale: 2,
+    useCORS: true,
+    logging: false,
+  });
   const off = document.createElement("canvas");
-  off.width = canvas.width;
-  off.height = canvas.height + 48;
+  off.width = captured.width;
+  off.height = captured.height + 48;
   const ctx = off.getContext("2d");
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, off.width, off.height);
-  ctx.drawImage(canvas, 0, 32);
+  ctx.drawImage(captured, 0, 32);
   ctx.save();
   ctx.globalAlpha = 1.0;
   ctx.font = "bold 13px 'Libre Baskerville', Georgia, serif";
@@ -246,7 +253,7 @@ function downloadChartPng(canvasRef, filename, title) {
   ctx.fillStyle = "#8B7355";
   ctx.textAlign = "right";
   ctx.textBaseline = "bottom";
-  ctx.fillText("napaserve.org", off.width - 12, off.height - 8);
+  ctx.fillText("napaserve.org", off.width - 10, off.height - 6);
   ctx.restore();
   const link = document.createElement("a");
   link.download = filename;
@@ -283,6 +290,7 @@ const watermarkPlugin = {
 // ─── CHART 1: Hormuz Strait Tanker Traffic Collapse ──────────────────────────
 function Chart1_HormuzTraffic() {
   const ref = useRef(null);
+  const containerRef = useRef(null);
   useEffect(() => {
     if (!window.Chart || !ref.current) return;
     const labels = ["Feb 20","Feb 24","Feb 27","Feb 28","Mar 1","Mar 2","Mar 4","Mar 8","Mar 12","Mar 16","Mar 20","Mar 26"];
@@ -320,6 +328,7 @@ function Chart1_HormuzTraffic() {
 
   return (
     <>
+      <div ref={containerRef}>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 1 — HORMUZ STRAIT
       </div>
@@ -338,7 +347,8 @@ function Chart1_HormuzTraffic() {
           <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", color: C.secondary, marginTop: 4 }}>Vessels stranded nearby</div>
         </div>
       </div>
-      <button onClick={() => downloadChartPng(ref, "chart-1_hormuz-traffic-collapse_nvf_2026.png", "Hormuz Strait Tanker Traffic Collapse")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      </div>
+      <button onClick={() => downloadComponentPng(containerRef, "chart-1_hormuz-traffic-collapse_nvf_2026.png", "Hormuz Strait Tanker Traffic Collapse")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
@@ -346,6 +356,7 @@ function Chart1_HormuzTraffic() {
 // ─── CHART 2: Commodity Before vs. After ─────────────────────────────────────
 function Chart2_CommodityBeforeAfter() {
   const ref = useRef(null);
+  const containerRef = useRef(null);
   useEffect(() => {
     if (!window.Chart || !ref.current) return;
     const labels = ["Crude oil\n(mb/day)","LNG\n(bcm/mo)","LPG\n(mt/mo)","Fertilizers\n(mt/mo)","Dry bulk\n(mt/day)"];
@@ -394,6 +405,7 @@ function Chart2_CommodityBeforeAfter() {
 
   return (
     <>
+      <div ref={containerRef}>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 2 — BEFORE VS. AFTER
       </div>
@@ -402,7 +414,8 @@ function Chart2_CommodityBeforeAfter() {
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: C.red }} />Current estimated flow (March 2026)</span>
       </div>
       <div style={{ position: "relative", width: "100%", height: 320 }}><canvas ref={ref} /></div>
-      <button onClick={() => downloadChartPng(ref, "chart-2_commodity-before-after_nvf_2026.png", "Commodity Prices: Before vs. After the Disruption")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      </div>
+      <button onClick={() => downloadComponentPng(containerRef, "chart-2_commodity-before-after_nvf_2026.png", "Commodity Prices: Before vs. After the Disruption")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
@@ -410,6 +423,7 @@ function Chart2_CommodityBeforeAfter() {
 // ─── CHART 3: Energy Price Shock ─────────────────────────────────────────────
 function Chart3_EnergyPriceShock() {
   const ref = useRef(null);
+  const containerRef = useRef(null);
   useEffect(() => {
     if (!window.Chart || !ref.current) return;
     const labels = ["Nov 2025","Dec 2025","Jan 2026","Feb 1–27","Mar 1","Mar 4\nQatar FM","Mar 8\n$100+","Mar peak\n$126","Mar 27"];
@@ -441,6 +455,7 @@ function Chart3_EnergyPriceShock() {
 
   return (
     <>
+      <div ref={containerRef}>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 3 — ENERGY PRICE SHOCK
       </div>
@@ -449,7 +464,8 @@ function Chart3_EnergyPriceShock() {
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px dashed " + C.tan, verticalAlign: "middle" }} />European gas (€/MWh, right)</span>
       </div>
       <div style={{ position: "relative", width: "100%", height: 300 }}><canvas ref={ref} /></div>
-      <button onClick={() => downloadChartPng(ref, "chart-3_energy-price-shock_nvf_2026.png", "Energy Price Shock Transmission")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      </div>
+      <button onClick={() => downloadComponentPng(containerRef, "chart-3_energy-price-shock_nvf_2026.png", "Energy Price Shock Transmission")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
@@ -458,6 +474,7 @@ function Chart3_EnergyPriceShock() {
 function Chart4_NapaGdpEmploymentGap() {
   const refA = useRef(null);
   const refB = useRef(null);
+  const containerRef = useRef(null);
 
   // 4A — Nominal vs Real GDP
   useEffect(() => {
@@ -569,6 +586,7 @@ function Chart4_NapaGdpEmploymentGap() {
 
   return (
     <>
+      <div ref={containerRef}>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 4 — NAPA'S ECONOMIC CUSHION
       </div>
@@ -604,7 +622,8 @@ function Chart4_NapaGdpEmploymentGap() {
       </div>
       <div style={{ position: "relative", width: "100%", height: 280 }}><canvas ref={refB} /></div>
 
-      <button onClick={() => downloadChartPng(refA, "chart-4_napa-gdp-employment-gap_nvf_2026.png", "Napa GDP and Employment: The Widening Gap")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
+      </div>
+      <button onClick={() => downloadComponentPng(containerRef, "chart-4_napa-gdp-employment-gap_nvf_2026.png", "Napa GDP and Employment: The Widening Gap")} style={dlBtnStyle}>DOWNLOAD CHART PNG</button>
     </>
   );
 }
