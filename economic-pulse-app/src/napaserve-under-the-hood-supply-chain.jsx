@@ -249,11 +249,11 @@ async function downloadComponentPng(containerRef, filename, title) {
   ctx.restore();
   ctx.save();
   ctx.globalAlpha = 0.25;
-  ctx.font = "10px 'Source Code Pro', monospace";
+  ctx.font = "20px 'Source Code Pro', monospace";
   ctx.fillStyle = "#8B7355";
   ctx.textAlign = "right";
   ctx.textBaseline = "bottom";
-  ctx.fillText("napaserve.org", off.width - 10, off.height - 6);
+  ctx.fillText("napaserve.org", off.width - 20, off.height - 16);
   ctx.restore();
   const link = document.createElement("a");
   link.download = filename;
