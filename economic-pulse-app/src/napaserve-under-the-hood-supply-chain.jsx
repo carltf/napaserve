@@ -241,7 +241,7 @@ async function downloadComponentPng(containerRef, filename, title) {
   ctx.drawImage(captured, 0, 32);
   ctx.save();
   ctx.globalAlpha = 1.0;
-  ctx.font = "bold 13px 'Libre Baskerville', Georgia, serif";
+  ctx.font = "bold 16px 'Libre Baskerville', Georgia, serif";
   ctx.fillStyle = "#2C1810";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
