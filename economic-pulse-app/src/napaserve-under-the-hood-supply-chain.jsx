@@ -245,11 +245,11 @@ async function downloadComponentPng(containerRef, filename, title) {
   ctx.fillStyle = "#2C1810";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(title || "", 28, 16);
+  ctx.fillText(title || "", 14, 16);
   ctx.restore();
   ctx.save();
   ctx.globalAlpha = 0.25;
-  ctx.font = "20px 'Source Code Pro', monospace";
+  ctx.font = "26px 'Source Code Pro', monospace";
   ctx.fillStyle = "#8B7355";
   ctx.textAlign = "right";
   ctx.textBaseline = "bottom";
