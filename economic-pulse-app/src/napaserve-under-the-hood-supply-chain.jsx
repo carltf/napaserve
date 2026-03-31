@@ -234,11 +234,19 @@ async function downloadComponentPng(containerRef, filename, title) {
   });
   const off = document.createElement("canvas");
   off.width = captured.width;
-  off.height = captured.height + 20;
+  off.height = captured.height + 80;
   const ctx = off.getContext("2d");
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, off.width, off.height);
-  ctx.drawImage(captured, 0, 10);
+  ctx.drawImage(captured, 0, 60);
+  ctx.save();
+  ctx.globalAlpha = 1.0;
+  ctx.font = "bold 32px 'Libre Baskerville', Georgia, serif";
+  ctx.fillStyle = "#2C1810";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(title || "", 14, 16);
+  ctx.restore();
   ctx.save();
   ctx.globalAlpha = 0.25;
   ctx.font = "26px 'Source Code Pro', monospace";
@@ -321,7 +329,6 @@ function Chart1_HormuzTraffic() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Hormuz Strait Tanker Traffic Collapse</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 1 — HORMUZ STRAIT
       </div>
@@ -399,7 +406,6 @@ function Chart2_CommodityBeforeAfter() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Commodity Prices: Before vs. After the Disruption</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 2 — BEFORE VS. AFTER
       </div>
@@ -450,7 +456,6 @@ function Chart3_EnergyPriceShock() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Energy Price Shock Transmission</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 3 — ENERGY PRICE SHOCK
       </div>
@@ -582,7 +587,6 @@ function Chart4_NapaGdpEmploymentGap() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Napa GDP and Employment: The Widening Gap</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 4 — NAPA'S ECONOMIC CUSHION
       </div>
