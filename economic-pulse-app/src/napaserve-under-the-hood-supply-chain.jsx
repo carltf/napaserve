@@ -321,6 +321,7 @@ function Chart1_HormuzTraffic() {
   return (
     <>
       <div ref={containerRef}>
+      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Hormuz Strait Tanker Traffic Collapse</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 1 — HORMUZ STRAIT
       </div>
@@ -398,6 +399,7 @@ function Chart2_CommodityBeforeAfter() {
   return (
     <>
       <div ref={containerRef}>
+      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Commodity Prices: Before vs. After the Disruption</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 2 — BEFORE VS. AFTER
       </div>
@@ -448,6 +450,7 @@ function Chart3_EnergyPriceShock() {
   return (
     <>
       <div ref={containerRef}>
+      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Energy Price Shock Transmission</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 3 — ENERGY PRICE SHOCK
       </div>
@@ -579,6 +582,7 @@ function Chart4_NapaGdpEmploymentGap() {
   return (
     <>
       <div ref={containerRef}>
+      <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Napa GDP and Employment: The Widening Gap</div>
       <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
         CHART 4 — NAPA'S ECONOMIC CUSHION
       </div>
