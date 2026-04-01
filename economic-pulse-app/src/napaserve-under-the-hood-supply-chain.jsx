@@ -917,6 +917,13 @@ export default function UnderTheHoodSupplyChain() {
           </div>
         ))}
 
+        {/* byline */}
+        <div style={{ marginTop: 40, marginBottom: 40 }}>
+          <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
+            Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
+          </p>
+        </div>
+
         {/* polls */}
         <PollsSection />
 
@@ -937,13 +944,6 @@ export default function UnderTheHoodSupplyChain() {
               </a>
             </div>
           ))}
-        </div>
-
-        {/* byline */}
-        <div style={{ marginTop: 40, paddingTop: 24, borderTop: `1px solid ${T.border}` }}>
-          <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
-            Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
-          </p>
         </div>
 
         {/* methodology */}
