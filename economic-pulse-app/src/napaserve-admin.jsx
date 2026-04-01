@@ -32,7 +32,7 @@ const ARTICLES = [
   {
     publication: "Napa Valley Features",
     headline: "How a Global Supply Shock Reaches Napa Valley",
-    deck: "War around Iran has cut Hormuz tanker traffic 94%. This traces the supply chain from the strait to the Napa farm gate \u2014 and shows why the local economy has less cushion than the numbers suggest.",
+    deck: "War with Iran has cut Hormuz tanker traffic 94%. This traces the supply chain from the strait to the Napa farm gate \u2014 and shows why the local economy has less cushion than the numbers suggest.",
     slug: "napa-supply-chain-2026",
   },
   {

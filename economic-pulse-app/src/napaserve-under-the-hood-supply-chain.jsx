@@ -880,7 +880,7 @@ export default function UnderTheHoodSupplyChain() {
           Under the Hood: How a Global Supply Shock Reaches Napa Valley
         </h1>
         <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontWeight: 300, fontSize: 17, lineHeight: 1.65, color: "#5C4033", marginBottom: 24 }}>
-          War around Iran has cut Hormuz tanker traffic 94%. This traces the supply chain from the strait to the Napa farm gate — and shows why the local economy has less cushion than the numbers suggest. This interactive edition includes four data visualizations, a scenario calculator and live reader polls.
+          War with Iran has cut Hormuz tanker traffic 94%. This traces the supply chain from the strait to the Napa farm gate — and shows why the local economy has less cushion than the numbers suggest. This interactive edition includes four data visualizations, a scenario calculator and live reader polls.
         </p>
         <div style={{ borderTop: "1px solid #D4C4A8", paddingTop: 14 }}>
           <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "#8B7355" }}>
