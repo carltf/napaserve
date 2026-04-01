@@ -470,7 +470,7 @@ export default function Archive() {
                 }}
                 onClick={() => setMode(m)}
               >
-                {m === "answer" ? "✦ AI Answer" : "▤ Raw Results"}
+                {m === "answer" ? "✦ CI Answer" : "▤ Raw Results"}
               </button>
             ))}
           </div>
