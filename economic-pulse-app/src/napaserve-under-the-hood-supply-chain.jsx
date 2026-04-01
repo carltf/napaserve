@@ -329,9 +329,6 @@ function Chart1_HormuzTraffic() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
-        CHART 1 — HORMUZ STRAIT
-      </div>
       <div style={{ position: "relative", width: "100%", height: 300 }}><canvas ref={ref} /></div>
       <div style={{ display: "flex", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
         <div style={statBoxStyle}>
@@ -406,9 +403,6 @@ function Chart2_CommodityBeforeAfter() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
-        CHART 2 — BEFORE VS. AFTER
-      </div>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: C.blue }} />Normal daily flow (pre-war)</span>
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: C.red }} />Current estimated flow (March 2026)</span>
@@ -456,9 +450,6 @@ function Chart3_EnergyPriceShock() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
-        CHART 3 — ENERGY PRICE SHOCK
-      </div>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px solid " + C.blue, verticalAlign: "middle" }} />Brent crude ($/bbl, left)</span>
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ display: "inline-block", width: 20, height: 0, border: "2px dashed " + C.tan, verticalAlign: "middle" }} />European gas (€/MWh, right)</span>
@@ -587,9 +578,6 @@ function Chart4_NapaGdpEmploymentGap() {
   return (
     <>
       <div ref={containerRef}>
-      <div style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.gold, marginBottom: 8 }}>
-        CHART 4 — NAPA'S ECONOMIC CUSHION
-      </div>
 
       {/* 4A: GDP */}
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 10, fontSize: 11, color: C.secondary, fontFamily: sans }}>
