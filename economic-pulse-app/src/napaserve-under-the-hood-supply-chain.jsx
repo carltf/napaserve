@@ -838,7 +838,7 @@ export default function UnderTheHoodSupplyChain() {
     "intro": (() => {
       const paras = SECTIONS.find(s => s.id === "intro").body.split("\n\n");
       return (<>
-        <p key={0} style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: '1rem', color: '#2C1810', lineHeight: 1.7 }}>
+        <p key={0} style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: '1rem', color: '#2C1810', lineHeight: 1.7, marginBottom: 18 }}>
           <span>NAPA VALLEY, Calif. —</span> {paras[0]}
         </p>
         {paras.slice(1).map((para, i) => (
