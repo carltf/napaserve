@@ -173,41 +173,21 @@ function TimelineChart() {
   const containerRef = useRef(null);
   useEffect(() => {
     if (!canvasRef.current) return;
-    const labelPlugin = {
-      id: "eventLabels",
-      afterDatasetsDraw(chart) {
-        const { ctx: c } = chart;
-        chart.data.datasets.forEach((dataset, di) => {
-          const cat = CATEGORIES[di];
-          const meta = chart.getDatasetMeta(di);
-          meta.data.forEach((point, pi) => {
-            const raw = dataset.data[pi];
-            c.save();
-            c.font = `11px ${font}`;
-            c.fillStyle = cat.color;
-            c.textAlign = "left";
-            c.textBaseline = "middle";
-            c.fillText(raw.label, point.x + 10, point.y + (raw.yOff || 0));
-            c.restore();
-          });
-        });
-      },
-    };
     const datasets = CATEGORIES.map((cat, ci) => ({
       label: cat.label,
       data: EVENTS.filter(e => e.cat === ci).map(e => ({ x: dateToX(e.x), y: cat.y, label: e.label, yOff: e.yOff || 0 })),
       backgroundColor: cat.color, borderColor: cat.color, pointRadius: 7, pointHoverRadius: 9,
     }));
     const chart = new Chart(canvasRef.current, {
-      type: "scatter", data: { datasets }, plugins: [labelPlugin],
+      type: "scatter", data: { datasets },
       options: {
         animation: false, responsive: true, maintainAspectRatio: false,
         layout: { padding: { right: 180, left: 10 } },
         scales: {
-          x: { type: "linear", min: X_MIN, max: X_MAX, ticks: { stepSize: 1, callback: xTickLabel, color: T.muted, font: { size: 11 }, maxRotation: 0 }, grid: { color: T.rule } },
+          x: { type: "linear", min: X_MIN, max: X_MAX, ticks: { stepSize: 3, callback: xTickLabel, color: T.muted, font: { size: 11 }, maxRotation: 0, maxTicksLimit: 10 }, grid: { color: T.rule } },
           y: { min: 0, max: 5, reverse: false, ticks: { stepSize: 1, callback: (val) => { const found = CATEGORIES.find(c => c.y === val); return found ? found.label : ""; }, color: T.ink, font: { size: 11, weight: "600" } }, grid: { color: T.rule } },
         },
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.raw.label, title: () => "" } } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.raw.label, title: (items) => { const val = items[0].raw.x; const year = 2023 + Math.floor(val / 12); const month = (val % 12) + 1; const names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return `${names[month-1]} ${year}`; } }, backgroundColor: "#2C1810", titleColor: "#C4A050", bodyColor: "#F5F0E8", padding: 10, cornerRadius: 4 } },
       },
     });
     return () => chart.destroy();
