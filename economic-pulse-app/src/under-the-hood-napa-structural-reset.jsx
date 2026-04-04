@@ -384,6 +384,78 @@ function ScenarioCalculator() {
   );
 }
 
+function ArchiveSearch() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+
+  const search = async () => {
+    if (!query.trim()) return;
+    setLoading(true);
+    setSearched(true);
+    try {
+      const res = await fetch(`${WORKER}/api/rag-search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, top_k: 5 })
+      });
+      const data = await res.json();
+      setResults(data.results || data || []);
+    } catch(e) { setResults([]); }
+    setLoading(false);
+  };
+
+  const handleKey = (e) => { if (e.key === "Enter") search(); };
+
+  return (
+    <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>Archive</p>
+      <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 6px 0" }}>Search Napa Valley Features</h2>
+      <p style={{ fontFamily: font, fontSize: 14, color: T.muted, margin: "0 0 16px 0" }}>Search 1,000+ articles and reports from Napa Valley Features.</p>
+      <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder="Search supply chain, energy costs, economic impact..."
+          style={{ flex: 1, padding: "10px 14px", fontFamily: font, fontSize: 14, color: T.ink, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, outline: "none" }}
+        />
+        <button onClick={search} disabled={loading}
+          style={{ padding: "10px 20px", background: T.accent, color: "#fff", border: "none", borderRadius: 6, fontFamily: font, fontSize: 14, fontWeight: 600, cursor: loading ? "default" : "pointer" }}>
+          {loading ? "..." : "Search"}
+        </button>
+      </div>
+      {searched && !loading && results.length === 0 && (
+        <p style={{ fontFamily: font, fontSize: 14, color: T.muted }}>No results found. Try different keywords.</p>
+      )}
+      {results.map((r, i) => (
+        <div key={i} style={{ borderBottom: `1px solid ${T.border}`, padding: "14px 0" }}>
+          {r.post_url ? (
+            <a href={r.post_url} target="_blank" rel="noreferrer"
+              style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", display: "block", marginBottom: 4 }}>
+              {r.post_title || r.title || "Article"}
+            </a>
+          ) : (
+            <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: "0 0 4px 0" }}>{r.post_title || r.title || "Article"}</p>
+          )}
+          <p style={{ fontFamily: font, fontSize: 13, color: T.ink, margin: "0 0 4px 0", lineHeight: 1.5 }}>{r.chunk_text || r.text || r.content || ""}</p>
+          {r.post_url && (
+            <a href={r.post_url} target="_blank" rel="noreferrer"
+              style={{ fontFamily: font, fontSize: 12, color: T.muted }}>Read full article →</a>
+          )}
+        </div>
+      ))}
+      {results.length > 0 && (
+        <a href="/archive" style={{ display: "inline-block", marginTop: 16, fontFamily: font, fontSize: 14, color: T.accent, textDecoration: "underline" }}>
+          Open full archive search →
+        </a>
+      )}
+    </div>
+  );
+}
+
 const prose = { fontFamily: serif, fontSize: 16, color: "#2C1810", lineHeight: 1.8, marginBottom: 14 };
 const extLink = { color: "#8B5E3C", textDecoration: "none", borderBottom: "1px solid #C4A050" };
 const sectionHead = { fontFamily: serif, fontSize: 22, fontWeight: 700, color: "#2C1810", margin: "40px 0 16px", lineHeight: 1.3 };
@@ -511,6 +583,37 @@ export default function NapaStructuralReset() {
         <p style={prose}>{"More split-asset transactions: additional deals in which land, brand, operations and financing move separately rather than together, using the Cain and Stanly Ranch structures as a template. Wider bid-ask spreads: sellers anchored to 2018\u20132022 valuations meeting buyers pricing in structural uncertainty. Deals that take longer, require more seller flexibility or fall through are signals worth tracking alongside deals that do close."}</p>
         <p style={prose}>{"The employment signal: Napa County food service and hospitality employment data from the California Employment Development Department will show whether what is visible in individual closure announcements is accumulating into a broader labor-market shift. Watch for slower hiring, reduced seasonal staffing and attrition that is not backfilled."}</p>
 
+        {/* ── Related Coverage ─────────────────────────────────── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, margin: "40px 0 32px" }}>
+          <div style={{ flex: 1, height: 1, background: T.rule }} />
+          <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: T.muted, whiteSpace: "nowrap" }}>Related Coverage</span>
+          <div style={{ flex: 1, height: 1, background: T.rule }} />
+        </div>
+        <div style={{ marginBottom: 36 }}>
+          <div style={{ marginBottom: 12 }}>
+            <a href="/under-the-hood/napa-gdp-2024" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
+              {"\u201CNapa\u2019s Economy Looks Bigger Than It Is\u201D"}
+            </a>
+            <span style={{ fontFamily: font, fontSize: 14, color: T.muted }}> {"\u2014"} Napa Valley Features</span>
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <a href="/under-the-hood/napa-supply-chain-2026" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
+              {"\u201CUnder the Hood: How a Global Supply Shock Reaches Napa Valley\u201D"}
+            </a>
+            <span style={{ fontFamily: font, fontSize: 14, color: T.muted }}> {"\u2014"} Napa Valley Features</span>
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <a href="/under-the-hood/napa-cab-2025" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
+              {"\u201C2025 Napa Grape Prices Slip After a Record High\u201D"}
+            </a>
+            <span style={{ fontFamily: font, fontSize: 14, color: T.muted }}> {"\u2014"} Napa Valley Features</span>
+          </div>
+        </div>
+
+        {/* ── Archive Search ───────────────────────────────────── */}
+        <ArchiveSearch />
+
+        {/* ── Sources ─────────────────────────────────────────── */}
         <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 24 }}>
           <h2 style={{ fontWeight: 700, fontSize: 17, color: T.ink, fontFamily: serif, marginBottom: 16 }}>Sources</h2>
           {[
@@ -546,12 +649,17 @@ export default function NapaStructuralReset() {
           ))}
         </div>
 
-        <p style={{ fontFamily: font, fontSize: 14, color: T.muted, fontStyle: "italic", marginTop: 40, marginBottom: 40 }}>
-          Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
-        </p>
+        {/* ── Author note ─────────────────────────────────────── */}
+        <div style={{ marginTop: 32, padding: "20px 0", borderTop: `1px solid ${T.border}` }}>
+          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
+            Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
+          </p>
+        </div>
 
+        {/* ── Polls ────────────────────────────────────────────── */}
         <PollsSection />
 
+        {/* ── Methodology ──────────────────────────────────────── */}
         <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 20 }}>
           <h3 style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, margin: "0 0 10px" }}>Methodology</h3>
           <p style={{ fontSize: 14, color: T.muted, lineHeight: 1.7 }}>
