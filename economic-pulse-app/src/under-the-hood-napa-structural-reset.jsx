@@ -514,31 +514,34 @@ export default function NapaStructuralReset() {
         <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 24 }}>
           <h2 style={{ fontWeight: 700, fontSize: 17, color: T.ink, fontFamily: serif, marginBottom: 16 }}>Sources</h2>
           {[
-            "SF Chronicle, \u201CCharlie Palmer Steak to close at Archer Hotel Napa,\u201D Apr. 1, 2026.",
-            "North Bay Business Journal \u00B7 Press Democrat, \u201CCharlie Palmer Steak Napa to close after almost a decade,\u201D Apr. 1, 2026.",
-            "Napa Valley Register, \u201CCharlie Palmer Steak at Archer Napa hotel to close,\u201D Apr. 1, 2026.",
-            "SF Chronicle, \u201COne of California\u2019s flashiest winery owners closed 2 tasting rooms,\u201D Jan. 12, 2026.",
-            "SF Chronicle, \u201CVermeil Wines closes Napa tasting room,\u201D 2026.",
-            "TheStreet, \u201CVermeil Wines Closes Tasting Room \u2014 No Bankruptcy,\u201D 2026.",
-            "Calistoga Tribune, \u201CCalistoga Depot announces temporary closure for restructuring,\u201D March 2026.",
-            "Calistoga Tribune, \u201CJohnny\u2019s Restaurant & Bar,\u201D February 6, 2026.",
-            "Napa Valley Register, \u201CStanly Ranch Napa resort sold for $195M in foreclosure,\u201D Apr. 1, 2026.",
-            "Bloomberg, \u201CBlackstone Acquires Napa Valley Resort in a Foreclosure Sale,\u201D Mar. 30, 2026.",
-            "SF Chronicle, \u201CNapa\u2019s Cain Vineyards & Winery sold to SF firm Third Leaf Partners,\u201D Apr. 1, 2026.",
-            "The Real Deal SF, \u201CSF investment firm grabs fire-ravaged Napa Valley winery assets,\u201D Apr. 2, 2026.",
-            "SF Chronicle, \u201CCalifornia wine titan Trinchero selling two Napa vineyards,\u201D Feb. 18, 2026.",
-            "SF Chronicle, \u201CThis famous California sparkling winery has a new owner,\u201D Dec. 16, 2025.",
-            "Wine Spectator \u00B7 Shanken News Daily, \u201CTrinchero to Acquire Mumm Napa from Pernod Ricard,\u201D Dec. 15, 2025.",
-            "CBS SF \u00B7 Press Democrat, \u201CWine giant Gallo closing Napa Valley facility, laying off dozens,\u201D Feb. 2026.",
-            "SF Chronicle, \u201CA major wine company is exiting California,\u201D Jun. 12, 2025.",
-            "Silicon Valley Bank, U.S. Wine Industry Report 2026.",
-            "Bureau of Economic Analysis, FRED series REALGDPALL06055, Napa County real GDP 2001\u20132024.",
-            "Napa Valley Features, \u201CNapa Valley\u2019s M&A Surge: From Bohemia to Boardroom,\u201D December 2023.",
-            "Napa Valley Features, \u201CUnder the Hood: Deepening Crisis,\u201D September 2024.",
-            "Napa Valley Features, \u201CUnder the Hood: Wine Overproduction Scenarios Suggest Tougher Days Ahead,\u201D October 2025.",
+            { label: "SF Chronicle, \u201CCharlie Palmer Steak to close at Archer Hotel Napa,\u201D Apr. 1, 2026.", url: "https://www.sfchronicle.com/food/restaurants/article/charlie-palmer-steak-napa-closing-22181204.php" },
+            { label: "North Bay Business Journal \u00B7 Press Democrat, \u201CCharlie Palmer Steak Napa to close after almost a decade,\u201D Apr. 1, 2026.", url: "https://www.pressdemocrat.com/2026/04/01/charlie-palmers-napa-steakhouse-to-close-after-almost-a-decade/" },
+            { label: "Napa Valley Register, \u201CCharlie Palmer Steak at Archer Napa hotel to close,\u201D Apr. 1, 2026.", url: "https://napavalleyregister.com/business/charlie-palmer-restaurant-archer-napa-hotel/article_4f1c7408-ba48-4b7f-aa77-b720973dfe40.html" },
+            { label: "SF Chronicle, \u201COne of California\u2019s flashiest winery owners closed 2 tasting rooms,\u201D Jan. 12, 2026.", url: "https://www.sfchronicle.com/food/wine/article/boissett-collection-napa-valley-closed-21290573.php" },
+            { label: "SF Chronicle, \u201CVermeil Wines closes Napa tasting room,\u201D 2026.", url: "https://www.sfchronicle.com/food/wine/article/vermeil-wines-napa-closing-21318149.php" },
+            { label: "TheStreet, \u201CVermeil Wines Closes Tasting Room \u2014 No Bankruptcy,\u201D 2026.", url: "https://www.thestreet.com/retail/vermeil-wines-closes-tasting-room-no-bankruptcy" },
+            { label: "Calistoga Tribune, \u201CCalistoga Depot announces temporary closure for restructuring,\u201D March 2026.", url: "https://calistogatribune.com/calistoga-depot-announces-temporary-closure-for-restructuring/" },
+            { label: "Calistoga Tribune, \u201CJohnny\u2019s Restaurant & Bar,\u201D February 6, 2026.", url: "https://calistogatribune.com/wp-content/uploads/2026/02/February-6-2026-pgs.1-8.pdf" },
+            { label: "Napa Valley Register, \u201CStanly Ranch Napa resort sold for $195M in foreclosure,\u201D Apr. 1, 2026.", url: "https://napavalleyregister.com/news/napa-hotel-foreclosure-stanly-ranch-auberge-group/article_af89ef60-2410-4a75-9338-20c9baaf707e.html" },
+            { label: "Bloomberg, \u201CBlackstone Acquires Napa Valley Resort in a Foreclosure Sale,\u201D Mar. 30, 2026.", url: "https://www.bloomberg.com/news/articles/2026-03-30/blackstone-acquires-napa-valley-resort-in-a-foreclosure-sale" },
+            { label: "SF Chronicle, \u201CNapa\u2019s Cain Vineyards & Winery sold to SF firm Third Leaf Partners,\u201D Apr. 1, 2026.", url: "https://www.sfchronicle.com/food/wine/article/cain-vineyards-winery-spring-mountain-22094636.php" },
+            { label: "The Real Deal SF, \u201CSF investment firm grabs fire-ravaged Napa Valley winery assets,\u201D Apr. 2, 2026.", url: "https://therealdeal.com/san-francisco/2026/04/02/cain-vineyard-winery-assets-bought-by-investors/" },
+            { label: "SF Chronicle, \u201CCalifornia wine titan Trinchero selling two Napa vineyards,\u201D Feb. 18, 2026.", url: "https://www.sfchronicle.com/food/wine/article/trinchero-vineyards-sale-21360518.php" },
+            { label: "SF Chronicle, \u201CThis famous California sparkling winery has a new owner,\u201D Dec. 16, 2025.", url: "https://www.sfchronicle.com/food/wine/article/trinchero-buys-mumm-napa-21245989.php" },
+            { label: "Wine Spectator \u00B7 Shanken News Daily, \u201CTrinchero to Acquire Mumm Napa from Pernod Ricard,\u201D Dec. 15, 2025.", url: "https://www.winespectator.com/articles/trinchero-to-acquire-mumm-napa-from-pernod-ricard" },
+            { label: "CBS SF \u00B7 Press Democrat, \u201CWine giant Gallo closing Napa Valley facility, laying off dozens,\u201D Feb. 2026.", url: "https://www.pressdemocrat.com/2026/02/18/gallo-napa-ranch-winery-closure-j-sonoma-martini-orin-swift-layoffs/" },
+            { label: "SF Chronicle, \u201CA major wine company is exiting California,\u201D Jun. 12, 2025.", url: "https://www.sfchronicle.com/food/wine/article/republic-national-distributing-california-20370277.php" },
+            { label: "Silicon Valley Bank, U.S. Wine Industry Report 2026.", url: "https://www.svb.com/trends-insights/reports/wine-report" },
+            { label: "Bureau of Economic Analysis, FRED series REALGDPALL06055, Napa County real GDP 2001\u20132024.", url: "https://fred.stlouisfed.org/series/REALGDPALL06055" },
+            { label: "Napa Valley Features, \u201CNapa Valley\u2019s M&A Surge: From Bohemia to Boardroom,\u201D September 2023.", url: "https://napavalleyfocus.substack.com/p/napa-valleys-m-and-a-surge-from-bohemia" },
+            { label: "Napa Valley Features, \u201CUnder the Hood: Deepening Crisis \u2014 Pressures Reshaping Napa Valley\u2019s Wine Industry,\u201D September 2024.", url: "https://napavalleyfocus.substack.com/p/under-the-hood-heidi-barretts-bold" },
+            { label: "Napa Valley Features, \u201CUnder the Hood: Wine Overproduction Scenarios Suggest Tougher Days Ahead,\u201D October 2025.", url: "https://napavalleyfocus.substack.com/p/under-the-hood-wine-overproduction" },
           ].map((s, i) => (
             <div key={i} style={{ marginBottom: 8 }}>
-              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.5 }}>{"\u2014 "}{s}</span>
+              <a href={s.url} target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: font, fontSize: 14, color: T.accent, textDecoration: "underline", lineHeight: 1.5 }}>
+                {"\u2014 "}{s.label}
+              </a>
             </div>
           ))}
         </div>
