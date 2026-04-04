@@ -121,10 +121,10 @@ function dateToX(str) {
 }
 
 const CATEGORIES = [
-  { label: "Hospitality Closures", color: "#8B2E2E", y: 4 },
-  { label: "Production / Capacity", color: "#C4A050", y: 3 },
-  { label: "Deal Structure / Transactions", color: "#5C7A5C", y: 2 },
-  { label: "Distribution / Macro", color: "#8B7355", y: 1 },
+  { label: "Hospitality Closures", color: "#8B2E2E", y: 1 },
+  { label: "Production / Capacity", color: "#C4A050", y: 2 },
+  { label: "Deal Structure / Transactions", color: "#5C7A5C", y: 3 },
+  { label: "Distribution / Macro", color: "#8B7355", y: 4 },
 ];
 
 const EVENTS = [
@@ -202,10 +202,10 @@ function TimelineChart() {
       type: "scatter", data: { datasets }, plugins: [labelPlugin],
       options: {
         animation: false, responsive: true, maintainAspectRatio: false,
-        layout: { padding: { right: 20 } },
+        layout: { padding: { right: 180, left: 10 } },
         scales: {
           x: { type: "linear", min: X_MIN, max: X_MAX, ticks: { stepSize: 1, callback: xTickLabel, color: T.muted, font: { size: 11 }, maxRotation: 0 }, grid: { color: T.rule } },
-          y: { min: 0, max: 5, ticks: { stepSize: 1, callback: (val) => CATEGORIES[val - 1]?.label || "", color: T.ink, font: { size: 11, weight: "600" } }, grid: { color: T.rule } },
+          y: { min: 0, max: 5, reverse: false, ticks: { stepSize: 1, callback: (val) => { const found = CATEGORIES.find(c => c.y === val); return found ? found.label : ""; }, color: T.ink, font: { size: 11, weight: "600" } }, grid: { color: T.rule } },
         },
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.raw.label, title: () => "" } } },
       },
@@ -222,7 +222,7 @@ function TimelineChart() {
           </div>
         ))}
       </div>
-      <div style={{ height: 280, position: "relative" }}>
+      <div style={{ height: 320, position: "relative" }}>
         <canvas ref={canvasRef} />
       </div>
       <button onClick={() => downloadComponentPng(containerRef, "napa-contraction-timeline.png", "Napa Valley: Regional Contraction Timeline, 2023\u20132026")}
