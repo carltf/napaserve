@@ -182,9 +182,9 @@ function TimelineChart() {
       type: "scatter", data: { datasets },
       options: {
         animation: false, responsive: true, maintainAspectRatio: false,
-        layout: { padding: { right: 180, left: 10 } },
+        layout: { padding: { right: 40, left: 10, top: 10, bottom: 10 } },
         scales: {
-          x: { type: "linear", min: X_MIN, max: X_MAX, ticks: { stepSize: 3, callback: xTickLabel, color: T.muted, font: { size: 11 }, maxRotation: 0, maxTicksLimit: 10 }, grid: { color: T.rule } },
+          x: { type: "linear", min: dateToX("2023-11"), max: dateToX("2026-06"), ticks: { stepSize: 3, callback: (val) => { const year = 2023 + Math.floor(val / 12); const month = (val % 12) + 1; if (month === 1) return String(year); if (month === 4) return "Q2"; if (month === 7) return "Q3"; if (month === 10) return "Q4"; return ""; }, color: T.muted, font: { size: 11 }, maxRotation: 0 }, grid: { color: T.rule } },
           y: { min: 0, max: 5, reverse: false, ticks: { stepSize: 1, callback: (val) => { const found = CATEGORIES.find(c => c.y === val); return found ? found.label : ""; }, color: T.ink, font: { size: 11, weight: "600" } }, grid: { color: T.rule } },
         },
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.raw.label, title: (items) => { const val = items[0].raw.x; const year = 2023 + Math.floor(val / 12); const month = (val % 12) + 1; const names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return `${names[month-1]} ${year}`; } }, backgroundColor: "#2C1810", titleColor: "#C4A050", bodyColor: "#F5F0E8", padding: 10, cornerRadius: 4 } },
@@ -202,7 +202,7 @@ function TimelineChart() {
           </div>
         ))}
       </div>
-      <div style={{ height: 320, position: "relative" }}>
+      <div style={{ height: 340, position: "relative" }}>
         <canvas ref={canvasRef} />
       </div>
       <button onClick={() => downloadComponentPng(containerRef, "napa-contraction-timeline.png", "Napa Valley: Regional Contraction Timeline, 2023\u20132026")}
