@@ -486,7 +486,7 @@ export default function NapaStructuralReset() {
           <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted }}>
             By Tim Carl &nbsp;&middot;&nbsp; Napa Valley Features &nbsp;&middot;&nbsp; April 4, 2026
           </div>
-          <a href="https://napavalleyfocus.substack.com/the-reset-spreads" target="_blank" rel="noopener noreferrer"
+          <a href="https://napavalleyfocus.substack.com/" target="_blank" rel="noopener noreferrer"
             style={{ fontFamily: font, fontSize: 14, fontWeight: 400, color: T.accent, textDecoration: "none", display: "inline-block", marginTop: 12, marginBottom: 0 }}>
             Read on Napa Valley Features &nbsp;&middot;&nbsp; Substack &nbsp;&rarr;
           </a>
