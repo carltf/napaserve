@@ -21,9 +21,17 @@ import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
 
-export default function App() {
+export default 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
+function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Hub />} />
         <Route path="/dashboard" element={<Dashboard />} />
