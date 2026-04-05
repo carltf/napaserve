@@ -388,6 +388,7 @@ export default function EventFinder() {
       _dbTitle: ev.title,
       _dbDate: ev.event_date || "",
       _dbTown: ev.town || "",
+      _dbVenue: ev.venue_name || "",
       _dbPriceInfo: ev.price_info || "",
       bestUrl: dbUrl,
     };
@@ -894,6 +895,14 @@ export default function EventFinder() {
               let { text, urls } = parseEventBody(event.body);
               // Fallback: if no URLs found in body but event has a bestUrl, use that
               if (urls.length === 0 && event.bestUrl) urls = [event.bestUrl];
+              // Last resort: Google search for the venue + city
+              if (urls.length === 0) {
+                const venue = event._dbVenue || "";
+                const city = event._dbTown ? townLabel(event._dbTown) : "";
+                if (venue || event.header) {
+                  urls = [`https://www.google.com/search?q=${encodeURIComponent((venue || event.header) + (city ? ' ' + city : ''))}`];
+                }
+              }
               return (
                 <div key={i} style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", padding: "20px 24px", marginBottom: 12 }}>
                   <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#2C1810", margin: "0 0 8px", lineHeight: 1.3 }}>{event.header}</h3>
