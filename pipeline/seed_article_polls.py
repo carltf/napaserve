@@ -131,6 +131,43 @@ POLLS = [
         "question": "What should Napa prioritize to reverse trends?",
         "options": ["Attract higher-wage industries", "Build more workforce housing", "Invest in schools and families", "Survey where residents work", "Unsure / all of the above"],
     },
+    # ── Napa Structural Reset 2026 ───────────────────────────────
+    {
+        "article_slug": "napa-structural-reset-2026",
+        "sort_order": 1,
+        "question": "What is the biggest driver of Napa's current reset?",
+        "options": [
+            "Falling wine demand overall",
+            "Overbuilt hospitality footprint",
+            "Cost of capital and debt load",
+            "Demographic shift away from wine",
+            "Trade disruption and distribution",
+        ],
+    },
+    {
+        "article_slug": "napa-structural-reset-2026",
+        "sort_order": 2,
+        "question": "Which signal concerns you most for Napa?",
+        "options": [
+            "Restaurant and tasting room closures",
+            "Distressed property transactions",
+            "Production capacity reductions",
+            "Split-asset and complex deals",
+            "Layoffs across wine operations",
+        ],
+    },
+    {
+        "article_slug": "napa-structural-reset-2026",
+        "sort_order": 3,
+        "question": "How long before Napa's reset stabilizes?",
+        "options": [
+            "Already stabilizing now",
+            "One to two more years",
+            "Three to five years",
+            "More than five years",
+            "It depends on the segment",
+        ],
+    },
 ]
 
 

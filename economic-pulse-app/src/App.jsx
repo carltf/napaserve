@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Hub from "./napaserve-hub";
 import Dashboard from "./napa-economic-pulse-full-3";
@@ -18,7 +19,19 @@ import UnderTheHoodSupplyChain from "./napaserve-under-the-hood-supply-chain";
 import NapaPopulation from "./napaserve-under-the-hood-population";
 import NapaStructuralReset from "./under-the-hood-napa-structural-reset";
 import NapaServeAdmin from "./napaserve-admin";
+import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
+
+
+class CalcErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  componentDidCatch(error, info) { this.setState({ error: error.message + ' | ' + error.stack?.split('\n')[1] }); }
+  static getDerivedStateFromError(error) { return { error: error.message }; }
+  render() {
+    if (this.state.error) return React.createElement('div', { style: { padding: 40, fontFamily: 'monospace', fontSize: 14, color: 'red', whiteSpace: 'pre-wrap' } }, 'CALC ERROR: ' + this.state.error);
+    return this.props.children;
+  }
+}
 
 export default function App() {
   return (
@@ -41,6 +54,7 @@ export default function App() {
         <Route path="/under-the-hood/napa-population-2025" element={<NapaPopulation />} />
         <Route path="/under-the-hood/napa-structural-reset-2026" element={<NapaStructuralReset />} />
         <Route path="/under-the-hood/template" element={<UnderTheHoodTemplate />} />
+        <Route path="/under-the-hood/calculators" element={<CalcErrorBoundary><CalculatorsPage /></CalcErrorBoundary>} />
         <Route path="/events/digest" element={<DigestCuration />} />
         <Route path="/about" element={<About />} />
         <Route path="/admin" element={<NapaServeAdmin />} />

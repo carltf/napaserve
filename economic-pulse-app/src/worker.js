@@ -1004,31 +1004,44 @@ export default {
       });
     }
 
-    // ── Original Substack proxy route (unchanged) ──────────────────────────
+    // ── Original Substack proxy route (Cloudflare Cache API) ────────────────
     if (url.pathname === "/substack/archive") {
       if (request.method !== "GET" && request.method !== "HEAD") {
         return new Response("Method not allowed", { status: 405 });
       }
 
-      const target = new URL("https://napavalleyfocus.substack.com/api/v1/archive");
-      url.searchParams.forEach((value, key) => {
-        target.searchParams.set(key, value);
-      });
+      const cacheKey = new Request(request.url, { method: "GET" });
+      const cache = caches.default;
+      let cached = await cache.match(cacheKey);
 
-      const upstream = await fetch(target.toString(), {
-        headers: {
-          accept: "application/json",
-          "user-agent": "nvf-squarespace-proxy/1.0",
-        },
-      });
+      if (!cached) {
+        const target = new URL("https://napavalleyfocus.substack.com/api/v1/archive");
+        url.searchParams.forEach((value, key) => {
+          target.searchParams.set(key, value);
+        });
 
-      const body = await upstream.arrayBuffer();
-      const headers = new Headers(upstream.headers);
-      headers.set("content-type", "application/json; charset=utf-8");
-      headers.set("cache-control", "public, max-age=300");
-      applyCors(headers, request);
+        const upstream = await fetch(target.toString(), {
+          headers: {
+            accept: "application/json",
+            "user-agent": "nvf-squarespace-proxy/1.0",
+          },
+        });
 
-      return new Response(body, { status: upstream.status, headers });
+        const body = await upstream.arrayBuffer();
+        cached = new Response(body, {
+          status: upstream.status,
+          headers: {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "public, max-age=1800",
+          },
+        });
+        await cache.put(cacheKey, cached.clone());
+      }
+
+      // Reconstruct with fresh CORS headers for every request
+      const freshHeaders = new Headers(cached.headers);
+      applyCors(freshHeaders, request);
+      return new Response(cached.body, { status: cached.status, headers: freshHeaders });
     }
 
     // ── API routes ─────────────────────────────────────────────────────────
