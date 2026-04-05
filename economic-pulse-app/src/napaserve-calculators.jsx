@@ -22,9 +22,9 @@ const fonts = {
 };
 
 // ─── CARD WRAPPER ──────────────────────────────────────────────────────────
-function CalcCard({ eyebrow, title, articleLabel, articleHref, howTo, sources, children }) {
+function CalcCard({ id, eyebrow, title, articleLabel, articleHref, howTo, sources, children }) {
   return (
-    <div style={{ background: T.surface, borderRadius: 4, padding: "32px 36px 28px", marginBottom: 48, border: `1px solid ${T.border}` }}>
+    <div id={id} style={{ background: T.surface, borderRadius: 4, padding: "32px 36px 28px", marginBottom: 48, border: `1px solid ${T.border}` }}>
       {/* Eyebrow */}
       <div style={{ fontFamily: fonts.mono, fontSize: 11, color: T.gold, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10 }}>
         {eyebrow}
@@ -43,7 +43,7 @@ function CalcCard({ eyebrow, title, articleLabel, articleHref, howTo, sources, c
       )}
       {articleHref === null && articleLabel && (
         <div style={{ marginBottom: 16, fontFamily: fonts.sans, fontSize: 13, color: T.muted, fontStyle: "italic" }}>
-          Originally published on Napa Valley Features · Substack (November 2025)
+          Originally published on <a href="https://napavalleyfocus.substack.com/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "none" }}>Napa Valley Features · Substack</a> (November 2025)
         </div>
       )}
       {/* How to use */}
@@ -549,11 +549,7 @@ function AssetRepricingCalc() {
                         ${(val/1000).toFixed(1)}B
                       </div>
                       <div style={{ position: "relative", width: "100%" }}>
-                        {scenario && (
-                          <div style={{ position: "absolute", top: -16, left: "50%", transform: "translateX(-50%)", fontFamily: fonts.mono, fontSize: 8, color: T.accent, whiteSpace: "nowrap", fontWeight: 700 }}>
-                            est.
-                          </div>
-                        )}
+  
                         <div style={{ width: "100%", height: h, background: scenario ? T.accent : T.gold, borderRadius: "2px 2px 0 0", border: scenario ? `1.5px solid ${T.accent}` : "none", transition: "height 0.4s ease" }} />
                       </div>
                     </div>
@@ -829,7 +825,7 @@ function ContractionTracker() {
 
       {/* Admin note */}
       <div style={{ marginTop: 16, padding: "12px 16px", background: T.surface, borderRadius: 3, border: `1px solid ${T.border}`, fontFamily: fonts.sans, fontSize: 12, color: T.muted, lineHeight: 1.5 }}>
-        <strong style={{ color: T.ink }}>Editorial note:</strong> This tracker is updated manually as events are confirmed from primary sources. Entries reflect closures, transactions and capacity moves documented in Napa Valley Features reporting. Not exhaustive. To add an entry, update the <code style={{ fontFamily: fonts.mono, fontSize: 11, background: T.bg, padding: "1px 4px", borderRadius: 2 }}>TRACKER_EVENTS</code> array in <code style={{ fontFamily: fonts.mono, fontSize: 11, background: T.bg, padding: "1px 4px", borderRadius: 2 }}>napaserve-calculators.jsx</code>.
+        <strong style={{ color: T.ink }}>Editorial note:</strong> This tracker is updated manually as events are confirmed from primary sources. Entries document closures, transactions and capacity moves across the Napa Valley regional economy. Not exhaustive — coverage focuses on events with confirmed sourcing. To suggest an addition, <a href="/about#contact" style={{ color: T.accent, textDecoration: "none" }}>contact the newsroom</a>.
       </div>
     </div>
   );
@@ -860,8 +856,42 @@ export default function CalculatorsPage() {
           <div style={{ borderBottom: `2px solid ${T.gold}`, marginTop: 32 }} />
         </div>
 
+        {/* ── JUMP-TO NAV ── */}
+        <div style={{ marginBottom: 48, overflowX: "auto" }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {[
+              { label: "Vineyard Impact", href: "#vineyard" },
+              { label: "Industry Contraction", href: "#contraction" },
+              { label: "Supply Shock", href: "#supply-shock" },
+              { label: "Asset Repricing", href: "#asset-repricing" },
+              { label: "Contraction Tracker", href: "#tracker" },
+            ].map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                style={{
+                  display: "inline-block",
+                  padding: "8px 16px",
+                  fontFamily: fonts.sans,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: T.accent,
+                  background: T.surface,
+                  border: `1.5px solid ${T.border}`,
+                  borderRadius: 3,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+
         {/* ── CALCULATOR 1 ── */}
         <CalcCard
+          id="vineyard"
           eyebrow="Under the Hood · Napa Valley Features · November 2025"
           title="Vineyard Acre Impact Calculator"
           articleLabel="The Dismal Math of Napa's Skipped Acres"
@@ -874,6 +904,7 @@ export default function CalculatorsPage() {
 
         {/* ── CALCULATOR 2 ── */}
         <CalcCard
+          id="contraction"
           eyebrow="Under the Hood · Napa Valley Features · March 24, 2026"
           title="Wine Industry Contraction Calculator"
           articleLabel="Napa's Economy Looks Bigger Than It Is"
@@ -886,6 +917,7 @@ export default function CalculatorsPage() {
 
         {/* ── CALCULATOR 3 ── */}
         <CalcCard
+          id="supply-shock"
           eyebrow="Under the Hood · Napa Valley Features · March 28, 2026"
           title="Napa Valley Supply Shock Impact Estimator"
           articleLabel="Under the Hood: How a Global Supply Shock Reaches Napa Valley"
@@ -898,6 +930,7 @@ export default function CalculatorsPage() {
 
         {/* ── CALCULATOR 4 ── */}
         <CalcCard
+          id="asset-repricing"
           eyebrow="Under the Hood · Napa Valley Features · April 4, 2026"
           title="Asset Repricing Scenario Calculator"
           articleLabel="The Reset Spreads"
@@ -909,7 +942,7 @@ export default function CalculatorsPage() {
         </CalcCard>
 
         {/* ── REGIONAL CONTRACTION TRACKER ── */}
-        <div style={{ marginBottom: 60 }}>
+        <div id="tracker" style={{ marginBottom: 60 }}>
           <div style={{ borderTop: `2px solid ${T.gold}`, marginBottom: 32 }} />
           <div style={{ fontFamily: fonts.mono, fontSize: 11, color: T.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 10 }}>
             Under the Hood · Running Record
