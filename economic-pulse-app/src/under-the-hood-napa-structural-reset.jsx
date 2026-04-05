@@ -608,17 +608,11 @@ export default function NapaStructuralReset() {
               { title: "Under the Hood: How a Global Supply Shock Reaches Napa Valley", date: "March 2026", href: "/under-the-hood/napa-supply-chain-2026" },
               { title: "2025 Napa Grape Prices Slip After a Record High", date: "March 2026", href: "/under-the-hood/napa-cab-2025" },
             ].map((a, i) => (
-              <div key={i} style={{ background: T.surface, borderRadius: 6, padding: 16, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <a href={a.href} style={{ fontFamily: serif, fontSize: 14, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4, display: "block", marginBottom: 8 }}>
-                    {a.title}
-                  </a>
-                  <span style={{ fontFamily: "monospace", fontSize: 10, color: T.muted, letterSpacing: "0.08em" }}>{a.date}</span>
-                </div>
-                <a href="https://napavalleyfocus.substack.com/" target="_blank" rel="noopener noreferrer"
-                  style={{ fontFamily: font, fontSize: 12, color: T.muted, textDecoration: "none", marginTop: 12, display: "inline-block" }}>
-                  Napa Valley Features on Substack &rarr;
+              <div key={i} style={{ background: T.surface, borderRadius: 6, padding: 16 }}>
+                <a href={a.href} style={{ fontFamily: serif, fontSize: 14, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4, display: "block", marginBottom: 8 }}>
+                  {a.title}
                 </a>
+                <span style={{ fontFamily: "monospace", fontSize: 10, color: T.muted, letterSpacing: "0.08em" }}>{a.date}</span>
               </div>
             ))}
           </div>
