@@ -512,6 +512,15 @@ export default function UnderTheHoodIndex() {
           </div>
         )}
 
+        {/* ── 7b. MODELS & CALCULATORS ────────────────────────────── */}
+        <div style={{ marginBottom: 40 }}>
+          <a href="/under-the-hood/calculators" style={{ display: "block", background: T.surface, border: "1px solid rgba(44,24,16,0.1)", padding: "22px 24px", textDecoration: "none" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: T.gold, textTransform: "uppercase", marginBottom: 6 }}>Interactive Tools</div>
+            <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: T.ink, marginBottom: 6 }}>Models &amp; Calculators</div>
+            <div style={{ fontSize: 14, color: T.muted, lineHeight: 1.5 }}>Vineyard acre impact, wine industry contraction, supply shock estimator, asset repricing scenarios and a regional contraction tracker — built from the data behind the series.</div>
+          </a>
+        </div>
+
         {/* ── 8. FULL ARCHIVE ────────────────────────────────────── */}
         {(years.length > 0 || Object.values(topicArticles).some(a => a.length > 0)) && (
           <div style={{ marginBottom: 40 }}>
