@@ -343,3 +343,13 @@ No CSS files — inline styles only or @media style tags
 | /under-the-hood/napa-gdp-2024 | under-the-hood-gdp-2024.jsx | napa-gdp-2024 |
 | /under-the-hood/sonoma-cab-2025 | under-the-hood-sonoma.jsx | sonoma-cab-2025 |
 | /under-the-hood/lake-county-cab-2025 | under-the-hood-lake.jsx | lake-county-cab-2025 |
+
+## April 5, 2026 Session
+- Built /under-the-hood/calculators — 4 calculators + Regional Contraction Tracker + jump-to TOC
+- File: economic-pulse-app/src/napaserve-calculators.jsx (imports NavBar, Footer — does NOT redefine them)
+- NavBar: Models & Calculators added to Intelligence group
+- UTH index: tile added linking to /under-the-hood/calculators
+- Contraction Tracker: static TRACKER_EVENTS array, manually updated, 12 events seeded
+- GDP bar chart fix: FLOOR=9500 normalization so 2026 scenario bar is visibly lower than 2024 baseline
+- Commits: 239b44e (error boundary debug), 9b3d116 (main build), 5c00e98 (TOC + fixes)
+- Next: confirm Dismal Math Substack URL via nvf_posts DB query
