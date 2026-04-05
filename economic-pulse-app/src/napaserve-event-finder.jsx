@@ -934,7 +934,7 @@ export default function EventFinder() {
 
             {results.results?.length > visibleCount && (
               <div style={{ textAlign: "center", margin: "16px 0" }}>
-                <button onClick={() => setVisibleCount(Math.min(visibleCount + 10, 20))} style={{
+                <button onClick={() => setVisibleCount(visibleCount + 10)} style={{
                   padding: "10px 28px", fontSize: 14, fontWeight: 600, fontFamily: "'Source Sans 3',sans-serif",
                   background: "transparent", border: "1px solid rgba(139,105,20,0.25)",
                   color: "#8B5E3C", borderRadius: 8, cursor: "pointer",
@@ -952,7 +952,7 @@ export default function EventFinder() {
               </div>
             )}
 
-            {/* Map — merge scraper pins with DB/fallback pins */}
+            {/* Map — merge scraper pins with DB/fallback pins, apply jitter */}
             <EventMap pins={(() => {
               const GEO_HINTS = {
                 'napa': { lat: 38.2975, lon: -122.2869 },
@@ -960,6 +960,12 @@ export default function EventFinder() {
                 'calistoga': { lat: 38.5788, lon: -122.5797 },
                 'yountville': { lat: 38.4024, lon: -122.3606 },
                 'american-canyon': { lat: 38.1741, lon: -122.2477 },
+              };
+              // Deterministic jitter based on string hash — stable across re-renders
+              const hashJitter = (str, scale = 0.008) => {
+                let h = 0;
+                for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+                return ((h & 0xffff) / 0xffff - 0.5) * scale;
               };
               const pins = [...(results.map || [])];
               const pinKeys = new Set(pins.map(p => `${p.lat}|${p.lon}|${p.name}`));
@@ -972,13 +978,15 @@ export default function EventFinder() {
               });
               // Fallback: DB events with a town but no geo → use GEO_HINTS
               (results.results || []).forEach(r => {
-                if (pinKeys.has(`${r.header}`)) return; // already has a pin by name (loose check)
-                if (r._fromDB && r._dbTown) {
+                if (r._fromDB && r._dbTown && !pins.some(p => p.name === r.header)) {
                   const hint = GEO_HINTS[r._dbTown];
-                  if (hint && !pins.some(p => p.name === r.header)) {
-                    pins.push({ name: r.header, lat: hint.lat, lon: hint.lon });
-                  }
+                  if (hint) pins.push({ name: r.header, lat: hint.lat, lon: hint.lon });
                 }
+              });
+              // Apply deterministic jitter to all pins so stacked markers spread out
+              pins.forEach(p => {
+                p.lat += hashJitter(p.name + 'lat');
+                p.lon += hashJitter(p.name + 'lon');
               });
               return pins;
             })()} />
