@@ -69,6 +69,10 @@ function fmtTimeAP(t) {
 function fmtPriceAP(ev) {
   if (ev.is_free) return "Free.";
   if (ev.price_info) return ev.price_info.endsWith(".") ? ev.price_info : ev.price_info + ".";
+  // NapaServe-seeded events (farmers markets, etc.) are free community events
+  if (ev.source === "NapaServe") return "Free.";
+  // Farmers markets are always free
+  if (ev.category === "food" && /farmers\s*market/i.test(ev.title || "")) return "Free.";
   // Reception heuristic: receptions at galleries are almost always free
   const text = ((ev.title || "") + " " + (ev.description || "")).toLowerCase();
   if (/\b(reception|opening reception|closing reception)\b/.test(text)) return "Free.";
@@ -84,9 +88,13 @@ const QUICK_DATES = [
   { label: "Today", get: () => ({ s: todayStr(), e: todayStr() }) },
   { label: "This Weekend", get: () => {
     const d = new Date(), day = d.getDay();
-    const fri = new Date(d); fri.setDate(d.getDate() + ((5 - day + 7) % 7 || 7));
-    const sun = new Date(fri); sun.setDate(fri.getDate() + 2);
     const f = x => x.getFullYear() + "-" + String(x.getMonth()+1).padStart(2,"0") + "-" + String(x.getDate()).padStart(2,"0");
+    let fri;
+    if (day === 5) { fri = new Date(d); }                                       // Friday → current weekend
+    else if (day === 6) { fri = new Date(d); fri.setDate(d.getDate() - 1); }    // Saturday → back to Friday
+    else if (day === 0) { fri = new Date(d); fri.setDate(d.getDate() - 2); }    // Sunday → back to Friday
+    else { fri = new Date(d); fri.setDate(d.getDate() + (5 - day)); }           // Mon–Thu → next Friday
+    const sun = new Date(fri); sun.setDate(fri.getDate() + 2);
     return { s: f(fri), e: f(sun) };
   }},
   { label: "Next 7 Days", get: () => ({ s: todayStr(), e: plusDays(todayStr(), 7) }) },
@@ -379,6 +387,7 @@ export default function EventFinder() {
       _source: ev.source,
       _dbTitle: ev.title,
       _dbDate: ev.event_date || "",
+      _dbTown: ev.town || "",
       _dbPriceInfo: ev.price_info || "",
       bestUrl: dbUrl,
     };
@@ -882,7 +891,9 @@ export default function EventFinder() {
             )}
 
             {results.results?.slice(0, visibleCount).map((event, i) => {
-              const { text, urls } = parseEventBody(event.body);
+              let { text, urls } = parseEventBody(event.body);
+              // Fallback: if no URLs found in body but event has a bestUrl, use that
+              if (urls.length === 0 && event.bestUrl) urls = [event.bestUrl];
               return (
                 <div key={i} style={{ background: "#EDE8DE", border: "1px solid rgba(139,105,20,0.15)", padding: "20px 24px", marginBottom: 12 }}>
                   <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 18, fontWeight: 700, color: "#2C1810", margin: "0 0 8px", lineHeight: 1.3 }}>{event.header}</h3>
@@ -932,8 +943,36 @@ export default function EventFinder() {
               </div>
             )}
 
-            {/* Map */}
-            <EventMap pins={results.map || []} />
+            {/* Map — merge scraper pins with DB/fallback pins */}
+            <EventMap pins={(() => {
+              const GEO_HINTS = {
+                'napa': { lat: 38.2975, lon: -122.2869 },
+                'st-helena': { lat: 38.5024, lon: -122.4697 },
+                'calistoga': { lat: 38.5788, lon: -122.5797 },
+                'yountville': { lat: 38.4024, lon: -122.3606 },
+                'american-canyon': { lat: 38.1741, lon: -122.2477 },
+              };
+              const pins = [...(results.map || [])];
+              const pinKeys = new Set(pins.map(p => `${p.lat}|${p.lon}|${p.name}`));
+              // Add pins for results that have geo in the result object
+              (results.results || []).forEach(r => {
+                if (r.geo && r.geo.lat && r.geo.lon) {
+                  const key = `${r.geo.lat}|${r.geo.lon}|${r.header}`;
+                  if (!pinKeys.has(key)) { pins.push({ name: r.header, lat: r.geo.lat, lon: r.geo.lon }); pinKeys.add(key); }
+                }
+              });
+              // Fallback: DB events with a town but no geo → use GEO_HINTS
+              (results.results || []).forEach(r => {
+                if (pinKeys.has(`${r.header}`)) return; // already has a pin by name (loose check)
+                if (r._fromDB && r._dbTown) {
+                  const hint = GEO_HINTS[r._dbTown];
+                  if (hint && !pins.some(p => p.name === r.header)) {
+                    pins.push({ name: r.header, lat: hint.lat, lon: hint.lon });
+                  }
+                }
+              });
+              return pins;
+            })()} />
           </>)}
 
           {/* Nudge */}
