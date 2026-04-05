@@ -704,9 +704,9 @@ export default function EventFinder() {
     (async () => {
       try {
         const today = todayStr();
-        const twoWeeks = plusDays(today, 14);
+        const thirtyDays = plusDays(today, 30);
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/community_events?status=eq.approved&event_date=gte.${today}&event_date=lte.${twoWeeks}&order=event_date.asc&limit=6`,
+          `${SUPABASE_URL}/rest/v1/community_events?status=eq.approved&event_date=gte.${today}&event_date=lte.${thirtyDays}&order=event_date.asc&limit=20`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (res.ok) { const data = await res.json(); setUpcomingEvents(data); }
