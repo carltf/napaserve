@@ -591,26 +591,33 @@ export default function NapaStructuralReset() {
         <p style={prose}>{"More split-asset transactions: additional deals in which land, brand, operations and financing move separately rather than together, using the Cain and Stanly Ranch structures as a template. Wider bid-ask spreads: sellers anchored to 2018\u20132022 valuations meeting buyers pricing in structural uncertainty. Deals that take longer, require more seller flexibility or fall through are signals worth tracking alongside deals that do close."}</p>
         <p style={prose}>{"The employment signal: Napa County food service and hospitality employment data from the California Employment Development Department will show whether what is visible in individual closure announcements is accumulating into a broader labor-market shift. Watch for slower hiring, reduced seasonal staffing and attrition that is not backfilled."}</p>
 
+        {/* ── Author note ─────────────────────────────────────── */}
+        <div style={{ marginTop: 32, padding: "20px 0", borderTop: `1px solid ${T.border}` }}>
+          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
+            Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
+          </p>
+        </div>
+
         {/* ── Related Coverage ─────────────────────────────────── */}
         <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
           <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>From the Archive</p>
           <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 20px 0" }}>Related Coverage</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12, marginBottom: 8 }}>
             {[
-              { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "March 2026", napaserve: "/under-the-hood/napa-gdp-2024", substack: "https://napavalleyfocus.substack.com/p/napas-economy-looks-bigger-than-it" },
-              { title: "Under the Hood: How a Global Supply Shock Reaches Napa Valley", date: "March 2026", napaserve: "/under-the-hood/napa-supply-chain-2026", substack: "https://napavalleyfocus.substack.com/p/under-the-hood-how-a-global-supply" },
-              { title: "2025 Napa Grape Prices Slip After a Record High", date: "March 2026", napaserve: "/under-the-hood/napa-cab-2025", substack: "https://napavalleyfocus.substack.com/p/2025-napa-grape-prices-slip-after" },
+              { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "March 2026", href: "/under-the-hood/napa-gdp-2024" },
+              { title: "Under the Hood: How a Global Supply Shock Reaches Napa Valley", date: "March 2026", href: "/under-the-hood/napa-supply-chain-2026" },
+              { title: "2025 Napa Grape Prices Slip After a Record High", date: "March 2026", href: "/under-the-hood/napa-cab-2025" },
             ].map((a, i) => (
               <div key={i} style={{ background: T.surface, borderRadius: 6, padding: 16, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
-                  <a href={a.napaserve} style={{ fontFamily: serif, fontSize: 14, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4, display: "block", marginBottom: 8 }}>
+                  <a href={a.href} style={{ fontFamily: serif, fontSize: 14, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4, display: "block", marginBottom: 8 }}>
                     {a.title}
                   </a>
                   <span style={{ fontFamily: "monospace", fontSize: 10, color: T.muted, letterSpacing: "0.08em" }}>{a.date}</span>
                 </div>
-                <a href={a.substack} target="_blank" rel="noopener noreferrer"
+                <a href="https://napavalleyfocus.substack.com/" target="_blank" rel="noopener noreferrer"
                   style={{ fontFamily: font, fontSize: 12, color: T.muted, textDecoration: "none", marginTop: 12, display: "inline-block" }}>
-                  Read on Substack &rarr;
+                  Napa Valley Features on Substack &rarr;
                 </a>
               </div>
             ))}
@@ -654,13 +661,6 @@ export default function NapaStructuralReset() {
               </a>
             </div>
           ))}
-        </div>
-
-        {/* ── Author note ─────────────────────────────────────── */}
-        <div style={{ marginTop: 32, padding: "20px 0", borderTop: `1px solid ${T.border}` }}>
-          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
-            Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
-          </p>
         </div>
 
         {/* ── Polls ────────────────────────────────────────────── */}
