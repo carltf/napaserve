@@ -165,7 +165,7 @@ const REPRICING = [
 ];
 
 const GDP24 = 11313.745;
-const ASSET_BASE = 17000;
+const ASSET_BASE = 4000;
 const MULT = 0.4;
 
 function TimelineChart() {
@@ -193,17 +193,19 @@ function TimelineChart() {
     return () => chart.destroy();
   }, []);
   return (
-    <div ref={containerRef} style={{ background: T.bg, borderRadius: 4, padding: "16px 16px 8px", marginBottom: 8 }}>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 18px", marginBottom: 12 }}>
-        {CATEGORIES.map(cat => (
-          <div key={cat.label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: cat.color, flexShrink: 0 }} />
-            <span style={{ fontFamily: font, fontSize: 11, color: T.ink }}>{cat.label}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{ height: 340, position: "relative" }}>
-        <canvas ref={canvasRef} />
+    <div>
+      <div ref={containerRef} style={{ background: T.bg, borderRadius: 4, padding: "16px 16px 8px", marginBottom: 8 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 18px", marginBottom: 12 }}>
+          {CATEGORIES.map(cat => (
+            <div key={cat.label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: cat.color, flexShrink: 0 }} />
+              <span style={{ fontFamily: font, fontSize: 11, color: T.ink }}>{cat.label}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ height: 340, position: "relative" }}>
+          <canvas ref={canvasRef} />
+        </div>
       </div>
       <button onClick={() => downloadComponentPng(containerRef, "napa-contraction-timeline.png", "Napa Valley: Regional Contraction Timeline, 2023\u20132026")}
         style={{ marginTop: 8, padding: "4px 12px", fontSize: 11, fontFamily: "monospace", letterSpacing: "0.08em", color: T.muted, background: "transparent", border: `1px solid ${T.border}`, borderRadius: 3, cursor: "pointer" }}>
@@ -236,12 +238,14 @@ function RepricingChart() {
     return () => chart.destroy();
   }, []);
   return (
-    <div ref={containerRef} style={{ background: T.bg, borderRadius: 4, padding: "16px 16px 8px", marginBottom: 8 }}>
-      <p style={{ fontFamily: font, fontSize: 12, color: T.muted, marginBottom: 12 }}>
-        Selected repricing signals across luxury, hospitality and wine. Sources and methods vary. Not directly comparable. For context only. Bars extend left from zero baseline.
-      </p>
-      <div style={{ height: 160, position: "relative" }}>
-        <canvas ref={canvasRef} />
+    <div>
+      <div ref={containerRef} style={{ background: T.bg, borderRadius: 4, padding: "16px 16px 8px", marginBottom: 8 }}>
+        <p style={{ fontFamily: font, fontSize: 12, color: T.muted, marginBottom: 12 }}>
+          Selected repricing signals across luxury, hospitality and wine. Sources and methods vary. Not directly comparable. For context only. Bars extend left from zero baseline.
+        </p>
+        <div style={{ height: 160, position: "relative" }}>
+          <canvas ref={canvasRef} />
+        </div>
       </div>
       <button onClick={() => downloadComponentPng(containerRef, "napa-repricing-chart.png", "Repricing Across the System")}
         style={{ marginTop: 8, padding: "4px 12px", fontSize: 11, fontFamily: "monospace", letterSpacing: "0.08em", color: T.muted, background: "transparent", border: `1px solid ${T.border}`, borderRadius: 3, cursor: "pointer" }}>
@@ -312,7 +316,7 @@ function ScenarioCalculator() {
           onChange={(e) => { setHaircut(parseInt(e.target.value)); setActiveScenario("C"); }}
           style={{ width: "100%", accentColor: T.accent, cursor: "pointer" }} />
         <div style={{ fontFamily: font, fontSize: 11, color: T.muted, marginTop: 3, lineHeight: 1.4 }}>
-          Applied to estimated Napa County real estate and hospitality asset base (~$17B, BEA fixed assets + county assessor). GDP drag at 0.4x indirect multiplier.
+          Applied to estimated Napa County hospitality and premium wine real estate directly exposed to repricing — hotels, resorts and winery estates subject to transaction-level price discovery in the current cycle (~$4B). GDP drag at 0.4x indirect multiplier.
         </div>
       </div>
       <div style={{ background: T.surface, borderRadius: 4, padding: 16 }}>
@@ -376,7 +380,7 @@ function ScenarioCalculator() {
           <span>0%</span><span>2.5%</span><span>5%</span><span>7.5%</span><span>10%</span>
         </div>
         <div style={{ fontFamily: font, fontSize: 11, color: T.muted, lineHeight: 1.5, borderTop: `1px solid ${T.border}`, paddingTop: 10 }}>
-          <strong>Methodology:</strong> Asset base ~$17B from BEA regional fixed assets and Napa County assessor data. GDP drag = asset base {"\u00D7"} repricing rate {"\u00D7"} 0.4 indirect multiplier. All figures in 2017 chained dollars (BEA REALGDPALL06055). 2026 scenario bar normalized to 2024 = 100%; at 0% repricing it equals 2024 baseline exactly. 2020 reference is actual BEA-reported decline. Uniform repricing rate applied across asset base {"\u2014"} actual impact varies by asset class, leverage and timing. See{" "}
+          <strong>Methodology:</strong> Asset base ~$4B representing Napa hospitality and premium wine real estate directly subject to repricing in the current cycle. GDP drag = asset base {"\u00D7"} repricing rate {"\u00D7"} 0.4 indirect multiplier. All figures in 2017 chained dollars (BEA REALGDPALL06055). 2026 scenario bar normalized to 2024 = 100%; at 0% repricing it equals 2024 baseline exactly. 2020 reference is actual BEA-reported decline. Uniform repricing rate applied across asset base {"\u2014"} actual impact varies by asset class, leverage and timing. See{" "}
           <a href="/under-the-hood/napa-supply-chain-2026" style={{ color: T.accent }}>{"\u201CUnder the Hood: How a Global Supply Shock Reaches Napa Valley\u201D"}</a> (March 2026) for cost-side context. Directional estimates only {"\u2014"} not a BEA or county economic forecast.
         </div>
       </div>
@@ -482,6 +486,10 @@ export default function NapaStructuralReset() {
           <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted }}>
             By Tim Carl &nbsp;&middot;&nbsp; Napa Valley Features &nbsp;&middot;&nbsp; April 4, 2026
           </div>
+          <a href="https://napavalleyfocus.substack.com/p/the-reset-spreads" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: font, fontSize: 14, fontWeight: 400, color: T.accent, textDecoration: "none", display: "inline-block", marginTop: 12, marginBottom: 0 }}>
+            Read on Napa Valley Features &nbsp;&middot;&nbsp; Substack &nbsp;&rarr;
+          </a>
         </div>
 
         <div style={{ marginBottom: 40 }}>
@@ -584,29 +592,28 @@ export default function NapaStructuralReset() {
         <p style={prose}>{"The employment signal: Napa County food service and hospitality employment data from the California Employment Development Department will show whether what is visible in individual closure announcements is accumulating into a broader labor-market shift. Watch for slower hiring, reduced seasonal staffing and attrition that is not backfilled."}</p>
 
         {/* ── Related Coverage ─────────────────────────────────── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, margin: "40px 0 32px" }}>
-          <div style={{ flex: 1, height: 1, background: T.rule }} />
-          <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: T.muted, whiteSpace: "nowrap" }}>Related Coverage</span>
-          <div style={{ flex: 1, height: 1, background: T.rule }} />
-        </div>
-        <div style={{ marginBottom: 36 }}>
-          <div style={{ marginBottom: 12 }}>
-            <a href="/under-the-hood/napa-gdp-2024" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
-              {"\u201CNapa\u2019s Economy Looks Bigger Than It Is\u201D"}
-            </a>
-            <span style={{ fontFamily: font, fontSize: 14, color: T.muted }}> {"\u2014"} Napa Valley Features</span>
-          </div>
-          <div style={{ marginBottom: 12 }}>
-            <a href="/under-the-hood/napa-supply-chain-2026" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
-              {"\u201CUnder the Hood: How a Global Supply Shock Reaches Napa Valley\u201D"}
-            </a>
-            <span style={{ fontFamily: font, fontSize: 14, color: T.muted }}> {"\u2014"} Napa Valley Features</span>
-          </div>
-          <div style={{ marginBottom: 12 }}>
-            <a href="/under-the-hood/napa-cab-2025" style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4 }}>
-              {"\u201C2025 Napa Grape Prices Slip After a Record High\u201D"}
-            </a>
-            <span style={{ fontFamily: font, fontSize: 14, color: T.muted }}> {"\u2014"} Napa Valley Features</span>
+        <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
+          <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>From the Archive</p>
+          <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 20px 0" }}>Related Coverage</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12, marginBottom: 8 }}>
+            {[
+              { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "March 2026", napaserve: "/under-the-hood/napa-gdp-2024", substack: "https://napavalleyfocus.substack.com/p/napas-economy-looks-bigger-than-it" },
+              { title: "Under the Hood: How a Global Supply Shock Reaches Napa Valley", date: "March 2026", napaserve: "/under-the-hood/napa-supply-chain-2026", substack: "https://napavalleyfocus.substack.com/p/under-the-hood-how-a-global-supply" },
+              { title: "2025 Napa Grape Prices Slip After a Record High", date: "March 2026", napaserve: "/under-the-hood/napa-cab-2025", substack: "https://napavalleyfocus.substack.com/p/2025-napa-grape-prices-slip-after" },
+            ].map((a, i) => (
+              <div key={i} style={{ background: T.surface, borderRadius: 6, padding: 16, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div>
+                  <a href={a.napaserve} style={{ fontFamily: serif, fontSize: 14, fontWeight: 700, color: T.accent, textDecoration: "none", lineHeight: 1.4, display: "block", marginBottom: 8 }}>
+                    {a.title}
+                  </a>
+                  <span style={{ fontFamily: "monospace", fontSize: 10, color: T.muted, letterSpacing: "0.08em" }}>{a.date}</span>
+                </div>
+                <a href={a.substack} target="_blank" rel="noopener noreferrer"
+                  style={{ fontFamily: font, fontSize: 12, color: T.muted, textDecoration: "none", marginTop: 12, display: "inline-block" }}>
+                  Read on Substack &rarr;
+                </a>
+              </div>
+            ))}
           </div>
         </div>
 
