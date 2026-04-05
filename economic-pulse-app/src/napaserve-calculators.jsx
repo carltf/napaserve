@@ -43,7 +43,7 @@ function CalcCard({ id, eyebrow, title, articleLabel, articleHref, howTo, source
       )}
       {articleHref === null && articleLabel && (
         <div style={{ marginBottom: 16, fontFamily: fonts.sans, fontSize: 13, color: T.muted, fontStyle: "italic" }}>
-          Originally published on <a href="https://napavalleyfocus.substack.com/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "none" }}>Napa Valley Features · Substack</a> (November 2025)
+          Originally published on <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-dismal-math-of" target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "none" }}>Napa Valley Features · Substack</a> (November 2025)
         </div>
       )}
       {/* How to use */}
