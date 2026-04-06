@@ -353,3 +353,18 @@ No CSS files — inline styles only or @media style tags
 - GDP bar chart fix: FLOOR=9500 normalization so 2026 scenario bar is visibly lower than 2024 baseline
 - Commits: 239b44e (error boundary debug), 9b3d116 (main build), 5c00e98 (TOC + fixes)
 - Next: confirm Dismal Math Substack URL via nvf_posts DB query
+
+## agent.html — Architectural Debt (Critical — Next Session)
+agent.html is a standalone static HTML file at the repo root. It has its own nav, footer, and CSS — completely separate from the React component system. This causes permanent drift vs. all other pages every time NavBar.jsx or Footer.jsx is updated.
+
+TODAY'S WORKAROUND: Manually ported hamburger nav (#ns-drawer) and Footer.jsx as static HTML into agent.html. Functional but will drift again on next NavBar/Footer change.
+
+REAL FIX (next dedicated session): Port agent.html → AgentPage.jsx React component
+- Move agent UI logic into economic-pulse-app/src/AgentPage.jsx
+- Add route: <Route path="/agent" element={<AgentPage />} /> in App.jsx
+- Gets NavBar, Footer, ScrollToTop automatically — zero maintenance forever
+- Retire agent.html from repo root
+- Update all internal links from /agent.html → /agent
+- Add redirect: /agent.html → /agent in vercel.json
+
+This is Priority 1 architectural fix. Every new agent added before this is done will have the same problem.
