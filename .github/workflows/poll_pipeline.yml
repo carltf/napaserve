@@ -66,28 +66,38 @@ jobs:
 
       - name: Slack — success
         if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          CLASSIFIED: ${{ steps.classify.outputs.classified }}
+          FIRST_MONDAY: ${{ steps.classify.outputs.first_monday }}
         run: |
-          MSG="✅ NVF poll classification complete — ${{ steps.classify.outputs.classified }} polls themed"
-          if [ "${{ steps.classify.outputs.first_monday }}" = "true" ]; then
-            read -r -d '' REMINDER << 'EOREMINDER'
+          python3 -c "
+          import json, os, urllib.request
+
+          msg = f'✅ NVF poll classification complete — {os.environ[\"CLASSIFIED\"]} polls themed'
+
+          if os.environ['FIRST_MONDAY'] == 'true':
+              msg += '''
 
           🔔 Monthly maintenance reminder:
           STEP 1 — Run poll extraction locally:
           1. Make sure iCloud Drive is synced
           2. Refresh Substack export if needed (Settings → Exports → Request new export)
-          3. Run: python pipeline/poll_extraction.py --cookie "substack.sid=..." --skip-existing
+          3. Run: python pipeline/poll_extraction.py --cookie \"substack.sid=...\" --skip-existing
 
           STEP 2 — Refresh cookie (if needed):
           1. Open Safari → napavalleyfocus.substack.com (logged in as publisher)
           2. Right-click → Inspect Element → Storage → Cookies → napavalleyfocus.substack.com
-          3. Find substack.sid → copy the Value
-          EOREMINDER
-            MSG="$MSG$REMINDER"
-          fi
-          PAYLOAD=$(jq -n --arg text "$MSG" '{text: $text}')
-          curl -sS -X POST -H 'Content-type: application/json' \
-            --data "$PAYLOAD" \
-            "${{ secrets.SLACK_WEBHOOK_URL }}"
+          3. Find substack.sid → copy the Value'''
+
+          req = urllib.request.Request(
+              os.environ['SLACK_WEBHOOK_URL'],
+              data=json.dumps({'text': msg}).encode(),
+              headers={'Content-Type': 'application/json'},
+              method='POST',
+          )
+          urllib.request.urlopen(req)
+          "
 
       - name: Slack — failure
         if: failure()
