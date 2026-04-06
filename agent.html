@@ -55,16 +55,6 @@
   .main-nav { display: none; }
   .nav-link { display: none; }
   .nav-active {}
-
-  .hamburger {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    background: none;
-    border: 1px solid rgba(44,24,16,0.12);
-    cursor: pointer;
-    padding: 7px 10px;
-  }
   .hbar { display: block; width: 18px; height: 1.5px; background: #7A6A50; transition: transform .2s, opacity .2s; }
 
   .mobile-nav {
@@ -319,11 +309,7 @@
     <a href="/admin" style="display:block;font-family:'Source Sans 3',sans-serif;font-size:14px;color:#2C1810;text-decoration:none;padding:6px 0;border-bottom:1px solid rgba(44,24,16,0.12);">Admin</a>
   </div>
 </div>
-  <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
-    <span class="hbar" id="hb1"></span>
-    <span class="hbar" id="hb2"></span>
-    <span class="hbar" id="hb3"></span>
-  </button>
+  
 </header>
 <div id="navBackdrop" onclick="closeNav()" style="display:none;position:fixed;inset:0;z-index:99;"></div>
 
