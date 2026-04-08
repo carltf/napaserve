@@ -138,7 +138,7 @@ export default function AgentPage() {
             const items = STARTERS.filter(s => s.group === g);
             return (
               <div key={g} style={{ ...S.sGroup, marginTop: gi === 0 ? 0 : undefined }}>
-                <span style={S.sLabel}>{g} — Example Questions</span>
+                <span style={S.sLabel}>{g} — Examples</span>
                 {items.map((s, i) => {
                   const tc = TAG_STYLE[s.tag];
                   return (
