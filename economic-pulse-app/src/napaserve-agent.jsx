@@ -52,10 +52,16 @@ export default function AgentPage() {
   const [input, setInput]       = useState('');
   const [loading, setLoading]   = useState(false);
   const [showHow, setShowHow]   = useState(true);
+  const [isMobile, setIsMobile]  = useState(() => typeof window !== 'undefined' && window.innerWidth < 700);
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, loading]);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 700);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
 
   const groups = [...new Set(STARTERS.map(s => s.group))];
 
@@ -93,8 +99,8 @@ export default function AgentPage() {
     page:    { minHeight: '100vh', background: '#F5F0E8', display: 'flex', flexDirection: 'column', fontFamily: "'Source Sans 3',sans-serif" },
     hero:    { background: '#EDE8DE', borderBottom: '1px solid rgba(44,24,16,0.12)', padding: '20px 24px 18px' },
     heroIn:  { maxWidth: 1100, margin: '0 auto' },
-    body:    { flex: 1, display: 'flex', maxWidth: 1100, margin: '0 auto', width: '100%', padding: '16px 16px', gap: 24, alignItems: 'flex-start' },
-    sidebar: { width: 260, flexShrink: 0 },
+    body:    { flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', maxWidth: 1100, margin: '0 auto', width: '100%', padding: isMobile ? '12px' : '16px 16px', gap: isMobile ? 12 : 24, alignItems: 'flex-start' },
+    sidebar: { width: isMobile ? '100%' : 260, flexShrink: 0 },
     sGroup:  { marginBottom: 20 },
     sLabel:  { fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 10, display: 'block' },
     sBtn:    { display: 'block', width: '100%', textAlign: 'left', background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 6, padding: '10px 12px', marginBottom: 8, cursor: 'pointer', fontFamily: "'Source Sans 3',sans-serif", fontSize: 14, color: '#2C1810', lineHeight: 1.4 },
