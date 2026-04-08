@@ -98,7 +98,7 @@ export default function AgentPage() {
     sGroup:  { marginBottom: 20 },
     sLabel:  { fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 10, display: 'block' },
     sBtn:    { display: 'block', width: '100%', textAlign: 'left', background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 6, padding: '10px 12px', marginBottom: 8, cursor: 'pointer', fontFamily: "'Source Sans 3',sans-serif", fontSize: 14, color: '#2C1810', lineHeight: 1.4 },
-    chatCol: { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 },
+    chatCol: { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 8 },
     howTo:   { background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 8, padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: 12 },
     msgBox:  { background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 12, padding: 24, display: 'flex', flexDirection: 'column', gap: 20 },
     welcome: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '48px 16px', flex: 1 },
@@ -128,10 +128,10 @@ export default function AgentPage() {
 
       <div style={S.body}>
         <div style={S.sidebar}>
-          {groups.map(g => {
+          {groups.map((g, gi) => {
             const items = STARTERS.filter(s => s.group === g);
             return (
-              <div key={g} style={S.sGroup}>
+              <div key={g} style={{ ...S.sGroup, marginTop: gi === 0 ? 0 : undefined }}>
                 <span style={S.sLabel}>{g}</span>
                 {items.map((s, i) => {
                   const tc = TAG_STYLE[s.tag];
@@ -162,6 +162,7 @@ export default function AgentPage() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
             </button>
           </div>
+          <button style={S.clrBtn} onClick={() => setMessages([])}>Clear conversation</button>
           <p style={S.hint}>Responses are grounded in NVF archive sources shown below each answer. AI is one tool within a larger system of community knowledge.</p>
 
           <div style={S.msgBox}>
@@ -211,7 +212,6 @@ export default function AgentPage() {
             )}
             <div ref={bottomRef} />
           </div>
-          <button style={S.clrBtn} onClick={() => setMessages([])}>Clear conversation</button>
         </div>
       </div>
 
