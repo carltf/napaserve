@@ -157,14 +157,22 @@ export default function AgentPage() {
             </div>
           )}
 
+          <div style={S.inRow}>
+            <textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey} placeholder="Ask NapaServe about a policy, project, or community challenge..." rows={1} style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', resize: 'none', fontFamily: "'Source Sans 3',sans-serif", fontSize: 15, color: '#2C1810', lineHeight: 1.5, minHeight: 44, maxHeight: 140 }} />
+            <button onClick={() => send()} disabled={loading || !input.trim()} style={{ background: (loading || !input.trim()) ? 'rgba(44,24,16,0.2)' : '#2C1810', color: '#F5F0E8', border: 'none', borderRadius: 8, width: 40, height: 40, cursor: (loading || !input.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+            </button>
+          </div>
+          <p style={S.hint}>Responses are grounded in NVF archive sources shown below each answer. AI is one tool within a larger system of community knowledge.</p>
+
           <div style={S.msgBox}>
             {messages.length === 0 && !loading && (
               <div style={S.welcome}>
                 <div style={{ width: 64, height: 64, borderRadius: '50%', border: '2px solid rgba(196,160,80,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8B5E3C" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
                 </div>
-                <h2 style={{ fontFamily: "'Libre Baskerville',serif", fontSize: '1.6rem', fontWeight: 700, color: '#2C1810', marginBottom: 12 }}>Ask NapaServe</h2>
-                <p style={{ fontSize: 15, color: '#5A4A3A', lineHeight: 1.65, maxWidth: 440 }}>This agent draws on three years of original local reporting, regional economic data and community polling. Ask about land use, the wine industry, housing, workforce, or anything shaping the valley's future.</p>
+                <h2 style={{ fontFamily: "'Libre Baskerville',serif", fontSize: '1.6rem', fontWeight: 700, color: '#2C1810', marginBottom: 12 }}>NapaServe Community Intelligence</h2>
+                <p style={{ fontSize: 15, color: '#5A4A3A', lineHeight: 1.65, maxWidth: 440 }}>NapaServe is a community intelligence platform built on three years of original local reporting, regional economic data, and community polling. Ask about land use, the wine industry, housing, workforce, or anything shaping Napa Valley's future — and see the sources behind every answer.</p>
                 <div style={{ display: 'flex', gap: 8, marginTop: 20, flexWrap: 'wrap', justifyContent: 'center' }}>
                   {pills.map(p => <span key={p.label} style={{ padding: '4px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: p.bg, color: p.color, border: '1px solid ' + p.border }}>{p.label}</span>)}
                 </div>
@@ -204,14 +212,6 @@ export default function AgentPage() {
             )}
             <div ref={bottomRef} />
           </div>
-
-          <div style={S.inRow}>
-            <textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey} placeholder="Ask NapaServe about a policy, project, or community challenge..." rows={1} style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', resize: 'none', fontFamily: "'Source Sans 3',sans-serif", fontSize: 15, color: '#2C1810', lineHeight: 1.5, minHeight: 44, maxHeight: 140 }} />
-            <button onClick={() => send()} disabled={loading || !input.trim()} style={{ background: (loading || !input.trim()) ? 'rgba(44,24,16,0.2)' : '#2C1810', color: '#F5F0E8', border: 'none', borderRadius: 8, width: 40, height: 40, cursor: (loading || !input.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
-            </button>
-          </div>
-          <p style={S.hint}>Responses are grounded in NVF archive sources shown below each answer. AI is one tool within a larger system of community knowledge.</p>
         </div>
       </div>
 
