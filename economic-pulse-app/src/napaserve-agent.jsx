@@ -99,7 +99,7 @@ export default function AgentPage() {
     page:    { minHeight: '100vh', background: '#F5F0E8', display: 'flex', flexDirection: 'column', fontFamily: "'Source Sans 3',sans-serif" },
     hero:    { background: '#EDE8DE', borderBottom: '1px solid rgba(44,24,16,0.12)', padding: '20px 24px 18px' },
     heroIn:  { maxWidth: 1100, margin: '0 auto' },
-    body:    { flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', maxWidth: 1100, margin: '0 auto', width: '100%', padding: isMobile ? '12px' : '16px 16px', gap: isMobile ? 12 : 24, alignItems: 'flex-start' },
+    body:    { flex: 1, display: 'flex', flexDirection: isMobile ? 'column-reverse' : 'row', maxWidth: 1100, margin: '0 auto', width: '100%', padding: isMobile ? '12px' : '16px 16px', gap: isMobile ? 12 : 24, alignItems: 'flex-start' },
     sidebar: { width: isMobile ? '100%' : 260, flexShrink: 0 },
     sGroup:  { marginBottom: 20 },
     sLabel:  { fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 10, display: 'block' },
@@ -158,7 +158,7 @@ export default function AgentPage() {
             <>
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8B7355', margin: 0 }}>How to Use</p>
               <div style={S.howTo}>
-                <p style={{ margin: 0, fontSize: 13, color: '#5A4A3A', lineHeight: 1.5, flex: 1 }}>Ask any question about Napa County policy, land use, housing, water, or economic development. The agent searches the NVF archive and the live web before responding — and cites its sources.</p>
+                <p style={{ margin: 0, fontSize: 13, color: '#5A4A3A', lineHeight: 1.5, flex: 1 }}>Ask any question about Napa County policy, land use, housing, water, or economic development. The agent searches the NVF archive and the live web before responding — and cites its sources. Not sure where to start? Try one of the example questions below.</p>
                 <button onClick={() => setShowHow(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A89880', fontSize: 18, lineHeight: 1, flexShrink: 0, padding: 0 }}>×</button>
               </div>
             </>
