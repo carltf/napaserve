@@ -20,6 +20,7 @@ import NapaStructuralReset from "./under-the-hood-napa-structural-reset";
 import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
+import AgentPage from './napaserve-agent';
 
 export default function App() {
   return (
@@ -46,7 +47,8 @@ export default function App() {
         <Route path="/events/digest" element={<DigestCuration />} />
         <Route path="/about" element={<About />} />
         <Route path="/admin" element={<NapaServeAdmin />} />
-      </Routes>
+      <Route path="/agent" element={<AgentPage />} />
+        </Routes>
     </BrowserRouter>
   );
 }

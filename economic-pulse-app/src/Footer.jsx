@@ -52,7 +52,7 @@ export default function Footer() {
               <div style={sectionHead}>Intelligence</div>
               <Link to="/dashboard" className="ns-footer-link" style={navLink}>Community Pulse</Link>
               <Link to="/evaluator" className="ns-footer-link" style={navLink}>Project Evaluator</Link>
-              <a href="/agent.html" className="ns-footer-link" style={navLink}>Research Agent</a>
+              <a href="/agent" className="ns-footer-link" style={navLink}>Research Agent</a>
               <a href="/under-the-hood/calculators" className="ns-footer-link" style={navLink}>Models & Calculators</a>
             </div>
             <div>
