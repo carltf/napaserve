@@ -83,6 +83,7 @@
   input[type="text"],
   input[type="url"],
   input[type="email"],
+  input[type="tel"],
   input[type="date"],
   input[type="time"],
   textarea,
@@ -170,6 +171,9 @@
     text-align: center;
     padding: 48px 24px;
     display: none;
+    background: #F5F0E8;
+    color: #2C1810;
+    border-radius: 8px;
   }
 
   .success-msg .check {
@@ -197,10 +201,31 @@
   }
 
   .success-msg p {
+    font-family: 'Source Sans 3', sans-serif;
     font-size: 15px;
-    color: #8B7355;
+    color: #2C1810;
     max-width: 400px;
     margin: 0 auto 20px;
+  }
+
+  .success-msg p a {
+    color: #8B5E3C;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .success-msg p a:hover { text-decoration: underline; }
+
+  .reset-btn {
+    background: #8B5E3C;
+    color: #F5F0E8;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 8px;
   }
 
   .success-msg button {
@@ -416,6 +441,11 @@
         </div>
       </div>
 
+      <div class="field">
+        <label for="submitter_phone">Your Phone</label>
+        <input type="tel" id="submitter_phone" name="submitter_phone" placeholder="Phone number (optional)" aria-label="Your phone">
+      </div>
+
       <button type="submit" class="submit-btn" id="submitBtn">Submit Event</button>
 
       <div class="error-msg" id="errorMsg"></div>
@@ -426,9 +456,9 @@
     <div class="check">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
     </div>
-    <h2>Event Submitted</h2>
-    <p>Thank you for sharing your event with the Napa Valley community. Our team will review it shortly.</p>
-    <button onclick="resetForm()">Submit Another Event</button>
+    <h2 id="successHeading">Thank you!</h2>
+    <p>We received your event and will review it shortly. Questions? Email <a href="mailto:info@napaserve.com">info@napaserve.com</a></p>
+    <button class="reset-btn" onclick="resetForm()">Submit another event</button>
   </div>
 
   <div class="powered-by">
@@ -453,6 +483,9 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
   btn.textContent = 'Submitting\u2026';
 
   const form = e.target;
+  const submitterName = form.submitted_by.value.trim();
+  const submitterEmail = form.organizer_contact.value.trim();
+  const submitterPhone = form.submitter_phone.value.trim();
   const data = {
     title: form.title.value.trim(),
     description: form.description.value.trim(),
@@ -461,8 +494,11 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     category: form.category.value,
     is_free: form.is_free.checked,
     is_recurring: form.is_recurring.checked,
-    submitted_by: form.submitted_by.value.trim(),
-    organizer_contact: form.organizer_contact.value.trim(),
+    submitted_by: submitterName,
+    organizer_contact: submitterEmail,
+    submitter_name: submitterName,
+    submitter_email: submitterEmail,
+    submitter_phone: submitterPhone,
   };
 
   // Optional text fields
@@ -492,6 +528,8 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
       throw new Error(result.error || 'Submission failed');
     }
 
+    const firstName = submitterName.split(' ')[0] || submitterName;
+    document.getElementById('successHeading').textContent = 'Thank you, ' + firstName + '!';
     document.getElementById('formCard').style.display = 'none';
     document.getElementById('successMsg').style.display = 'block';
   } catch (error) {
