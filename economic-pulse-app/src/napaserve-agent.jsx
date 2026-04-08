@@ -93,14 +93,14 @@ export default function AgentPage() {
     page:    { minHeight: '100vh', background: '#F5F0E8', display: 'flex', flexDirection: 'column', fontFamily: "'Source Sans 3',sans-serif" },
     hero:    { background: '#EDE8DE', borderBottom: '1px solid rgba(44,24,16,0.12)', padding: '20px 24px 18px' },
     heroIn:  { maxWidth: 1100, margin: '0 auto' },
-    body:    { flex: 1, display: 'flex', maxWidth: 1100, margin: '0 auto', width: '100%', padding: '24px 16px', gap: 24, alignItems: 'flex-start' },
+    body:    { flex: 1, display: 'flex', maxWidth: 1100, margin: '0 auto', width: '100%', padding: '16px 16px', gap: 24, alignItems: 'flex-start' },
     sidebar: { width: 260, flexShrink: 0 },
     sGroup:  { marginBottom: 20 },
     sLabel:  { fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 10, display: 'block' },
     sBtn:    { display: 'block', width: '100%', textAlign: 'left', background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 6, padding: '10px 12px', marginBottom: 8, cursor: 'pointer', fontFamily: "'Source Sans 3',sans-serif", fontSize: 14, color: '#2C1810', lineHeight: 1.4 },
     chatCol: { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 },
     howTo:   { background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 8, padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: 12 },
-    msgBox:  { background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 12, minHeight: 380, padding: 24, display: 'flex', flexDirection: 'column', gap: 20, overflowY: 'auto', maxHeight: 'calc(100vh - 340px)' },
+    msgBox:  { background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 12, padding: 24, display: 'flex', flexDirection: 'column', gap: 20 },
     welcome: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '48px 16px', flex: 1 },
     inRow:   { background: '#EDE8DE', border: '1px solid rgba(44,24,16,0.12)', borderRadius: 10, padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'flex-end' },
     hint:    { fontSize: 12, color: '#8B7355', textAlign: 'center' },
@@ -145,7 +145,6 @@ export default function AgentPage() {
               </div>
             );
           })}
-          <button style={S.clrBtn} onClick={() => setMessages([])}>Clear conversation</button>
         </div>
 
         <div style={S.chatCol}>
@@ -171,7 +170,7 @@ export default function AgentPage() {
                 <div style={{ width: 64, height: 64, borderRadius: '50%', border: '2px solid rgba(196,160,80,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8B5E3C" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
                 </div>
-                <h2 style={{ fontFamily: "'Libre Baskerville',serif", fontSize: '1.6rem', fontWeight: 700, color: '#2C1810', marginBottom: 12 }}>NapaServe Community Intelligence</h2>
+                <h2 style={{ fontFamily: "'Libre Baskerville',serif", fontSize: '1.6rem', fontWeight: 700, color: '#2C1810', marginBottom: 12 }}>NapaServe Community Intelligence Agent</h2>
                 <p style={{ fontSize: 15, color: '#5A4A3A', lineHeight: 1.65, maxWidth: 440 }}>NapaServe is a community intelligence platform built on three years of original local reporting, regional economic data, and community polling. Ask about land use, the wine industry, housing, workforce, or anything shaping Napa Valley's future — and see the sources behind every answer.</p>
                 <div style={{ display: 'flex', gap: 8, marginTop: 20, flexWrap: 'wrap', justifyContent: 'center' }}>
                   {pills.map(p => <span key={p.label} style={{ padding: '4px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: p.bg, color: p.color, border: '1px solid ' + p.border }}>{p.label}</span>)}
@@ -212,6 +211,7 @@ export default function AgentPage() {
             )}
             <div ref={bottomRef} />
           </div>
+          <button style={S.clrBtn} onClick={() => setMessages([])}>Clear conversation</button>
         </div>
       </div>
 
