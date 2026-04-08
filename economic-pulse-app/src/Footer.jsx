@@ -87,7 +87,7 @@ export default function Footer() {
                 <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8C10.8 8.4 7.8 4.2 5.4 2.4 3.6 1.2 2.4 2.4 2.4 4.2c0 1.2.6 5.4.9 6.6.9 3.3 4.2 4.2 7.2 3.6-3 .6-6 1.8-6.6 5.4-.3 1.8.6 3.6 2.4 3.6 3 0 5.7-3.6 5.7-3.6s2.7 3.6 5.7 3.6c1.8 0 2.7-1.8 2.4-3.6-.6-3.6-3.6-4.8-6.6-5.4 3 .6 6.3-.3 7.2-3.6.3-1.2.9-5.4.9-6.6 0-1.8-1.2-3-3-1.8C16.2 4.2 13.2 8.4 12 10.8z" /></svg>
                 Bluesky ↗
               </a>
-              <a href="https://valleyworkscollaborative.substack.com/" target="_blank" rel="noopener noreferrer" className="ns-footer-sbtn" style={socialBtn} aria-label="Substack, opens in new tab">
+              <a href="https://napavalleyfocus.substack.com/" target="_blank" rel="noopener noreferrer" className="ns-footer-sbtn" style={socialBtn} aria-label="Napa Valley Features on Substack, opens in new tab">
                 <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.5H2V8h20V5.5zM2 10.5V21l10-5.5 10 5.5V10.5H2zM22 2H2v2h20V2z" /></svg>
                 Substack ↗
               </a>
@@ -97,7 +97,7 @@ export default function Footer() {
               <div style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, marginBottom: 4 }}>Stay informed on Napa County.</div>
               <div style={{ fontSize: 14, color: T.muted, fontFamily: font, lineHeight: 1.6, marginBottom: 14 }}>Original reporting, economic updates and community intelligence from Napa Valley Features — delivered when it matters.</div>
               <div style={{ display: "flex", gap: 8, maxWidth: 440 }}>
-                <input className="ns-footer-sub-in" type="text" placeholder="Your name" aria-label="Your name" value={subName} onChange={e => setSubName(e.target.value)} style={{ marginBottom: 6 }} />
+                <input className="ns-footer-sub-in" type="text" placeholder="Your name" aria-label="Your name" value={subName} onChange={e => setSubName(e.target.value)} />
                 <input className="ns-footer-sub-in" type="email" placeholder="Your email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} />
                 <button disabled={subStatus === "loading"} onClick={async () => {
                   setSubStatus("loading");
