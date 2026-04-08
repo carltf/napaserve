@@ -1,6 +1,6 @@
 # NapaServe — Claude Code Reference
 
-Last updated: March 27, 2026
+Last updated: April 8, 2026
 
 ## Project Overview
 
@@ -66,6 +66,7 @@ All React pages are inside `economic-pulse-app/src/`:
 | Under the Hood Article (GDP) | under-the-hood-gdp-2024.jsx |
 | Under the Hood Article (Sonoma) | under-the-hood-sonoma.jsx |
 | Under the Hood Article (Lake) | under-the-hood-lake.jsx |
+| Research Agent | napaserve-agent.jsx — React component at route /agent |
 | Admin | napaserve-admin.jsx (DRAFT/LIVE badges, Publish button) |
 | Shared Footer | Footer.jsx (imported on ALL pages) |
 | Archive | pages/Archive.jsx (ALWAYS this — never src/Archive.jsx) |
@@ -79,7 +80,8 @@ All React pages are inside `economic-pulse-app/src/`:
 `/under-the-hood` route → index page. `/under-the-hood/napa-cab-2025` → article.
 
 **Standalone files (repo root, NOT in src/):**
-- `agent.html` — AI Research Agent. Standalone HTML — has its own raw HTML nav and footer that must be maintained manually. Does not use NavBar.jsx or Footer.jsx. Nav and footer changes must be mirrored here manually.
+- `agent.html` — META-REFRESH REDIRECT ONLY → /agent. Do not put content here.
+- `napaserve-agent.jsx` (in src/) — Research Agent React component. Imports NavBar and Footer automatically. Route: /agent. Calls /api/rag-answer on Cloudflare Worker.
 - `embed-events.html` — Squarespace embed form
 - `api/evaluate.js` — Evaluator serverless function
 
@@ -91,7 +93,7 @@ All React pages are inside `economic-pulse-app/src/`:
 
 - **Group 1 Journalism:** Napa Valley Features, NVF Archive Search, Under the Hood
 - **Group 2 Community:** Event Finder, Valley Works, VW Labs
-- **Group 3 Intelligence:** Community Pulse, Project Evaluator, Research Agent
+- **Group 3 Intelligence:** Community Pulse, Project Evaluator, Research Agent (/agent), Models & Calculators (/under-the-hood/calculators)
 - **Group 4 Platform:** About NapaServe, Contact
 
 ---
@@ -172,6 +174,10 @@ No CSS files — inline styles only or @media style tags
 13. sessionStorage admin auth key is `admin_token` (not `adminToken`)
 14. `seed_article_polls.py`: never add hardcoded `"id"` field to new POLLS entries — Supabase auto-assigns, hardcoded ids cause sequence desync
 15. `/api/publish-article` uses `env.SUPABASE_KEY` (service role) — not anon key
+16. `agent.html` is a REDIRECT ONLY — never put content there. Route is /agent (React component).
+17. Research Agent API: /api/rag-answer — NOT /api/claude (does not exist in worker).
+18. Responsive layouts: use isMobile = useState(window.innerWidth < breakpoint) + resize listener — NOT CSS @media queries (inline styles don't respond to media queries).
+19. AP style throughout — no Oxford commas.
 
 ---
 
@@ -332,7 +338,9 @@ No CSS files — inline styles only or @media style tags
 | sonoma-cab-2025 | 4–6 | Live |
 | lake-county-cab-2025 | 7–9 | Live |
 | napa-gdp-2024 | 10–14 | Live |
-| napa-supply-chain-2026 | 15–17 | Seeded, article in draft |
+| napa-supply-chain-2026 | 15–17 | Live |
+| napa-population-2025 | 18–20 | Draft — 5 open flags |
+| napa-structural-reset-2026 | 21–23 | Live April 4, 2026 |
 
 ### Under the Hood Article Files
 
@@ -343,6 +351,8 @@ No CSS files — inline styles only or @media style tags
 | /under-the-hood/napa-gdp-2024 | under-the-hood-gdp-2024.jsx | napa-gdp-2024 |
 | /under-the-hood/sonoma-cab-2025 | under-the-hood-sonoma.jsx | sonoma-cab-2025 |
 | /under-the-hood/lake-county-cab-2025 | under-the-hood-lake.jsx | lake-county-cab-2025 |
+| /under-the-hood/napa-structural-reset-2026 | under-the-hood-napa-structural-reset.jsx | napa-structural-reset-2026 |
+| /under-the-hood/calculators | napaserve-calculators.jsx | — |
 
 ## April 5, 2026 Session
 - Built /under-the-hood/calculators — 4 calculators + Regional Contraction Tracker + jump-to TOC
@@ -354,17 +364,35 @@ No CSS files — inline styles only or @media style tags
 - Commits: 239b44e (error boundary debug), 9b3d116 (main build), 5c00e98 (TOC + fixes)
 - Next: confirm Dismal Math Substack URL via nvf_posts DB query
 
-## agent.html — Architectural Debt (Critical — Next Session)
-agent.html is a standalone static HTML file at the repo root. It has its own nav, footer, and CSS — completely separate from the React component system. This causes permanent drift vs. all other pages every time NavBar.jsx or Footer.jsx is updated.
+## April 8, 2026 Session — Research Agent Rebuilt ✅
 
-TODAY'S WORKAROUND: Manually ported hamburger nav (#ns-drawer) and Footer.jsx as static HTML into agent.html. Functional but will drift again on next NavBar/Footer change.
+agent.html architectural debt is RESOLVED. The Research Agent is now a full React component.
 
-REAL FIX (next dedicated session): Port agent.html → AgentPage.jsx React component
-- Move agent UI logic into economic-pulse-app/src/AgentPage.jsx
-- Add route: <Route path="/agent" element={<AgentPage />} /> in App.jsx
-- Gets NavBar, Footer, ScrollToTop automatically — zero maintenance forever
-- Retire agent.html from repo root
-- Update all internal links from /agent.html → /agent
-- Add redirect: /agent.html → /agent in vercel.json
+### What changed
+- New file: `economic-pulse-app/src/napaserve-agent.jsx` — full React component
+- Route: /agent (added to App.jsx)
+- NavBar and Footer imported automatically — zero manual maintenance
+- agent.html at repo root: meta-refresh redirect to /agent only — do not edit for content
+- NavBar.jsx and Footer.jsx: /agent.html links updated to /agent
+- API: calls /api/rag-answer (Cloudflare Worker) — grounded in NVF archive + Claude
+- Mobile: isMobile useState(window.innerWidth < 700) + resize listener (NOT CSS media queries)
+- Mobile layout: column-reverse — chat/input above example questions on narrow screens
 
-This is Priority 1 architectural fix. Every new agent added before this is done will have the same problem.
+### Design
+- Theme 02 Cream throughout — inline styles only
+- HOW TO USE label above banner (matches sidebar pillar label pattern)
+- Input bar above messages (immediately visible without scrolling)
+- Sidebar groups labeled: People & Well-Being — Example Questions, etc.
+- Welcome state: NapaServe Community Intelligence Agent heading + pillar pills
+- Hint line: CI is one tool within a larger system of community knowledge
+
+### Key commits (April 8, 2026)
+- 8cc5c2a — feat: convert Research Agent to React
+- e9991cb — fix: /api/rag-answer not /api/claude
+- e47b97f — feat: input above messages, CI framing
+- 953159f — fix: isMobile responsive layout
+- 31ff347 — fix: column-reverse mobile, example questions copy
+- aba27c5 — fix: no Oxford commas, Example Questions sidebar labels
+
+### Reference doc
+NapaServe_ResearchAgent_Status_2026-04-08.docx — full architecture, design and rules
