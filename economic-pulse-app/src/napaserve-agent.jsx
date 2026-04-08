@@ -149,11 +149,13 @@ export default function AgentPage() {
 
         <div style={S.chatCol}>
           {showHow && (
-            <div style={S.howTo}>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#8B7355', whiteSpace: 'nowrap', paddingTop: 2, flexShrink: 0 }}>How to use</span>
-              <p style={{ margin: 0, fontSize: 13, color: '#5A4A3A', lineHeight: 1.5, flex: 1 }}>Ask any question about Napa County policy, land use, housing, water, or economic development. The agent searches the NVF archive and the live web before responding — and cites its sources.</p>
-              <button onClick={() => setShowHow(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A89880', fontSize: 18, lineHeight: 1, flexShrink: 0, padding: 0 }}>×</button>
-            </div>
+            <>
+              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8B7355', margin: 0 }}>How to Use</p>
+              <div style={S.howTo}>
+                <p style={{ margin: 0, fontSize: 13, color: '#5A4A3A', lineHeight: 1.5, flex: 1 }}>Ask any question about Napa County policy, land use, housing, water, or economic development. The agent searches the NVF archive and the live web before responding — and cites its sources.</p>
+                <button onClick={() => setShowHow(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A89880', fontSize: 18, lineHeight: 1, flexShrink: 0, padding: 0 }}>×</button>
+              </div>
+            </>
           )}
 
           <div style={S.inRow}>
@@ -163,7 +165,7 @@ export default function AgentPage() {
             </button>
           </div>
           <button style={S.clrBtn} onClick={() => setMessages([])}>Clear conversation</button>
-          <p style={S.hint}>Responses are grounded in NVF archive sources shown below each answer. AI is one tool within a larger system of community knowledge.</p>
+          <p style={S.hint}>Responses are grounded in NVF archive sources shown below each answer. CI is one tool within a larger system of community knowledge.</p>
 
           <div style={S.msgBox}>
             {messages.length === 0 && !loading && (
