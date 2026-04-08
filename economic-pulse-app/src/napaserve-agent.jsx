@@ -66,33 +66,18 @@ export default function AgentPage() {
     setLoading(true);
     setMessages(prev => [...prev, { role: 'user', content: q }]);
 
-    const chunks = await fetchArchiveContext(q);
-    const archiveCtx = chunks.length
-      ? '\n\nNVF ARCHIVE CONTEXT:\n' + chunks.map(c =>
-          'Title: ' + c.title + '\nURL: ' + (c.substack_url || '') + '\nExcerpt: ' + (c.chunk_text || '').slice(0, 400)
-        ).join('\n\n')
-      : '';
-
     try {
-      const res = await fetch(WORKER + '/api/claude', {
+      const res = await fetch(WORKER + '/api/rag-answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1200,
-          system: SYSTEM_PROMPT + archiveCtx,
-          messages: [
-            ...messages.map(m => ({ role: m.role, content: m.content })),
-            { role: 'user', content: q },
-          ],
-        }),
+        body: JSON.stringify({ query: q, matchCount: 6 }),
       });
       if (!res.ok) throw new Error('Worker ' + res.status);
       const data  = await res.json();
-      const reply = data.content?.[0]?.text || 'No response generated.';
-      const sources = chunks
-        .filter(c => c.title && c.substack_url)
-        .map(c => ({ title: c.title, url: c.substack_url, date: c.published_at }));
+      const reply = data.answer || 'No response generated.';
+      const sources = (data.sources || [])
+        .filter(s => s.title && s.substack_url)
+        .map(s => ({ title: s.title, url: s.substack_url, date: s.published_at }));
       setMessages(prev => [...prev, { role: 'assistant', content: reply, sources }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error — please try again. (' + e.message + ')' }]);
