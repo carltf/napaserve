@@ -4,9 +4,9 @@ import Footer from './Footer';
 
 const WORKER = 'https://misty-bush-fc93.tfcarl.workers.dev';
 
-const SYSTEM_PROMPT = `You are NapaServe's Research Agent — a knowledgeable, community-focused AI for Napa County, California. You help planners, policymakers, community members and civic leaders understand local policy, land use, housing, the wine industry, workforce, environment, and economic development.
+const SYSTEM_PROMPT = `You are NapaServe's Research Agent — a knowledgeable, community-focused AI for Napa County, California. You help planners, policymakers, community members and civic leaders understand local policy, land use, housing, the wine industry, workforce, environment and economic development.
 
-You have access to three years of Napa Valley Features archive reporting and can draw on the live web for current information. Always cite your sources clearly by title and link. Be direct, factual, and concise. When uncertain, say so. Prioritize local Napa County context over generic answers.`;
+You have access to three years of Napa Valley Features archive reporting and can draw on the live web for current information. Always cite your sources clearly by title and link. Be direct, factual and concise. When uncertain, say so. Prioritize local Napa County context over generic answers.`;
 
 const STARTERS = [
   { tag: 'PEOPLE', group: 'People & Well-Being', q: 'A developer is proposing 200 new units near downtown. How does this serve working families?' },
@@ -128,7 +128,7 @@ export default function AgentPage() {
         <div style={S.heroIn}>
           <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 6 }}>● NapaServe &nbsp; Napa County</p>
           <h1 style={{ fontFamily: "'Libre Baskerville',serif", fontSize: '1.6rem', fontWeight: 700, color: '#2C1810', marginBottom: 6 }}>Research Agent</h1>
-          <p style={{ fontSize: 15, color: '#5A4A3A', lineHeight: 1.5 }}>Grounded in NVF archive reporting, regional data, and the live web. Ask about policy, housing, the wine industry, or anything shaping Napa Valley.</p>
+          <p style={{ fontSize: 15, color: '#5A4A3A', lineHeight: 1.5 }}>Grounded in NVF archive reporting, regional data and the live web. Ask about policy, housing, the wine industry, or anything shaping Napa Valley.</p>
         </div>
       </div>
 
@@ -138,7 +138,7 @@ export default function AgentPage() {
             const items = STARTERS.filter(s => s.group === g);
             return (
               <div key={g} style={{ ...S.sGroup, marginTop: gi === 0 ? 0 : undefined }}>
-                <span style={S.sLabel}>{g}</span>
+                <span style={S.sLabel}>{g} — Example Questions</span>
                 {items.map((s, i) => {
                   const tc = TAG_STYLE[s.tag];
                   return (
@@ -180,7 +180,7 @@ export default function AgentPage() {
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8B5E3C" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
                 </div>
                 <h2 style={{ fontFamily: "'Libre Baskerville',serif", fontSize: '1.6rem', fontWeight: 700, color: '#2C1810', marginBottom: 12 }}>NapaServe Community Intelligence Agent</h2>
-                <p style={{ fontSize: 15, color: '#5A4A3A', lineHeight: 1.65, maxWidth: 440 }}>NapaServe is a community intelligence platform built on three years of original local reporting, regional economic data, and community polling. Ask about land use, the wine industry, housing, workforce, or anything shaping Napa Valley's future — and see the sources behind every answer.</p>
+                <p style={{ fontSize: 15, color: '#5A4A3A', lineHeight: 1.65, maxWidth: 440 }}>NapaServe is a community intelligence platform built on three years of original local reporting, regional economic data and community polling. Ask about land use, the wine industry, housing, workforce, or anything shaping Napa Valley's future — and see the sources behind every answer.</p>
                 <div style={{ display: 'flex', gap: 8, marginTop: 20, flexWrap: 'wrap', justifyContent: 'center' }}>
                   {pills.map(p => <span key={p.label} style={{ padding: '4px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: p.bg, color: p.color, border: '1px solid ' + p.border }}>{p.label}</span>)}
                 </div>
