@@ -36,6 +36,30 @@ git push             # Vercel auto-deploys on push to main
 
 ---
 
+## API Keys & Credentials
+
+All API keys and secrets are stored in `~/Desktop/napaserve/.env` — never in this file, never in chat, never committed to the repo.
+
+.env is gitignored at both the repo root and inside economic-pulse-app/. Do not commit it.
+
+A safe, secret-free registry of all services, variable names, endpoints, and stack details lives at:
+  ~/Desktop/napaserve/APIS.md
+Safe to paste into any Claude Code session. Contains no actual key values.
+
+A full master reference with expiration dates, rotation log, and retrieval URLs lives at:
+  ~/Documents/ValleyWorks/MASTER_KEYS_REFERENCE.md
+Local-only — not in any repo.
+
+### Standard session startup
+
+cd ~/Desktop/napaserve
+source .env
+claude
+
+Always `source .env` before launching Claude Code so all keys are available in the shell environment.
+
+---
+
 ## Vercel Build Config
 
 ```
