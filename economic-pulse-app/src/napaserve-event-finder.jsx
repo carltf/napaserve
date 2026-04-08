@@ -336,7 +336,7 @@ export default function EventFinder() {
     age_restriction: "all_ages", indoor_outdoor: "indoor",
     is_recurring: false, recurrence_desc: "",
     website_url: "", ticket_url: "",
-    organizer_contact: "", accessibility_info: "", submitted_by: "",
+    organizer_contact: "", accessibility_info: "", submitted_by: "", submitter_phone: "",
   };
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
@@ -649,6 +649,8 @@ export default function EventFinder() {
     if (!form.town) { setSubmitError("Town is required."); return; }
     if (!form.category) { setSubmitError("Category is required."); return; }
     if (!form.description.trim()) { setSubmitError("A brief description is required."); return; }
+    if (!form.submitted_by.trim()) { setSubmitError("Your name is required."); return; }
+    if (!form.organizer_contact.trim()) { setSubmitError("Your email is required."); return; }
 
     setSubmitting(true); setSubmitError(null);
     try {
@@ -1011,7 +1013,7 @@ export default function EventFinder() {
           {submitted ? (
             <div style={{ background: "rgba(91,138,90,0.1)", border: "1px solid rgba(91,138,90,0.3)", padding: "40px 28px", textAlign: "center" }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>✓</div>
-              <h2 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 24, fontWeight: 700, color: "#4A7A5A", margin: "0 0 8px" }}>Event Submitted</h2>
+              <h2 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 24, fontWeight: 700, color: "#4A7A5A", margin: "0 0 8px" }}>Thank you, {(form.submitted_by.trim().split(/\s+/)[0]) || "friend"}!</h2>
               <p style={{ fontSize: 15, color: "#7A6A50", margin: "0 0 20px", lineHeight: 1.5 }}>
                 Thanks for adding to NapaServe. Your event will appear after a quick review — usually within 24 hours.
               </p>
@@ -1178,20 +1180,23 @@ export default function EventFinder() {
                 </div>
               </div>
 
-              {/* ── CONTACT ── */}
-              {sectionHeader("Contact")}
+              {/* ── YOUR INFO ── */}
+              {sectionHeader("Your Info")}
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 24 }}>
-                <div>
-                  <label style={labelBase}>Organizer Contact</label>
-                  <input value={form.organizer_contact} onChange={e => uf("organizer_contact", e.target.value)}
-                    placeholder="Email or phone for event questions" style={inputBase} />
-                </div>
-                <div>
-                  <label style={labelBase}>Your Name or Email</label>
-                  <input value={form.submitted_by} onChange={e => uf("submitted_by", e.target.value)}
-                    placeholder="So we can follow up if needed" style={inputBase} />
-                </div>
+              <div style={{ marginBottom: 14 }}>
+                <label style={labelBase}>Your Name *</label>
+                <input value={form.submitted_by} onChange={e => uf("submitted_by", e.target.value)}
+                  required placeholder="First and last name" style={inputBase} />
+              </div>
+              <div style={{ marginBottom: 14 }}>
+                <label style={labelBase}>Your Email *</label>
+                <input type="email" value={form.organizer_contact} onChange={e => uf("organizer_contact", e.target.value)}
+                  required placeholder="your@email.com" style={inputBase} />
+              </div>
+              <div style={{ marginBottom: 24 }}>
+                <label style={labelBase}>Your Phone</label>
+                <input type="tel" value={form.submitter_phone} onChange={e => uf("submitter_phone", e.target.value)}
+                  placeholder="Phone number (optional)" style={inputBase} />
               </div>
 
               {/* Error */}
