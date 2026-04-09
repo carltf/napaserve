@@ -439,8 +439,8 @@ function SupplyShockCalc() {
       ]} />
 
       {/* SVG donut — every $1 of apparent growth */}
-      <div style={{ marginTop: 20, background: T.surface, borderRadius: 3, padding: "16px", border: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 20 }}>
-        <div style={{ flexShrink: 0 }}>
+      <div style={{ marginTop: 20, background: T.surface, borderRadius: 3, padding: "16px", border: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+        <div style={{ flexShrink: 0, minWidth: "30%" }}>
           <svg width={120} height={120} viewBox="0 0 120 120">
             <circle cx={cx} cy={cy} r={r} fill="none" stroke={T.gold} strokeWidth={stroke}
               strokeDasharray={`${seg1} ${gap1}`} strokeDashoffset={circ / 4} />
@@ -528,7 +528,7 @@ function AssetRepricingCalc() {
       </div>
 
       {/* GDP mini bar chart — normalized from floor so differences are visible */}
-      <div style={{ marginBottom: 20, overflow: "hidden" }}>
+      <div style={{ marginBottom: 20, overflowX: "auto", width: "100%" }}>
         <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted, marginBottom: 10 }}>
           Napa County real GDP 2019–2026 scenario (BEA 2017 chained dollars)
         </div>
