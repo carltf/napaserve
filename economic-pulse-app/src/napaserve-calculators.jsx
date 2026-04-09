@@ -121,9 +121,13 @@ function Slider({ min, max, step, value, onChange, label, formatValue }) {
 }
 
 function OutputGrid({ items }) {
-  const cols = window.innerWidth < 600
-    ? Math.min(2, items.length)
-    : items.length;
+  const [mobile, setMobile] = React.useState(window.innerWidth < 600);
+  React.useEffect(() => {
+    const handler = () => setMobile(window.innerWidth < 600);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  const cols = mobile ? Math.min(2, items.length) : items.length;
   return (
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 12, marginTop: 20 }}>
       {items.map((item) => (
