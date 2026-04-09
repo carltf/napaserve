@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Hub from "./napaserve-hub";
 import Dashboard from "./napa-economic-pulse-full-3";
 import Evaluator from "./napaserve-project-evaluator";
@@ -22,9 +23,16 @@ import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
 import AgentPage from './napaserve-agent';
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Hub />} />
         <Route path="/dashboard" element={<Dashboard />} />
