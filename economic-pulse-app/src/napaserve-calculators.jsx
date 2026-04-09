@@ -121,8 +121,8 @@ function Slider({ min, max, step, value, onChange, label, formatValue }) {
 }
 
 function OutputGrid({ items }) {
-  const [mobile, setMobile] = React.useState(window.innerWidth < 600);
-  React.useEffect(() => {
+  const [mobile, setMobile] = useState(window.innerWidth < 600);
+  useEffect(() => {
     const handler = () => setMobile(window.innerWidth < 600);
     window.addEventListener('resize', handler);
     return () => window.removeEventListener('resize', handler);
