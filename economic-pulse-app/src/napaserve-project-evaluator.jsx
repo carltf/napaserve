@@ -150,7 +150,7 @@ function drawCompassBase(canvas, scores) {
     const sa = (s * step - step / 2 - 90) * Math.PI / 180;
     const ea = (e * step + step / 2 - 90) * Math.PI / 180;
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, oR, sa, ea); ctx.closePath();
-    ctx.fillStyle = p.color + "0A"; ctx.fill();
+    ctx.fillStyle = p.color + "1A"; ctx.fill();
     axIdx += p.axes.length;
   });
 
@@ -169,13 +169,6 @@ function drawCompassBase(canvas, scores) {
   ctx.strokeStyle = "rgba(139,94,60,0.3)"; ctx.lineWidth = 0.8; ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2);
   ctx.fillStyle = "#8B5E3C"; ctx.fill();
-
-  [0, 90, 180, 270].map(d => ({ d, i: polar(d, oR + 20, cx, cy), o: polar(d, oR + 28, cx, cy), l: polar(d, oR + 38, cx, cy) })).forEach(({ d, i, o, l }) => {
-    ctx.beginPath(); ctx.moveTo(i.x, i.y); ctx.lineTo(o.x, o.y);
-    ctx.strokeStyle = "rgba(139,94,60,0.5)"; ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.fillStyle = "rgba(139,94,60,0.6)"; ctx.font = "bold 8px monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText({ 0: "N", 90: "E", 180: "S", 270: "W" }[d], l.x, l.y);
-  });
 
   ctx.beginPath(); ctx.arc(cx, cy, oR + 28, 0, Math.PI * 2);
   ctx.strokeStyle = "rgba(139,94,60,0.2)"; ctx.lineWidth = 0.5; ctx.stroke();
@@ -203,7 +196,7 @@ function drawCompassBase(canvas, scores) {
   PILLARS.forEach(p => {
     const mid = axIdx + Math.floor(p.axes.length / 2);
     const mp = polar(mid * step, oR - 18, cx, cy);
-    ctx.fillStyle = p.color + "55"; ctx.font = "bold 7px monospace";
+    ctx.fillStyle = p.color + "8C"; ctx.font = "bold 7px monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(p.label.toUpperCase(), mp.x, mp.y);
     axIdx += p.axes.length;
@@ -433,7 +426,7 @@ export default function ProjectEvaluator() {
         </div>
         <h1 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: "clamp(24px,4vw,36px)", fontWeight: 700, color: "var(--ink2)", marginBottom: 6 }}>Project Evaluator</h1>
         <p style={{ fontSize: 15, fontWeight: 600, color: "var(--accent)", lineHeight: 1.5, marginBottom: 14, letterSpacing: ".01em" }}>Community analysis grounded in community knowledge</p>
-        <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8, marginBottom: 18, maxWidth: 720 }}>Submit a proposed project — a resort, housing development, winery expansion, land use change or any initiative affecting Napa Valley — and this tool will evaluate it against the valley's own data, reporting and stated priorities. Analysis is structured around the Jobs · People · Place framework and draws on three years of local journalism, regional economic data and community polling. AI is one tool in that process — the knowledge comes from the community.</p>
+        <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8, marginBottom: 18, maxWidth: 620 }}>Submit a proposed project — a resort, housing development, winery expansion, land use change or any initiative affecting Napa Valley — and this tool will evaluate it against the valley's own data, reporting and stated priorities. Analysis is structured around the Jobs · People · Place framework and draws on three years of local journalism, regional economic data and community polling. AI is one tool in that process — the knowledge comes from the community.</p>
 
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--dim)", marginBottom: 8 }}>Try an example project</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 22 }}>
