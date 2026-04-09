@@ -121,8 +121,11 @@ function Slider({ min, max, step, value, onChange, label, formatValue }) {
 }
 
 function OutputGrid({ items }) {
+  const cols = window.innerWidth < 600
+    ? Math.min(2, items.length)
+    : items.length;
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${items.length}, 1fr)`, gap: 12, marginTop: 20 }}>
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 12, marginTop: 20 }}>
       {items.map((item) => (
         <div key={item.label} style={{ background: T.surface, borderRadius: 3, padding: "16px 14px", textAlign: "center", border: `1px solid ${T.border}` }}>
           <div style={{ fontFamily: fonts.mono, fontSize: 20, fontWeight: 700, color: T.accent, marginBottom: 4 }}>{item.value}</div>
