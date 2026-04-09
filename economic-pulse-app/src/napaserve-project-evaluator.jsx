@@ -174,7 +174,7 @@ function drawCompassBase(canvas, scores) {
   ctx.strokeStyle = "rgba(139,94,60,0.2)"; ctx.lineWidth = 0.5; ctx.stroke();
 
   ALL_AXES.forEach((ax, i) => {
-    const angle = i * step, lp = polar(angle, oR + 36, cx, cy);
+    const angle = i * step, lp = polar(angle, oR + 26, cx, cy);
     let anc = "center";
     if (angle > 20 && angle < 160) anc = "left";
     if (angle > 200 && angle < 340) anc = "right";
