@@ -835,13 +835,6 @@ function ContractionTracker() {
 export default function CalculatorsPage() {
   return (
     <div style={{ background: T.bg, minHeight: "100vh", fontFamily: fonts.sans }}>
-      <style>{`
-        @media (max-width: 600px) {
-          [style*="1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
-          [style*="repeat(3, 1fr)"] { grid-template-columns: 1fr 1fr !important; }
-          [style*="repeat(4, 1fr)"] { grid-template-columns: 1fr 1fr !important; }
-        }
-      `}</style>
       <NavBar />
 
       <main style={{ maxWidth: 860, margin: "0 auto", padding: "48px 24px 0" }}>
