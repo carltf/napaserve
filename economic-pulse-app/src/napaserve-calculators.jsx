@@ -193,7 +193,7 @@ function VineyardCalc() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 8 }}>
+      <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 600 ? "1fr 1fr" : "1fr 1fr 1fr", gap: 12, marginBottom: 8 }}>
         {[
           { label: "Scenario A — Acres skipped (maintained)", value: acresA, min: 0, max: 15000, step: 500, set: setAcresA },
           { label: "Scenario B — Acres removed (not replanted)", value: acresB, min: 0, max: 10000, step: 500, set: setAcresB },
@@ -221,7 +221,7 @@ function VineyardCalc() {
         {acresA > 0 && (
           <>
             <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>Scenario A — Skipped, Maintained ({acresA.toLocaleString()} acres) · 5-Year Community Impact</div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 600 ? "1fr 1fr" : "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
               {[["Conservative (25%)", communityA_25], ["Moderate (50%)", communityA_50], ["Full (100%)", communityA_100]].map(([l, v]) => (
                 <div key={l} style={{ background: T.surface, padding: "10px 12px", borderRadius: 3, border: `1px solid ${T.border}`, textAlign: "center" }}>
                   <div style={{ fontFamily: fonts.mono, fontSize: 16, color: T.accent, fontWeight: 700 }}>{fmtM(v)}</div>
@@ -235,7 +235,7 @@ function VineyardCalc() {
         {acresB > 0 && (
           <>
             <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>Scenario B — Removed, Not Replanted ({acresB.toLocaleString()} acres) · 5-Year Community Impact</div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 600 ? "1fr 1fr" : "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
               {[["Conservative (25%)", communityB_25], ["Moderate (50%)", communityB_50], ["Full (100%)", communityB_100]].map(([l, v]) => (
                 <div key={l} style={{ background: T.surface, padding: "10px 12px", borderRadius: 3, border: `1px solid ${T.border}`, textAlign: "center" }}>
                   <div style={{ fontFamily: fonts.mono, fontSize: 16, color: T.accent, fontWeight: 700 }}>{fmtM(v)}</div>
