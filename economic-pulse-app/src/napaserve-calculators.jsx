@@ -121,15 +121,8 @@ function Slider({ min, max, step, value, onChange, label, formatValue }) {
 }
 
 function OutputGrid({ items }) {
-  const [mobile, setMobile] = useState(window.innerWidth < 600);
-  useEffect(() => {
-    const handler = () => setMobile(window.innerWidth < 600);
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
-  }, []);
-  const cols = mobile ? Math.min(2, items.length) : items.length;
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 12, marginTop: 20 }}>
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${items.length}, 1fr)`, gap: 12, marginTop: 20 }}>
       {items.map((item) => (
         <div key={item.label} style={{ background: T.surface, borderRadius: 3, padding: "16px 14px", textAlign: "center", border: `1px solid ${T.border}` }}>
           <div style={{ fontFamily: fonts.mono, fontSize: 20, fontWeight: 700, color: T.accent, marginBottom: 4 }}>{item.value}</div>
@@ -193,7 +186,7 @@ function VineyardCalc() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 600 ? "1fr 1fr" : "1fr 1fr 1fr", gap: 12, marginBottom: 8 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 8 }}>
         {[
           { label: "Scenario A — Acres skipped (maintained)", value: acresA, min: 0, max: 15000, step: 500, set: setAcresA },
           { label: "Scenario B — Acres removed (not replanted)", value: acresB, min: 0, max: 10000, step: 500, set: setAcresB },
@@ -221,7 +214,7 @@ function VineyardCalc() {
         {acresA > 0 && (
           <>
             <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>Scenario A — Skipped, Maintained ({acresA.toLocaleString()} acres) · 5-Year Community Impact</div>
-            <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 600 ? "1fr 1fr" : "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
               {[["Conservative (25%)", communityA_25], ["Moderate (50%)", communityA_50], ["Full (100%)", communityA_100]].map(([l, v]) => (
                 <div key={l} style={{ background: T.surface, padding: "10px 12px", borderRadius: 3, border: `1px solid ${T.border}`, textAlign: "center" }}>
                   <div style={{ fontFamily: fonts.mono, fontSize: 16, color: T.accent, fontWeight: 700 }}>{fmtM(v)}</div>
@@ -235,7 +228,7 @@ function VineyardCalc() {
         {acresB > 0 && (
           <>
             <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>Scenario B — Removed, Not Replanted ({acresB.toLocaleString()} acres) · 5-Year Community Impact</div>
-            <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 600 ? "1fr 1fr" : "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
               {[["Conservative (25%)", communityB_25], ["Moderate (50%)", communityB_50], ["Full (100%)", communityB_100]].map(([l, v]) => (
                 <div key={l} style={{ background: T.surface, padding: "10px 12px", borderRadius: 3, border: `1px solid ${T.border}`, textAlign: "center" }}>
                   <div style={{ fontFamily: fonts.mono, fontSize: 16, color: T.accent, fontWeight: 700 }}>{fmtM(v)}</div>
@@ -842,6 +835,12 @@ function ContractionTracker() {
 export default function CalculatorsPage() {
   return (
     <div style={{ background: T.bg, minHeight: "100vh", fontFamily: fonts.sans }}>
+      <style>{`
+        @media (max-width: 600px) {
+          [style*="1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+          [style*="repeat(4"] { grid-template-columns: 1fr 1fr !important; }
+        }
+      `}</style>
       <NavBar />
 
       <main style={{ maxWidth: 860, margin: "0 auto", padding: "48px 24px 0" }}>
