@@ -181,12 +181,22 @@ function drawCompassBase(canvas, scores) {
   ctx.strokeStyle = "rgba(139,94,60,0.2)"; ctx.lineWidth = 0.5; ctx.stroke();
 
   ALL_AXES.forEach((ax, i) => {
-    const angle = i * step, lp = polar(angle, oR + 32, cx, cy);
+    const angle = i * step, lp = polar(angle, oR + 36, cx, cy);
     let anc = "center";
     if (angle > 20 && angle < 160) anc = "left";
     if (angle > 200 && angle < 340) anc = "right";
-    ctx.fillStyle = "rgba(44,24,16,0.6)"; ctx.font = "600 10px 'Source Sans 3',sans-serif"; ctx.textAlign = anc; ctx.textBaseline = "middle";
-    ctx.fillText(ax.label, lp.x, lp.y);
+    ctx.fillStyle = "rgba(44,24,16,0.6)"; ctx.font = "600 10px 'Source Sans 3',sans-serif";
+    ctx.textAlign = anc; ctx.textBaseline = "middle";
+    const words = ax.label.split(" ");
+    if (words.length > 1) {
+      const mid = Math.ceil(words.length / 2);
+      const line1 = words.slice(0, mid).join(" ");
+      const line2 = words.slice(mid).join(" ");
+      ctx.fillText(line1, lp.x, lp.y - 6);
+      ctx.fillText(line2, lp.x, lp.y + 6);
+    } else {
+      ctx.fillText(ax.label, lp.x, lp.y);
+    }
   });
 
   axIdx = 0;
