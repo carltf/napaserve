@@ -27,7 +27,7 @@ NapaServe (napaserve.org) is a civic AI platform for Napa County built on React/
 ```bash
 cd ~/Desktop/napaserve/economic-pulse-app
 npm run build        # always build before pushing
-git add .
+git add . 
 git commit -m "..."
 git push             # Vercel auto-deploys on push to main
 ```
@@ -420,3 +420,41 @@ agent.html architectural debt is RESOLVED. The Research Agent is now a full Reac
 
 ### Reference doc
 NapaServe_ResearchAgent_Status_2026-04-08.docx — full architecture, design and rules
+
+---
+
+## April 8, 2026 Session — Additional Changes
+
+### Event Submit Form
+- embed-events.html location: repo root (NOT economic-pulse-app/public/) — confirmed
+- YOUR INFO section added to both embed-events.html and napaserve-event-finder.jsx
+- Fields: Your Name * (submitted_by, required), Your Email * (organizer_contact, required), Your Phone (submitter_phone, optional)
+- On-screen confirmation: "Thank you, [firstName]!" + "Add Another" + "Back to Search" buttons
+- napaserve-event-finder.jsx writes DIRECT to Supabase REST (not Worker)
+- embed-events.html POSTs to /api/submit-event Worker route
+- community_events: added submitter_name, submitter_email, submitter_phone columns (text, nullable)
+- No confirmation email — on-screen only. Admin token safeguard planned before digest send.
+- TextEdit trap confirmed: never save .html files from TextEdit — converts to Cocoa stub. Use VS Code or str_replace only.
+
+### Site-Wide ScrollToTop
+- ScrollToTop component added to App.jsx — covers all 22 routes
+- Mounted as first child of <BrowserRouter> before <Routes>
+- Agent page fix: useEffect bottomRef.current?.scrollIntoView guarded with if (messages.length > 0)
+- Pattern: any component with scroll useEffect can override ScrollToTop — always guard with state
+
+### Project Evaluator Compass
+- Chart is hand-drawn canvas (getContext('2d')) — NOT Chart.js
+- Pillar colors use hex alpha suffixes (1A, 8C) — not globalAlpha
+- Multi-word axis labels now split onto two lines at word midpoint
+- N/E/S/W compass markers removed — do not re-add
+- Label offset: oR + 26 (pulled in from oR + 36 to prevent edge clipping)
+- Pillar wedge shading: hex alpha 1A (10%) | Pillar label opacity: hex alpha 8C (55%)
+
+### Key Commits
+- 39b93bb — embed-events.html: phone field + confirmation
+- 7334246 — napaserve-event-finder.jsx: YOUR INFO section cleanup
+- 3522552 — App.jsx: ScrollToTop site-wide
+- 35b1f29 — napaserve-agent.jsx: guard bottomRef scroll on mount
+- d853d3f — napaserve-project-evaluator.jsx: two-line compass labels
+- 878bed1 — napaserve-project-evaluator.jsx: NESW removed, opacity/shading
+- 1751e85 — napaserve-project-evaluator.jsx: label offset oR+26
