@@ -838,7 +838,8 @@ export default function CalculatorsPage() {
       <style>{`
         @media (max-width: 600px) {
           [style*="1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
-          [style*="repeat(4"] { grid-template-columns: 1fr 1fr !important; }
+          [style*="repeat(3, 1fr)"] { grid-template-columns: 1fr 1fr !important; }
+          [style*="repeat(4, 1fr)"] { grid-template-columns: 1fr 1fr !important; }
         }
       `}</style>
       <NavBar />
