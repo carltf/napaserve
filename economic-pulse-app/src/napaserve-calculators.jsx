@@ -535,7 +535,7 @@ function AssetRepricingCalc() {
       </div>
 
       {/* GDP mini bar chart — normalized from floor so differences are visible */}
-      <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 20, overflow: "hidden" }}>
         <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted, marginBottom: 10 }}>
           Napa County real GDP 2019–2026 scenario (BEA 2017 chained dollars)
         </div>
@@ -586,7 +586,7 @@ function AssetRepricingCalc() {
       ]} />
 
       {/* Scenario comparison table */}
-      <div style={{ marginTop: 20, overflowX: "auto" }}>
+      <div style={{ marginTop: 20, overflowX: "auto", maxWidth: "100%" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: fonts.sans, fontSize: 13 }}>
           <thead>
             <tr>
