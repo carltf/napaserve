@@ -458,3 +458,17 @@ NapaServe_ResearchAgent_Status_2026-04-08.docx — full architecture, design and
 - d853d3f — napaserve-project-evaluator.jsx: two-line compass labels
 - 878bed1 — napaserve-project-evaluator.jsx: NESW removed, opacity/shading
 - 1751e85 — napaserve-project-evaluator.jsx: label offset oR+26
+
+## Mobile Responsiveness — Site-Wide Standard (April 9, 2026)
+
+CRITICAL: Never put gridTemplateColumns in inline styles — use index.css classes.
+Inline styles always beat CSS on mobile Safari. Pattern: className on element, desktop default + @media override in index.css.
+
+Established classes (all 1fr at max-width 600px):
+.grid-2col .grid-3col .grid-4col .vw-pillars .vwl-focus .vwl-steps .kpi-grid .calc-section .calc-card .donut-chart-container
+
+April 8-9 critical rules:
+- TextEdit trap: never save .html from TextEdit — wipes content silently
+- embed-events.html at repo root not economic-pulse-app/public/
+- No @supabase/supabase-js — raw REST fetch only
+- community_events has submitter_name/email/phone columns
