@@ -40,6 +40,7 @@ button {
 .vwl-steps { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .vwl-focus { grid-template-columns: repeat(4, 1fr); }
 .vw-pillars { grid-template-columns: repeat(3, 1fr); }
+.kpi-grid-overview, .kpi-grid-housing { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
 
 @media (max-width: 600px) {
   .grid-2col, .grid-3col, .grid-4col { grid-template-columns: 1fr !important; }
@@ -52,5 +53,5 @@ button {
   .vwl-focus { grid-template-columns: 1fr !important; }
   .vwl-steps { grid-template-columns: 1fr !important; }
   .vw-pillars { grid-template-columns: 1fr !important; }
-  .kpi-grid { grid-template-columns: 1fr !important; }
+  .kpi-grid { display: grid !important; grid-template-columns: 1fr !important; }
 }
