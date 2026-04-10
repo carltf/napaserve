@@ -24,7 +24,7 @@ const fonts = {
 // ─── CARD WRAPPER ──────────────────────────────────────────────────────────
 function CalcCard({ id, eyebrow, title, articleLabel, articleHref, howTo, sources, children }) {
   return (
-    <div id={id} style={{ background: T.surface, borderRadius: 4, padding: "32px 36px 28px", marginBottom: 48, border: `1px solid ${T.border}` }}>
+    <div id={id} className="calc-section" style={{ background: T.surface, borderRadius: 4, padding: "32px 36px 28px", marginBottom: 48, border: `1px solid ${T.border}` }}>
       {/* Eyebrow */}
       <div style={{ fontFamily: fonts.mono, fontSize: 11, color: T.gold, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10 }}>
         {eyebrow}
@@ -51,7 +51,7 @@ function CalcCard({ id, eyebrow, title, articleLabel, articleHref, howTo, source
         {howTo}
       </p>
       {/* Calculator */}
-      <div style={{ background: T.bg, borderRadius: 3, padding: "24px 28px", border: `1px solid ${T.border}` }}>
+      <div className="calc-card" style={{ background: T.bg, borderRadius: 3, padding: "24px 28px", border: `1px solid ${T.border}` }}>
         {children}
       </div>
       {/* Sources */}
@@ -122,7 +122,7 @@ function Slider({ min, max, step, value, onChange, label, formatValue }) {
 
 function OutputGrid({ items }) {
   return (
-    <div className={items.length >= 4 ? "grid-4col" : items.length === 3 ? "grid-3col" : undefined} style={{ display: "grid", gridTemplateColumns: `repeat(${items.length}, 1fr)`, gap: 12, marginTop: 20 }}>
+    <div className={items.length >= 4 ? "grid-4col" : items.length === 3 ? "grid-3col" : "grid-2col"} style={{ display: "grid", gridTemplateColumns: `repeat(${items.length}, 1fr)`, gap: 12, marginTop: 20 }}>
       {items.map((item) => (
         <div key={item.label} style={{ background: T.surface, borderRadius: 3, padding: "16px 14px", textAlign: "center", border: `1px solid ${T.border}` }}>
           <div style={{ fontFamily: fonts.mono, fontSize: 20, fontWeight: 700, color: T.accent, marginBottom: 4 }}>{item.value}</div>
@@ -172,7 +172,7 @@ function VineyardCalc() {
 
   return (
     <>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+      <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
         {[
           { label: "Tons per acre", value: tonsPerAcre, min: 1, max: 6, step: 0.5, set: setTonsPerAcre, fmt: v => `${v} t/ac` },
           { label: "Price per ton ($)", value: pricePerTon, min: 2000, max: 15000, step: 500, set: setPricePerTon, fmt: v => `$${v.toLocaleString()}` },
@@ -200,7 +200,7 @@ function VineyardCalc() {
 
       <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 20, paddingTop: 20 }}>
         <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted, marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>Per-Acre Grower Loss</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
+        <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
           <div style={{ background: T.surface, padding: "12px 14px", borderRadius: 3, border: `1px solid ${T.border}` }}>
             <div style={{ fontFamily: fonts.mono, fontSize: 22, color: T.accent, fontWeight: 700 }}>{fmt(netPerAcre)}</div>
             <div style={{ fontFamily: fonts.sans, fontSize: 12, color: T.muted }}>Net loss per acre (grower)</div>
@@ -240,7 +240,7 @@ function VineyardCalc() {
         )}
 
         {acresC > 0 && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
             <div style={{ background: T.surface, padding: "10px 12px", borderRadius: 3, border: `1px solid ${T.border}` }}>
               <div style={{ fontFamily: fonts.mono, fontSize: 16, color: T.accent, fontWeight: 700 }}>{fmt(replantTotal)}</div>
               <div style={{ fontFamily: fonts.sans, fontSize: 11, color: T.muted }}>Scenario C — Replant capital ({acresC.toLocaleString()} ac)</div>
