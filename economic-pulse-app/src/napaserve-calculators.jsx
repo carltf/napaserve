@@ -439,7 +439,7 @@ function SupplyShockCalc() {
       ]} />
 
       {/* SVG donut — every $1 of apparent growth */}
-      <div style={{ marginTop: 20, background: T.surface, borderRadius: 3, padding: "16px", border: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+      <div className="donut-chart-container" style={{ marginTop: 20, background: T.surface, borderRadius: 3, padding: "16px", border: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
         <div style={{ flexShrink: 0, minWidth: "30%" }}>
           <svg width={120} height={120} viewBox="0 0 120 120">
             <circle cx={cx} cy={cy} r={r} fill="none" stroke={T.gold} strokeWidth={stroke}
