@@ -95,7 +95,7 @@ export default function ValleyWorksPage() {
         {/* Three Pillars */}
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#8B5E3C", fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Our Priorities</div>
 
-        <div className="vw-pillars" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18, marginBottom: 32 }}>
+        <div className="vw-pillars" style={{ display: "grid", gap: 18, marginBottom: 32 }}>
           {PILLARS.map(p => (
             <div key={p.id} onClick={() => setActivePillar(activePillar === p.id ? null : p.id)} style={{
               background: activePillar === p.id ? `${p.color}18` : "#EDE8DE",

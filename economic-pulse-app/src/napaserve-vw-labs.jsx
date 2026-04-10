@@ -66,7 +66,7 @@ export default function VWLabsPage() {
         {/* Incubation Program */}
         <div style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Incubation Program</div>
-          <div className="vwl-steps" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+          <div className="vwl-steps" style={{ display: "grid", gap: 14 }}>
             {STEPS.map(s => (
               <div key={s.n} style={{ background: T.bg2, border: `1px solid ${T.rule}`, padding: "24px 22px" }}>
                 <div style={{ fontSize: 32, fontWeight: 700, color: T.gold, fontFamily: "'Libre Baskerville',Georgia,serif", lineHeight: 1, marginBottom: 10 }}>{s.n}</div>
@@ -80,7 +80,7 @@ export default function VWLabsPage() {
         {/* Focus Areas */}
         <div style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.accent, fontFamily: "'Source Sans 3',sans-serif", marginBottom: 16 }}>Focus Areas</div>
-          <div className="vwl-focus" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+          <div className="vwl-focus" style={{ display: "grid", gap: 14 }}>
             {FOCUS.map(f => (
               <div key={f.title} style={{ background: T.bg2, border: `1px solid ${T.rule}`, borderLeft: `3px solid ${T.gold}`, padding: "20px 22px" }}>
                 <h3 style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 16, fontWeight: 700, color: T.ink2, margin: "0 0 8px" }}>{f.title}</h3>
