@@ -52,4 +52,5 @@ button {
   .vwl-focus { grid-template-columns: 1fr !important; }
   .vwl-steps { grid-template-columns: 1fr !important; }
   .vw-pillars { grid-template-columns: 1fr !important; }
+  .kpi-grid { grid-template-columns: 1fr !important; }
 }

@@ -87,7 +87,7 @@ function Delta({c,p,s="",inv=false}){
 
 function KPI({label,value,delta}){
   return(
-    <div className="kpi-card-pulse" style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"16px 18px",flex:1,minWidth:140,minHeight:120}}>
+    <div className="kpi-card-pulse" style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"16px 18px",flex:1,minWidth:140,minHeight:120,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
       <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:8,fontFamily:"'Source Sans 3',sans-serif"}}>{label}</div>
       <div className="kpi-value" style={{fontSize:28,fontWeight:700,color:T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1,marginBottom:6}}>{value}</div>
       <div>{delta}</div>
@@ -97,7 +97,7 @@ function KPI({label,value,delta}){
 
 function StatCard({label,value,detail,accent}){
   return(
-    <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"16px 18px",flex:1,minWidth:130,minHeight:120}}>
+    <div style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"16px 18px",flex:1,minWidth:130,minHeight:120,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
       <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:T.dim,textTransform:"uppercase",marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{label}</div>
       <div style={{fontSize:26,fontWeight:700,color:accent||T.ink2,fontFamily:"'Libre Baskerville',Georgia,serif",lineHeight:1}}>{value}</div>
       {detail&&<div style={{fontSize:14,color:T.muted,marginTop:4,fontFamily:"'Source Sans 3',sans-serif"}}>{detail}</div>}
@@ -577,7 +577,7 @@ export default function EconomicPulseDashboard(){
             <h2 style={{fontFamily:"'Libre Baskerville',Georgia,serif",fontSize:24,fontWeight:700,color:T.ink2,margin:"0 0 4px"}}>Housing Market</h2>
             <p style={{fontSize:17,color:T.muted,margin:0}}>Zillow Home Value Index (ZHVI) — All homes, smoothed, county level</p>
           </div>
-          <div className="kpi-grid-housing" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24,overflow:"hidden"}}>
+          <div className="kpi-grid-housing kpi-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:24,alignItems:"stretch"}}>
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const ci=homes.length-1;const mom=ci>=4?homes[ci-4]:null;const yoy=ci>=52?homes[ci-52]:null;return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:140}}><KPI label="Avg Home Value" value={f$(latestE.home)} delta={<><Delta c={latestE.home} p={mom?.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>MoM</span>{yoy&&<><span style={{margin:"0 6px",color:T.rule}}>·</span><Delta c={latestE.home} p={yoy.home}/><span style={{fontSize:10,color:T.dim,marginLeft:4}}>YoY</span></>}</>}/></a>;})()}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const peak=Math.max(...homes.map(d=>d.home));const diff=latestE.home-peak;return diff!==0?<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="From Peak" value={f$(diff)} detail={`peak ${f$(peak)}`} accent={diff<0?T.neg:T.pos}/></a>:null;})()}
             {latestE?.home!=null&&(()=>{const homes=econData.filter(d=>d.home!=null);const idx=homes.findIndex(d=>d===latestE);const ago=homes[idx-12]||homes[0];if(!ago||ago===latestE)return null;const diff=latestE.home-ago.home;const pct=((diff/ago.home)*100).toFixed(1);return<a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer" aria-label="Zillow Research data, opens in new tab" style={{display:"block",textDecoration:"none",color:"inherit",flex:1,minWidth:120}}><StatCard label="YoY Change" value={f$(diff)} detail={`${diff>=0?"+":""}${pct}% from ${fMo(ago.date)}`} accent={diff>=0?T.pos:T.neg}/></a>;})()}
