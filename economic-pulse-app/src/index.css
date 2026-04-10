@@ -45,4 +45,5 @@ button {
     flex-direction: column !important;
     align-items: center !important;
   }
+  .vw-pillars { grid-template-columns: 1fr !important; }
 }

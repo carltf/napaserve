@@ -382,7 +382,7 @@ export default function EconomicPulseDashboard(){
               return rows.map((row,ri)=>(
                 <div key={ri} style={{marginBottom:ri<2?16:0}}>
                   <div style={{fontSize:11,fontWeight:700,letterSpacing:".16em",textTransform:"uppercase",color:T.dim,marginBottom:6,fontFamily:"'Source Sans 3',sans-serif"}}>{row.label}</div>
-                  <div className="kpi-grid-macro" style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(140px,1fr))",gap:8,overflowX:"auto",overflow:"hidden"}}>
+                  <div className="kpi-grid-macro" style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(160px,1fr))",gap:8,overflowX:"auto"}}>
                     {row.ids.map(id=>{
                       const m = byId[id];
                       if(!m) return <div key={id} style={{background:T.bg2,border:`1px solid ${T.rule}`,padding:"14px 16px",height:90}} />;
