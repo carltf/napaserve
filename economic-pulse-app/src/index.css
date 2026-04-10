@@ -45,5 +45,7 @@ button {
     flex-direction: column !important;
     align-items: center !important;
   }
+  .vwl-focus { grid-template-columns: 1fr !important; }
+  .vwl-steps { grid-template-columns: 1fr !important; }
   .vw-pillars { grid-template-columns: 1fr !important; }
 }
