@@ -95,11 +95,11 @@ async function downloadComponentPng(containerRef, filename, title) {
   const canvas = await html2canvas(containerRef.current, { scale: 2, useCORS: true, backgroundColor: T.bg });
   const off = document.createElement("canvas");
   off.width = canvas.width;
-  off.height = canvas.height + 48;
+  off.height = canvas.height + 80;
   const ctx = off.getContext("2d");
   ctx.fillStyle = T.bg;
   ctx.fillRect(0, 0, off.width, off.height);
-  ctx.drawImage(canvas, 0, 32);
+  ctx.drawImage(canvas, 0, 64);
   ctx.save(); ctx.globalAlpha = 1.0;
   ctx.font = "bold 32px 'Libre Baskerville', Georgia, serif";
   ctx.fillStyle = T.ink; ctx.textAlign = "left"; ctx.textBaseline = "top";
