@@ -101,13 +101,13 @@ async function downloadComponentPng(containerRef, filename, title) {
   ctx.fillRect(0, 0, off.width, off.height);
   ctx.drawImage(canvas, 0, 32);
   ctx.save(); ctx.globalAlpha = 1.0;
-  ctx.font = "bold 13px 'Libre Baskerville', Georgia, serif";
+  ctx.font = "bold 32px 'Libre Baskerville', Georgia, serif";
   ctx.fillStyle = T.ink; ctx.textAlign = "left"; ctx.textBaseline = "top";
-  ctx.fillText(title || "", 14, 10); ctx.restore();
+  ctx.fillText(title || "", 28, 16); ctx.restore();
   ctx.save(); ctx.globalAlpha = 0.25;
-  ctx.font = "11px 'Source Code Pro', monospace";
+  ctx.font = "26px 'Source Code Pro', monospace";
   ctx.fillStyle = T.muted; ctx.textAlign = "right"; ctx.textBaseline = "bottom";
-  ctx.fillText("napaserve.org", off.width - 12, off.height - 8); ctx.restore();
+  ctx.fillText("napaserve.org", off.width - 24, off.height - 16); ctx.restore();
   const a = document.createElement("a");
   a.href = off.toDataURL("image/png");
   a.download = filename;
