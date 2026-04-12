@@ -18,6 +18,7 @@ import UnderTheHoodGDP from "./under-the-hood-gdp-2024";
 import UnderTheHoodSupplyChain from "./napaserve-under-the-hood-supply-chain";
 import NapaPopulation from "./napaserve-under-the-hood-population";
 import NapaStructuralReset from "./under-the-hood-napa-structural-reset";
+import NapaPriceDiscovery from "./napaserve-under-the-hood-napa-price-discovery";
 import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="/under-the-hood/napa-supply-chain-2026" element={<UnderTheHoodSupplyChain />} />
         <Route path="/under-the-hood/napa-population-2025" element={<NapaPopulation />} />
         <Route path="/under-the-hood/napa-structural-reset-2026" element={<NapaStructuralReset />} />
+        <Route path="/under-the-hood/napa-price-discovery-2026" element={<NapaPriceDiscovery />} />
         <Route path="/under-the-hood/template" element={<UnderTheHoodTemplate />} />
         <Route path="/under-the-hood/calculators" element={<CalculatorsPage />} />
         <Route path="/events/digest" element={<DigestCuration />} />

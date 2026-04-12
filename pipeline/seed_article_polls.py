@@ -168,6 +168,44 @@ POLLS = [
             "It depends on the segment",
         ],
     },
+
+    # ── Napa Price Discovery 2026 ────────────────────────────────
+    {
+        "article_slug": "napa-price-discovery-2026",
+        "sort_order": 1,
+        "question": "What does the Benessere auction tell you about Napa winery real estate?",
+        "options": [
+            "Major correction confirmed",
+            "One data point, not a trend",
+            "Auction format distorts value",
+            "Italian varietals are a niche risk",
+            "Unsure — need more data",
+        ],
+    },
+    {
+        "article_slug": "napa-price-discovery-2026",
+        "sort_order": 2,
+        "question": "Which asset class concerns you most in Napa right now?",
+        "options": [
+            "Luxury hospitality (hotels/resorts)",
+            "Operating winery estates",
+            "Vineyard land",
+            "Wine brands without real estate",
+            "All equally",
+        ],
+    },
+    {
+        "article_slug": "napa-price-discovery-2026",
+        "sort_order": 3,
+        "question": "Is Napa's current repricing temporary or structural?",
+        "options": [
+            "Structural — won't fully recover",
+            "Structural but will stabilize",
+            "Temporary — demand will return",
+            "Too early to say",
+            "Depends on the asset class",
+        ],
+    },
 ]
 
 
