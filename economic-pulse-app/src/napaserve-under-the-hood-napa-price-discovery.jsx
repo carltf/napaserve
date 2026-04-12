@@ -313,67 +313,82 @@ function RepricingCalculator() {
   );
 }
 
-// ── PollsSection ─────────────────────────────────────────────────
-function PollsSection({ slug }) {
-  const [polls, setPolls] = useState([]);
-  const [votes, setVotes] = useState({});
-  const [submitted, setSubmitted] = useState({});
-
-  useEffect(() => {
-    fetch(`${WORKER}/api/article-polls?slug=${slug}`)
-      .then(r => r.json())
-      .then(data => setPolls(data || []))
-      .catch(() => {});
-  }, [slug]);
-
-  const vote = (pollId, optionIdx) => {
-    if (submitted[pollId]) return;
-    fetch(`${WORKER}/api/article-poll-vote`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ poll_id: pollId, option_index: optionIdx }),
-    }).then(() => {
-      setSubmitted(s => ({ ...s, [pollId]: optionIdx }));
-      setVotes(v => ({ ...v, [pollId]: (v[pollId] || []).map((c, i) => i === optionIdx ? c + 1 : c) }));
-    });
+// ── LivePoll + PollsSection (proven structural-reset pattern) ────
+function LivePoll({ poll }) {
+  const font = "'Source Sans 3', sans-serif";
+  const serif = "'Libre Baskerville', Georgia, serif";
+  const [voted, setVoted] = useState(null);
+  const [counts, setCounts] = useState(poll.counts || {});
+  const [total, setTotal] = useState(poll.total || 0);
+  const [loading, setLoading] = useState(false);
+  const vote = async (idx) => {
+    if (voted !== null || loading) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${WORKER}/api/article-poll-vote`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ poll_id: poll.id, option_index: idx }),
+      });
+      const data = await res.json();
+      if (data.success) { setCounts(data.counts); setTotal(data.total); setVoted(idx); }
+    } catch(e) {}
+    setLoading(false);
   };
-
-  if (!polls.length) return null;
-
   return (
-    <div style={{ marginTop: 40, marginBottom: 40 }}>
-      <h2 style={{ ...h2style, fontSize: 18, borderBottom: `2px solid ${T.border}`, paddingBottom: 8 }}>Reader Polls</h2>
-      {polls.map(poll => {
-        const totalVotes = (poll.vote_counts || []).reduce((a, b) => a + b, 0);
-        const isSubmitted = submitted[poll.id] !== undefined;
-        const localVotes = votes[poll.id] || poll.vote_counts || [];
+    <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 8, padding: "20px 20px 16px", marginBottom: 16 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 8px 0" }}>Poll</p>
+      <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: "0 0 14px 0", lineHeight: 1.4 }}>{poll.question}</p>
+      {poll.options.map((opt, idx) => {
+        const count = counts[idx] || 0;
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+        const isVoted = voted === idx;
         return (
-          <div key={poll.id} style={{ marginBottom: 24, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 16 }}>
-            <p style={{ fontFamily: "'Libre Baskerville', Georgia, serif", fontSize: 15, fontWeight: 700, color: T.ink, marginBottom: 12 }}>{poll.question}</p>
-            {poll.options.map((opt, i) => {
-              const count = localVotes[i] || 0;
-              const total = localVotes.reduce((a, b) => a + b, 0);
-              const pct = total > 0 ? Math.round(count / total * 100) : 0;
-              return (
-                <div key={i} style={{ marginBottom: 8 }}>
-                  {!isSubmitted ? (
-                    <button onClick={() => vote(poll.id, i)} style={{ width: "100%", textAlign: "left", padding: "8px 12px", border: `1px solid ${T.border}`, borderRadius: 4, background: T.bg, color: T.ink, cursor: "pointer", fontFamily: "'Source Sans 3', sans-serif", fontSize: 14 }}>
-                      {opt}
-                    </button>
-                  ) : (
-                    <div style={{ position: "relative", padding: "8px 12px", borderRadius: 4, overflow: "hidden", border: `1px solid ${submitted[poll.id] === i ? T.accent : T.border}` }}>
-                      <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${pct}%`, background: submitted[poll.id] === i ? T.accent + "33" : T.border + "66", transition: "width 0.5s" }} />
-                      <span style={{ position: "relative", fontFamily: "'Source Sans 3', sans-serif", fontSize: 14, color: T.ink }}>{opt}</span>
-                      <span style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", fontFamily: "'Source Sans 3', sans-serif", fontSize: 13, color: T.muted }}>{pct}%</span>
-                    </div>
-                  )}
+          <div key={idx} style={{ marginBottom: 8 }}>
+            {voted === null ? (
+              <button onClick={() => vote(idx)} disabled={loading}
+                style={{ width: "100%", textAlign: "center", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "9px 12px", fontFamily: font, fontSize: 14, color: T.ink, cursor: loading ? "default" : "pointer" }}>
+                {opt}
+              </button>
+            ) : (
+              <div style={{ position: "relative", overflow: "hidden", borderRadius: 4, border: `1px solid ${isVoted ? T.accent : T.border}` }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: pct + "%", background: isVoted ? "rgba(139,94,60,0.15)" : "rgba(139,94,60,0.06)", transition: "width 0.5s ease" }} />
+                <div style={{ position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 12px" }}>
+                  <span style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: isVoted ? 600 : 400 }}>{opt}</span>
+                  <span style={{ fontFamily: font, fontSize: 13, color: T.muted, marginLeft: 12, whiteSpace: "nowrap" }}>{pct}%</span>
                 </div>
-              );
-            })}
-            {isSubmitted && <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 12, color: T.muted, marginTop: 6 }}>{(localVotes.reduce((a, b) => a + b, 0))} votes</p>}
+              </div>
+            )}
           </div>
         );
       })}
+      {voted !== null && <p style={{ fontFamily: font, fontSize: 12, color: T.muted, margin: "10px 0 0 0" }}>{total} {total === 1 ? "vote" : "votes"} · Results update in real time</p>}
+    </div>
+  );
+}
+
+function PollsSection({ slug }) {
+  const font = "'Source Sans 3', sans-serif";
+  const serif = "'Libre Baskerville', Georgia, serif";
+  const [polls, setPolls] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch(`${WORKER}/api/article-polls?slug=${slug}`)
+      .then(r => r.json())
+      .then(data => { setPolls(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [slug]);
+  if (loading) return <div style={{ padding: "24px 0", fontFamily: font, fontSize: 14, color: T.muted }}>Loading polls...</div>;
+  if (!polls.length) return null;
+  return (
+    <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>{"Today\u2019s Polls"}</p>
+      <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 20px 0" }}>What do you think?</h2>
+      {polls.map(poll => <LivePoll key={poll.id} poll={poll} />)}
+      <p style={{ fontFamily: font, fontSize: 12, color: T.muted, marginTop: 8, lineHeight: 1.5 }}>
+        Poll results are anonymous and stored on NapaServe. Results shown after you vote.{" "}
+        Historical reader polls from Napa Valley Features are searchable in the{" "}
+        <a href="/dashboard" style={{ color: T.accent }}>Community Pulse dashboard</a>.
+      </p>
     </div>
   );
 }
