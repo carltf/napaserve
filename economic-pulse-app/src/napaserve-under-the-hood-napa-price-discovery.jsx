@@ -83,7 +83,7 @@ const SOURCES = [
   { label: "Napa Valley Features — 'Under the Hood: How a Global Supply Shock Reaches Napa Valley' (Apr 2, 2026)", url: "https://napaserve.org/under-the-hood/napa-supply-chain-2026" },
   { label: "Napa Valley Features — 'Under the Hood: 2025 Napa Grape Prices Slip After a Record High' (Mar 19, 2026)", url: "https://napaserve.org/under-the-hood/napa-cab-2025" },
   { label: "Napa Valley Features — 'Napa's Economy Looks Bigger Than It Is' (Mar 24, 2026)", url: "https://napaserve.org/under-the-hood/napa-gdp-2024" },
-  { label: "Pat Delong, Azur Associates — wine/vineyard market size cited in SFC Trinchero reporting", url: "https://www.sfchronicle.com" },
+  { label: "SF Chronicle — 'California wine titan Trinchero selling two Napa vineyards' (Lander, Feb 2026)", url: "https://www.sfchronicle.com/food/wine/article/trinchero-vineyards-sale-21360518.php" },
   { label: "Concierge Auctions — Villa San Juliette, Paso Robles auction result, Aug 2025", url: "https://www.conciergeauctions.com" },
   { label: "MGG Investment Group — Spring Mountain Vineyard bankruptcy acquisition (SF Chronicle)", url: "https://www.sfchronicle.com/food/wine/article/cain-vineyards-winery-spring-mountain-22094636.php" },
   { label: "Napa Valley Features — 'Wine Chronicles: Benessere Vineyards' Vision' (Nov 2025)", url: "https://napavalleyfocus.substack.com/p/wine-chronicles-living-well-differently" },
