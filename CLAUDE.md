@@ -17,8 +17,8 @@ NEVER save .html files from TextEdit — silently wipes content
 html2canvas uses scale:2 — ALL drawn text must be at 2x intended display size:
 - Title: bold 32px (renders as 16px), x=28, y=16, color T.ink, globalAlpha 1.0
 - Watermark: 26px Source Code Pro (renders as 13px), bottom-right, globalAlpha 0.25
-- off.height = canvas.height + 48
-- ctx.drawImage(canvas, 0, 32)
+- Bare canvas charts: off.height = canvas.height + 48, ctx.drawImage(canvas, 0, 32)
+- Bordered/padded components (html2canvas): off.height = canvas.height + 80, ctx.drawImage(canvas, 0, 64)
 - napaserve.org watermark on all chart downloads
 - Download button must be OUTSIDE containerRef div — sibling not child
 
