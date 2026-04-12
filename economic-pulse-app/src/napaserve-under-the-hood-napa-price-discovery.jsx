@@ -68,7 +68,7 @@ const POLLS = [
 ];
 
 const SOURCES = [
-  { label: "Napa County deed records — Stanly Ranch foreclosure, Mar 27, 2026", url: "https://www.countyofnapa.org/186/Assessor-Recorder-County-Clerk" },
+  { label: "Napa County deed records — Stanly Ranch foreclosure, Mar 27, 2026", url: "https://www.napacounty.gov/186/Assessor-Recorder-County-Clerk" },
   { label: "SF Chronicle — 'Napa luxury resort snapped up by New York firm in foreclosure sale'", url: "https://www.sfchronicle.com" },
   { label: "SF Chronicle — 'Fire-ravaged Napa Valley winery snapped up by S.F. investment firm'", url: "https://www.sfchronicle.com" },
   { label: "SF Chronicle — 'This maverick Napa Valley winery couldn't sell. Now, it's headed for auction'", url: "https://www.sfchronicle.com" },
@@ -86,6 +86,7 @@ const SOURCES = [
   { label: "Pat Delong, Azur Associates — wine/vineyard market size cited in SFC Trinchero reporting", url: "https://www.sfchronicle.com" },
   { label: "Concierge Auctions — Villa San Juliette, Paso Robles auction result, Aug 2025", url: "https://www.conciergeauctions.com" },
   { label: "MGG Investment Group — Spring Mountain Vineyard bankruptcy acquisition", url: "https://www.sfchronicle.com" },
+  { label: "Napa Valley Features — 'Wine Chronicles: Benessere Vineyards' Vision' (Nov 2025)", url: "https://napavalleyfocus.substack.com/p/wine-chronicles-living-well-differently" },
 ];
 
 // ── Download helper ──────────────────────────────────────────────
@@ -454,6 +455,9 @@ export default function NapaUnderHoodPriceDiscovery() {
           When the Price Gives Way
         </h1>
 
+        {/* Byline */}
+        <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 15, color: T.muted, marginBottom: 16 }}>By Tim Carl</p>
+
         {/* Deck */}
         <p style={{ fontFamily: "'Libre Baskerville', Georgia, serif", fontSize: 18, color: T.muted, lineHeight: 1.6, marginBottom: 24, fontStyle: "italic" }}>
           Three Napa wine-industry assets have moved through the market in ways that expose a widening gap between what sellers expected and what buyers were willing to pay. Together, they mark the first legible pattern of asset-level repricing across Napa's wine and hospitality economy.
@@ -518,7 +522,7 @@ export default function NapaUnderHoodPriceDiscovery() {
           Work through the implied discount range. Against the original $35 million asking price, the expected opening bid range represents a 66% to 77% discount. Against the most recent $28 million asking price, it represents a 57% to 71% discount. Even if competitive bidding pushes the final sale price well above the opening range, the gap from original asking price to auction expectation is wide enough to constitute its own market signal.
         </p>
         <p style={{ ...prose }}>
-          The Benessere estate includes roughly 29 acres of planted vines — Sangiovese as the flagship, alongside Sagrantino, Pinot Grigio, Aglianico and Falanghina, varietals rarely found elsewhere in Napa Valley — a working winery, a tasting room and two residences totaling more than 6,300 square feet of living space. The Benish family acquired the property in 1994 for $1.5 million after Charles Shaw, the brand behind Trader Joe's Two Buck Chuck, filed for bankruptcy. The family made the estate's focus on Italian varieties its identity. "If my dad were still around, I'm sure we'd still be going strong," John Benish told the San Francisco Chronicle. "We love the place, but I think in any big family, it's hard to get a consensus about what you want to do for the future."
+          The Benessere estate includes roughly 29 acres of planted vines — Sangiovese as the flagship, alongside Sagrantino, Pinot Grigio, Aglianico and Falanghina, varietals rarely found elsewhere in Napa Valley — a working winery, a tasting room and two residences totaling more than 6,300 square feet of living space. The Benish family acquired the property in 1994 for $1.5 million after Charles Shaw, the brand behind Trader Joe's Two Buck Chuck, filed for bankruptcy. The family made the estate's focus on Italian varieties its identity. "If my dad were still around, I'm sure we'd still be going strong," John Benish told the San Francisco Chronicle. <a href="https://napavalleyfocus.substack.com/p/wine-chronicles-living-well-differently" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Read the full Benessere profile on Napa Valley Features →</a> "We love the place, but I think in any big family, it's hard to get a consensus about what you want to do for the future."
         </p>
         <p style={{ ...prose }}>
           The Benessere auction is not an isolated case. In 2025, Villa San Juliette, a 160-acre estate in Paso Robles, followed a nearly identical path: originally listed at $22 million in 2022, reduced to roughly $14.75 million, then sent to auction with no minimum bid. It sold in August 2025 for $8.8 million — a 60% discount from its original asking price. Concierge's Leonard acknowledged the pattern directly, saying he expects more wineries will pursue the auction route as the conventional real estate market for wine estates remains slow. According to food and beverage consultant Pat Delong of Azur Associates, the market for wine and vineyard sales in 2026 is on pace to be less than half the size it was in 2021, when roughly $3.5 billion in assets changed hands.
@@ -528,7 +532,7 @@ export default function NapaUnderHoodPriceDiscovery() {
         <h2 style={h2style}>The Broader Pattern</h2>
 
         <p style={{ ...prose }}>
-          These transactions do not exist in isolation. As documented in "Under the Hood: The Reset Spreads" (April 9, 2026), Napa's structural adjustment has moved beyond wine production into the broader visitor economy. The same issue's contraction timeline showed three named hospitality closures — Charlie Palmer Steak, Chateau Buena Vista and the JCB Tasting Salon in Yountville — in a four-month window, each handled as a repositioning, none described as a crisis. E. &amp; J. Gallo announced the permanent closure of The Ranch Winery in St. Helena effective April 15, eliminating 93 positions across five North Coast sites. Trinchero Family Wine &amp; Spirits listed two premium mountain vineyards — Haystack on Atlas Peak at $5.5 million and Clouds Nest on Mount Veeder at $4.5 million — two months after acquiring Mumm Napa from Pernod Ricard, a simultaneous pruning and deployment that reflects the portfolio logic of a structural reset.
+          These transactions do not exist in isolation. As documented in <a href="/under-the-hood/napa-structural-reset-2026" style={{ color: T.accent }}>"Under the Hood: The Reset Spreads"</a> (April 9, 2026), Napa's structural adjustment has moved beyond wine production into the broader visitor economy. The same issue's contraction timeline showed three named hospitality closures — Charlie Palmer Steak, Chateau Buena Vista and the JCB Tasting Salon in Yountville — in a four-month window, each handled as a repositioning, none described as a crisis. E. &amp; J. Gallo announced the permanent closure of The Ranch Winery in St. Helena effective April 15, eliminating 93 positions across five North Coast sites. Trinchero Family Wine &amp; Spirits listed two premium mountain vineyards — Haystack on Atlas Peak at $5.5 million and Clouds Nest on Mount Veeder at $4.5 million — two months after acquiring Mumm Napa from Pernod Ricard, a simultaneous pruning and deployment that reflects the portfolio logic of a structural reset.
         </p>
         <p style={{ ...prose }}>
           The pattern across Cain, Stanly Ranch and Benessere represents three different expressions of the same underlying condition: assets that were priced for an era of expanding demand, low-cost capital and rising brand multiples are now being repriced for a market where demand has plateaued, capital is more expensive and the exit options are narrower than sellers anticipated. The hospitality asset repriced through foreclosure. The winery brand repriced through separation from its land. The vineyard estate is repricing through the auction mechanism. Different paths, the same direction.
