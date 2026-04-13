@@ -317,8 +317,19 @@ export default function DigestCuration() {
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: T.gold, marginBottom: 8 }}>Napa Valley Features</div>
             <h1 style={{ fontFamily: serif, fontSize: 28, fontWeight: 700, color: T.ink, margin: 0, lineHeight: 1.2 }}>The Napa Valley Weekender</h1>
             <p style={{ fontSize: 15, color: T.muted, marginTop: 8, lineHeight: 1.5 }}>
-              Review upcoming events, edit the intro, and send the weekly digest to subscribers.
+              Review upcoming events, edit the intro, and send the weekly digest to NapaServe subscribers.
             </p>
+            <div style={{ marginTop: 16, padding: '12px 16px', background: T.surface, borderLeft: '3px solid #C4A050', fontSize: 13, color: '#5A4A3A', lineHeight: 1.7 }}>
+              <strong style={{ display: 'block', marginBottom: 4, color: '#2C1810' }}>How this works:</strong>
+              1. Click Generate Draft — pulls upcoming approved events from the database.<br/>
+              2. Review events, toggle any in or out, edit the intro paragraph.<br/>
+              3. Click "Send Preview to info@napaserve.com" — sends a test email to your inbox only.<br/>
+              4. Check your inbox. When satisfied, click the live send button.<br/>
+              5. The live send button shows the exact subscriber count and requires Step 3 to be completed first.
+            </div>
+            <div style={{ marginTop: 8, fontSize: 11, color: T.muted, letterSpacing: '.05em' }}>
+              v2 — Two-step send · Preview gate · Subscriber count warning
+            </div>
           </div>
 
           {/* Generate button */}
