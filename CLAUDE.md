@@ -1,11 +1,19 @@
 # NapaServe — Claude Code Reference
-Last updated: April 12, 2026
+Last updated: April 13, 2026
 
 ## Directory & Commands
 - Repo: ~/Desktop/napaserve
 - Launch: cd ~/Desktop/napaserve && source .env && claude
 - Build: cd economic-pulse-app && npm run build 2>&1 | tail -8
 - Deploy: git add -A && git commit -m "message" && git push
+
+## Critical Rules
+- ctx.waitUntil() is required for ALL background async operations in Cloudflare Worker — without it Cloudflare kills background fetches when the response is sent
+- CoveragePanel component (src/components/CoveragePanel.jsx) is the single source of truth for coverage display — never duplicate inline in agent or evaluator
+- SECONDARY_SOURCES must be updated in BOTH coverageUtils.js (React) AND worker.js (Cloudflare) when adding a new category
+- agent.html at repo root is a REDIRECT ONLY — route is /agent (napaserve-agent.jsx)
+- Research Agent API route: /api/rag-answer — NOT /api/claude (404)
+- All Anthropic API calls use callAnthropicWithRetry() — 3 retries on 529 with linear backoff
 
 ## Worker Deploy — CRITICAL
 open -a TextEdit ~/Desktop/napaserve/economic-pulse-app/src/worker.js
@@ -79,11 +87,32 @@ LIVE: napa-cab-2025, sonoma-cab-2025, lake-county-cab-2025, napa-gdp-2024,
       napa-supply-chain-2026, napa-structural-reset-2026, napa-price-discovery-2026
 DRAFT: napa-population-2025 (5 open flags — do not publish)
 
+## Key File Locations
+- src/utils/coverageUtils.js — SECONDARY_SOURCES, classifyQuery(), coverageSignal() — shared by Agent + Evaluator
+- src/components/CoveragePanel.jsx — Archive Coverage indicator + Official & Regional Sources UI
+
 ## Key Tables
 - napaserve_articles: slug, headline, published, polls_seeded, admin_cards_added, related_coverage_added, topic_seed
 - napaserve_article_polls: article polls (IDs 1-26 used)
 - community_events: status='approved', description NOT NULL, has submitter_name/email/phone
 - nvf_posts: 1000+ NVF articles with substack_url — always query for confirmed URLs
+- coverage_gaps: query, category, tier (low/medium/strong), chunk_count, top_similarity, asked_at
+
+## Cloudflare Worker Secrets (all must be present)
+- ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_KEY
+- SUPABASE_KEY — service role key — was missing until April 13, 2026; caused coverage_gaps logging to fail silently
+
+## GitHub Actions
+- poll_pipeline.yml now has 4 jobs: classify-polls, subscriber-digest, events-digest, coverage-gaps-digest (NEW April 13)
+- coverage-gaps-digest: queries coverage_gaps last 7 days, posts tier breakdown to Slack every Monday
+
+## Agent UX Rules
+- Error message pattern: "The CI Agent is temporarily busy — please try again in a moment. (error type)"
+- Scroll: only scroll to bottom on assistant reply — never on user message submit (useEffect on role === assistant)
+
+## Evaluator Rules
+- Disclaimer: "Community Intelligence (CI)-generated" (not "AI-generated")
+- Error messages aligned with agent pattern
 
 ## Architecture Rules
 - NavBar.jsx and Footer.jsx: single shared components — never redefine inline
