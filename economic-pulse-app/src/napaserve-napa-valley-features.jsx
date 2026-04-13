@@ -11,17 +11,6 @@ const SUBSTACK_API = "https://misty-bush-fc93.tfcarl.workers.dev/substack/archiv
 const SUPABASE_URL = "https://csenpchwxxepdvjebsrt.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ";
 
-// RSS-to-JSON for ticker headlines
-const NEWS_SOURCES = [
-  { id: "caltrib", name: "Calistoga Tribune", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://calistogatribune.com/feed&count=5", color: "#8B5E3C" },
-  { id: "ytsun", name: "Yountville Sun", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://yountvillesun.com/feed&count=5", color: "#7EB8A4" },
-  { id: "nctimes", name: "Napa County Times", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://napacountytimes.com/feed&count=5", color: "#9B8EC4" },
-  { id: "patch", name: "Napa Patch", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://patch.com/california/napa/rss&count=5", color: "#8A3A2A" },
-  { id: "register", name: "NV Register", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://napavalleyregister.com/search/?f=rss&t=article&l=10&s=start_time&sd=desc&count=5", color: "#8B7355" },
-  { id: "pressdem", name: "Press Democrat", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://www.pressdemocrat.com/recent/rss&count=5", color: "#C8A96E" },
-  { id: "sfchron", name: "SF Chronicle", feed: "https://api.rss2json.com/v1/api.json?rss_url=https://www.sfchronicle.com/bayarea/feed/Bay-Area-News-702702.php&count=5", color: "#7A6A50" },
-];
-
 const CATEGORIES = [
   { key: "all", label: "All Stories" },
   { key: "policy", label: "Policy & Government" },
@@ -141,26 +130,6 @@ export default function NapaValleyFeatures() {
       } finally {
         setLoading(false);
       }
-    })();
-  }, []);
-
-  // Fetch ticker headlines
-  useEffect(() => {
-    (async () => {
-      const all = [];
-      for (const src of NEWS_SOURCES) {
-        try {
-          const res = await fetch(src.feed);
-          const data = await res.json();
-          if (data.status === "ok" && data.items) {
-            data.items.slice(0, 5).forEach(item => {
-              all.push({ title: item.title, link: item.link, pubDate: item.pubDate, source: src.name, sourceColor: src.color });
-            });
-          }
-        } catch { /* skip */ }
-      }
-      all.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-      setHeadlines(all);
     })();
   }, []);
 
