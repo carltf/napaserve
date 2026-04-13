@@ -47,6 +47,27 @@ function formatResponse(text) {
     .replace(/\n/g, '<br>');
 }
 
+function coverageSignal(sources) {
+  if (!sources || sources.length === 0) return null;
+  const count = sources.length;
+  const years = sources
+    .map(s => s.published_at ? new Date(s.published_at).getFullYear() : null)
+    .filter(Boolean);
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+  const yearRange = minYear === maxYear ? `${minYear}` : `${minYear}–${maxYear}`;
+  const avgSimilarity = sources.reduce((a, s) => a + (s.similarity || 0), 0) / count;
+  let tier, dot, color;
+  if (count >= 5 && avgSimilarity >= 0.6) {
+    tier = 'Strong'; dot = '●'; color = '#5A7A50';
+  } else if (count >= 3 || avgSimilarity >= 0.5) {
+    tier = 'Moderate'; dot = '◐'; color = '#8B6914';
+  } else {
+    tier = 'Thin'; dot = '○'; color = '#8A3A2A';
+  }
+  return { count, yearRange, tier, dot, color };
+}
+
 export default function AgentPage() {
   const [messages, setMessages] = useState([]);
   const [input, setInput]       = useState('');
@@ -210,6 +231,20 @@ export default function AgentPage() {
                       ))}
                     </div>
                   )}
+                  {(() => {
+                    const cov = coverageSignal(m.sources);
+                    if (!cov) return null;
+                    return (
+                      <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid rgba(44,24,16,0.08)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#8B7355' }}>Archive Coverage</span>
+                        <span style={{ fontSize: 12, color: '#8B7355', marginLeft: 4 }}>
+                          {cov.dot} <span style={{ color: cov.color, fontWeight: 600 }}>{cov.tier}</span>
+                          {' · '}{cov.count} {cov.count === 1 ? 'source' : 'sources'}
+                          {' · '}{cov.yearRange}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             ))}
