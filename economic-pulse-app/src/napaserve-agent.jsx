@@ -56,7 +56,12 @@ export default function AgentPage() {
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
 
-  useEffect(() => { if (messages.length > 0) { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); } }, [messages, loading]);
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (last?.role === 'assistant') {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 700);
     window.addEventListener('resize', handler);
