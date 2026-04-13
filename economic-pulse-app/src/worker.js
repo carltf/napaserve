@@ -364,6 +364,26 @@ Answer in 2–4 focused paragraphs. Be specific: cite article titles or dates wh
     const category = classifyQuery(query.trim());
     const secondarySources = category ? SECONDARY_SOURCES[category] : [];
 
+    // Log to coverage_gaps — non-blocking
+    const tier = chunks.length >= 5 ? 'strong' : chunks.length >= 3 ? 'medium' : 'low';
+    const topSimilarity = chunks.length > 0 ? Math.max(...chunks.map(c => c.similarity || 0)) : 0;
+    fetch(`${env.SUPABASE_URL}/rest/v1/coverage_gaps`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': env.SUPABASE_KEY,
+        'Authorization': `Bearer ${env.SUPABASE_KEY}`,
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({
+        query: query.trim(),
+        category: category || 'uncategorized',
+        tier,
+        chunk_count: chunks.length,
+        top_similarity: topSimilarity,
+      }),
+    }).catch(() => {}); // silently ignore errors
+
     return json({ answer, sources, secondarySources, query: query.trim() }, 200, request);
   } catch (e) {
     console.error("RAG answer failed:", e);
