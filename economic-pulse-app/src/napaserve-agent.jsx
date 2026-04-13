@@ -109,7 +109,7 @@ export default function AgentPage() {
       const reply = data.answer || 'No response generated.';
       const sources = (data.sources || [])
         .filter(s => s.title && s.substack_url)
-        .map(s => ({ title: s.title, url: s.substack_url, date: s.published_at }));
+        .map(s => ({ title: s.title, url: s.substack_url, date: s.published_at, similarity: s.similarity }));
       setMessages(prev => [...prev, { role: 'assistant', content: reply, sources }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'The CI Agent is temporarily busy — please try again in a moment. (' + e.message + ')' }]);
