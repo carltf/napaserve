@@ -301,7 +301,7 @@ async function callAnthropicWithRetry(payload, apiKey, maxRetries = 3) {
   throw new Error(`Anthropic API error ${lastStatus} after ${maxRetries} retries`);
 }
 
-async function handleRagAnswer(request, env) {
+async function handleRagAnswer(request, env, ctx) {
   let body;
   try {
     body = await request.json();
@@ -367,22 +367,25 @@ Answer in 2–4 focused paragraphs. Be specific: cite article titles or dates wh
     // Log to coverage_gaps — non-blocking
     const tier = chunks.length >= 5 ? 'strong' : chunks.length >= 3 ? 'medium' : 'low';
     const topSimilarity = chunks.length > 0 ? Math.max(...chunks.map(c => c.similarity || 0)) : 0;
-    fetch(`${env.SUPABASE_URL}/rest/v1/coverage_gaps`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': env.SUPABASE_KEY,
-        'Authorization': `Bearer ${env.SUPABASE_KEY}`,
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify({
-        query: query.trim(),
-        category: category || 'uncategorized',
-        tier,
-        chunk_count: chunks.length,
-        top_similarity: topSimilarity,
-      }),
-    }).catch(() => {}); // silently ignore errors
+    ctx.waitUntil(
+      fetch(`${env.SUPABASE_URL}/rest/v1/coverage_gaps`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': env.SUPABASE_KEY,
+          'Authorization': `Bearer ${env.SUPABASE_KEY}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({
+          query: query.trim(),
+          category: category || 'uncategorized',
+          tier,
+          chunk_count: chunks.length,
+          top_similarity: topSimilarity,
+        }),
+      }).then(r => { if (!r.ok) r.text().then(t => console.error('coverage_gaps HTTP', r.status, t)); })
+        .catch(e => console.error('coverage_gaps fetch error:', e.message))
+    );
 
     return json({ answer, sources, secondarySources, query: query.trim() }, 200, request);
   } catch (e) {
@@ -1105,7 +1108,7 @@ async function handleEventsSearch(request, env) {
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     // Handle CORS preflight
@@ -1158,7 +1161,7 @@ export default {
 
     // ── API routes ─────────────────────────────────────────────────────────
     if (url.pathname === "/api/health") {
-      return json({ status: "ok", service: "napaserve-worker", ts: Date.now() }, 200, request);
+      return json({ status: "ok", service: "napaserve-worker", ts: Date.now(), hasServiceKey: !!env.SUPABASE_KEY, hasSupabaseUrl: !!env.SUPABASE_URL, supabaseUrlPrefix: (env.SUPABASE_URL || '').slice(0, 30) }, 200, request);
     }
 
     if (url.pathname === "/api/rag-search" && request.method === "POST") {
@@ -1166,7 +1169,7 @@ export default {
     }
 
     if (url.pathname === "/api/rag-answer" && request.method === "POST") {
-      return handleRagAnswer(request, env);
+      return handleRagAnswer(request, env, ctx);
     }
 
     if (url.pathname === "/api/fred" && request.method === "GET") {
