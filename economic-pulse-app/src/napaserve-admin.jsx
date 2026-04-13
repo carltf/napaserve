@@ -847,7 +847,7 @@ function EventModeration({ token }) {
 
       {!loading && events.length === 0 && (
         <div style={{ background: T.surface, borderRadius: 8, padding: '24px', textAlign: 'center', color: T.muted, fontFamily: font, fontSize: 14 }}>
-          \u2713 All caught up \u2014 no pending events
+          ✓ All caught up — no pending events
         </div>
       )}
 
