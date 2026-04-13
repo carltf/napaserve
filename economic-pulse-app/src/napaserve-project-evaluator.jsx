@@ -358,12 +358,12 @@ export default function ProjectEvaluator() {
         body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 3000, messages: [{ role: "user", content: fullPrompt }] }),
       });
       const data = await res.json();
-      const text = data.content?.[0]?.text || "No response generated.";
+      const text = data.content?.[0]?.text || "The CI Agent is temporarily busy — please try again in a moment.";
       setReportText(text);
       setReportHtml(renderReportToHtml(text));
       setNvfSourcesForPanel(archiveChunks || []);
     } catch (err) {
-      setReportErr("Failed to connect: " + err.message);
+      setReportErr("The CI Agent is temporarily busy — please try again in a moment. (Error: " + err.message + ")");
     }
     setGenerating(false); setGeneratingStatus("");
   };
@@ -629,7 +629,7 @@ export default function ProjectEvaluator() {
             )}
 
             <div style={{ marginTop: 16, background: "var(--bg2)", border: "1px solid var(--rule)", borderLeft: "3px solid var(--dim)", padding: "12px 16px" }}>
-              <p style={{ fontSize: 11, color: "var(--dim)", lineHeight: 1.7 }}>This report is AI-generated using the Jobs · People · Place framework and is intended as a discussion document — not a final determination or official recommendation. NapaServe and the Valley Works Collaborative are not liable for decisions made based on this output.</p>
+              <p style={{ fontSize: 11, color: "var(--dim)", lineHeight: 1.7 }}>This report is Community Intelligence (CI)-generated using the Jobs · People · Place framework and is intended as a discussion document — not a final determination or official recommendation. NapaServe and the Valley Works Collaborative are not liable for decisions made based on this output.</p>
             </div>
           </div>
         </div>
