@@ -51,7 +51,7 @@ function coverageSignal(sources) {
   if (!sources || sources.length === 0) return null;
   const count = sources.length;
   const years = sources
-    .map(s => s.published_at ? new Date(s.published_at).getFullYear() : null)
+    .map(s => (s.date || s.published_at) ? new Date(s.date || s.published_at).getFullYear() : null)
     .filter(Boolean);
   const minYear = Math.min(...years);
   const maxYear = Math.max(...years);
