@@ -693,6 +693,16 @@ function ArticleCard({ article, token, published = true, onPublished }) {
         {article.deck}
       </p>
 
+      {article.publishedAt ? (
+        <div style={{ fontSize: 12, color: '#8B7355', marginBottom: 8 }}>
+          Published {new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+        </div>
+      ) : (
+        <div style={{ fontSize: 12, color: '#C4A050', fontWeight: 600, marginBottom: 8 }}>
+          DRAFT — not yet published
+        </div>
+      )}
+
       <a href={`/under-the-hood/${article.slug}`}
         style={{ fontFamily: mono, fontSize: 11, color: T.muted, textDecoration: "none", display: "block", marginBottom: 16 }}>
         View article {"\u2192"}
@@ -720,7 +730,8 @@ function ArticleCard({ article, token, published = true, onPublished }) {
             }
             setPublishing(false);
           }}
-          style={{ ...btnBase, background: T.accent, color: "#fff", display: "block", width: "100%", marginBottom: 10, opacity: publishing ? 0.7 : 1 }}
+          title="Publish this article to napaserve.org"
+          style={{ ...btnBase, background: '#8B6914', color: "#fff", display: "block", width: "100%", marginBottom: 10, opacity: publishing ? 0.7 : 1 }}
         >
           {publishing ? "Publishing\u2026" : "Publish Article"}
         </button>
@@ -1090,18 +1101,27 @@ export default function NapaServeAdmin() {
         <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, marginBottom: 20 }}>Publish Under the Hood articles to @valleyworkscollab.bsky.social. Select an article, optionally upload a chart image, then post directly to BlueSky. Each article can only be posted once.</p>
 
         {/* Recent articles — full cards */}
-        {ARTICLES.filter(a => isRecent(a.publishedAt)).map(article => {
-          const dbRow = dbArticles && dbArticles.find(a => a.slug === article.slug);
-          return (
-            <ArticleCard
-              key={article.slug}
-              article={article}
-              token={token}
-              published={dbRow ? dbRow.published : true}
-              onPublished={fetchArticles}
-            />
-          );
-        })}
+        {ARTICLES
+          .filter(a => isRecent(a.publishedAt))
+          .sort((a, b) => {
+            // Drafts (null publishedAt) always first
+            if (!a.publishedAt && b.publishedAt) return -1;
+            if (a.publishedAt && !b.publishedAt) return 1;
+            // Then most recent first
+            return new Date(b.publishedAt) - new Date(a.publishedAt);
+          })
+          .map(article => {
+            const dbRow = dbArticles && dbArticles.find(a => a.slug === article.slug);
+            return (
+              <ArticleCard
+                key={article.slug}
+                article={article}
+                token={token}
+                published={dbRow ? dbRow.published : true}
+                onPublished={fetchArticles}
+              />
+            );
+          })}
 
         {/* Archived articles — compact link rows */}
         {ARTICLES.filter(a => !isRecent(a.publishedAt)).length > 0 && (
