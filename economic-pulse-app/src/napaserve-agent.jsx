@@ -110,7 +110,8 @@ export default function AgentPage() {
       const sources = (data.sources || [])
         .filter(s => s.title && s.substack_url)
         .map(s => ({ title: s.title, url: s.substack_url, date: s.published_at, similarity: s.similarity }));
-      setMessages(prev => [...prev, { role: 'assistant', content: reply, sources }]);
+      const secondarySources = data.secondarySources || [];
+      setMessages(prev => [...prev, { role: 'assistant', content: reply, sources, secondarySources }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'The CI Agent is temporarily busy — please try again in a moment. (' + e.message + ')' }]);
     } finally {
@@ -245,6 +246,18 @@ export default function AgentPage() {
                       </div>
                     );
                   })()}
+                  {m.secondarySources && m.secondarySources.length > 0 && (
+                    <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid rgba(44,24,16,0.08)' }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 6 }}>Official & Regional Sources</div>
+                      {m.secondarySources.map((s, i) => (
+                        <div key={i} style={{ fontSize: 13, marginBottom: 4 }}>
+                          <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: '#3A88A0', textDecoration: 'none', fontWeight: 500 }}>
+                            ↗ {s.label}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

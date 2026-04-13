@@ -200,6 +200,86 @@ async function handleRagSearch(request, env) {
   }
 }
 
+const SECONDARY_SOURCES = {
+  'housing': [
+    { label: 'Napa County Housing Element', url: 'https://www.countyofnapa.org/2245/Housing-Element' },
+    { label: 'CA Dept. of Housing & Community Development', url: 'https://www.hcd.ca.gov/' },
+    { label: 'Zillow Napa Market Data', url: 'https://www.zillow.com/napa-ca/home-values/' },
+  ],
+  'water': [
+    { label: 'Napa County Watershed Information', url: 'https://www.countyofnapa.org/1427/Watershed-Information-Center' },
+    { label: 'State Water Resources Control Board', url: 'https://www.waterboards.ca.gov/' },
+    { label: 'Napa County Flood Control', url: 'https://www.countyofnapa.org/182/Flood-Control-Water-Conservation' },
+  ],
+  'land_use': [
+    { label: 'Napa County General Plan', url: 'https://www.countyofnapa.org/1041/General-Plan' },
+    { label: 'Napa County Planning Commission', url: 'https://www.countyofnapa.org/1042/Planning-Commission' },
+    { label: 'City of Napa Planning Division', url: 'https://www.cityofnapa.org/313/Planning' },
+  ],
+  'wine': [
+    { label: 'CDFA Grape Crush Report', url: 'https://www.cdfa.ca.gov/Statistics/PDFs/2024Grape_Crush.pdf' },
+    { label: 'Wine Institute CA Data', url: 'https://wineinstitute.org/our-industry/statistics/' },
+    { label: 'Napa Valley Vintners', url: 'https://napavintners.com/napa-valley/facts-figures/' },
+  ],
+  'workforce': [
+    { label: 'EDD Napa County Labor Market', url: 'https://labormarketinfo.edd.ca.gov/county/napa.html' },
+    { label: 'Napa Valley Community Foundation', url: 'https://www.napavalleycf.org/' },
+    { label: 'Napa County Workforce Development', url: 'https://www.countyofnapa.org/1706/Workforce-Development' },
+  ],
+  'tourism': [
+    { label: 'Visit Napa Valley Industry Data', url: 'https://www.visitnapavalley.com/industry/' },
+    { label: 'CA Tourism Research', url: 'https://industry.visitcalifornia.com/research' },
+    { label: 'Napa County TOT Data', url: 'https://www.countyofnapa.org/169/Treasurer-Tax-Collector' },
+  ],
+  'agriculture': [
+    { label: 'CDFA Napa County Ag Report', url: 'https://www.cdfa.ca.gov/Statistics/' },
+    { label: 'Napa County Ag Commissioner', url: 'https://www.countyofnapa.org/175/Agricultural-Commissioner' },
+    { label: 'UC Cooperative Extension Napa', url: 'https://ucanr.edu/sites/napamg/' },
+  ],
+  'safety': [
+    { label: 'Napa County OES', url: 'https://www.countyofnapa.org/1165/Office-of-Emergency-Services' },
+    { label: 'CAL FIRE Napa Unit', url: 'https://www.fire.ca.gov/incidents/' },
+    { label: 'Napa County Sheriff', url: 'https://www.countyofnapa.org/188/Sheriff' },
+  ],
+  'economy': [
+    { label: 'Napa County Economic Development', url: 'https://www.countyofnapa.org/1706/Workforce-Development' },
+    { label: 'FRED Napa MSA Data', url: 'https://fred.stlouisfed.org/release/tables?rid=454&eid=784071' },
+    { label: 'CA Dept. of Finance County Profiles', url: 'https://dof.ca.gov/forecasting/demographics/estimates/' },
+  ],
+  'health': [
+    { label: 'Napa County Public Health', url: 'https://www.countyofnapa.org/1115/Public-Health' },
+    { label: 'Napa Valley Community Health', url: 'https://www.nvch.org/' },
+    { label: 'CA Dept. of Public Health', url: 'https://www.cdph.ca.gov/' },
+  ],
+  'education': [
+    { label: 'Napa Valley Unified School District', url: 'https://www.nvusd.org/' },
+    { label: 'Napa Valley College', url: 'https://www.napavalley.edu/' },
+    { label: 'CA Dept. of Education Napa', url: 'https://www.cde.ca.gov/' },
+  ],
+  'government': [
+    { label: 'Napa County Board of Supervisors', url: 'https://www.countyofnapa.org/1007/Board-of-Supervisors' },
+    { label: 'City of Napa', url: 'https://www.cityofnapa.org/' },
+    { label: 'CA State Legislature', url: 'https://leginfo.legislature.ca.gov/' },
+  ],
+};
+
+function classifyQuery(query) {
+  const q = query.toLowerCase();
+  if (/housing|afford|rent|home|apartment|residential|hcd/.test(q)) return 'housing';
+  if (/water|watershed|flood|drought|groundwater|creek|river/.test(q)) return 'water';
+  if (/land use|zoning|general plan|parcel|planning|permit|development/.test(q)) return 'land_use';
+  if (/wine|winery|vineyard|cab|cabernet|vintage|tasting|bottle|dtc/.test(q)) return 'wine';
+  if (/grape|crush|viticulture|harvest|farming|grower|vineyard/.test(q)) return 'agriculture';
+  if (/workforce|job|employ|wage|labor|worker|hire|career/.test(q)) return 'workforce';
+  if (/tourism|hotel|lodging|visitor|hospitality|tasting room|travel/.test(q)) return 'tourism';
+  if (/wildfire|fire|emergency|safety|sheriff|crime|police/.test(q)) return 'safety';
+  if (/economy|economic|gdp|revenue|fiscal|budget|tax|business/.test(q)) return 'economy';
+  if (/health|hospital|mental|wellness|medical|clinic/.test(q)) return 'health';
+  if (/school|education|college|student|youth|family|child/.test(q)) return 'education';
+  if (/government|policy|supervisor|council|ordinance|regulation|law/.test(q)) return 'government';
+  return null;
+}
+
 async function callAnthropicWithRetry(payload, apiKey, maxRetries = 3) {
   let lastStatus = 0;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -281,7 +361,10 @@ Answer in 2–4 focused paragraphs. Be specific: cite article titles or dates wh
       excerpt: (c.chunk_text || "").slice(0, 280) + "…",
     }));
 
-    return json({ answer, sources, query: query.trim() }, 200, request);
+    const category = classifyQuery(query.trim());
+    const secondarySources = category ? SECONDARY_SOURCES[category] : [];
+
+    return json({ answer, sources, secondarySources, query: query.trim() }, 200, request);
   } catch (e) {
     console.error("RAG answer failed:", e);
     return err(`Answer generation failed: ${e.message}`, 502, request);
