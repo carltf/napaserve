@@ -86,7 +86,7 @@ export default function AgentPage() {
         .map(s => ({ title: s.title, url: s.substack_url, date: s.published_at }));
       setMessages(prev => [...prev, { role: 'assistant', content: reply, sources }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error — please try again. (' + e.message + ')' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'The CI Agent is temporarily busy — please try again in a moment. (' + e.message + ')' }]);
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 80);
