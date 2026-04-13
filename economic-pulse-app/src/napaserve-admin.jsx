@@ -16,6 +16,7 @@ const T = {
   muted:   "#8B7355",
   border:  "#D4C4A8",
   body:    "#5C4033",
+  rule:    "rgba(44,24,16,0.12)",
 };
 
 const serif = "'Libre Baskerville', serif";
@@ -28,48 +29,56 @@ const ARTICLES = [
     headline: "The Reset Spreads",
     deck: "Closures are moving beyond wineries into Napa\u2019s visitor economy. Transactions are becoming more defensive. The regional footprint is contracting \u2014 quietly, and across systems.",
     slug: "napa-structural-reset-2026",
+    publishedAt: "2026-04-04",
   },
   {
     publication: "Napa Valley Features",
     headline: "Under the Hood: The Pattern Holds \u2014 and the Numbers Get More Telling",
     deck: "Napa County added 709 residents in 2024 \u2014 but 90% came from one city. Strip out American Canyon and the rest of the county gained 70 people. Twenty-five years of data point to the same structural condition.",
     slug: "napa-population-2025",
+    publishedAt: null,
   },
   {
     publication: "Napa Valley Features",
     headline: "How a Global Supply Shock Reaches Napa Valley",
     deck: "War with Iran has cut Hormuz tanker traffic 94%. This traces the supply chain from the strait to the Napa farm gate \u2014 and shows why the local economy has less cushion than the numbers suggest.",
     slug: "napa-supply-chain-2026",
+    publishedAt: "2026-03-27",
   },
   {
     publication: "Napa Valley Features",
     headline: "Napa Cabernet Prices Break the Growth Curve",
     deck: "The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years \u2014 the first such decline in the modern data series.",
     slug: "napa-cab-2025",
+    publishedAt: "2026-03-19",
   },
   {
     publication: "Sonoma County Features",
     headline: "Sonoma Grape Prices Fall for a Second Year",
     deck: "Sonoma County\u2019s weighted average grape price declined for the second consecutive year in 2025, with cabernet sauvignon leading the drop.",
     slug: "sonoma-cab-2025",
+    publishedAt: "2026-03-21",
   },
   {
     publication: "Lake County Features",
     headline: "Lake County Grape Prices Have Fallen 38% in Two Years",
     deck: "Lake County\u2019s weighted average grape price has dropped 38% since 2023, with chardonnay prices collapsing 70% in two years.",
     slug: "lake-county-cab-2025",
+    publishedAt: "2026-03-21",
   },
   {
     publication: "Napa Valley Features",
     headline: "Napa\u2019s Economy Looks Bigger Than It Is",
     deck: "Nominal GDP rose 35.8% since 2016. Real GDP grew 4.6%. Of the apparent $3.84 billion in growth, 87% was inflation \u2014 and the jobs engine has stalled.",
     slug: "napa-gdp-2024",
+    publishedAt: "2026-03-24",
   },
   {
     publication: "Napa Valley Features",
     headline: "When the Price Gives Way",
     deck: "Three Napa wine-industry assets have moved through the market in ways that expose a widening gap between what sellers expected and what buyers were willing to pay. Together, they mark the first legible pattern of asset-level repricing across Napa\u2019s wine and hospitality economy.",
     slug: "napa-price-discovery-2026",
+    publishedAt: "2026-04-12",
   },
 ];
 
@@ -573,6 +582,31 @@ function bskyWebUrl(uri) {
 
 // ─── BlueSky Card ─────────────────────────────────────────────────────────────
 
+function isRecent(publishedAt) {
+  if (!publishedAt) return true; // drafts always show full card
+  const fourWeeksAgo = new Date();
+  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
+  return new Date(publishedAt) >= fourWeeksAgo;
+}
+
+function ArchivedArticleRow({ article }) {
+  const pubDate = article.publishedAt
+    ? new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', background: '#EDE8DE', borderRadius: 6, marginBottom: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', color: '#8B7355' }}>{article.publication?.toUpperCase()}</span>
+        <a href={`https://napaserve.org/under-the-hood/${article.slug}`} target="_blank" rel="noopener noreferrer"
+          style={{ fontFamily: "'Libre Baskerville',serif", fontSize: 14, fontWeight: 600, color: '#2C1810', textDecoration: 'none' }}>
+          {article.headline}
+        </a>
+      </div>
+      <span style={{ fontSize: 12, color: '#8B7355', whiteSpace: 'nowrap', marginLeft: 16 }}>{pubDate}</span>
+    </div>
+  );
+}
+
 function ArticleCard({ article, token, published = true, onPublished }) {
   const [state, setState] = useState("idle"); // idle | preview | posting | success | error
   const [postUri, setPostUri] = useState(null);
@@ -1008,86 +1042,76 @@ export default function NapaServeAdmin() {
   return (
     <div style={{ background: T.bg, minHeight: "100vh" }}>
       <NavBar />
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "48px 24px 60px" }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 80px' }}>
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-          <div>
-            <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: T.gold, marginBottom: 8 }}>
-              Valley Works Collaborative {"\u00B7"} NapaServe
-            </div>
-            <h1 style={{ fontFamily: serif, fontSize: 32, fontWeight: 700, color: T.ink, margin: 0 }}>
-              Admin
-            </h1>
-            <p style={{ fontFamily: font, fontSize: 17, fontWeight: 300, color: T.muted, margin: "8px 0 0" }}>
-              Publisher & Operations Tools
-            </p>
-          </div>
-          <button onClick={handleLogout} style={{
-            fontFamily: mono, fontSize: 11, color: T.muted, background: "transparent",
-            border: "none", cursor: "pointer", padding: "4px 0", marginTop: 4,
-          }}>
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: T.gold, marginBottom: 8 }}>VALLEY WORKS COLLABORATIVE · NAPASERVE</p>
+          <h1 style={{ fontFamily: serif, fontSize: 32, fontWeight: 700, color: T.ink, margin: '0 0 6px' }}>Admin</h1>
+          <p style={{ fontSize: 15, color: T.muted, margin: 0 }}>Publisher and operations tools for NapaServe.</p>
+          <button onClick={() => { sessionStorage.removeItem('admin_token'); window.location.reload(); }}
+            style={{ position: 'absolute', top: 80, right: 24, background: 'none', border: 'none', fontSize: 13, color: T.muted, cursor: 'pointer', fontFamily: font }}>
             Sign out
           </button>
         </div>
 
-        <div style={{ borderTop: `1px solid ${T.border}`, margin: "24px 0 32px" }} />
+        <div style={{ borderTop: `1px solid ${T.rule}`, marginBottom: 32 }} />
 
-        {/* Admin Tool Cards */}
-        <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: T.gold, marginBottom: 6 }}>
-          Admin Tools
-        </div>
-        <p style={{ fontFamily: font, fontSize: 14, color: T.muted, margin: "0 0 20px" }}>
-          Internal tools for NapaServe operations
-        </p>
+        {/* ── ADMIN TOOLS ── */}
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: T.muted, marginBottom: 4 }}>ADMIN TOOLS</p>
+        <p style={{ fontSize: 13, color: T.muted, marginBottom: 20 }}>Internal tools for managing NapaServe operations.</p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20, marginBottom: 40 }}>
-          {/* Weekly Digest card */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: "24px 20px" }}>
-            <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: T.gold, marginBottom: 8 }}>Weekly Digest</div>
-            <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, marginBottom: 8 }}>The Napa Valley Weekender</div>
-            <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.5, margin: "0 0 16px" }}>
-              Review, format and send the weekly Weekender email to subscribers.
-            </p>
-            <button onClick={() => navigate("/events/digest")} style={{
-              fontFamily: font, fontSize: 13, fontWeight: 600, color: "#fff",
-              background: T.accent, border: "none", padding: "8px 20px", cursor: "pointer",
-            }}>
-              Open Digest Tool
-            </button>
-          </div>
-
+        {/* Weekly Digest card */}
+        <div style={{ background: T.surface, border: `1px solid ${T.rule}`, borderRadius: 8, padding: '20px 24px', marginBottom: 12 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: T.gold, marginBottom: 6 }}>WEEKLY DIGEST</p>
+          <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: '0 0 8px' }}>The Napa Valley Weekender</h2>
+          <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, marginBottom: 4 }}>Sends to NapaServe subscribers. Steps: (1) Open the Digest Tool. (2) Click Generate Draft to pull upcoming approved events. (3) Toggle events in or out, edit the intro. (4) Send a preview to info@napaserve.com first. (5) When satisfied, send to all subscribers.</p>
+          <button onClick={() => navigate('/events/digest')}
+            style={{ marginTop: 12, background: T.accent, color: '#fff', border: 'none', borderRadius: 6, padding: '9px 20px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: font }}>
+            Open Digest Tool
+          </button>
         </div>
 
-        {/* Event Moderation */}
+        <div style={{ borderTop: `1px solid ${T.rule}`, margin: '28px 0' }} />
+
+        {/* ── EVENT MODERATION ── */}
         <EventModeration token={token} />
 
-        {/* Event Intake */}
+        <div style={{ borderTop: `1px solid ${T.rule}`, margin: '28px 0' }} />
+
+        {/* ── EVENT INTAKE ── */}
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: T.muted, marginBottom: 4 }}>EVENT INTAKE</p>
+        <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, marginBottom: 16 }}>Paste any public event URL and Claude will extract the event details and add it directly to the community events database. Use this to seed events from Eventbrite, winery websites, or other local sources.</p>
         <EventIntake />
 
-        <div style={{ borderTop: `1px solid ${T.border}`, margin: "0 0 32px" }} />
+        <div style={{ borderTop: `1px solid ${T.rule}`, margin: '28px 0' }} />
 
-        {/* BlueSky Publisher section */}
-        <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: T.gold, marginBottom: 6 }}>
-          BlueSky Publisher
-        </div>
-        <p style={{ fontFamily: font, fontSize: 14, color: T.muted, margin: "0 0 24px" }}>
-          Post Under the Hood articles to @valleyworkscollab.bsky.social
-        </p>
+        {/* ── BLUESKY PUBLISHER ── */}
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: T.muted, marginBottom: 4 }}>BLUESKY PUBLISHER</p>
+        <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, marginBottom: 20 }}>Publish Under the Hood articles to @valleyworkscollab.bsky.social. Select an article, optionally upload a chart image, then post directly to BlueSky. Each article can only be posted once.</p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
-          {ARTICLES.map(article => {
-            const dbRow = dbArticles && dbArticles.find(a => a.slug === article.slug);
-            return (
-              <ArticleCard
-                key={article.slug}
-                article={article}
-                token={token}
-                published={dbRow ? dbRow.published : true}
-                onPublished={fetchArticles}
-              />
-            );
-          })}
-        </div>
+        {/* Recent articles — full cards */}
+        {ARTICLES.filter(a => isRecent(a.publishedAt)).map(article => {
+          const dbRow = dbArticles && dbArticles.find(a => a.slug === article.slug);
+          return (
+            <ArticleCard
+              key={article.slug}
+              article={article}
+              token={token}
+              published={dbRow ? dbRow.published : true}
+              onPublished={fetchArticles}
+            />
+          );
+        })}
+
+        {/* Archived articles — compact link rows */}
+        {ARTICLES.filter(a => !isRecent(a.publishedAt)).length > 0 && (
+          <div style={{ marginTop: 24 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: T.muted, marginBottom: 10 }}>ARCHIVED — OLDER THAN 4 WEEKS</p>
+            {ARTICLES.filter(a => !isRecent(a.publishedAt)).map(a => (
+              <ArchivedArticleRow key={a.slug} article={a} />
+            ))}
+          </div>
+        )}
       </div>
       <Footer />
     </div>
