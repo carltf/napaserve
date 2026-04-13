@@ -1161,7 +1161,7 @@ export default {
 
     // ── API routes ─────────────────────────────────────────────────────────
     if (url.pathname === "/api/health") {
-      return json({ status: "ok", service: "napaserve-worker", ts: Date.now(), hasServiceKey: !!env.SUPABASE_KEY, hasSupabaseUrl: !!env.SUPABASE_URL, supabaseUrlPrefix: (env.SUPABASE_URL || '').slice(0, 30) }, 200, request);
+      return json({ status: "ok", service: "napaserve-worker", ts: Date.now() }, 200, request);
     }
 
     if (url.pathname === "/api/rag-search" && request.method === "POST") {
