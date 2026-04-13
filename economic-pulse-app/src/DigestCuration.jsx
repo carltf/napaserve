@@ -63,6 +63,8 @@ export default function DigestCuration() {
   const [totalEvents, setTotalEvents] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const [fetchExhausted, setFetchExhausted] = useState(false);
+  const [previewSent, setPreviewSent] = useState(false);
+  const [subscriberCount, setSubscriberCount] = useState(null);
   const formatAbort = useRef(null);
 
   const formatEventAsync = useCallback(async (ev) => {
@@ -126,6 +128,15 @@ export default function DigestCuration() {
       for (const ev of data.skyEvents || []) skyInc[ev.id] = true;
       setSkyIncluded(skyInc);
       setDateRange({ start: data.date_range_start || "", end: data.date_range_end || "" });
+
+      // Fetch subscriber count for send warning
+      try {
+        const subRes = await fetch('https://csenpchwxxepdvjebsrt.supabase.co/rest/v1/napaserve_subscribers?select=email&unsubscribed=is.null', {
+          headers: { 'apikey': 'sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ', 'Authorization': 'Bearer sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ' }
+        });
+        const subs = await subRes.json();
+        setSubscriberCount(Array.isArray(subs) ? subs.length : null);
+      } catch { setSubscriberCount(null); }
 
       // Auto-format all events
       if (loadedEvents.length > 0) {
@@ -221,6 +232,36 @@ export default function DigestCuration() {
 
   const deselectAll = () => {
     setIncluded({});
+  };
+
+  const sendPreview = async () => {
+    const selectedIds = Object.entries(included).filter(([, v]) => v).map(([k]) => Number(k));
+    const selectedSkyIds = Object.entries(skyIncluded).filter(([, v]) => v).map(([k]) => Number(k));
+    if (selectedIds.length === 0 && selectedSkyIds.length === 0) { setError('Select at least one event'); return; }
+    setSending(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/digest-send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          draft_id: draftId,
+          ai_intro: aiIntro,
+          event_ids: selectedIds,
+          sky_event_ids: selectedSkyIds,
+          preview_only: true,
+          preview_email: 'info@napaserve.com',
+          formatted_events: events.reduce((acc, ev) => { if (ev.formatted) acc[ev.id] = ev.formatted; return acc; }, {}),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Preview failed');
+      setPreviewSent(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSending(false);
+    }
   };
 
   const sendDigest = async () => {
@@ -506,25 +547,67 @@ export default function DigestCuration() {
 
               {/* Send button */}
               {!sent && (
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <button
-                    onClick={sendDigest}
-                    disabled={sending || selectedCount === 0}
-                    style={{
-                      background: selectedCount === 0 ? T.muted : T.ink,
-                      color: T.bg, border: "none", padding: "12px 28px",
-                      fontSize: 13, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase",
-                      cursor: sending || selectedCount === 0 ? "not-allowed" : "pointer", fontFamily: font,
-                    }}
-                  >
-                    {sending ? "Sending\u2026" : `Send to Subscribers (${selectedCount} events)`}
-                  </button>
-                  <button
-                    onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setSkyEvents([]); setSkyIncluded({}); setAiIntro(""); setSent(false); setEventLimit(5); setHasMore(false); setFetchExhausted(false); }}
-                    style={{ background: "none", border: `1px solid ${T.rule}`, padding: "10px 20px", fontSize: 13, color: T.muted, cursor: "pointer", fontFamily: font }}
-                  >
-                    Start Over
-                  </button>
+                <div style={{ marginTop: 8 }}>
+                  {/* Step 1 — Send preview */}
+                  {!previewSent && (
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: T.muted, marginBottom: 8 }}>
+                        Step 1 — Send preview to info@napaserve.com
+                      </div>
+                      <button
+                        onClick={sendPreview}
+                        disabled={sending || selectedCount === 0}
+                        style={{ background: T.surface, color: T.ink, border: `1px solid ${T.rule}`, padding: '10px 24px', fontSize: 13, fontWeight: 600, cursor: sending || selectedCount === 0 ? 'not-allowed' : 'pointer', fontFamily: font, marginRight: 12 }}
+                      >
+                        {sending ? 'Sending preview…' : 'Send Preview to info@napaserve.com'}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Step 1 complete */}
+                  {previewSent && !sent && (
+                    <div style={{ fontSize: 13, color: '#5A7A50', fontWeight: 600, marginBottom: 16 }}>
+                      ✓ Preview sent to info@napaserve.com — check your inbox before sending live.
+                    </div>
+                  )}
+
+                  {/* Step 2 — Send live (only active after preview sent) */}
+                  <div style={{ marginBottom: 20 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: previewSent ? T.muted : '#C0B8B0', marginBottom: 8 }}>
+                      Step 2 — Send to all subscribers
+                    </div>
+                    {subscriberCount !== null && previewSent && (
+                      <div style={{ fontSize: 13, color: '#8A3A2A', fontWeight: 600, background: 'rgba(138,58,42,0.07)', border: '1px solid rgba(138,58,42,0.2)', padding: '10px 14px', borderRadius: 6, marginBottom: 12 }}>
+                        ⚠ This will send to {subscriberCount.toLocaleString()} subscribers. This cannot be undone.
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <button
+                        onClick={sendDigest}
+                        disabled={sending || selectedCount === 0 || !previewSent}
+                        style={{
+                          background: !previewSent ? '#C0B8B0' : selectedCount === 0 ? T.muted : '#8A3A2A',
+                          color: T.bg,
+                          border: 'none',
+                          padding: '12px 28px',
+                          fontSize: 13,
+                          fontWeight: 700,
+                          letterSpacing: '.1em',
+                          textTransform: 'uppercase',
+                          cursor: sending || selectedCount === 0 || !previewSent ? 'not-allowed' : 'pointer',
+                          fontFamily: font,
+                        }}
+                      >
+                        {sending ? 'Sending…' : `Send to ${subscriberCount ? subscriberCount.toLocaleString() : ''} Subscribers (${selectedCount} events)`}
+                      </button>
+                      <button
+                        onClick={() => { setDraftId(null); setEvents([]); setIncluded({}); setSkyEvents([]); setSkyIncluded({}); setAiIntro(''); setSent(false); setEventLimit(5); setHasMore(false); setFetchExhausted(false); setPreviewSent(false); setSubscriberCount(null); }}
+                        style={{ background: 'none', border: `1px solid ${T.rule}`, padding: '10px 20px', fontSize: 13, color: T.muted, cursor: 'pointer', fontFamily: font }}
+                      >
+                        Start Over
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </>
