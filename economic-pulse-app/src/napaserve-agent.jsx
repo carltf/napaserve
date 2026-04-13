@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import NavBar from './NavBar';
 import Footer from './Footer';
+import CoveragePanel from './components/CoveragePanel';
 
 const WORKER = 'https://misty-bush-fc93.tfcarl.workers.dev';
 
@@ -45,27 +46,6 @@ function formatResponse(text) {
     .replace(/\n\n/g, '</p><p style=\"margin:0 0 10px\">')
     .replace(/\n- /g, '</p><li style=\"margin:0 0 4px\">')
     .replace(/\n/g, '<br>');
-}
-
-function coverageSignal(sources) {
-  if (!sources || sources.length === 0) return null;
-  const count = sources.length;
-  const years = sources
-    .map(s => (s.date || s.published_at) ? new Date(s.date || s.published_at).getFullYear() : null)
-    .filter(Boolean);
-  const minYear = Math.min(...years);
-  const maxYear = Math.max(...years);
-  const yearRange = minYear === maxYear ? `${minYear}` : `${minYear}–${maxYear}`;
-  const avgSimilarity = sources.reduce((a, s) => a + (s.similarity || 0), 0) / count;
-  let tier, dot, color;
-  if (count >= 5 && avgSimilarity >= 0.6) {
-    tier = 'Strong'; dot = '●'; color = '#5A7A50';
-  } else if (count >= 3 || avgSimilarity >= 0.5) {
-    tier = 'Moderate'; dot = '◐'; color = '#8B6914';
-  } else {
-    tier = 'Thin'; dot = '○'; color = '#8A3A2A';
-  }
-  return { count, yearRange, tier, dot, color };
 }
 
 export default function AgentPage() {
@@ -232,32 +212,7 @@ export default function AgentPage() {
                       ))}
                     </div>
                   )}
-                  {(() => {
-                    const cov = coverageSignal(m.sources);
-                    if (!cov) return null;
-                    return (
-                      <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid rgba(44,24,16,0.08)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#8B7355' }}>Archive Coverage</span>
-                        <span style={{ fontSize: 12, color: '#8B7355', marginLeft: 4 }}>
-                          {cov.dot} <span style={{ color: cov.color, fontWeight: 600 }}>{cov.tier}</span>
-                          {' · '}{cov.count} {cov.count === 1 ? 'source' : 'sources'}
-                          {' · '}{cov.yearRange}
-                        </span>
-                      </div>
-                    );
-                  })()}
-                  {m.secondarySources && m.secondarySources.length > 0 && (
-                    <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid rgba(44,24,16,0.08)' }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 6 }}>Official & Regional Sources</div>
-                      {m.secondarySources.map((s, i) => (
-                        <div key={i} style={{ fontSize: 13, marginBottom: 4 }}>
-                          <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: '#3A88A0', textDecoration: 'none', fontWeight: 500 }}>
-                            ↗ {s.label}
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <CoveragePanel sources={m.sources} query={messages[i - 1]?.content} />
                 </div>
               </div>
             ))}

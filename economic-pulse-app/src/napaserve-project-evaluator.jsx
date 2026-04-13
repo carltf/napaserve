@@ -3,6 +3,7 @@ import Footer from "./Footer";
 import { Link } from "react-router-dom";
 import NavBar from "./NavBar";
 import { buildRagContext } from "./hooks/useRag";
+import CoveragePanel from './components/CoveragePanel';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FRAMEWORK
@@ -253,6 +254,7 @@ export default function ProjectEvaluator() {
   const [reportHtml, setReportHtml] = useState(null);
   const [reportErr, setReportErr] = useState(null);
   const [nvfSources, setNvfSources] = useState([]);
+  const [nvfSourcesForPanel, setNvfSourcesForPanel] = useState([]);
 
   const WORKER_RAG_URL = "https://misty-bush-fc93.tfcarl.workers.dev/api/rag-search";
 
@@ -359,6 +361,7 @@ export default function ProjectEvaluator() {
       const text = data.content?.[0]?.text || "No response generated.";
       setReportText(text);
       setReportHtml(renderReportToHtml(text));
+      setNvfSourcesForPanel(archiveChunks || []);
     } catch (err) {
       setReportErr("Failed to connect: " + err.message);
     }
@@ -617,6 +620,7 @@ export default function ProjectEvaluator() {
                     })}
                   </div>
                 )}
+                <CoveragePanel sources={nvfSourcesForPanel} query={projName + ' ' + projDesc} />
                 </div>
               </div>
             )}
