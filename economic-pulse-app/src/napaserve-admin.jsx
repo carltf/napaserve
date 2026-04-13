@@ -765,6 +765,129 @@ function ArticleCard({ article, token, published = true, onPublished }) {
   );
 }
 
+// ─── Event Moderation ────────────────────────────────────────────────────────
+
+function EventModeration({ token }) {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [actionMsg, setActionMsg] = useState('');
+
+  useEffect(() => { loadEvents(); }, []);
+
+  async function loadEvents() {
+    setLoading(true);
+    try {
+      const sbRes = await fetch(
+        'https://csenpchwxxepdvjebsrt.supabase.co/rest/v1/community_events?status=eq.pending&order=submitted_at.desc&select=id,title,description,event_date,town,category,venue_name,address,website_url,submitter_name,submitter_email,submitted_at,price_info&limit=50',
+        { headers: { 'apikey': 'sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ', 'Authorization': 'Bearer sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ' } }
+      );
+      const data = await sbRes.json();
+      setEvents(Array.isArray(data) ? data : []);
+    } catch(e) { setEvents([]); }
+    setLoading(false);
+  }
+
+  function completeness(ev) {
+    const missing = [];
+    if (!ev.description || ev.description.length < 20) missing.push('description');
+    if (!ev.event_date) missing.push('date');
+    if (!ev.venue_name) missing.push('venue');
+    if (!ev.town) missing.push('town');
+    return missing;
+  }
+
+  async function approve(id) {
+    const res = await fetch(`${WORKER}/api/admin-approve-event`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      setEvents(prev => prev.filter(e => e.id !== id));
+      setActionMsg('\u2713 Event approved');
+      setTimeout(() => setActionMsg(''), 3000);
+    }
+  }
+
+  async function reject(id) {
+    if (!window.confirm('Reject and delete this event?')) return;
+    const res = await fetch(`${WORKER}/api/admin-reject-event`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      setEvents(prev => prev.filter(e => e.id !== id));
+      setActionMsg('\u2717 Event rejected');
+      setTimeout(() => setActionMsg(''), 3000);
+    }
+  }
+
+  const S = {
+    card: { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', marginBottom: 12 },
+    title: { fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, marginBottom: 4 },
+    meta: { fontFamily: font, fontSize: 12, color: T.muted, marginBottom: 6 },
+    desc: { fontFamily: font, fontSize: 13, color: T.body, lineHeight: 1.5, marginBottom: 8 },
+    warning: { fontSize: 11, fontWeight: 700, color: '#8A3A2A', background: 'rgba(138,58,42,0.08)', padding: '3px 8px', borderRadius: 4, display: 'inline-block', marginBottom: 8 },
+    link: { fontSize: 12, color: '#3A88A0', textDecoration: 'none' },
+    btnRow: { display: 'flex', gap: 8, marginTop: 10 },
+    approve: { background: '#5A7A50', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: font },
+    reject: { background: 'rgba(138,58,42,0.1)', color: '#8A3A2A', border: '1px solid rgba(138,58,42,0.3)', borderRadius: 6, padding: '6px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: font },
+  };
+
+  return (
+    <div style={{ marginTop: 32 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        <h2 style={{ fontFamily: serif, fontSize: 18, color: T.ink, margin: 0 }}>Event Moderation</h2>
+        {!loading && <span style={{ fontFamily: font, fontSize: 13, color: T.muted }}>{events.length} pending</span>}
+        {actionMsg && <span style={{ fontSize: 13, fontWeight: 600, color: actionMsg.startsWith('\u2713') ? '#5A7A50' : '#8A3A2A' }}>{actionMsg}</span>}
+      </div>
+
+      {loading && <p style={{ color: T.muted, fontFamily: font, fontSize: 14 }}>Loading pending events\u2026</p>}
+
+      {!loading && events.length === 0 && (
+        <div style={{ background: T.surface, borderRadius: 8, padding: '24px', textAlign: 'center', color: T.muted, fontFamily: font, fontSize: 14 }}>
+          \u2713 All caught up \u2014 no pending events
+        </div>
+      )}
+
+      {events.map(ev => {
+        const missing = completeness(ev);
+        const date = ev.event_date ? new Date(ev.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'No date';
+        const submitted = ev.submitted_at ? ev.submitted_at.slice(0, 10) : '';
+        return (
+          <div key={ev.id} style={S.card}>
+            <div style={S.title}>{ev.title}</div>
+            <div style={S.meta}>
+              {date} {"\u00B7"} {ev.town || 'No town'} {"\u00B7"} {ev.category || 'No category'}
+              {ev.venue_name ? ` \u00B7 ${ev.venue_name}` : ''}
+            </div>
+            <div style={S.meta}>
+              Submitted {submitted} by {ev.submitter_name || 'Unknown'} \u2014 {ev.submitter_email || 'No email'}
+            </div>
+            {missing.length > 0 && (
+              <div style={S.warning}>\u26A0 Missing: {missing.join(', ')}</div>
+            )}
+            {ev.description && (
+              <div style={S.desc}>{ev.description.slice(0, 200)}{ev.description.length > 200 ? '\u2026' : ''}</div>
+            )}
+            {ev.website_url && (
+              <div style={{ marginBottom: 8 }}>
+                <a href={ev.website_url} target="_blank" rel="noopener noreferrer" style={S.link}>\u2197 {ev.website_url}</a>
+              </div>
+            )}
+            {ev.price_info && <div style={S.meta}>Price: {ev.price_info}</div>}
+            <div style={S.btnRow}>
+              <button style={S.approve} onClick={() => approve(ev.id)}>Approve</button>
+              <button style={S.reject} onClick={() => reject(ev.id)}>Reject</button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Main Admin Page ──────────────────────────────────────────────────────────
 
 export default function NapaServeAdmin() {
@@ -934,6 +1057,9 @@ export default function NapaServeAdmin() {
           </div>
 
         </div>
+
+        {/* Event Moderation */}
+        <EventModeration token={token} />
 
         {/* Event Intake */}
         <EventIntake />

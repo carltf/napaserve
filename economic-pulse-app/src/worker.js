@@ -1105,6 +1105,38 @@ async function handleEventsSearch(request, env) {
   }
 }
 
+// ─── Event moderation handlers ──────────────────────────────────────────────
+
+async function handleApproveEvent(request, env) {
+  const authorized = await requireAdminToken(request, env);
+  if (!authorized) return err('Unauthorized', 401, request);
+  let body;
+  try { body = await request.json(); } catch { return err('Invalid JSON', 400, request); }
+  const { id } = body;
+  if (!id) return err('id required', 400, request);
+  const res = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/community_events?id=eq.${id}`,
+    { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': env.SUPABASE_KEY, 'Authorization': `Bearer ${env.SUPABASE_KEY}`, 'Prefer': 'return=minimal' }, body: JSON.stringify({ status: 'approved' }) }
+  );
+  if (!res.ok) return err('Update failed', 500, request);
+  return json({ success: true }, 200, request);
+}
+
+async function handleRejectEvent(request, env) {
+  const authorized = await requireAdminToken(request, env);
+  if (!authorized) return err('Unauthorized', 401, request);
+  let body;
+  try { body = await request.json(); } catch { return err('Invalid JSON', 400, request); }
+  const { id } = body;
+  if (!id) return err('id required', 400, request);
+  const res = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/community_events?id=eq.${id}`,
+    { method: 'DELETE', headers: { 'apikey': env.SUPABASE_KEY, 'Authorization': `Bearer ${env.SUPABASE_KEY}` } }
+  );
+  if (!res.ok) return err('Delete failed', 500, request);
+  return json({ success: true }, 200, request);
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
@@ -1238,6 +1270,13 @@ export default {
 
     if (url.pathname === "/api/events-search" && request.method === "GET") {
       return handleEventsSearch(request, env);
+    }
+
+    if (url.pathname === '/api/admin-approve-event' && request.method === 'POST') {
+      return handleApproveEvent(request, env);
+    }
+    if (url.pathname === '/api/admin-reject-event' && request.method === 'POST') {
+      return handleRejectEvent(request, env);
     }
 
     return new Response("Not found", { status: 404 });
