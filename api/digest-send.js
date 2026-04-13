@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { draft_id, ai_intro: overrideIntro, event_ids: overrideEventIds, sky_event_ids: overrideSkyEventIds, formatted_events: overrideFormatted } = req.body || {};
+    const { draft_id, ai_intro: overrideIntro, event_ids: overrideEventIds, sky_event_ids: overrideSkyEventIds, formatted_events: overrideFormatted, preview_only, preview_email } = req.body || {};
 
     if (!draft_id) {
       return res.status(400).json({ error: 'Missing draft_id' });
@@ -99,20 +99,25 @@ export default async function handler(req, res) {
       }
     }
 
-    // Fetch subscribers
-    const subsRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/napaserve_subscribers?select=email,name&unsubscribed=is.null`,
-      {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-        },
+    // If preview_only, send only to the preview email — never the full list
+    let subscribers;
+    if (preview_only) {
+      const previewTo = preview_email || 'info@napaserve.com';
+      subscribers = [{ email: previewTo, name: 'Preview' }];
+    } else {
+      const subsRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/napaserve_subscribers?select=email,name&unsubscribed=is.null`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+          },
+        }
+      );
+      subscribers = await subsRes.json();
+      if (!subscribers.length) {
+        return res.status(400).json({ error: 'No active subscribers' });
       }
-    );
-
-    const subscribers = await subsRes.json();
-    if (!subscribers.length) {
-      return res.status(400).json({ error: 'No active subscribers' });
     }
 
     // Group events by town in defined order
@@ -160,24 +165,26 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Failed to send emails', details: resendData });
     }
 
-    // Update digest record
+    // Update digest record (skip for preview sends)
     const messageId = resendData.data?.[0]?.id || resendData[0]?.id || null;
-    await fetch(`${SUPABASE_URL}/rest/v1/email_digests?id=eq.${draft_id}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        status: 'sent',
-        sent_at: new Date().toISOString(),
-        resend_message_id: messageId,
-        ai_intro: aiIntro,
-        event_ids: eventIds,
-        sky_event_ids: skyEventIds,
-      }),
-    });
+    if (!preview_only) {
+      await fetch(`${SUPABASE_URL}/rest/v1/email_digests?id=eq.${draft_id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          resend_message_id: messageId,
+          ai_intro: aiIntro,
+          event_ids: eventIds,
+          sky_event_ids: skyEventIds,
+        }),
+      });
+    }
 
     return res.status(200).json({
       success: true,
