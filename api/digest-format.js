@@ -32,6 +32,27 @@ const FREE_RECEPTION_VENUES = new Set([
 // Words that indicate a venue name, not a street address
 const VENUE_NAME_WORDS = /\b(center|hall|gallery|theater|theatre|church|studio|museum|library|park|school|inn|hotel|resort|winery|cellar|tasting room)\b/i;
 
+async function callAnthropicWithRetry(payload, apiKey, maxRetries = 3, anthropicVersion = '2023-06-01') {
+  let lastStatus = 0;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': anthropicVersion,
+      },
+      body: JSON.stringify(payload),
+    });
+    lastStatus = res.status;
+    if (res.status !== 529) return res;
+    if (attempt < maxRetries - 1) {
+      await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+    }
+  }
+  throw new Error(`Anthropic API error ${lastStatus} after ${maxRetries} retries`);
+}
+
 export default async function handler(req, res) {
   // CORS headers on every response
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -135,14 +156,7 @@ export default async function handler(req, res) {
         const searchTarget = [enriched.venue_name, enriched.title, city, 'California']
           .filter(Boolean).join(' ');
 
-        const enrichRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': ANTHROPIC_API_KEY,
-            'anthropic-version': '2025-03-26',
-          },
-          body: JSON.stringify({
+        const enrichRes = await callAnthropicWithRetry({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 400,
             tools: [{
@@ -168,8 +182,7 @@ Return ONLY a JSON object with these fields (use null for anything not found):
 
 Do not include any other text.`,
             }],
-          }),
-        });
+          }, ANTHROPIC_API_KEY, 3, '2025-03-26');
 
         const enrichData = await enrichRes.json();
 
@@ -254,20 +267,12 @@ Output only the finished listing. No notes, no labels, no explanation.`;
       `Phone/Email: ${enriched.organizer_contact || ''}`,
     ].join('\n');
 
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 500,
-        system: WEEKENDER_SYSTEM,
-        messages: [{ role: 'user', content: fields }],
-      }),
-    });
+    const claudeRes = await callAnthropicWithRetry({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 500,
+      system: WEEKENDER_SYSTEM,
+      messages: [{ role: 'user', content: fields }],
+    }, ANTHROPIC_API_KEY);
 
     const data = await claudeRes.json();
     if (data.error) {

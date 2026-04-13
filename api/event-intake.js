@@ -65,6 +65,27 @@ PAGE CONTENT:
 ${content.slice(0, 8000)}
 `;
 
+async function callAnthropicWithRetry(payload, apiKey, maxRetries = 3) {
+  let lastStatus = 0;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify(payload),
+    });
+    lastStatus = res.status;
+    if (res.status !== 529) return res;
+    if (attempt < maxRetries - 1) {
+      await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+    }
+  }
+  throw new Error(`Anthropic API error ${lastStatus} after ${maxRetries} retries`);
+}
+
 export default async function handler(req, res) {
   const origin = req.headers.origin || "";
 
@@ -111,24 +132,11 @@ export default async function handler(req, res) {
     }
 
     try {
-      const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 2000,
-          messages: [{ role: "user", content: EXTRACTION_PROMPT(pageContent, url || "") }],
-        }),
-      });
-
-      if (!claudeRes.ok) {
-        const err = await claudeRes.text();
-        return res.status(502).json({ error: `Claude API error: ${err}` });
-      }
+      const claudeRes = await callAnthropicWithRetry({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        messages: [{ role: "user", content: EXTRACTION_PROMPT(pageContent, url || "") }],
+      }, process.env.ANTHROPIC_API_KEY);
 
       const claudeData = await claudeRes.json();
       const text = (claudeData.content || []).map(b => b.text || "").join("");

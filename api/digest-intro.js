@@ -1,5 +1,26 @@
 const TOWN_ORDER = ['valley-wide', 'american-canyon', 'calistoga', 'napa', 'st-helena', 'yountville'];
 
+async function callAnthropicWithRetry(payload, apiKey, maxRetries = 3) {
+  let lastStatus = 0;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify(payload),
+    });
+    lastStatus = res.status;
+    if (res.status !== 529) return res;
+    if (attempt < maxRetries - 1) {
+      await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+    }
+  }
+  throw new Error(`Anthropic API error ${lastStatus} after ${maxRetries} retries`);
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -45,19 +66,12 @@ export default async function handler(req, res) {
       return `${label}:\n${lines}`;
     }).join('\n\n');
 
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 300,
-        messages: [{
-          role: 'user',
-          content: `You are writing the opening paragraph for the Napa Valley Features Weekender, a weekly events email for Napa County, California.
+    const claudeRes = await callAnthropicWithRetry({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 300,
+      messages: [{
+        role: 'user',
+        content: `You are writing the opening paragraph for the Napa Valley Features Weekender, a weekly events email for Napa County, California.
 
 Format rules:
 - Start with "NAPA VALLEY, Calif. \u2014" as an AP-style dateline
@@ -69,9 +83,8 @@ Format rules:
 Events for ${today} through ${endDate}:
 
 ${eventSummary}`,
-        }],
-      }),
-    });
+      }],
+    }, ANTHROPIC_API_KEY);
 
     const claudeData = await claudeRes.json();
     if (claudeData.error) {

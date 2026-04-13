@@ -200,6 +200,27 @@ async function handleRagSearch(request, env) {
   }
 }
 
+async function callAnthropicWithRetry(payload, apiKey, maxRetries = 3) {
+  let lastStatus = 0;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify(payload),
+    });
+    lastStatus = res.status;
+    if (res.status !== 529) return res;
+    if (attempt < maxRetries - 1) {
+      await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+    }
+  }
+  throw new Error(`Anthropic API error ${lastStatus} after ${maxRetries} retries`);
+}
+
 async function handleRagAnswer(request, env) {
   let body;
   try {
@@ -239,24 +260,12 @@ Answer in 2–4 focused paragraphs. Be specific: cite article titles or dates wh
 
     const userPrompt = `Using these archive excerpts, answer the following question about Napa County:\n\n${context}\n\n---\n\nQuestion: ${query.trim()}`;
 
-    const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 800,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
-      }),
-    });
-
-    if (!claudeRes.ok) {
-      throw new Error(`Anthropic API error ${claudeRes.status}`);
-    }
+    const claudeRes = await callAnthropicWithRetry({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 800,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }],
+    }, env.ANTHROPIC_API_KEY);
 
     const claudeData = await claudeRes.json();
     const answer = claudeData.content?.[0]?.text || "No answer generated.";
