@@ -731,7 +731,7 @@ function ArticleCard({ article, token, published = true, onPublished }) {
             setPublishing(false);
           }}
           title="Publish this article to napaserve.org"
-          style={{ ...btnBase, background: '#8B6914', color: "#fff", display: "block", width: "100%", marginBottom: 10, opacity: publishing ? 0.7 : 1 }}
+          style={{ ...btnBase, background: '#8B6914', color: "#fff", marginBottom: 10, opacity: publishing ? 0.7 : 1 }}
         >
           {publishing ? "Publishing\u2026" : "Publish Article"}
         </button>
