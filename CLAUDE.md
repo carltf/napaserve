@@ -14,6 +14,11 @@ Last updated: April 13, 2026
 - agent.html at repo root is a REDIRECT ONLY — route is /agent (napaserve-agent.jsx)
 - Research Agent API route: /api/rag-answer — NOT /api/claude (404)
 - All Anthropic API calls use callAnthropicWithRetry() — 3 retries on 529 with linear backoff
+- nvf_polls.substack_url was null until April 13 backfill — never assume it's populated without checking
+- napaserve_articles deck column exists — include in SQL INSERTs for new articles going forward
+- isRecent(publishedAt, 14) — admin page pattern for collapsing old article cards to compact rows
+- digest-send.js enforces preview_only server-side — UI gate alone is not sufficient for broadcast ops
+- Under the Hood index (under-the-hood-index.jsx): read entire file before making any changes — data sources are nvf_polls (archive), nvf_posts (NVF section), napaserve_articles (tile cards)
 
 ## Worker Deploy — CRITICAL
 open -a TextEdit ~/Desktop/napaserve/economic-pulse-app/src/worker.js
@@ -92,10 +97,11 @@ DRAFT: napa-population-2025 (5 open flags — do not publish)
 - src/components/CoveragePanel.jsx — Archive Coverage indicator + Official & Regional Sources UI
 
 ## Key Tables
-- napaserve_articles: slug, headline, published, polls_seeded, admin_cards_added, related_coverage_added, topic_seed
+- napaserve_articles: slug, headline, deck, published, polls_seeded, admin_cards_added, related_coverage_added, topic_seed
 - napaserve_article_polls: article polls (IDs 1-26 used)
 - community_events: status='approved', description NOT NULL, has submitter_name/email/phone
-- nvf_posts: 1000+ NVF articles with substack_url — always query for confirmed URLs
+- nvf_posts: 997 NVF articles with substack_url — always query for confirmed URLs
+- nvf_polls: 1,719 rows — substack_url backfilled from nvf_posts April 13 — archive links use this
 - coverage_gaps: query, category, tier (low/medium/strong), chunk_count, top_similarity, asked_at
 
 ## Cloudflare Worker Secrets (all must be present)
@@ -122,6 +128,24 @@ DRAFT: napa-population-2025 (5 open flags — do not publish)
 - ScrollToTop in App.jsx covers all routes — guard scroll effects with state
 - Admin sessionStorage key: admin_token (NOT adminToken)
 - Admin "View article" links must NOT use target="_blank" (loses session token)
+
+## Admin Page
+- Event Moderation: approve/reject community_events pending submissions — Worker routes /api/admin-approve-event and /api/admin-reject-event
+- Digest tool: two-step send — preview required before live send, server enforces preview_only
+- Article cards: isRecent() 14-day threshold, ArchivedArticleRow for older articles
+- ARTICLES array in napaserve-admin.jsx has publishedAt for all 8 articles
+
+## Under the Hood Index — Data Sources
+- Tile cards (NVF section): napaserve_articles table via /api/articles Worker route — includes deck
+- Archive list: nvf_polls table — substack_url now populated (backfilled April 13)
+- Planned: 'From NVF' section → nvf_posts where series='Under the Hood' → substack_url
+- Static tiles: Sonoma and Lake County defined in STATIC_SECTIONS array in JSX
+- CSS grid: uth-article-grid class in index.css with @media (max-width: 600px) override — ready to use
+
+## Secondary Sources — Verified April 13
+- All 36 URLs verified live — all index/landing pages, no PDFs
+- County domain: napacounty.gov (countyofnapa.org retired)
+- Key verified URLs: EDD /geography/msa/napa.html, NVV /napa_valley/, NASS Grape Crush index page, UC Extension ucanr.edu/county/napa-county-ucce
 
 ## File Editing Traps
 - grep against assumed filenames frequently fails — check directory listing first
