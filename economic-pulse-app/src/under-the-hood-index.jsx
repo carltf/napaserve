@@ -110,8 +110,9 @@ function stripPrefix(title) {
 function dedupeArticles(rows) {
   const seen = new Set();
   return rows.filter(r => {
-    if (!r.post_title || seen.has(r.post_title)) return false;
-    seen.add(r.post_title);
+    const t = r.title || r.post_title;
+    if (!t || seen.has(t)) return false;
+    seen.add(t);
     return true;
   });
 }
@@ -181,7 +182,7 @@ export default function UnderTheHoodIndex() {
     (async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_polls?select=post_title,substack_url,published_at&post_title=ilike.%25under%20the%20hood%25&order=published_at.desc&limit=300`,
+          `${SUPABASE_URL}/rest/v1/nvf_posts?select=title,substack_url,published_at&series=eq.Under the Hood&order=published_at.desc`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (res.ok) {
@@ -304,7 +305,7 @@ export default function UnderTheHoodIndex() {
         onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
         onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
       >
-        {stripPrefix(a.post_title)}
+        {stripPrefix(a.title || a.post_title)}
       </a>
       <span style={{ fontSize: 13, color: T.muted, whiteSpace: "nowrap", flexShrink: 0 }}>
         {fmtDate(a.published_at)}
