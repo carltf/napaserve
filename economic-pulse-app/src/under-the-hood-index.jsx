@@ -72,6 +72,7 @@ function buildSections(publishedArticles) {
     .filter(a => a.publication === "Napa Valley Features")
     .map(a => ({
       title: a.title,
+      deck: a.deck || '',
       date: a.published_at ? new Date(a.published_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "",
       tag: a.publication,
       href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
@@ -326,7 +327,7 @@ export default function UnderTheHoodIndex() {
               <p style={{ fontSize: 14, color: T.muted, margin: "4px 0 0", lineHeight: 1.5 }}>{section.desc}</p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+            <div className="uth-article-grid" style={{ display: "grid", gap: 16 }}>
               {section.tiles.map((tile, ti) => {
                 const inner = (
                   <div style={{
@@ -348,6 +349,21 @@ export default function UnderTheHoodIndex() {
                     <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, lineHeight: 1.35, marginBottom: 8 }}>
                       {tile.title}
                     </div>
+                    {tile.deck && (
+                      <p style={{
+                        fontFamily: "'Source Sans 3', sans-serif",
+                        fontSize: 14,
+                        color: '#5A4A3A',
+                        lineHeight: 1.55,
+                        margin: '6px 0 8px',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                      }}>
+                        {tile.deck}
+                      </p>
+                    )}
                     {tile.date && (
                       <div style={{ fontSize: 13, color: T.muted }}>{tile.date}</div>
                     )}

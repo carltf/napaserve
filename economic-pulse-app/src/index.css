@@ -54,4 +54,11 @@ button {
   .vwl-steps { grid-template-columns: 1fr !important; }
   .vw-pillars { grid-template-columns: 1fr !important; }
   .kpi-grid { display: grid !important; grid-template-columns: 1fr !important; }
+  .uth-article-grid { grid-template-columns: 1fr !important; }
+}
+
+.uth-article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }

@@ -1032,7 +1032,7 @@ async function handlePublishArticle(request, env) {
 async function handleArticles(request, env) {
   const url = new URL(request.url);
   const published = url.searchParams.get("published");
-  let query = `${env.SUPABASE_URL}/rest/v1/napaserve_articles?select=slug,title,publication,published,published_at&order=published_at.desc`;
+  let query = `${env.SUPABASE_URL}/rest/v1/napaserve_articles?select=slug,title,deck,publication,published,published_at&order=published_at.desc`;
   if (published === "true") query += "&published=eq.true";
   const res = await fetch(query, {
     headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` },
