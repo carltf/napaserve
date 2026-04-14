@@ -1130,7 +1130,7 @@ export default function NapaServeAdmin() {
         {/* Archived articles — compact link rows */}
         {ARTICLES.filter(a => !isRecent(a.publishedAt)).length > 0 && (
           <div style={{ marginTop: 24 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: T.muted, marginBottom: 10 }}>ARCHIVED — OLDER THAN 4 WEEKS</p>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: T.muted, marginBottom: 10 }}>ARCHIVED — OLDER THAN 2 WEEKS</p>
             {ARTICLES.filter(a => !isRecent(a.publishedAt)).map(a => (
               <ArchivedArticleRow key={a.slug} article={a} />
             ))}
