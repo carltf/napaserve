@@ -223,11 +223,13 @@ function TransactionChart() {
 
   return (
     <div style={{ marginBottom: 32 }}>
-      <div ref={containerRef} style={{ background: T.bg, padding: "16px 8px 8px" }}>
+      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div ref={containerRef} style={{ background: T.bg, padding: "16px 8px 8px", minWidth: 560 }}>
         <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 12, color: T.muted, marginBottom: 8 }}>
           Discount from original asking price or original loan amount. Spring Mountain Vineyard reflects a credit bid against an assumed $185M loan — structure differs from market sale. Benessere dashed/pending — auction closes May 28, 2026. Sources: Napa County deed records; SF Chronicle; napaserve.org.
         </p>
         <canvas ref={canvasRef} style={{ width: "100%", display: "block" }} />
+      </div>
       </div>
       <button
         onClick={() => downloadComponentPng(containerRef, "napa-asset-price-discovery.png", "Chart 1 — Napa Asset Price Discovery: Selected Transactions, 2023–2026")}
@@ -290,7 +292,7 @@ function RepricingCalculator() {
         <div style={{ marginBottom: 14, padding: "10px 14px", background: T.bg, borderRadius: 4, borderLeft: `3px solid ${T.accent}` }}>
           <p style={{ fontFamily: "'Source Sans 3', sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>{current.subDesc}</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 600 ? "1fr" : "repeat(3, 1fr)", gap: 12 }}>
           {[
             { label: "Repriced Asset Value", value: `$${repriced.toFixed(2)}B`, sub: `from $${ASSET_BASE.toFixed(1)}B` },
             { label: "Estimated Value Change", value: `−$${change.toFixed(2)}B`, sub: `at ${current.pct}% repricing` },
