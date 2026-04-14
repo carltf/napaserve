@@ -182,7 +182,7 @@ export default function UnderTheHoodIndex() {
     (async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_posts?select=title,substack_url,published_at&series=eq.Under the Hood&order=published_at.desc`,
+          `${SUPABASE_URL}/rest/v1/nvf_posts?select=title,substack_url,published_at&series=eq.Under%20the%20Hood&order=published_at.desc`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (res.ok) {
