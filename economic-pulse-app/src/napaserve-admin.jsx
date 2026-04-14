@@ -709,38 +709,42 @@ function ArticleCard({ article, token, published = true, onPublished }) {
       </a>
 
       {!published && (
-        <button
-          disabled={publishing}
-          onClick={async () => {
-            setPublishing(true);
-            try {
-              const res = await fetch(`${WORKER}/api/publish-article`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "X-Admin-Token": token },
-                body: JSON.stringify({ slug: article.slug }),
-              });
-              const data = await res.json();
-              if (res.ok && data.published) {
-                if (onPublished) onPublished();
-              } else {
-                alert(data.error || "Publish failed");
+        <div style={{ display: 'block', marginBottom: 10 }}>
+          <button
+            disabled={publishing}
+            onClick={async () => {
+              setPublishing(true);
+              try {
+                const res = await fetch(`${WORKER}/api/publish-article`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", "X-Admin-Token": token },
+                  body: JSON.stringify({ slug: article.slug }),
+                });
+                const data = await res.json();
+                if (res.ok && data.published) {
+                  if (onPublished) onPublished();
+                } else {
+                  alert(data.error || "Publish failed");
+                }
+              } catch (e) {
+                alert("Publish failed: " + e.message);
               }
-            } catch (e) {
-              alert("Publish failed: " + e.message);
-            }
-            setPublishing(false);
-          }}
-          title="Publish this article to napaserve.org"
-          style={{ ...btnBase, background: '#5C8A3C', color: "#fff", marginBottom: 10, opacity: publishing ? 0.7 : 1 }}
-        >
-          {publishing ? "Publishing\u2026" : "Publish Article"}
-        </button>
+              setPublishing(false);
+            }}
+            title="Publish this article to napaserve.org"
+            style={{ ...btnBase, background: '#5C8A3C', color: "#fff", opacity: publishing ? 0.7 : 1 }}
+          >
+            {publishing ? "Publishing\u2026" : "Publish Article"}
+          </button>
+        </div>
       )}
 
       {state === "idle" && (
-        <button onClick={() => setState("preview")} style={{ ...btnBase, background: T.accent, color: "#fff" }}>
-          Post to BlueSky
-        </button>
+        <div style={{ display: 'block', marginBottom: 8 }}>
+          <button onClick={() => setState("preview")} style={{ ...btnBase, background: T.accent, color: "#fff" }}>
+            Post to BlueSky
+          </button>
+        </div>
       )}
 
       {state === "success" && (
