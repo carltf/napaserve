@@ -45,6 +45,7 @@ const STATIC_SECTIONS = {
     tiles: [
       {
         title: "Sonoma Grape Prices Fall for a Second Year as Cab Sauv Leads the Decline",
+        deck: "Sonoma grape prices dropped for a second consecutive year in 2024, with Cabernet Sauvignon leading the decline across the county's key growing regions.",
         date: "March 21, 2026",
         tag: "Sonoma County Features",
         href: "/under-the-hood/sonoma-cab-2025",
@@ -58,6 +59,7 @@ const STATIC_SECTIONS = {
     tiles: [
       {
         title: "Lake County Grape Prices Have Fallen 38% in Two Years",
+        deck: "Lake County Cabernet prices have fallen 38% in two years, making it one of the steepest regional price drops in California's wine grape market.",
         date: "March 21, 2026",
         tag: "Lake County Features",
         href: "/under-the-hood/lake-county-cab-2025",
@@ -295,7 +297,7 @@ export default function UnderTheHoodIndex() {
       }}
     >
       <a
-        href={a.substack_url}
+        href={a.substack_url || "#"}
         target="_blank"
         rel="noopener noreferrer"
         style={{ fontSize: 15, fontWeight: 600, color: "#2C1810", lineHeight: 1.4, flex: 1, textDecoration: "none", font: "inherit" }}
