@@ -584,9 +584,9 @@ function bskyWebUrl(uri) {
 
 function isRecent(publishedAt) {
   if (!publishedAt) return true; // drafts always show full card
-  const fourWeeksAgo = new Date();
-  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
-  return new Date(publishedAt) >= fourWeeksAgo;
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+  return new Date(publishedAt) >= twoWeeksAgo;
 }
 
 function ArchivedArticleRow({ article }) {
