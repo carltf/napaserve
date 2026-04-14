@@ -34,7 +34,7 @@ CRITICAL RULES:
 - event_date: YYYY-MM-DD format required
 - start_time: "1:00 PM" format
 - end_time: "2:30 PM" format
-- description: full text, do not summarize or paraphrase
+- description: rewrite in neutral, factual, third-person AP style — no promotional language, no "Join us", no "we", no "our", no "you", no "curated", no "don't miss", no first-person voice. Describe what the event is, who is hosting it, and what attendees can expect. Write as a journalist reporting on the event, not as the organizer promoting it.
 - status: always "approved"
 - source: always "napaserve_submission"
 - website_url: use "${url}" if it is the event page URL
