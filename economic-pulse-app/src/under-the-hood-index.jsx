@@ -45,7 +45,6 @@ const STATIC_SECTIONS = {
     tiles: [
       {
         title: "Sonoma Grape Prices Fall for a Second Year as Cab Sauv Leads the Decline",
-        deck: "Sonoma grape prices dropped for a second consecutive year in 2024, with Cabernet Sauvignon leading the decline across the county's key growing regions.",
         date: "March 21, 2026",
         tag: "Sonoma County Features",
         href: "/under-the-hood/sonoma-cab-2025",
@@ -59,7 +58,6 @@ const STATIC_SECTIONS = {
     tiles: [
       {
         title: "Lake County Grape Prices Have Fallen 38% in Two Years",
-        deck: "Lake County Cabernet prices have fallen 38% in two years, making it one of the steepest regional price drops in California's wine grape market.",
         date: "March 21, 2026",
         tag: "Lake County Features",
         href: "/under-the-hood/lake-county-cab-2025",
@@ -74,7 +72,6 @@ function buildSections(publishedArticles) {
     .filter(a => a.publication === "Napa Valley Features")
     .map(a => ({
       title: a.title,
-      deck: a.deck || '',
       date: a.published_at ? new Date(a.published_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "",
       tag: a.publication,
       href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
@@ -110,9 +107,8 @@ function stripPrefix(title) {
 function dedupeArticles(rows) {
   const seen = new Set();
   return rows.filter(r => {
-    const t = r.title || r.post_title;
-    if (!t || seen.has(t)) return false;
-    seen.add(t);
+    if (!r.post_title || seen.has(r.post_title)) return false;
+    seen.add(r.post_title);
     return true;
   });
 }
@@ -165,7 +161,6 @@ export default function UnderTheHoodIndex() {
   const [readerPolls, setReaderPolls] = useState([]);
   const [archiveView, setArchiveView] = useState("year");
   const [topicArticles, setTopicArticles] = useState({});
-  const [nvfUthPosts, setNvfUthPosts] = useState([]);
 
   // Fetch published articles from Worker
   useEffect(() => {
@@ -182,7 +177,7 @@ export default function UnderTheHoodIndex() {
     (async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/nvf_posts?select=title,substack_url,published_at&series=eq.Under%20the%20Hood&order=published_at.desc`,
+          `${SUPABASE_URL}/rest/v1/nvf_polls?select=post_title,substack_url,published_at&post_title=ilike.%25under%20the%20hood%25&order=published_at.desc&limit=300`,
           { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (res.ok) {
@@ -230,18 +225,6 @@ export default function UnderTheHoodIndex() {
         }
       } catch { /* silent */ }
     })();
-  }, []);
-
-  useEffect(() => {
-    fetch('https://csenpchwxxepdvjebsrt.supabase.co/rest/v1/nvf_posts?select=title,substack_url,published_at,series&series=eq.Under the Hood&order=published_at.desc&limit=6', {
-      headers: {
-        'apikey': 'sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ',
-        'Authorization': 'Bearer sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ'
-      }
-    })
-    .then(r => r.json())
-    .then(data => setNvfUthPosts(Array.isArray(data) ? data : []))
-    .catch(() => {});
   }, []);
 
   // Group archive by year
@@ -298,14 +281,14 @@ export default function UnderTheHoodIndex() {
       }}
     >
       <a
-        href={a.substack_url || "#"}
+        href={a.substack_url}
         target="_blank"
         rel="noopener noreferrer"
         style={{ fontSize: 15, fontWeight: 600, color: "#2C1810", lineHeight: 1.4, flex: 1, textDecoration: "none", font: "inherit" }}
         onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
         onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
       >
-        {stripPrefix(a.title || a.post_title)}
+        {stripPrefix(a.post_title)}
       </a>
       <span style={{ fontSize: 13, color: T.muted, whiteSpace: "nowrap", flexShrink: 0 }}>
         {fmtDate(a.published_at)}
@@ -343,7 +326,7 @@ export default function UnderTheHoodIndex() {
               <p style={{ fontSize: 14, color: T.muted, margin: "4px 0 0", lineHeight: 1.5 }}>{section.desc}</p>
             </div>
 
-            <div className="uth-article-grid" style={{ display: "grid", gap: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
               {section.tiles.map((tile, ti) => {
                 const inner = (
                   <div style={{
@@ -365,21 +348,6 @@ export default function UnderTheHoodIndex() {
                     <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, lineHeight: 1.35, marginBottom: 8 }}>
                       {tile.title}
                     </div>
-                    {tile.deck && (
-                      <p style={{
-                        fontFamily: "'Source Sans 3', sans-serif",
-                        fontSize: 14,
-                        color: '#5A4A3A',
-                        lineHeight: 1.55,
-                        margin: '6px 0 8px',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                      }}>
-                        {tile.deck}
-                      </p>
-                    )}
                     {tile.date && (
                       <div style={{ fontSize: 13, color: T.muted }}>{tile.date}</div>
                     )}
@@ -493,27 +461,41 @@ export default function UnderTheHoodIndex() {
           </div>
         </div>
 
-        {/* ── 6. FROM NAPA VALLEY FEATURES ──────────────── */}
-        {nvfUthPosts.length > 0 && (
-          <div style={{ maxWidth: 740, margin: '48px auto 0', padding: '0 20px' }}>
-            <div style={{ borderTop: '1px solid rgba(44,24,16,0.12)', paddingTop: 32, marginBottom: 24 }}>
-              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#8B7355', marginBottom: 4 }}>FROM NAPA VALLEY FEATURES</p>
-              <p style={{ fontSize: 14, color: '#8B7355', marginBottom: 0 }}>Recent Under the Hood on Substack — where our analysis goes deeper for paid subscribers.</p>
-            </div>
-            {nvfUthPosts.map((post, i) => (
-              <a key={i} href={post.substack_url} target="_blank" rel="noopener noreferrer"
-                style={{ display: 'block', padding: '16px 0', borderBottom: '1px solid rgba(44,24,16,0.08)', textDecoration: 'none' }}>
-                <div style={{ fontSize: 11, color: '#8B7355', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 4 }}>
-                  {post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}
+        {/* ── 6. RECENT UNDER THE HOOD ARTICLES ──────────────── */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2.5, color: T.muted, textTransform: "uppercase", marginBottom: 14 }}>
+            Recent Under the Hood
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {(publishedArticles.length > 0
+              ? publishedArticles.map(a => ({
+                  title: a.title,
+                  pub: a.publication,
+                  date: a.published_at ? new Date(a.published_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "",
+                  href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
+                }))
+              : [
+                  { title: "Napa\u2019s Economy Looks Bigger Than It Is", pub: "Napa Valley Features", date: "March 2026", href: "/under-the-hood/napa-gdp-2024" },
+                  { title: "Napa Cabernet Prices Break the Growth Curve", pub: "Napa Valley Features", date: "March 19, 2026", href: "/under-the-hood/napa-cab-2025" },
+                  { title: "Sonoma Grape Prices Fall for a Second Year", pub: "Sonoma County Features", date: "March 21, 2026", href: "/under-the-hood/sonoma-cab-2025" },
+                  { title: "Lake County Grape Prices Have Fallen 38% in Two Years", pub: "Lake County Features", date: "March 21, 2026", href: "/under-the-hood/lake-county-cab-2025" },
+                ]
+            ).map((a, i) => (
+              <div key={i} style={{ background: T.surface, border: "1px solid rgba(44,24,16,0.1)", padding: "20px 22px" }}>
+                <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, lineHeight: 1.35, marginBottom: 6 }}>
+                  {a.title}
                 </div>
-                <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 17, fontWeight: 700, color: '#2C1810', marginBottom: 4, lineHeight: 1.3 }}>
-                  {post.title.replace('Under the Hood: ', '')}
-                </div>
-                <div style={{ fontSize: 13, color: '#8B5E3C', fontWeight: 600 }}>Read on Substack →</div>
-              </a>
+                <div style={{ fontSize: 13, color: T.muted, marginBottom: 10 }}>{a.pub} · {a.date}</div>
+                <a
+                  href={a.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.gold, textDecoration: "none" }}
+                >Read on Substack →</a>
+              </div>
             ))}
           </div>
-        )}
+        </div>
 
         {/* ── 7. READER PULSE ────────────────────────────────────── */}
         {readerPolls.length > 0 && (
