@@ -191,6 +191,9 @@ export default function AboutNapaServe() {
             <P style={{ fontSize: 14, color: T.dim }}>
               NapaServe · A Valley Works Collaborative · VW Labs project · Napa County, CA · Not affiliated with Napa County government.
             </P>
+            <P style={{ fontSize: 12, color: T.dim }}>
+              Napaserve.org is operated by Tim Carl, LLC.
+            </P>
           </div>
         </Section>
 
