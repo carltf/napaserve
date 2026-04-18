@@ -631,7 +631,7 @@ export default function NapaPopulation() {
 
       {/* Masthead */}
       <div style={{ background: "#2C1810", color: "#F5F0E8", textAlign: "center", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", padding: "10px 24px" }}>
-        Napa Valley Features &nbsp;{"\u00b7"}&nbsp; Under the Hood &nbsp;{"\u00b7"}&nbsp; March 2026
+        Napa Valley Features &nbsp;{"\u00b7"}&nbsp; Under the Hood &nbsp;{"\u00b7"}&nbsp; April 2026
       </div>
 
       {/* Header */}
@@ -640,14 +640,14 @@ export default function NapaPopulation() {
           Under the Hood &nbsp;{"\u00b7"}&nbsp; Napa Valley Features
         </div>
         <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(26px, 5vw, 42px)", color: T.ink, lineHeight: 1.15, marginBottom: 20 }}>
-          Under the Hood: The Pattern Holds {"\u2014"} and the Numbers Get More Telling
+          Under the Hood: Where Napa{"\u2019"}s Growth Actually Lives
         </h1>
         <p style={{ fontFamily: font, fontWeight: 300, fontSize: 17, lineHeight: 1.65, color: "#5C4033", marginBottom: 24 }}>
-          Napa County added 709 residents in 2024 {"\u2014"} but 90% came from one city. Strip out American Canyon and the rest of the county gained 70 people. Twenty-five years of data point to the same structural condition.
+          Napa County added 709 residents in 2024. American Canyon accounted for 639 of them. Across 25 years of state and census records, the pattern is the same: population growth concentrates in one city at the southern edge of the county, while the rest of the valley stays flat or shrinks.
         </p>
         <div style={{ borderTop: "1px solid #D4C4A8", paddingTop: 14 }}>
           <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted }}>
-            By Tim Carl &nbsp;{"\u00b7"}&nbsp; Napa Valley Features &nbsp;{"\u00b7"}&nbsp; March 2026
+            By Tim Carl &nbsp;{"\u00b7"}&nbsp; Napa Valley Features &nbsp;{"\u00b7"}&nbsp; April 2026
           </div>
           <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", color: T.muted, fontStyle: "italic", marginTop: 4 }}>
             California Dept. of Finance E-1 Population Estimates {"\u00b7"} U.S. Census Bureau {"\u00b7"} Bureau of Labor Statistics
@@ -661,18 +661,77 @@ export default function NapaPopulation() {
       {/* Article body */}
       <div style={{ maxWidth: 780, margin: "0 auto", padding: "0 24px 60px" }}>
 
-        {/* ── Section: Still Below Peak ─────────────────────────────── */}
-        <h2 style={heading}>Still Below Peak {"\u2014"} by Nearly a Decade</h2>
+        {/* ── Opening ───────────────────────────────────────────────── */}
         <p style={prose}>
-          NAPA VALLEY, Calif. {"\u2014"} Napa County has lost 4,995 residents since its modern peak of 141,119 in 2016 and remains down 3.5%. In 2010, the county had 136,484 residents {"\u2014"} nearly identical to today{"\u2019"}s 136,124. The past 15 years have produced a net population change of essentially zero at the county level.
+          <span style={{ fontWeight: 700 }}>NAPA VALLEY, Calif. {"\u2014"}</span> The California Department of Finance released its 2025 E-1 population estimates on May 1, showing Napa County gained 709 residents in 2024, for a total of 136,124 as of January 1, 2025. The county{"\u2019"}s 0.52% year-over-year growth rate led all nine Bay Area counties.
+        </p>
+        <p style={prose}>
+          Of those 709 new residents, 639 {"\u2014"} or 90% {"\u2014"} were added in one city: American Canyon. Every other part of the county, taken together, gained 70 people.
+        </p>
+        <p style={prose}>
+          Napa city added 216. Calistoga lost 21. St. Helena lost 7. Yountville lost 17. The unincorporated balance of the county lost 101. The three upvalley cities and the unincorporated county combined lost 146 residents.
+        </p>
+        <p style={prose}>
+          Strip out American Canyon and the remaining 113,728 residents of Napa County {"\u2014"} 83% of the population {"\u2014"} gained 70 people. That is a growth rate of 0.06%, which rounds to zero.
         </p>
 
-        {/* Chart 1 */}
+        {/* Chart 2 — Population Change by Jurisdiction */}
+        {chartReady ? (
+          <ChartBox
+            title="Population Change by Jurisdiction, 2024\u20132025"
+            caption="American Canyon gained 639 residents \u2014 90 percent of Napa County's 709-resident net gain. Napa city added 216. Calistoga, St. Helena, Yountville and the unincorporated balance of the county all lost residents. Ordered north (top) to south (bottom)."
+            source="California Department of Finance, E-1 Population Estimates, January 1, 2024 and January 1, 2025"
+          >
+            <Chart2 />
+          </ChartBox>
+        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
+
+
+        {/* ── Section: The New Pattern Is the Old Pattern ───────────── */}
+        <h2 style={heading}>The New Pattern Is the Old Pattern</h2>
+        <p style={prose}>
+          In 2000, American Canyon had 9,774 residents {"\u2014"} 7.9% of Napa County{"\u2019"}s 124,279. By 2010 it had nearly doubled to 19,454. By 2025 it stands at 22,396 {"\u2014"} 16.5% of the county.
+        </p>
+        <p style={prose}>
+          Since 2000, American Canyon has added roughly 12,622 residents. The rest of Napa County, taken together, has added approximately 750. Subtract American Canyon entirely, and the county outside that one city has posted essentially flat population over a quarter century.
+        </p>
+        <p style={prose}>
+          St. Helena{"\u2019"}s 2025 population of 5,349 is roughly 10% below its 2000 census count. Yountville{"\u2019"}s 2,638 is down by a similar margin. Calistoga is within 200 residents of where it stood 25 years ago. The city of Napa is up modestly. The unincorporated balance of the county is near flat.
+        </p>
+        <p style={prose}>
+          Last year{"\u2019"}s E-1 release, documented in this column in May 2025, showed the same geometry: a narrow southern gain, an upvalley decline, and county totals still running well below the 2016 peak. This year{"\u2019"}s release extends that reading across a second consecutive year of growth and a longer time series. A pattern that appears once is a data point. A pattern that persists across 25 years of census and state records {"\u2014"} through boom, pandemic, wildfire and recovery {"\u2014"} is a structural condition.
+        </p>
+
+        {/* Chart 3 — Population by Jurisdiction 2000 vs 2025 */}
+        {chartReady ? (
+          <ChartBox
+            title="Population by Jurisdiction, 2000 vs. 2025"
+            caption="American Canyon has grown 129 percent since 2000. St. Helena and Yountville are each down roughly 10 percent. The unincorporated balance of the county is down 18 percent. Most of Napa County's net population growth this century has been absorbed by one city."
+            source="U.S. Census Bureau Decennial Census (2000); California Department of Finance, E-1 Population Estimates (2025)"
+          >
+            <Chart3 />
+          </ChartBox>
+        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
+
+
+        {/* ── Section: Still Below Peak, After Nine Years ───────────── */}
+        <h2 style={heading}>Still Below Peak, After Nine Years</h2>
+        <p style={prose}>
+          Napa County reached its modern population peak of 141,294 in 2016, according to DOF{"\u2019"}s E-4 series (May 2018 benchmark). It has not recovered. The county stood at 136,124 on January 1, 2025 {"\u2014"} 5,170 residents below that peak, or 3.7% lower. The 2025 figure is within 360 residents of the county{"\u2019"}s 2010 census count of 136,484. In effect, the past 15 years have produced no net population change at the county level.
+        </p>
+        <p style={prose}>
+          What has changed in that time is where the residents live. In 2010, American Canyon held 14.3% of the county. In 2025, it holds 16.5%. Every other jurisdiction has held flat, declined, or shrunk as a share of the county.
+        </p>
+        <p style={prose}>
+          Housing construction mirrors the same geography. In 2024, Napa County added 658 housing units {"\u2014"} a 1.2% increase. American Canyon and the city of Napa together accounted for roughly 91% of that total. The three upvalley cities combined added 21 units. American Canyon{"\u2019"}s housing stock grew 5.0% in one year, among the fastest percent-change gains of any incorporated jurisdiction in California.
+        </p>
+
+        {/* Chart 1 — Napa County Population Trend */}
         {chartReady ? (
           <ChartBox
             title="Napa County Population Trend, 2000\u20132025"
-            caption="Growth peaked in 2016 and has not recovered. The 2025 count nearly equals 2010."
-            source="U.S. Census Bureau (2000, 2010, 2020); California Dept. of Finance E-1 estimates (2025)"
+            caption="The county's 2025 count of 136,124 sits 5,170 residents below its 2016 peak of 141,294 and within 360 residents of its 2010 census count. After nine years, Napa County has not recovered its previous high."
+            source="U.S. Census Bureau Decennial Census (2000, 2010, 2020); California Department of Finance, E-4 Estimates with 2010 Benchmark (2011\u20132018); DOF E-1 Estimates (2023\u20132025)"
             note="*2005 and 2015 are interpolated estimates."
           >
             <Chart1 />
@@ -680,80 +739,35 @@ export default function NapaPopulation() {
         ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
 
 
-        {/* ── Section: One City ─────────────────────────────────────── */}
-        <h2 style={heading}>One City {"\u2014"} and One End of the Valley</h2>
+        {/* ── Section: One County Line, Two Different Commutes ──────── */}
+        <h2 style={heading}>One County Line, Two Different Commutes</h2>
         <p style={prose}>
-          American Canyon alone added 639 of the county{"\u2019"}s 709 net new residents {"\u2014"} 90% of total growth {"\u2014"} from a city holding 16% of the county{"\u2019"}s population. Its 2.9% year-over-year gain stands in a different category from every other jurisdiction. Napa, the county seat, added 216 residents, or 0.3%. Calistoga fell from 5,181 to 5,160. St. Helena fell from 5,356 to 5,349. Yountville fell from 2,655 to 2,638. The unincorporated county fell from 22,946 to 22,845. The upvalley cities and balance of county, taken together, lost 146 residents.
+          Napa Valley is 30 miles long and narrow. A worker employed in Calistoga or St. Helena who lives in American Canyon faces a 25- to 35-mile commute {"\u2014"} roughly equivalent to commuting from Cloverdale in Sonoma County or Lakeport in Lake County, at materially lower housing costs in both comparison cases. The county line is not the relevant labor-market boundary for many upvalley workers. For an hourly worker priced out of St. Helena, leaving Napa County is often a shorter commute than staying in it.
         </p>
         <p style={prose}>
-          Strip out American Canyon entirely and the remaining 113,728 residents {"\u2014"} 83% of the county {"\u2014"} gained 70 people in a year. That is a growth rate of 0.06%, which rounds to zero.
-        </p>
-        <p style={prose}>
-          The housing construction data amplify the picture. In 2024{"\u2013"}25, American Canyon and the city of Napa together accounted for 91% of all new housing units built countywide {"\u2014"} 602 of 658. The three upvalley cities combined added 21 units, or 3% of the total.
+          American Canyon{"\u2019"}s housing surge is driven by the reverse dynamic: regional-scale developments {"\u2014"} Watson Ranch, Lemos Pointe and others {"\u2014"} built to serve Bay Area households for whom southern Napa County is an affordable alternative to Marin or the East Bay. The city sits at the intersection of State Route 29 and the corridor to Interstate 80, with direct access to Solano, Contra Costa and Alameda employment centers. U.S. Census LEHD {"\u2018"}On The Map{"\u2019"} data indicate that only 11% of American Canyon workers also live in American Canyon {"\u2014"} a ratio consistent with a bedroom community oriented outward rather than inward to Napa County{"\u2019"}s own labor market.
         </p>
 
-        {/* Chart 2 */}
+
+        {/* ── Section: The Commuter Arithmetic ──────────────────────── */}
+        <h2 style={heading}>The Commuter Arithmetic</h2>
+        <p style={prose}>
+          The Napa Valley Transportation Authority{"\u2019"}s 2018 Napa Valley Travel Behavior Study found approximately 30,740 workers commuting into Napa County daily, and approximately 26,500 commuting out {"\u2014"} a net inflow of about 4,240. The net inflow had been approximately 7,000 in 2015. The 40% decline in three years suggests the county{"\u2019"}s dependence on imported labor was softening well before the pandemic.
+        </p>
+        <p style={prose}>
+          NVTA also observed that outbound Napa workers earned, on average, more than inbound workers. Inbound commuters skewed toward service, hospitality and agricultural wages. Outbound commuters included a larger share of professional, technical and managerial workers.
+        </p>
+        <p style={prose}>
+          If the 2015{"\u2013"}2018 trend continued at the same rate, Napa County would have crossed into net commuter outflow territory around 2024 {"\u2014"} more workers leaving daily than arriving. That is an extrapolation, not a measurement. An updated NVTA or ACS commuting-flow study is required to confirm the crossover. The chart below shows the 2015 and 2018 NVTA values together with that linear extension.
+        </p>
+
+        {/* Chart 4 — Net Commuter Inflow */}
         {chartReady ? (
           <ChartBox
-            title="Population Change by Jurisdiction, 2024\u20132025"
-            caption="Ordered north (top) to south (bottom). Every jurisdiction except Napa city and American Canyon declined or lost residents."
-            source="California Dept. of Finance E-1 Population Estimates, Jan. 1, 2024 and Jan. 1, 2025"
-          >
-            <Chart2 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
-
-
-        {/* ── Section: This Is Not a New Pattern ────────────────────── */}
-        <h2 style={heading}>This Is Not a New Pattern {"\u2014"} It{"\u2019"}s 25 Years</h2>
-        <p style={prose}>
-          In 2000, American Canyon had 9,774 residents {"\u2014"} 7.9% of Napa County{"\u2019"}s 124,279. By 2010 it had nearly doubled to 19,454. By 2025 it stands at 22,396 {"\u2014"} 16.5% of the county. Since 2000, American Canyon has added 12,622 residents. The rest of Napa County has added approximately 750. Stripped of American Canyon, the county outside that one city has seen a net population loss since 2000.
-        </p>
-        <p style={prose}>
-          St. Helena is down roughly 10% from its 2000 census population. Yountville is down nearly 10%. As this column documented in prior coverage, the same jurisdictional structure appeared in the prior year{"\u2019"}s E-1 data. A pattern that appears once is a data point. A pattern that persists across 25 years of census and DOF records is a structural condition.
-        </p>
-
-        {/* Chart 3 */}
-        {chartReady ? (
-          <ChartBox
-            title="Population by Jurisdiction, 2000 vs. 2025"
-            caption="American Canyon +129% since 2000. St. Helena and Yountville each down roughly 10%."
-            source="U.S. Census Bureau 2000; California Dept. of Finance E-1 2025"
-          >
-            <Chart3 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
-
-
-        {/* ── Section: Why the Southern Cluster ─────────────────────── */}
-        <h2 style={heading}>Why the Southern Cluster Looks the Way It Does</h2>
-        <p style={prose}>
-          Geography explains a significant part of it. Napa Valley is approximately 30 miles long and narrow. A worker employed in Calistoga or St. Helena faces roughly a 25- to 35-mile commute from American Canyon {"\u2014"} not meaningfully different from commuting from Cloverdale in Sonoma County or Lakeport in Lake County, at substantially lower housing costs. A worker who cannot afford to live in upvalley Napa does not necessarily default to American Canyon. They may default to leaving Napa County entirely.
-        </p>
-        <p style={prose}>
-          American Canyon{"\u2019"}s housing boom {"\u2014"} 5% unit growth in 2024{"\u2013"}25, first in California for multifamily growth {"\u2014"} is driven by Bay Area affordability dynamics and freeway access to Solano, Contra Costa and Alameda employment corridors. The large-scale developments driving that surge are not being built to serve hospitality workers commuting to Yountville. They are being built for Bay Area households for whom southern Napa represents an affordable alternative to Marin or the East Bay.
-        </p>
-        <p style={prose}>
-          The most direct confirmation comes from Longitudinal Employer-Household Dynamics data: most new American Canyon residents work in Solano County or the East Bay, not Napa Valley.
-        </p>
-
-
-        {/* ── Section: The Wage-Flow Problem ────────────────────────── */}
-        <h2 style={heading}>The Wage-Flow Problem</h2>
-        <p style={prose}>
-          A Napa Valley Transportation Authority study using 2018 data found that roughly 30,740 workers commute into Napa County while 26,500 commute out {"\u2014"} a net inflow of about 4,240. That figure had already fallen from approximately 7,000 in 2015, a decline of nearly 40% in three years. The NVTA noted that outbound workers likely earn more than inbound ones: outbound jobs skew toward higher-wage categories, inbound jobs toward service and hospitality.
-        </p>
-        <p style={prose}>
-          If the 2015{"\u2013"}2018 decline rate continued at the same rate, the county would have crossed into net commuter outflow territory around 2024. That is a scenario projection, not a confirmed figure {"\u2014"} an updated NVTA study is required to validate it. But the directional signal is unambiguous.
-        </p>
-
-        {/* Chart 4 */}
-        {chartReady ? (
-          <ChartBox
-            title="Net Commuter Inflow and Linear Projection, 2015\u20132030"
-            caption="Net inbound commuters fell 40% in three years. If the trend continued, the county crossed into net outflow territory around 2024."
-            source="ACS County-to-County Commuting Flows 2011\u20132015; NVTA Napa Valley Travel Behavior Study 2018"
-            note="Linear extension of 2015\u20132018 NVTA trend. Not a confirmed forecast. Updated NVTA data required to validate."
+            title="Net Commuter Inflow to Napa County, 2015\u20132018 (with extrapolation)"
+            caption="NVTA measured a net inflow of approximately 7,000 commuters in 2015 and approximately 4,240 in 2018 \u2014 a 40 percent decline in three years. The dashed bars are a linear extension of that trend for 2021 through 2030. The extrapolation is illustrative only."
+            source="Napa Valley Transportation Authority, Napa Valley Travel Behavior Study (2018). Linear extension 2019\u20132030 by the author \u2014 illustrative only."
+            note="No updated NVTA or ACS study has confirmed a crossover into net outflow territory."
             scenarioBadge
           >
             <Chart4 />
@@ -761,77 +775,92 @@ export default function NapaPopulation() {
         ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
 
 
-        {/* ── Section: More Rooms, Not More Jobs ────────────────────── */}
-        <h2 style={heading}>More Rooms, Not More Jobs</h2>
+        {/* ── Section: More Rooms, Fewer Jobs per Room ──────────────── */}
+        <h2 style={heading}>More Rooms, Fewer Jobs per Room</h2>
         <p style={prose}>
-          For a decade, more hotel rooms reliably meant more jobs. From 2009 to 2019, Napa County added roughly 700 hotel rooms and gained more than 5,000 jobs in leisure and hospitality {"\u2014"} more than seven jobs per room. Since 2019 the county added 382 more rooms while leisure and hospitality employment fell by 200 and restaurant and bar jobs fell by 470. The ratio flipped from +7.6 jobs per room to {"\u2212"}0.5.
+          Napa County{"\u2019"}s visitor economy long offered a clean correlation between capacity and employment. Between 2009 and 2019, the county{"\u2019"}s lodging inventory grew by roughly 700 rooms and leisure-and-hospitality employment expanded by more than 5,000 jobs {"\u2014"} a ratio of more than seven jobs added per hotel room added.
+        </p>
+        <p style={prose}>
+          That ratio reversed. Between 2019 and 2024, roughly 382 rooms were added while leisure and hospitality employment fell by approximately 200, and food-services and drinking-places employment fell by roughly 470. The rooms-to-jobs ratio flipped from +7.6 to {"\u2212"}0.5.
+        </p>
+        <p style={prose}>
+          This is a sector-specific measure {"\u2014"} employment yield in the visitor economy {"\u2014"} not a comprehensive read on Napa County{"\u2019"}s labor market. But it captures a change in the single sector most frequently invoked to explain cross-county commuting: lodging capacity is no longer producing net new employment the way it used to.
         </p>
 
-        {/* Chart 5 */}
+        {/* Chart 5 — Jobs per Hotel Room */}
         {chartReady ? (
           <ChartBox
-            title="Jobs per Hotel Room Added"
-            caption="The relationship between hotel growth and job growth reversed completely after 2019."
-            source="Bureau of Labor Statistics (NAPA906LEIHN; SMU06349007072200001SA); STR Monthly Industry Report; author's analysis"
+            title="Leisure and Hospitality Jobs Added per Hotel Room Added, 2009\u20132019 vs. 2019\u20132024"
+            caption="From 2009 to 2019, each hotel room added in Napa County was associated with more than seven new leisure and hospitality jobs. Since 2019, the ratio has inverted: rooms have continued to be added, but leisure and hospitality employment has declined."
+            source="Bureau of Labor Statistics \u2014 Napa County Total Leisure and Hospitality (NAPA906LEIHN), Food Services and Drinking Places (SMU06349007072200001SA); STR Monthly Industry Report"
+            note="Sector-specific employment-yield measure, not a comprehensive read on the Napa County labor market."
           >
             <Chart5 />
           </ChartBox>
         ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
 
 
-        {/* ── Section: Housing Has Grown ────────────────────────────── */}
-        <h2 style={heading}>Housing Has Grown. The Income Gap Has Widened.</h2>
+        {/* ── Section: Housing Has Grown. Jobs Have Not. ────────────── */}
+        <h2 style={heading}>Housing Has Grown. Jobs Have Not.</h2>
         <p style={prose}>
-          Between 2010 and 2024, Napa County added roughly 9,000 housing units {"\u2014"} a 19% increase. Total employment grew only marginally. Intra-county vehicle trips declined from approximately 72,100 in 2018 to 58,000 in 2024 {"\u2014"} a drop of nearly 20%. If housing scarcity were driving workers out of the county, inbound commuting and internal traffic would be rising, not falling.
+          Between 2010 and 2024, Napa County{"\u2019"}s housing stock grew roughly 19%, adding approximately 9,000 units. Total nonfarm employment grew marginally over the same span. Intra-county weekday vehicle trips fell from approximately 72,100 in 2018 to 58,000 in 2024. If housing scarcity were the binding constraint on employment, inbound commuting and internal trip volumes would be climbing. They are not.
+        </p>
+        <p style={prose}>
+          Affordability data make the structural point concrete. In 2010, the median Napa County home sold at roughly 4.5 times median household income. As of 2025, that ratio is approximately 8.6. Qualifying for a median-priced Napa County home at current mortgage rates requires a household income near $230,000. Median hospitality wages in Napa County run roughly $35,000 to $45,000. No amount of unit construction closes that gap without a corresponding change in the wage mix.
         </p>
 
-        {/* Chart 6 */}
+        {/* Chart 6 — Housing Units and Total Nonfarm Employment */}
         {chartReady ? (
           <ChartBox
-            title="Housing Units and Total Jobs, Indexed to 2019 = 100"
-            caption="Since the pre-pandemic peak, housing has kept growing while jobs have not recovered. The shaded gap is the structural disconnect."
-            source="Housing \u2014 California Dept. of Finance E-1H. Employment \u2014 BLS Napa County total nonfarm. Both indexed 2019=100. Same scale \u2014 no dual axis."
+            title="Napa County Housing Units and Total Nonfarm Employment, Indexed to January 2019 = 100"
+            caption="Both series indexed to their January 2019 values. Housing has continued to grow through and past the pandemic; total nonfarm employment has not. The shaded area is the widening gap between residential capacity and workforce."
+            source="California Department of Finance, E-1H Housing Unit Estimates; Bureau of Labor Statistics, Napa County total nonfarm payrolls"
           >
             <Chart6 />
           </ChartBox>
         ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
 
+
+        {/* ── Section: What the Data Show, and What They Don't ──────── */}
+        <h2 style={heading}>What the Data Show, and What They Don{"\u2019"}t</h2>
         <p style={prose}>
-          The affordability ratio confirms the income constraint. In 2010 the median Napa County home cost about 4.5 times median household income. By 2025 that ratio reached 8.6. Qualifying for the median-priced home at $937,500 under current mortgage rates requires roughly $230,000 in gross household income. Tourism jobs average around $35,000. At those wages, the median home is not achievable regardless of how many units are built.
+          Four observations are supported directly by the E-1 release, the long-run DOF and Census series, and BLS employment data: county population growth over the past two years has concentrated almost entirely in American Canyon; the geographic pattern has persisted for 25 years across multiple data vintages; housing growth has outpaced job growth since 2019; and the visitor economy{"\u2019"}s employment yield per added hotel room has reversed.
         </p>
         <p style={prose}>
-          Between 2019 and 2024, Napa County added hundreds of housing units and hundreds of hotel rooms. Jobs in the sectors those rooms were built to support declined. The data point consistently toward one conclusion: until the wage structure of the local economy changes, building more units addresses the symptom, not the condition.
+          Three further readings are consistent with the data but not yet fully established: American Canyon{"\u2019"}s growth is driven more by regional labor markets than by Napa County{"\u2019"}s own; Napa County{"\u2019"}s net commuter inflow may have already crossed into outflow territory; and the wage structure of the county{"\u2019"}s dominant job sectors is the principal constraint on broader-based demographic recovery.
+        </p>
+        <p style={prose}>
+          One question the available public data cannot yet answer: where do new American Canyon residents actually work, and what share of upvalley employers{"\u2019"} workforces now live outside Napa County entirely? A countywide residency-and-commute survey {"\u2014"} of the kind NVTA conducted in 2018 {"\u2014"} would close that gap more quickly and at lower cost than any housing program the county is currently running. That is a measurement gap, not a policy recommendation.
+        </p>
+        <p style={prose}>
+          What the E-1 release tells us, plainly, is where Napa County{"\u2019"}s growth is landing. It is landing in American Canyon. The rest of the county {"\u2014"} eight out of ten residents {"\u2014"} is holding roughly steady or slowly declining, as it has for most of this century. Until the conditions that produce that geography change, the next E-1 release is likely to read much like this one.
         </p>
 
-
-        {/* ── Section: What the Data Can Tell Policymakers ──────────── */}
-        <h2 style={heading}>What the Data Can Tell Policymakers</h2>
-        <p style={prose}>
-          The accumulation of evidence across this series of columns {"\u2014"} 25 years of southern concentration, a shrinking net commuter inflow, higher-wage workers flowing out while lower-wage workers flow in, a rooms-to-jobs ratio that inverted after 2019, decoupled housing and employment growth, and a working-age population projected to fall nearly 20% by 2030 {"\u2014"} points consistently toward one conclusion: until the wage structure of the local economy changes, the pattern documented here will persist.
+        {/* Inline byline — after final paragraph, before Sources */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.ink, fontStyle: "italic", lineHeight: 1.65, margin: "28px 0 0 0" }}>
+          Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
         </p>
-        <p style={prose}>
-          What makes that conclusion more than a demographic observation is the current external environment. Consumer discretionary spending is under pressure nationally. Travel demand has softened. Tariffs on imported goods are raising input costs across the hospitality and wine supply chain. Wine consumption in the United States has been declining, accelerated by documented health-awareness shifts and a generational move away from wine as a category. The fine dining and luxury visitor economy that once drove Napa{"\u2019"}s job growth has not returned to its pre-pandemic trajectory.
-        </p>
-        <p style={prose}>
-          Each of those forces bears on the same underlying condition the population data reflect: a local economy whose dominant job sectors do not generate wages that support household formation, homeownership or long-term residency in Napa County. Adding housing capacity into that environment has produced more units without closing the income gap, more rooms without producing more jobs, and more residents in the southernmost cities without strengthening the workforce communities the valley depends on.
-        </p>
-        <p style={prose}>
-          A countywide survey of where residents work, what they earn and why they chose Napa County would cost a fraction of what the county spends annually on housing-related infrastructure {"\u2014"} and would answer the question the E-1 series, the RHNA mandates and the 2024 Housing Needs Assessment share an inability to answer: whether the growth being recorded each year is building toward a more economically resilient Napa County, or simply reflecting the valley{"\u2019"}s increasing function as a commuter corridor for the broader Bay Area while the structural conditions that shape it go unaddressed.
-        </p>
-
-        {/* Byline */}
-        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 40, paddingTop: 16, marginBottom: 40 }}>
-          <p style={{ fontFamily: font, fontSize: 15, color: T.ink, fontStyle: "italic", margin: 0 }}>
-            Tim Carl is a Napa Valley-based photojournalist.
-          </p>
-        </div>
 
         {/* Sources */}
-        <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 24 }}>
+        <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 24, marginTop: 32 }}>
           <h2 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 12px 0" }}>Sources</h2>
-          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, lineHeight: 1.6, margin: 0 }}>
-            California Department of Finance E-1 Population Estimates (2025); U.S. Census Bureau Decennial Census (2000, 2010, 2020); Napa Valley Transportation Authority Napa Valley Travel Behavior Study (2018); Bureau of Labor Statistics QCEW and CES series (NAPA906LEIHN; SMU06349007072200001SA); STR Monthly Industry Report; American Community Survey County-to-County Commuting Flows 2011{"\u2013"}2015; California Department of Finance E-1H Housing Unit series.
-          </p>
+          <ul style={{ fontFamily: font, fontSize: 13, color: T.muted, lineHeight: 1.6, margin: 0, paddingLeft: 18 }}>
+            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" style={{ color: T.accent }}>California Department of Finance</a> {"\u2014"} E-1 Population Estimates for Cities, Counties, and the State, January 1, 2024 and 2025 (released May 1, 2025).</li>
+            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" style={{ color: T.accent }}>DOF E-1H Housing Estimates</a> {"\u2014"} Cities, Counties, and the State, January 1, 2024 and 2025.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e4/" style={{ color: T.accent }}>DOF E-4 Historical Population Estimates with 2010 Benchmark, 2011{"\u2013"}2018</a> (released May 2018).</li>
+            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/projections/" style={{ color: T.accent }}>DOF P-1A Population Projections by County, 2020{"\u2013"}2060</a>.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://www.census.gov/quickfacts/napacountycalifornia" style={{ color: T.accent }}>U.S. Census Bureau</a> {"\u2014"} Decennial Census Napa County QuickFacts, 2000, 2010, 2020.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://www.nvta.ca.gov/studies-plans" style={{ color: T.accent }}>Napa Valley Transportation Authority</a> {"\u2014"} Napa Valley Travel Behavior Study (2018).</li>
+            <li style={{ marginBottom: 6 }}><a href="https://lehd.ces.census.gov/data/" style={{ color: T.accent }}>U.S. Census LEHD LODES / On The Map</a>.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://fred.stlouisfed.org/series/NAPA906LEIHN" style={{ color: T.accent }}>BLS Napa County Total Leisure and Hospitality (NAPA906LEIHN)</a>.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://fred.stlouisfed.org/series/SMU06349007072200001SA" style={{ color: T.accent }}>BLS Napa Food Services and Drinking Places (SMU06349007072200001SA)</a>.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://str.com/" style={{ color: T.accent }}>STR (CoStar) Monthly Industry Report</a>.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://www.countyofnapa.org/1984/Housing-Element-Update" style={{ color: T.accent }}>Napa County 2024 Housing Needs Assessment</a>.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-american-canyon-grows" style={{ color: T.accent }}>Napa Valley Features {"\u2014"} American Canyon Grows While the Upvalley Shrinks</a> (May 10, 2025).</li>
+            <li style={{ marginBottom: 6 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" style={{ color: T.accent }}>Napa Valley Features {"\u2014"} Rethinking the Housing Narrative in Napa County</a> (June 7, 2025).</li>
+            <li style={{ marginBottom: 6 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-is-napa-valley-building" style={{ color: T.accent }}>Napa Valley Features {"\u2014"} Is Napa Valley Building for a Future That Doesn{"\u2019"}t Exist?</a> (August 31, 2024).</li>
+            <li style={{ marginBottom: 6 }}><a href="https://napavalleyregister.com/news/napa-population-growth-california/article_02b77c02-5eae-4a61-9506-c1d9979b4527.html" style={{ color: T.accent }}>Napa Valley Register {"\u2014"} Napa County sees second year of population growth</a> (May 8, 2025).</li>
+          </ul>
         </div>
 
         {/* Polls */}
