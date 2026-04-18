@@ -151,3 +151,25 @@ DRAFT: napa-population-2025 (5 open flags — do not publish)
 - grep against assumed filenames frequently fails — check directory listing first
 - sed -n 'X,Yp' reliable for reading specific line ranges before str_replace
 - Claude Code summarizes file output by default — instruct "Do not summarize. Print every line."
+
+## Session April 18, 2026 — Population Article Rewrite + Permanent SOPs
+
+### Article state changes
+- napa-population-2025: rewritten end-to-end from editor memo, frozen in DRAFT. Awaiting May 2026 DOF E-1 release before publish. Poll IDs 18-20 reserved but not seeded.
+- Seven Phase 1 commits (31a9cfa, 7d241fd, c47ecba, 181f183, f889c27, c6cc879).
+- Chart 1 uses authoritative DOF E-4 May 2025 benchmark (2011-2020 with 2010 and 2020 Census Benchmarks): peak 141,119 in 2016.
+
+### Permanent SOPs
+1. Every Claude Code prompt is fully self-contained inside a `cat << 'RULES' ... RULES` heredoc. Backup (cp) commands outside the heredoc as executable shell lines.
+2. NVF canonical Substack domain: napavalleyfocus.substack.com (never napavalleyfeatures).
+3. Data vintage rule: primary-source DOF landing pages take precedence; always use newest E-4 benchmark (currently May 2025).
+4. Caption SOP: single italic block, "Title. Description. Source: [link](url) (range)."
+5. JSX plain attr strings don't interpret \u escapes — use real en-dash/em-dash characters.
+6. DOF release timing: always include year; flag imminent next releases when publishing near April-May cycle.
+7. Chart 1 annotation: Chart.js plugin with afterDatasetsDraw + fillText at peak/current indices.
+8. Document format convention: session-close deliverables produced as real Microsoft Word 2007+ .docx (not plain text with .docx extension). Verify with `file [name].docx` — should say "Microsoft Word 2007+".
+
+### Broken DOF links to fix on sight
+- /forecasting/demographics/estimates-e4/ — 404
+- Correct E-4 URL: /forecasting/demographics/estimates/e-4-population-estimates-for-cities-counties-and-the-state-2011-2020-with-2010-and-2020-census-benchmark/
+- "DOF P-1A" is state-level; county equivalent is P-2A, 2020-2070, Baseline 2024
