@@ -969,26 +969,55 @@ export default function EventFinder() {
                 for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
                 return ((h & 0xffff) / 0xffff - 0.5) * scale;
               };
-              const pins = [...(results.map || [])];
-              const pinKeys = new Set(pins.map(p => `${p.lat}|${p.lon}|${p.name}`));
-              // Add pins for results that have geo in the result object
+              // Collect raw pins with their true coords (no jitter yet)
+              const rawPins = [...(results.map || [])];
+              const seenNames = new Set(rawPins.map(p => p.name));
               (results.results || []).forEach(r => {
-                if (r.geo && r.geo.lat && r.geo.lon) {
-                  const key = `${r.geo.lat}|${r.geo.lon}|${r.header}`;
-                  if (!pinKeys.has(key)) { pins.push({ name: r.header, lat: r.geo.lat, lon: r.geo.lon }); pinKeys.add(key); }
+                if (r.geo && r.geo.lat && r.geo.lon && !seenNames.has(r.header)) {
+                  rawPins.push({ name: r.header, lat: r.geo.lat, lon: r.geo.lon });
+                  seenNames.add(r.header);
                 }
               });
-              // Fallback: DB events with a town but no geo → use GEO_HINTS
               (results.results || []).forEach(r => {
-                if (r._fromDB && r._dbTown && !pins.some(p => p.name === r.header)) {
+                if (r._fromDB && r._dbTown && !seenNames.has(r.header)) {
                   const hint = GEO_HINTS[r._dbTown];
-                  if (hint) pins.push({ name: r.header, lat: hint.lat, lon: hint.lon });
+                  if (hint) { rawPins.push({ name: r.header, lat: hint.lat, lon: hint.lon }); seenNames.add(r.header); }
                 }
               });
-              // Apply deterministic jitter to all pins so stacked markers spread out
+              // Group pins that share the same coordinate (same venue) into one map marker
+              const coordKey = (p) => `${p.lat.toFixed(4)}|${p.lon.toFixed(4)}`;
+              const grouped = new Map();
+              rawPins.forEach(p => {
+                const key = coordKey(p);
+                if (!grouped.has(key)) {
+                  grouped.set(key, { lat: p.lat, lon: p.lon, names: [p.name] });
+                } else {
+                  grouped.get(key).names.push(p.name);
+                }
+              });
+              // Build final pins: one per venue. Multi-event venues get a count in the name.
+              const pins = Array.from(grouped.values()).map(g => ({
+                lat: g.lat,
+                lon: g.lon,
+                name: g.names.length === 1
+                  ? g.names[0]
+                  : `${g.names.length} events: ${g.names.slice(0, 3).join(' • ')}${g.names.length > 3 ? ` • +${g.names.length - 3} more` : ''}`,
+              }));
+              // Apply jitter ONLY if multiple distinct venues share a near-identical coord (rare edge case)
+              // Same-venue stacks are already collapsed above, so Cameo-style spread is prevented.
+              const bucketed = new Map();
               pins.forEach(p => {
-                p.lat += hashJitter(p.name + 'lat');
-                p.lon += hashJitter(p.name + 'lon');
+                const bucket = coordKey(p);
+                if (!bucketed.has(bucket)) bucketed.set(bucket, []);
+                bucketed.get(bucket).push(p);
+              });
+              bucketed.forEach(group => {
+                if (group.length > 1) {
+                  group.forEach(p => {
+                    p.lat += hashJitter(p.name + 'lat');
+                    p.lon += hashJitter(p.name + 'lon');
+                  });
+                }
               });
               return pins;
             })()} />
