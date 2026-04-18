@@ -267,10 +267,10 @@ function ChartCanvas({ canvasId, buildChart, downloadName }) {
 
 // ─── Chart 1: Napa County Population Trend, 2000-2025 ─────────────────────────
 function Chart1() {
-  const labels = ["2000", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2020", "2023", "2024", "2025"];
-  const data   = [124279, 136484, 136901, 138120, 138838, 140189, 140884, 141711, 141784, 141294, 138019, 135522, 135415, 136124];
-  const pointColors = labels.map((_, i) => i === 8 ? "#9E5050" : i === 13 ? "#5B9E8A" : "#4A7BA7");
-  const pointRadii  = labels.map((_, i) => (i === 8 || i === 13) ? 6 : 4);
+  const labels = ["2000", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2023", "2024", "2025"];
+  const data   = [124279, 136484, 136839, 138249, 138808, 140114, 140654, 141119, 140837, 139786, 138982, 138019, 135522, 135415, 136124];
+  const pointColors = labels.map((_, i) => i === 7 ? "#9E5050" : i === 14 ? "#5B9E8A" : "#4A7BA7");
+  const pointRadii  = labels.map((_, i) => (i === 7 || i === 14) ? 6 : 4);
 
   return (
     <ChartCanvas canvasId="chart-pop-trend" downloadName="chart-1_napa-population-trend.png" buildChart={(ctx) => {
@@ -310,14 +310,14 @@ function Chart1() {
           afterDatasetsDraw(chart) {
             const { ctx: c } = chart;
             const ds = chart.getDatasetMeta(0);
-            const peakIdx = 8;
-            const curIdx = 13;
+            const peakIdx = 7;
+            const curIdx = 14;
             c.save();
             c.font = "bold 11px 'Source Sans 3', sans-serif";
             c.fillStyle = "#9E5050";
             c.textAlign = "center";
             const peakPoint = ds.data[peakIdx];
-            if (peakPoint) c.fillText("Peak: 141,784 (2017)", peakPoint.x, peakPoint.y - 12);
+            if (peakPoint) c.fillText("Peak: 141,119 (2016)", peakPoint.x, peakPoint.y - 12);
             c.fillStyle = "#5B9E8A";
             const curPoint = ds.data[curIdx];
             if (curPoint) c.fillText("2025: 136,124", curPoint.x, curPoint.y + 20);
@@ -709,7 +709,7 @@ export default function NapaPopulation() {
 
         {/* ── Opening ───────────────────────────────────────────────── */}
         <p style={prose}>
-          <span style={{ fontWeight: 700 }}>NAPA VALLEY, Calif. {"\u2014"}</span> The California Department of Finance released its 2025 E-1 population estimates on May 1, showing Napa County gained 709 residents in 2024, for a total of 136,124 as of January 1, 2025. The county{"\u2019"}s 0.52% year-over-year growth rate led all nine Bay Area counties.
+          <span style={{ fontWeight: 700 }}>NAPA VALLEY, Calif. {"\u2014"}</span> The California Department of Finance{"\u2019"}s most recent E-1 population estimates {"\u2014"} released in May 2025 {"\u2014"} show Napa County gained 709 residents in 2024, for a total of 136,124 as of January 1, 2025. The county{"\u2019"}s 0.52% year-over-year growth rate led all nine Bay Area counties. The next E-1 release, reflecting January 1, 2026 figures, is expected from DOF in May 2026.
         </p>
         <p style={prose}>
           Of those 709 new residents, 639 {"\u2014"} or 90% {"\u2014"} were added in one city: American Canyon. Every other part of the county, taken together, gained 70 people.
@@ -760,10 +760,10 @@ export default function NapaPopulation() {
         ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
 
 
-        {/* ── Section: Still Below Peak, After Eight Years ───────────── */}
-        <h2 style={heading}>Still Below Peak, After Eight Years</h2>
+        {/* ── Section: Still Below Peak, After Nine Years ───────────── */}
+        <h2 style={heading}>Still Below Peak, After Nine Years</h2>
         <p style={prose}>
-          Napa County reached its modern population peak of 141,784 in 2017, according to DOF{"\u2019"}s E-4 series (May 2018 benchmark). It has not recovered. The county stood at 136,124 on January 1, 2025 {"\u2014"} 5,660 residents below that peak, or 4.0% lower. The 2025 figure is within 360 residents of the county{"\u2019"}s 2010 census count of 136,484. In effect, the past 15 years have produced no net population change at the county level.
+          Napa County reached its modern population peak of 141,119 in 2016, according to DOF{"\u2019"}s E-4 May 2025 benchmark (2011{"\u2013"}2020, with 2010 and 2020 Census benchmarks). It has not recovered. The county stood at 136,124 on January 1, 2025 {"\u2014"} 4,995 residents below that peak, or 3.5% lower. The 2025 figure is within 360 residents of the county{"\u2019"}s 2010 census count of 136,484. In effect, the past 15 years have produced no net population change at the county level.
         </p>
         <p style={prose}>
           What has changed in that time is where the residents live. In 2010, American Canyon held 14.3% of the county. In 2025, it holds 16.5%. Every other jurisdiction has held flat, declined, or shrunk as a share of the county.
@@ -776,7 +776,7 @@ export default function NapaPopulation() {
         {chartReady ? (
           <ChartBox
             title="Napa County Population Trend, 2000–2025"
-            caption="The county's 2025 count of 136,124 sits 5,660 residents below its 2017 peak of 141,784 and within 360 residents of its 2010 census count. After eight years, Napa County has not recovered its previous high."
+            caption="The county's 2025 count of 136,124 sits 4,995 residents below its 2016 peak of 141,119 and within 360 residents of its 2010 census count. After nine years, Napa County has not recovered its previous high."
             source="U.S. Census Bureau Decennial Census (2000, 2010, 2020); California Department of Finance, E-4 Estimates with 2010 Benchmark (2011–2018); DOF E-1 Estimates (2023–2025)"
           >
             <Chart1 />
@@ -892,8 +892,8 @@ export default function NapaPopulation() {
           <ul style={{ fontFamily: font, fontSize: 13, color: T.muted, lineHeight: 1.6, margin: 0, paddingLeft: 18 }}>
             <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" style={{ color: T.accent }}>California Department of Finance</a> {"\u2014"} E-1 Population Estimates for Cities, Counties, and the State, January 1, 2024 and 2025 (released May 1, 2025).</li>
             <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" style={{ color: T.accent }}>DOF E-1H Housing Estimates</a> {"\u2014"} Cities, Counties, and the State, January 1, 2024 and 2025.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e4/" style={{ color: T.accent }}>DOF E-4 Historical Population Estimates with 2010 Benchmark, 2011{"\u2013"}2018</a> (released May 2018).</li>
-            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/projections/" style={{ color: T.accent }}>DOF P-1A Population Projections by County, 2020{"\u2013"}2060</a>.</li>
+            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates/e-4-population-estimates-for-cities-counties-and-the-state-2011-2020-with-2010-and-2020-census-benchmark/" style={{ color: T.accent }}>DOF E-4 Population Estimates, 2011{"\u2013"}2020, with 2010 and 2020 Census Benchmarks</a> (released May 2025).</li>
+            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/projections/" style={{ color: T.accent }}>DOF P-2A County Population Projections, 2020{"\u2013"}2070 (Baseline 2024)</a>.</li>
             <li style={{ marginBottom: 6 }}><a href="https://www.census.gov/quickfacts/napacountycalifornia" style={{ color: T.accent }}>U.S. Census Bureau</a> {"\u2014"} Decennial Census Napa County QuickFacts, 2000, 2010, 2020.</li>
             <li style={{ marginBottom: 6 }}><a href="https://www.nvta.ca.gov/studies-plans" style={{ color: T.accent }}>Napa Valley Transportation Authority</a> {"\u2014"} Napa Valley Travel Behavior Study (2018).</li>
             <li style={{ marginBottom: 6 }}><a href="https://lehd.ces.census.gov/data/" style={{ color: T.accent }}>U.S. Census LEHD LODES / On The Map</a>.</li>
