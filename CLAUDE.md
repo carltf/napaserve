@@ -173,3 +173,121 @@ DRAFT: napa-population-2025 (5 open flags — do not publish)
 - /forecasting/demographics/estimates-e4/ — 404
 - Correct E-4 URL: /forecasting/demographics/estimates/e-4-population-estimates-for-cities-counties-and-the-state-2011-2020-with-2010-and-2020-census-benchmark/
 - "DOF P-1A" is state-level; county equivalent is P-2A, 2020-2070, Baseline 2024
+# CLAUDE.md Patch — April 18, 2026 (v2 / afternoon)
+
+Append the following to CLAUDE.md in the repo root. These rules are additive to the existing content and capture lessons from today's afternoon session.
+
+---
+
+## Git Staging Rules (Added April 18, 2026)
+
+**CRITICAL: NEVER use `git add -A` or `git add .` in this repo.**
+
+This repo intentionally keeps `.bak-*` files and a `tmp/` directory locally for reference. A blanket `git add -A` picks these up and pollutes commits (as happened in commit 42b1e9c on April 18, 2026).
+
+### Correct pattern
+
+```bash
+# Always stage explicit paths:
+git add path/to/file1 path/to/file2
+git commit -m "..."
+
+# For a single-file fix:
+git add economic-pulse-app/src/napaserve-event-finder.jsx
+git commit -m "fix: ..."
+```
+
+### Enforcement
+
+`.gitignore` was updated April 18, 2026 to exclude:
+- `*.bak-*` — all backup files created during debug sessions
+- `tmp/` — temporary data directory (xlsx exports, test artifacts, etc.)
+
+These patterns will prevent accidental commits going forward, but the `-A` rule still stands as a best practice.
+
+---
+
+## Map Pin Rendering Rules (Added April 18, 2026)
+
+**File:** `economic-pulse-app/src/napaserve-event-finder.jsx`
+
+### hashJitter constraints
+
+The `hashJitter` function applies a deterministic ~880m offset (scale = 0.008°) to separate visually-stacked map pins. It must **never** be applied to events that share a single venue — this causes the pin-spread bug that was visible for Cameo Cinema (10 events → 10 pins scattered across half a mile of St. Helena).
+
+### Correct pattern
+
+Group events by true coordinate key BEFORE applying jitter:
+
+```javascript
+// 1. Collect raw pins with true coords (no jitter)
+const rawPins = [...(results.map || [])];
+// ... collect DB fallbacks, etc.
+
+// 2. Group by coord key (~11m granularity)
+const coordKey = (p) => `${p.lat.toFixed(4)}|${p.lon.toFixed(4)}`;
+const grouped = new Map();
+rawPins.forEach(p => {
+  const key = coordKey(p);
+  if (!grouped.has(key)) grouped.set(key, { lat: p.lat, lon: p.lon, names: [p.name] });
+  else grouped.get(key).names.push(p.name);
+});
+
+// 3. Build one pin per venue, with event-list label for multi-event venues
+const pins = Array.from(grouped.values()).map(g => ({
+  lat: g.lat, lon: g.lon,
+  name: g.names.length === 1 ? g.names[0] : `${g.names.length} events: ${g.names.slice(0,3).join(' • ')}${g.names.length > 3 ? ` • +${g.names.length - 3} more` : ''}`,
+}));
+
+// 4. Apply jitter ONLY if multiple distinct venues share a near-identical coord (rare)
+```
+
+Landed in commit 4d1caf3.
+
+---
+
+## File Path Corrections (Added April 18, 2026)
+
+The Event Finder component is at:
+
+```
+economic-pulse-app/src/napaserve-event-finder.jsx
+```
+
+It is NOT at `src/pages/napaserve-event-finder.jsx`. Any grep/sed operations should use the correct path.
+
+---
+
+## Canonical Weekender Format (Added April 18, 2026)
+
+The standard structure for Weekender event lists (used in Napa Valley Features Friday Edition):
+
+### Structure
+
+1. **Intro paragraph** referencing specific events in the current list, ending with: "For the full picture, visit our Event Finder at napaserve.org/events."
+2. **Ongoing events FIRST** — multi-day runs that cross the issue date. Lead with "Through [final date]." Then list remaining performances.
+3. **Single-date events AFTER** in strict chronological order (by start date, then start time).
+
+### Each event entry
+
+- Title in H5 style (not bold paragraph text — this matters for Substack publishing).
+- Date and start time on one line.
+- Description: venue, performers/format, what to expect.
+- Price line.
+- "For more information visit their website[, email X]/[, or call Y]." The word "website" is hyperlinked to the source URL.
+- Street address as the final element.
+
+### Example pattern (ongoing event leading the list)
+
+```
+'Harvey'
+Through May 3. UpStage Napa Valley presents Mary Chase's Pulitzer Prize-winning
+comedy about Elwood P. Dowd and his invisible six-foot rabbit at Grace Episcopal
+Church. Remaining performances are Friday, May 1 and Saturday, May 2 at 7:30 p.m.,
+and Sunday, May 3 at 2:30 p.m. Tickets $26.50 to $36.50. For more information
+visit their website. 1314 Spring St., St. Helena.
+```
+
+### Source attribution
+
+The Napa Valley Register community calendar (Samie Hartley, published weekly) is a reliable source for events. Use when Event Finder scraper results are sparse.
