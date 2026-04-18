@@ -760,8 +760,8 @@ export default function NapaPopulation() {
         ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
 
 
-        {/* ── Section: Still Below Peak, After Nine Years ───────────── */}
-        <h2 style={heading}>Still Below Peak, After Nine Years</h2>
+        {/* ── Section: Still Below Peak, After Eight Years ───────────── */}
+        <h2 style={heading}>Still Below Peak, After Eight Years</h2>
         <p style={prose}>
           Napa County reached its modern population peak of 141,784 in 2017, according to DOF{"\u2019"}s E-4 series (May 2018 benchmark). It has not recovered. The county stood at 136,124 on January 1, 2025 {"\u2014"} 5,660 residents below that peak, or 4.0% lower. The 2025 figure is within 360 residents of the county{"\u2019"}s 2010 census count of 136,484. In effect, the past 15 years have produced no net population change at the county level.
         </p>
@@ -777,8 +777,7 @@ export default function NapaPopulation() {
           <ChartBox
             title="Napa County Population Trend, 2000–2025"
             caption="The county's 2025 count of 136,124 sits 5,660 residents below its 2017 peak of 141,784 and within 360 residents of its 2010 census count. After eight years, Napa County has not recovered its previous high."
-            source="U.S. Census Bureau Decennial Census (2000, 2010, 2020); California Department of Finance, E-4 Estimates with 2010 Benchmark (2011–2018); DOF E-1 Estimates (2023â2025)"
-            note="*2005 and 2015 are interpolated estimates."
+            source="U.S. Census Bureau Decennial Census (2000, 2010, 2020); California Department of Finance, E-4 Estimates with 2010 Benchmark (2011–2018); DOF E-1 Estimates (2023–2025)"
           >
             <Chart1 />
           </ChartBox>
@@ -836,7 +835,7 @@ export default function NapaPopulation() {
         {/* Chart 5 — Jobs per Hotel Room */}
         {chartReady ? (
           <ChartBox
-            title="Leisure and Hospitality Jobs Added per Hotel Room Added, 2009–2019 vs. 2019â2024"
+            title="Leisure and Hospitality Jobs Added per Hotel Room Added, 2009–2019 vs. 2019–2024"
             caption="From 2009 to 2019, each hotel room added in Napa County was associated with more than seven new leisure and hospitality jobs. Since 2019, the ratio has inverted: rooms have continued to be added, but leisure and hospitality employment has declined."
             source="Bureau of Labor Statistics — Napa County Total Leisure and Hospitality (NAPA906LEIHN), Food Services and Drinking Places (SMU06349007072200001SA); STR Monthly Industry Report"
             note="Sector-specific employment-yield measure, not a comprehensive read on the Napa County labor market."
