@@ -267,10 +267,10 @@ function ChartCanvas({ canvasId, buildChart, downloadName }) {
 
 // ─── Chart 1: Napa County Population Trend, 2000-2025 ─────────────────────────
 function Chart1() {
-  const labels = ["2000", "2005*", "2010", "2015*", "2016", "2020", "2025"];
-  const data   = [124279, 130500, 136484, 140175, 141119, 137744, 136124];
-  const pointColors = labels.map((_, i) => i === 4 ? "#9E5050" : i === 6 ? "#5B9E8A" : "#4A7BA7");
-  const pointRadii  = labels.map((_, i) => (i === 4 || i === 6) ? 6 : 4);
+  const labels = ["2000", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2020", "2023", "2024", "2025"];
+  const data   = [124279, 136484, 136901, 138120, 138838, 140189, 140884, 141294, 141711, 141784, 138019, 135522, 135415, 136124];
+  const pointColors = labels.map((_, i) => i === 7 ? "#9E5050" : i === 13 ? "#5B9E8A" : "#4A7BA7");
+  const pointRadii  = labels.map((_, i) => (i === 7 || i === 13) ? 6 : 4);
 
   return (
     <ChartCanvas canvasId="chart-pop-trend" downloadName="chart-1_napa-population-trend.png" buildChart={(ctx) => {
@@ -305,6 +305,25 @@ function Chart1() {
             },
           },
         },
+        plugins: [{
+          id: "peakCurrentLabels",
+          afterDatasetsDraw(chart) {
+            const { ctx: c } = chart;
+            const ds = chart.getDatasetMeta(0);
+            const peakIdx = 7;
+            const curIdx = 13;
+            c.save();
+            c.font = "bold 11px 'Source Sans 3', sans-serif";
+            c.fillStyle = "#9E5050";
+            c.textAlign = "center";
+            const peakPoint = ds.data[peakIdx];
+            if (peakPoint) c.fillText("Peak: 141,294 (2016)", peakPoint.x, peakPoint.y - 12);
+            c.fillStyle = "#5B9E8A";
+            const curPoint = ds.data[curIdx];
+            if (curPoint) c.fillText("2025: 136,124", curPoint.x, curPoint.y + 20);
+            c.restore();
+          },
+        }],
       });
     }} />
   );
@@ -427,7 +446,10 @@ function Chart4() {
             label: "Net Commuter Inflow",
             data,
             backgroundColor: colors,
+            borderColor: data.map((_, i) => i <= 1 ? "transparent" : (data[i] >= 0 ? "#4A7BA7" : "#9E5050")),
+            borderWidth: data.map((_, i) => i <= 1 ? 0 : 2),
             borderRadius: 3,
+            borderSkipped: false,
           }],
         },
         options: {
@@ -465,6 +487,30 @@ function Chart4() {
             c.textAlign = "left";
             c.textBaseline = "bottom";
             c.fillText("0 \u2190 breakeven", xScale.left + 4, y0 - 4);
+            c.restore();
+          },
+        }, {
+          id: "scenarioBadge",
+          afterDatasetsDraw(chart) {
+            const { ctx: c, chartArea } = chart;
+            c.save();
+            const badgeText = "SCENARIO \u2014 NOT A FORECAST";
+            c.font = "bold 10px 'Source Sans 3', sans-serif";
+            const metrics = c.measureText(badgeText);
+            const padX = 8, padY = 5;
+            const badgeW = metrics.width + padX * 2;
+            const badgeH = 20;
+            const x = chartArea.right - badgeW - 10;
+            const y = chartArea.top + 10;
+            c.fillStyle = "rgba(158, 80, 80, 0.12)";
+            c.strokeStyle = "#9E5050";
+            c.lineWidth = 1;
+            c.fillRect(x, y, badgeW, badgeH);
+            c.strokeRect(x, y, badgeW, badgeH);
+            c.fillStyle = "#9E5050";
+            c.textAlign = "left";
+            c.textBaseline = "middle";
+            c.fillText(badgeText, x + padX, y + badgeH / 2);
             c.restore();
           },
         }],
