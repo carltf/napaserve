@@ -268,9 +268,9 @@ function ChartCanvas({ canvasId, buildChart, downloadName }) {
 // ─── Chart 1: Napa County Population Trend, 2000-2025 ─────────────────────────
 function Chart1() {
   const labels = ["2000", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2020", "2023", "2024", "2025"];
-  const data   = [124279, 136484, 136901, 138120, 138838, 140189, 140884, 141294, 141711, 141784, 138019, 135522, 135415, 136124];
-  const pointColors = labels.map((_, i) => i === 7 ? "#9E5050" : i === 13 ? "#5B9E8A" : "#4A7BA7");
-  const pointRadii  = labels.map((_, i) => (i === 7 || i === 13) ? 6 : 4);
+  const data   = [124279, 136484, 136901, 138120, 138838, 140189, 140884, 141711, 141784, 141294, 138019, 135522, 135415, 136124];
+  const pointColors = labels.map((_, i) => i === 8 ? "#9E5050" : i === 13 ? "#5B9E8A" : "#4A7BA7");
+  const pointRadii  = labels.map((_, i) => (i === 8 || i === 13) ? 6 : 4);
 
   return (
     <ChartCanvas canvasId="chart-pop-trend" downloadName="chart-1_napa-population-trend.png" buildChart={(ctx) => {
@@ -310,14 +310,14 @@ function Chart1() {
           afterDatasetsDraw(chart) {
             const { ctx: c } = chart;
             const ds = chart.getDatasetMeta(0);
-            const peakIdx = 7;
+            const peakIdx = 8;
             const curIdx = 13;
             c.save();
             c.font = "bold 11px 'Source Sans 3', sans-serif";
             c.fillStyle = "#9E5050";
             c.textAlign = "center";
             const peakPoint = ds.data[peakIdx];
-            if (peakPoint) c.fillText("Peak: 141,294 (2016)", peakPoint.x, peakPoint.y - 12);
+            if (peakPoint) c.fillText("Peak: 141,784 (2017)", peakPoint.x, peakPoint.y - 12);
             c.fillStyle = "#5B9E8A";
             const curPoint = ds.data[curIdx];
             if (curPoint) c.fillText("2025: 136,124", curPoint.x, curPoint.y + 20);
@@ -724,8 +724,8 @@ export default function NapaPopulation() {
         {/* Chart 2 — Population Change by Jurisdiction */}
         {chartReady ? (
           <ChartBox
-            title="Population Change by Jurisdiction, 2024\u20132025"
-            caption="American Canyon gained 639 residents \u2014 90 percent of Napa County's 709-resident net gain. Napa city added 216. Calistoga, St. Helena, Yountville and the unincorporated balance of the county all lost residents. Ordered north (top) to south (bottom)."
+            title="Population Change by Jurisdiction, 2024–2025"
+            caption="American Canyon gained 639 residents — 90 percent of Napa County's 709-resident net gain. Napa city added 216. Calistoga, St. Helena, Yountville and the unincorporated balance of the county all lost residents. Ordered north (top) to south (bottom)."
             source="California Department of Finance, E-1 Population Estimates, January 1, 2024 and January 1, 2025"
           >
             <Chart2 />
@@ -763,7 +763,7 @@ export default function NapaPopulation() {
         {/* ── Section: Still Below Peak, After Nine Years ───────────── */}
         <h2 style={heading}>Still Below Peak, After Nine Years</h2>
         <p style={prose}>
-          Napa County reached its modern population peak of 141,294 in 2016, according to DOF{"\u2019"}s E-4 series (May 2018 benchmark). It has not recovered. The county stood at 136,124 on January 1, 2025 {"\u2014"} 5,170 residents below that peak, or 3.7% lower. The 2025 figure is within 360 residents of the county{"\u2019"}s 2010 census count of 136,484. In effect, the past 15 years have produced no net population change at the county level.
+          Napa County reached its modern population peak of 141,784 in 2017, according to DOF{"\u2019"}s E-4 series (May 2018 benchmark). It has not recovered. The county stood at 136,124 on January 1, 2025 {"\u2014"} 5,660 residents below that peak, or 4.0% lower. The 2025 figure is within 360 residents of the county{"\u2019"}s 2010 census count of 136,484. In effect, the past 15 years have produced no net population change at the county level.
         </p>
         <p style={prose}>
           What has changed in that time is where the residents live. In 2010, American Canyon held 14.3% of the county. In 2025, it holds 16.5%. Every other jurisdiction has held flat, declined, or shrunk as a share of the county.
@@ -775,9 +775,9 @@ export default function NapaPopulation() {
         {/* Chart 1 — Napa County Population Trend */}
         {chartReady ? (
           <ChartBox
-            title="Napa County Population Trend, 2000\u20132025"
-            caption="The county's 2025 count of 136,124 sits 5,170 residents below its 2016 peak of 141,294 and within 360 residents of its 2010 census count. After nine years, Napa County has not recovered its previous high."
-            source="U.S. Census Bureau Decennial Census (2000, 2010, 2020); California Department of Finance, E-4 Estimates with 2010 Benchmark (2011\u20132018); DOF E-1 Estimates (2023\u20132025)"
+            title="Napa County Population Trend, 2000–2025"
+            caption="The county's 2025 count of 136,124 sits 5,660 residents below its 2017 peak of 141,784 and within 360 residents of its 2010 census count. After eight years, Napa County has not recovered its previous high."
+            source="U.S. Census Bureau Decennial Census (2000, 2010, 2020); California Department of Finance, E-4 Estimates with 2010 Benchmark (2011–2018); DOF E-1 Estimates (2023â2025)"
             note="*2005 and 2015 are interpolated estimates."
           >
             <Chart1 />
@@ -810,9 +810,9 @@ export default function NapaPopulation() {
         {/* Chart 4 — Net Commuter Inflow */}
         {chartReady ? (
           <ChartBox
-            title="Net Commuter Inflow to Napa County, 2015\u20132018 (with extrapolation)"
-            caption="NVTA measured a net inflow of approximately 7,000 commuters in 2015 and approximately 4,240 in 2018 \u2014 a 40 percent decline in three years. The dashed bars are a linear extension of that trend for 2021 through 2030. The extrapolation is illustrative only."
-            source="Napa Valley Transportation Authority, Napa Valley Travel Behavior Study (2018). Linear extension 2019\u20132030 by the author \u2014 illustrative only."
+            title="Net Commuter Inflow to Napa County, 2015–2018 (with extrapolation)"
+            caption="NVTA measured a net inflow of approximately 7,000 commuters in 2015 and approximately 4,240 in 2018 — a 40 percent decline in three years. The dashed bars are a linear extension of that trend for 2021 through 2030. The extrapolation is illustrative only."
+            source="Napa Valley Transportation Authority, Napa Valley Travel Behavior Study (2018). Linear extension 2019–2030 by the author — illustrative only."
             note="No updated NVTA or ACS study has confirmed a crossover into net outflow territory."
             scenarioBadge
           >
@@ -836,9 +836,9 @@ export default function NapaPopulation() {
         {/* Chart 5 — Jobs per Hotel Room */}
         {chartReady ? (
           <ChartBox
-            title="Leisure and Hospitality Jobs Added per Hotel Room Added, 2009\u20132019 vs. 2019\u20132024"
+            title="Leisure and Hospitality Jobs Added per Hotel Room Added, 2009–2019 vs. 2019â2024"
             caption="From 2009 to 2019, each hotel room added in Napa County was associated with more than seven new leisure and hospitality jobs. Since 2019, the ratio has inverted: rooms have continued to be added, but leisure and hospitality employment has declined."
-            source="Bureau of Labor Statistics \u2014 Napa County Total Leisure and Hospitality (NAPA906LEIHN), Food Services and Drinking Places (SMU06349007072200001SA); STR Monthly Industry Report"
+            source="Bureau of Labor Statistics — Napa County Total Leisure and Hospitality (NAPA906LEIHN), Food Services and Drinking Places (SMU06349007072200001SA); STR Monthly Industry Report"
             note="Sector-specific employment-yield measure, not a comprehensive read on the Napa County labor market."
           >
             <Chart5 />
