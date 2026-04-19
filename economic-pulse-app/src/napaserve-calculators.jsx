@@ -918,18 +918,19 @@ function ContractionTracker() {
           <button
             onClick={downloadChart}
             style={{
-              padding: "4px 10px",
-              fontFamily: "'Source Sans 3', sans-serif",
+              padding: "4px 12px",
+              fontFamily: "monospace",
               fontSize: 11,
-              fontWeight: 600,
-              color: "#8B5E3C",
+              fontWeight: 400,
+              letterSpacing: "0.88px",
+              color: "#8B7355",
               background: "transparent",
-              border: "1px solid #8B5E3C",
+              border: "1px solid #D4C9B8",
               borderRadius: 3,
               cursor: "pointer",
             }}
           >
-            ↓ PNG
+            DOWNLOAD CHART PNG
           </button>
         </div>
         <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
