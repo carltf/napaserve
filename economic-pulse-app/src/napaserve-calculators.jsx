@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import { Chart, ScatterController, LinearScale, PointElement, Tooltip, Legend } from "chart.js";
+Chart.register(ScatterController, LinearScale, PointElement, Tooltip, Legend);
 
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 
@@ -751,13 +753,192 @@ const CATEGORY_COLORS = {
 function ContractionTracker() {
   const [filter, setFilter] = useState("All");
   const categories = ["All", "Hospitality", "Production", "Transaction", "Distribution"];
+  const chartRef = useRef(null);
+  const chartInstanceRef = useRef(null);
+
+  // Y-axis category map (4 = top, 1 = bottom) — matches card color system
+  const Y_MAP = { Hospitality: 4, Production: 3, Transaction: 2, Distribution: 1 };
+  const Y_LABELS = { 4: "Hospitality", 3: "Production", 2: "Transaction", 1: "Distribution" };
+
+  // "Mon D, YYYY" -> months-since-Jan-2023 (linear x-axis)
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const dateToX = (str) => {
+    const m = str.match(/^([A-Za-z]+)\s+(\d+),\s+(\d{4})$/);
+    if (!m) return 0;
+    const monthIdx = MONTHS.findIndex(mm => mm === m[1].slice(0,3));
+    return (parseInt(m[3]) - 2023) * 12 + monthIdx;
+  };
+  const xToLabel = (x) => {
+    const year = 2023 + Math.floor(x / 12);
+    const month = MONTHS[((x % 12) + 12) % 12];
+    return `${month} ${year}`;
+  };
+
+  // Deterministic jitter so same-category same-month dots don't overlap
+  const jitter = (headline) => {
+    let h = 0;
+    for (let i = 0; i < headline.length; i++) h = (h * 31 + headline.charCodeAt(i)) | 0;
+    return ((h % 1000) / 1000 - 0.5) * 0.3; // ±0.15 y-offset
+  };
+
+  // PNG download using native chart.toBase64Image()
+  const downloadChart = () => {
+    if (!chartInstanceRef.current) return;
+    const chart = chartInstanceRef.current;
+    // Temporarily set white bg for download
+    const canvas = chart.canvas;
+    const ctx = canvas.getContext("2d");
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = canvas.width + 80;
+    tempCanvas.height = canvas.height + 80;
+    const tctx = tempCanvas.getContext("2d");
+    tctx.fillStyle = "#F5F0E8";
+    tctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    // Title
+    tctx.fillStyle = "#2C1810";
+    tctx.font = "bold 32px 'Libre Baskerville', serif";
+    tctx.fillText("Regional Contraction Timeline — NapaServe", 28, 16 + 32);
+    // Chart
+    tctx.drawImage(canvas, 28, 80);
+    // Watermark
+    tctx.fillStyle = "rgba(139, 115, 85, 0.4)";
+    tctx.font = "26px 'Source Sans 3', sans-serif";
+    tctx.textAlign = "right";
+    tctx.fillText("napaserve.org", tempCanvas.width - 28, tempCanvas.height - 20);
+    // Trigger download
+    const link = document.createElement("a");
+    link.download = "regional-contraction-timeline.png";
+    link.href = tempCanvas.toDataURL("image/png");
+    link.click();
+  };
 
   const filtered = filter === "All"
     ? TRACKER_EVENTS
     : TRACKER_EVENTS.filter(e => e.category === filter);
 
+  // Chart.js effect — rebuilds when `filtered` changes
+  useEffect(() => {
+    if (!chartRef.current) return;
+    if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+    const datasets = Object.keys(Y_MAP).map(cat => {
+      const c = CATEGORY_COLORS[cat];
+      return {
+        label: cat,
+        data: filtered
+          .filter(e => e.category === cat)
+          .map(e => ({
+            x: dateToX(e.date),
+            y: Y_MAP[cat] + jitter(e.headline),
+            headline: e.headline,
+            date: e.date,
+          })),
+        backgroundColor: c.dot,
+        borderColor: c.border,
+        borderWidth: 1.5,
+        pointRadius: 7,
+        pointHoverRadius: 9,
+      };
+    });
+
+    // X-axis range: earliest event month to current month + 1
+    const allX = filtered.map(e => dateToX(e.date));
+    const xMin = allX.length ? Math.min(...allX) - 1 : 0;
+    const now = new Date();
+    const xMax = (now.getFullYear() - 2023) * 12 + now.getMonth() + 1;
+
+    chartInstanceRef.current = new Chart(chartRef.current, {
+      type: "scatter",
+      data: { datasets },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        layout: { padding: { left: 10, right: 40, top: 10, bottom: 10 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => items[0]?.raw?.date || "",
+              label: (item) => item.raw?.headline || "",
+            },
+            backgroundColor: "#2C1810",
+            titleColor: "#F5F0E8",
+            bodyColor: "#F5F0E8",
+            titleFont: { family: "'Source Sans 3', sans-serif", size: 12, weight: "600" },
+            bodyFont: { family: "'Source Sans 3', sans-serif", size: 13 },
+            padding: 10,
+            displayColors: false,
+          },
+        },
+        scales: {
+          x: {
+            type: "linear",
+            min: xMin,
+            max: xMax,
+            ticks: {
+              stepSize: 3,
+              maxTicksLimit: 10,
+              callback: (val) => xToLabel(val),
+              color: "#8B7355",
+              font: { family: "'Source Sans 3', sans-serif", size: 11 },
+            },
+            grid: { color: "rgba(139, 115, 85, 0.15)" },
+          },
+          y: {
+            min: 0.5,
+            max: 4.5,
+            ticks: {
+              stepSize: 1,
+              callback: (val) => Y_LABELS[val] || "",
+              color: "#8B7355",
+              font: { family: "'Source Sans 3', sans-serif", size: 12, weight: "600" },
+            },
+            grid: { color: "rgba(139, 115, 85, 0.15)" },
+          },
+        },
+      },
+    });
+
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+        chartInstanceRef.current = null;
+      }
+    };
+  }, [filtered]);
+
   return (
     <div>
+      {/* Chart — Regional Contraction Timeline */}
+      <div style={{ marginBottom: 24, background: "#EDE8DE", border: "1px solid rgba(139, 115, 85, 0.2)", borderRadius: 3, padding: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+          <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 15, fontWeight: 700, color: "#2C1810" }}>
+            Timeline of tracked events
+          </div>
+          <button
+            onClick={downloadChart}
+            style={{
+              padding: "4px 10px",
+              fontFamily: "'Source Sans 3', sans-serif",
+              fontSize: 11,
+              fontWeight: 600,
+              color: "#8B5E3C",
+              background: "transparent",
+              border: "1px solid #8B5E3C",
+              borderRadius: 3,
+              cursor: "pointer",
+            }}
+          >
+            ↓ PNG
+          </button>
+        </div>
+        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ minWidth: 720, height: 280 }}>
+            <canvas ref={chartRef} width={720} height={280} />
+          </div>
+        </div>
+      </div>
+
       {/* Filter buttons */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
         {categories.map(cat => {
