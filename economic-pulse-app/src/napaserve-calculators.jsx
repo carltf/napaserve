@@ -911,10 +911,15 @@ function ContractionTracker() {
     <div>
       {/* Chart — Regional Contraction Timeline */}
       <div style={{ marginBottom: 24, background: "#EDE8DE", border: "1px solid rgba(139, 115, 85, 0.2)", borderRadius: 3, padding: 16 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
-          <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 15, fontWeight: 700, color: "#2C1810" }}>
-            Timeline of tracked events
+        <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 15, fontWeight: 700, color: "#2C1810", marginBottom: 10 }}>
+          Timeline of tracked events
+        </div>
+        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ minWidth: 720, height: 280 }}>
+            <canvas ref={chartRef} width={720} height={280} />
           </div>
+        </div>
+        <div style={{ marginTop: 12 }}>
           <button
             onClick={downloadChart}
             style={{
@@ -932,11 +937,6 @@ function ContractionTracker() {
           >
             DOWNLOAD CHART PNG
           </button>
-        </div>
-        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-          <div style={{ minWidth: 720, height: 280 }}>
-            <canvas ref={chartRef} width={720} height={280} />
-          </div>
         </div>
       </div>
 
