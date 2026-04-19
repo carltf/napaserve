@@ -291,3 +291,106 @@ visit their website. 1314 Spring St., St. Helena.
 ### Source attribution
 
 The Napa Valley Register community calendar (Samie Hartley, published weekly) is a reliable source for events. Use when Event Finder scraper results are sparse.
+# CLAUDE.md Patch — April 18, 2026 (v3 / evening)
+
+Append the following to CLAUDE.md in the repo root. These rules are additive to existing content and capture lessons from the evening session on April 18, 2026.
+
+---
+
+## Chart Download Button — UI Standard (Added April 18, 2026)
+
+Every chart with a PNG download button — in Under the Hood articles, the Regional Contraction Tracker, and any future calculator — must use this exact button style and placement.
+
+### Rules
+
+- **Label:** always exactly `DOWNLOAD CHART PNG` — uppercase, no icon, no variation
+- **Position:** bottom-left, below the chart canvas — NOT in a header row above the chart
+- **Button lives OUTSIDE the chart's containerRef** — otherwise it's captured in the PNG export
+
+### Canonical JSX
+
+```jsx
+<button onClick={downloadFn} style={{
+  padding: "4px 12px",
+  fontFamily: "monospace",
+  fontSize: 11,
+  fontWeight: 400,
+  letterSpacing: "0.88px",
+  color: T.muted,        // #8B7355
+  background: "transparent",
+  border: `1px solid ${T.border}`,  // #D4C9B8
+  borderRadius: 3,
+  cursor: "pointer",
+}}>
+  DOWNLOAD CHART PNG
+</button>
+```
+
+### Why this matters
+
+This was an SOP gap. The button styling had been copy-pasted between article components since the first UTH piece, but never documented. When building the tracker's timeline chart, Claude Code reached for the generic accent-color button style and ended up with a non-matching visual that broke consistency. Landing this rule in CLAUDE.md means the next chart build uses the right pattern automatically.
+
+Landed via commits `eba6a1b` (styling) and `c746372` (position).
+
+---
+
+## Regional Contraction Tracker — Chart Added (April 18, 2026)
+
+The tracker at `/under-the-hood/calculators#tracker` now includes a Chart.js scatter timeline above the filter pills. Notes for future edits:
+
+### Architecture
+
+- **Library:** raw `chart.js` 4.5.1 via `useRef` + `useEffect`. Do NOT add `react-chartjs-2` as a dep — the project uses the raw library pattern throughout.
+- **Data binding:** chart `datasets` derive from the existing `filtered` array in `ContractionTracker`. Do NOT create a separate state for chart data — unified filter behavior depends on this binding.
+- **Jitter:** deterministic ±0.15 y-offset computed from headline string hash. Prevents same-category same-month dots from overlapping. Don't make this random — determinism means the chart doesn't flicker between reloads.
+- **Mobile:** outer wrapper uses `overflowX: auto`, inner div has `minWidth: 720`. Do NOT use CSS media queries — the file is inline-styles-only.
+- **Download:** uses `chart.toBase64Image()` with a temp canvas for title + watermark. No `html2canvas` needed for Chart.js canvases.
+
+### Location
+
+- Component: `ContractionTracker` function in `economic-pulse-app/src/napaserve-calculators.jsx`
+- Array: `TRACKER_EVENTS` at line 627 of the same file
+- Canvas ref + chart ref declared at top of component
+- `useEffect` with `[filtered]` dependency rebuilds the chart when filter changes
+
+Landed via commit `910faa9`.
+
+---
+
+## Napa Reset Watch — External Scout Project (April 18, 2026)
+
+A standalone Claude project handles the weekly scouting workflow for Tracker candidates and Under the Hood seeds. It lives OUTSIDE this repo — but the handoff pattern matters for anyone working in NapaServe project threads.
+
+### Handoff pattern
+
+When the user arrives with a block of JSX object literals (like this):
+
+```javascript
+{
+  date: "Apr 14, 2026",
+  category: "Transaction",
+  headline: "...",
+  detail: "...",
+  source: "...",
+  sourceUrl: "...",
+},
+```
+
+...they came from Napa Reset Watch. The task is to add those objects to `TRACKER_EVENTS` in chronological order (newest first, under the `// ── 2026 ──` comment).
+
+### Standard Claude Code prompt flow for ingesting JSX blocks
+
+1. Locate where the entries belong chronologically — `grep -nE '^\s*date: "' economic-pulse-app/src/napaserve-calculators.jsx`
+2. Show the bracket context to the user before inserting — confirm placement
+3. Use `str_replace` to insert the block at the confirmed location
+4. `npm run build 2>&1 | tail -8`
+5. Commit with explicit paths (NEVER `git add -A`) and push
+
+### Rules for Napa Reset Watch ingestion
+
+- **Never fabricate dates or URLs.** If the JSX block has a suspicious URL, flag it before inserting.
+- **Respect chronological order.** Entries in `TRACKER_EVENTS` are strictly reverse-chronological. New items go at the top of their date cluster.
+- **Update-in-place vs. insert.** If an entry already exists for the same entity and the new JSX has additional detail, treat it as an update (str_replace the detail field) rather than inserting a duplicate.
+- **Event count is `TRACKER_EVENTS.length`** — the counter on the page reads from this. Don't assume a commit added N events without counting.
+
+---
