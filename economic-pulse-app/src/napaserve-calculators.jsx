@@ -627,6 +627,22 @@ function AssetRepricingCalc() {
 const TRACKER_EVENTS = [
   // ── 2026 ──
   {
+    date: "Apr 13, 2026",
+    category: "Transaction",
+    headline: "Chanel's St. Supéry acquires Rudd Estate and Crossroads brand",
+    detail: "St. Supéry (owned by Chanel Group since 2015) acquired Rudd Oakville Estate, the Crossroads brand, inventory, and 65 acres (47 planted) from Samantha Rudd. Price undisclosed. The deal gives Chanel a second Napa property alongside its Rutherford and Dollarhide holdings — bringing its Napa footprint to 1,650 acres across four parcels. Winemaker Natalie Bath and managing director Oscar Henquet stay on; Rudd and Crossroads will continue as their own brands.",
+    source: "Wine Spectator",
+    sourceUrl: "https://www.winespectator.com/articles/st-supery-acquires-rudd-estates",
+  },
+  {
+    date: "Apr 12, 2026",
+    category: "Transaction",
+    headline: "Benessere Vineyards headed to auction after failed sales",
+    detail: "The 42–43 acre St. Helena estate failed to sell at $35M, then $28M, and is now listed via Concierge Auctions with bidding May 13–28. Expected clearing range is $8–12M — a steep repricing from the original ask. Result will be a live price-discovery signal for premium Napa estate values.",
+    source: "Napa Valley Features",
+    sourceUrl: "https://napavalleyfocus.substack.com/p/under-the-hood-when-the-price-gives",
+  },
+  {
     date: "Apr 12, 2026",
     category: "Hospitality",
     headline: "Charlie Palmer Steak closes at Archer Hotel Napa",
