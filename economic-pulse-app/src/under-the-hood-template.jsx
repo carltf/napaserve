@@ -11,11 +11,12 @@
 //   1. COUNTY + PUBLICATION constants (top of file)
 //   2. ARTICLE_SLUG + ARTICLE_DATE + ARTICLE_MONTH_YEAR
 //   3. POLLS array (3 polls, 5 options each, ≤35 chars per option)
-//   4. SOURCES array (specific article URLs only — no bare domains)
-//   5. Headline, deck (if SHOW_DECK=true), article summary
-//   6. Dateline + body prose + section headers
-//   7. Chart components (buildChart callbacks + captions)
-//   8. Optional: calculator component (see commented block)
+//   4. Headline, deck (if SHOW_DECK=true), article summary
+//   5. Dateline + body prose + section headers
+//   6. Chart components (buildChart callbacks + captions)
+//   7. Related Coverage list (4 curated article links at bottom)
+//   8. Sources block (hand-written JSX citations)
+//   9. Optional: calculator component (see commented block)
 // -----------------------------------------------------------------
 
 import { useEffect, useRef, useState } from "react";
@@ -25,7 +26,6 @@ import NavBar from "./NavBar";
 import Footer from "./Footer";
 import useDraftGate from "./hooks/useDraftGate";
 import DraftBanner from "./components/DraftBanner";
-import RelatedCoverage from "./components/RelatedCoverage";
 
 Chart.register(...registerables);
 
@@ -118,16 +118,6 @@ const POLLS = [
       "[Too soon to tell]",
     ],
   },
-];
-
-// ── SOURCES ────────────────────────────────────────────────────────
-// Specific article URLs only. Never bare domains.
-// NVF references: always query nvf_posts.substack_url for canonical URL.
-// NVF domain: napavalleyfocus.substack.com (NOT napavalleyfeatures.substack.com)
-const SOURCES = [
-  { label: "[Publication — 'Article Title' (Author, Date)]", url: "[full article URL]" },
-  { label: "[Publication — 'Article Title' (Author, Date)]", url: "[full article URL]" },
-  { label: "[Publication — 'Article Title' (Author, Date)]", url: "[full article URL]" },
 ];
 
 // ── DOWNLOAD HELPER ────────────────────────────────────────────────
@@ -520,36 +510,81 @@ export default function UnderTheHoodTemplate() {
           Remove this entire comment block if not needed.
         */}
 
-        {/* ── SOURCES ────────────────────────────────────────────── */}
-        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 24 }}>
-          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 17, color: T.ink, marginBottom: 16 }}>Sources</h2>
-          {SOURCES.map((s, i) => (
-            <div key={i} style={{ marginBottom: 10 }}>
-              <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 14, color: T.accent, textDecoration: "underline", lineHeight: 1.5 }}>
-                {s.label}
-              </a>
-            </div>
-          ))}
-        </div>
+        {/* ── BYLINE (inline italic, after final section, before Related Coverage) ── */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.ink, fontStyle: "italic", lineHeight: 1.65, margin: "28px 0 0 0" }}>
+          Tim Carl is a Napa Valley-based photojournalist and the founder and editor of {PUBLICATION}.
+        </p>
 
-        {/* ── AUTHOR NOTE ────────────────────────────────────────── */}
-        <div style={{ marginTop: 32, padding: "20px 0", borderTop: `1px solid ${T.border}` }}>
-          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
-            Tim Carl is a Napa Valley-based photojournalist and the founder and editor of {PUBLICATION}.
+        {/* ── RELATED COVERAGE (inline, curated list — writer replaces placeholders) ── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 28, marginBottom: 28 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center", marginBottom: 20 }}>
+            Related Coverage
           </p>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="[URL 1]" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"[TITLE 1]"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — [Publication attribution]</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="[URL 2]" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"[TITLE 2]"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — [Publication attribution]</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="[URL 3]" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"[TITLE 3]"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — [Publication attribution]</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="[URL 4]" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"[TITLE 4]"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — [Publication attribution]</span>
+            </li>
+          </ul>
         </div>
 
-        {/* ── POLLS ──────────────────────────────────────────────── */}
+        {/* ── ARCHIVE SEARCH (inline section) ────────────────────── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 28, paddingTop: 28, marginBottom: 28 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
+            Archive
+          </p>
+          <h2 style={{ fontFamily: serif, fontSize: 24, fontWeight: 700, color: T.ink, margin: "0 0 8px 0" }}>Search the Archive</h2>
+          <p style={{ fontFamily: font, fontSize: 15, color: T.muted, marginBottom: 16 }}>
+            Search 1,000+ articles and reports from {PUBLICATION}.
+          </p>
+          <div style={{ display: "flex", gap: 10 }}>
+            <input
+              type="text"
+              placeholder="Search GDP, employment, wine economics, tax revenue..."
+              style={{ flex: 1, padding: "10px 14px", fontFamily: font, fontSize: 15, color: T.ink, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 3, outline: "none" }}
+              onKeyDown={(e) => { if (e.key === "Enter" && e.target.value.trim()) { window.location.href = `/archive?q=${encodeURIComponent(e.target.value.trim())}`; } }}
+            />
+            <button
+              onClick={(e) => { const input = e.currentTarget.previousElementSibling; if (input.value.trim()) { window.location.href = `/archive?q=${encodeURIComponent(input.value.trim())}`; } }}
+              style={{ padding: "10px 20px", fontFamily: font, fontSize: 15, fontWeight: 600, color: "#FFFFFF", background: T.accent, border: "none", borderRadius: 3, cursor: "pointer" }}
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        {/* ── POLLS SECTION ──────────────────────────────────────── */}
         <PollsSection slug={ARTICLE_SLUG} />
 
-        {/* ── RELATED COVERAGE ───────────────────────────────────── */}
-        <RelatedCoverage articleSlug={ARTICLE_SLUG} />
+        {/* ── SOURCES (hand-written JSX, not from const array) ───── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 24 }}>
+          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
+          <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
+            <li style={{ marginBottom: 10 }}>
+              [Source entry 1 — replace with hand-written citation, e.g., "Constellation Brands, '<a href="[URL]" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Q4 FY26 Earnings Release</a>,' April 8, 2026."]
+            </li>
+            <li style={{ marginBottom: 10 }}>[Source entry 2]</li>
+            <li style={{ marginBottom: 10 }}>[Source entry 3]</li>
+          </ol>
+        </div>
 
-        {/* ── METHODOLOGY (optional) ─────────────────────────────── */}
+        {/* ── METHODOLOGY (optional — remove if not used) ────────── */}
         <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 40 }}>
           <h3 style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, margin: "0 0 10px" }}>Methodology</h3>
           <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.7 }}>
-            [Optional methodology note — how data was sourced, calculations performed, scope/limitations of analysis. Remove if not needed.]
+            [Optional methodology note. Remove this whole block if not needed for the article.]
           </p>
         </div>
 
