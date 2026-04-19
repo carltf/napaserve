@@ -629,12 +629,28 @@ function AssetRepricingCalc() {
 const TRACKER_EVENTS = [
   // ── 2026 ──
   {
+    date: "Apr 14, 2026",
+    category: "Production",
+    headline: "Constellation flags tasting-room softness at Napa wineries in Q4 call",
+    detail: "The Press Democrat reports that on Constellation Brands' fiscal Q4 2026 earnings call, CFO Garth Hankinson said the company has seen tasting-room softness at its Napa-based wineries, which include Robert Mondavi and The Prisoner. Management also said U.S. high-end wine has moved from expected low-single-digit growth to low-single-digit declines, and that Constellation has agreed to distributor inventory rebalancing through the year. The Robert Mondavi Winery in Oakville is scheduled to reopen April 20 after a nearly three-year renovation.",
+    source: "Press Democrat",
+    sourceUrl: "https://www.pressdemocrat.com/2026/04/14/constellation-brands-napa-mondavi-q4-wine-spirits-beer/",
+  },
+  {
     date: "Apr 13, 2026",
     category: "Transaction",
-    headline: "Chanel's St. Supéry acquires Rudd Estate and Crossroads brand",
-    detail: "St. Supéry (owned by Chanel Group since 2015) acquired Rudd Oakville Estate, the Crossroads brand, inventory, and 65 acres (47 planted) from Samantha Rudd. Price undisclosed. The deal gives Chanel a second Napa property alongside its Rutherford and Dollarhide holdings — bringing its Napa footprint to 1,650 acres across four parcels. Winemaker Natalie Bath and managing director Oscar Henquet stay on; Rudd and Crossroads will continue as their own brands.",
-    source: "Wine Spectator",
-    sourceUrl: "https://www.winespectator.com/articles/st-supery-acquires-rudd-estates",
+    headline: "Chanel's St. Supéry acquires Rudd Estate and Crossroads brand for $39.2M",
+    detail: "St. Supéry (owned by Chanel Group since 2015) acquired Rudd Oakville Estate, the Crossroads brand, inventory, and 65 acres (47 planted) from Samantha Rudd. Napa Valley Register later confirmed the price at $39.2M based on transfer tax on a deed recorded April 13 — neither party disclosed the figure directly. The deal gives Chanel a second Napa property alongside its Rutherford and Dollarhide holdings — bringing its Napa footprint to 1,650 acres across four parcels. Winemaker Natalie Bath and managing director Oscar Henquet stay on; Rudd and Crossroads will continue as their own brands.",
+    source: "Wine Spectator / Napa Valley Register",
+    sourceUrl: "https://napavalleyregister.com/news/st-supry-estate-vineyards--winery-napa-valley-chanel-rudd-estate/article_66a92e04-62b2-4972-9fc1-7d8044b919b8.html",
+  },
+  {
+    date: "Apr 13, 2026",
+    category: "Production",
+    headline: "Ninth Circuit revives winery constitutional claims against Napa County",
+    detail: "The Press Democrat reports that on April 13 the Ninth Circuit Court of Appeals reversed the district court's dismissal of claims brought by Hoopes Vineyard, Smith-Madrone Winery, and Summit Lake Vineyards against Napa County over winery regulation. The retaliation and First Amendment claims return to federal district court along with Smith-Madrone and Summit Lake's ordinance challenge; the Hoopes damages claim remains open. Distinct from the separate $4M fine judgment against Hoopes moving forward April 9.",
+    source: "Press Democrat",
+    sourceUrl: "https://www.pressdemocrat.com/2026/04/14/federal-appeals-court-reverses-dismissal-of-some-claims-against-napa-county-in-hoopes-vineyard-case/",
   },
   {
     date: "Apr 12, 2026",
