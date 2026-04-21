@@ -25,6 +25,12 @@ const mono = "monospace";
 
 const ARTICLES = [
   {
+    slug: "napa-constellation-2026",
+    headline: "From Selling Napa to Defending It",
+    publication: "Napa Valley Features",
+    date: "April 22, 2026",
+  },
+  {
     publication: "Napa Valley Features",
     headline: "The Reset Spreads",
     deck: "Closures are moving beyond wineries into Napa\u2019s visitor economy. Transactions are becoming more defensive. The regional footprint is contracting \u2014 quietly, and across systems.",
@@ -90,6 +96,37 @@ const h = (text) => ({ type: "header", text });
 const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
+  "napa-constellation-2026": {
+    slug: "napa-constellation-2026",
+    headline: "From Selling Napa to Defending It",
+    deck: "Five signals in two weeks describe an industry pivoting from marketing to defense — and a former Mondavi chairman naming the scale of what this reporting has documented for years.",
+    publication: "Napa Valley Features",
+    date: "April 22, 2026",
+    chartFilenames: [
+      "constellation-chart-1-five-signals.png",
+      "constellation-chart-2-wine-spirits-fy26.png",
+    ],
+    captions: [
+      "Five Signals in Two Weeks. Between April 5 and April 20, five public events from actors with little apparent coordination described the same industry pivot — from marketing to consumers toward marketing to regulators, courts, and investors. Sources: Ted Hall Substack (April 5, 2026); Constellation Brands Q4 FY26 Earnings Release (April 8, 2026); Ninth Circuit Court of Appeals docket (April 13, 2026); Napa County Board of Supervisors (April 14, 2026); San Francisco Chronicle (April 17, 2026).",
+      "Constellation Wine & Spirits, Full-Year FY26. Reported net sales fell 51% to $823.8 million, including the 2025 divestitures of Mondavi Private Selection, Ruffino, Cook’s, and J. Rogét. Stripping those out, organic net sales fell 14% — the underlying demand signal. Source: Constellation Brands Q4 FY26 Earnings Release (April 8, 2026).",
+    ],
+    sources: [
+      { label: "Ted Hall, 'Napa’s Luxury Squeeze,' Tell the Truth and Do the Right Thing Substack, April 5, 2026", url: "https://ted241.substack.com/p/napas-luxury-squeeze" },
+      { label: "Constellation Brands Fourth Quarter and Fiscal Year 2026 Results, April 8, 2026", url: "https://www.cbrands.com/investors" },
+      { label: "Press Democrat, Constellation Brands flags Napa tasting-room softness; Mondavi to reopen April 20, April 14, 2026", url: "https://www.pressdemocrat.com/2026/04/14/constellation-brands-napa-mondavi-q4-wine-spirits-beer/" },
+      { label: "Press Democrat, Federal appeals court reverses dismissal of some claims against Napa County in Hoopes Vineyard case, April 14, 2026", url: "https://www.pressdemocrat.com/2026/04/14/federal-appeals-court-reverses-dismissal-of-some-claims-against-napa-county-in-hoopes-vineyard-case/" },
+      { label: "Napa Valley Vintners, Napa Valley Grapegrowers, Coalition Napa Valley, and Napa County Farm Bureau joint petition, April 14, 2026", url: "" },
+      { label: "Jess Lander, Inside the most anticipated California winery opening of the year, or maybe ever, San Francisco Chronicle, April 17, 2026", url: "https://www.sfchronicle.com/food/wine/article/robert-mondavi-winery-napa-22081753.php" },
+      { label: "Tim Carl, Napa Valley Finds Itself Between a Rock and a Hard Place, Napa Valley Features, October 3, 2023", url: "https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" },
+      { label: "Tim Carl, Is the Wine Boom Over?, Napa Valley Features, January 4, 2024", url: "https://napavalleyfocus.substack.com/p/the-wine-boom-is-over" },
+      { label: "Tim Carl, Under the Hood: Napa’s Tasting Rooms Face a Numbers Problem, Napa Valley Features, July 5, 2025", url: "https://napavalleyfocus.substack.com/p/under-the-hood-napas-tasting-rooms" },
+      { label: "Tim Carl, Under the Hood: More Rooms Has Equaled Fewer Jobs in Napa County, Napa Valley Features, August 23, 2025", url: "https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled" },
+      { label: "Tim Carl, Under the Hood: How Accelerants — From GLP-1s to Politics — Are Reshaping Wine Demand, Napa Valley Features, January 2026", url: "https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" },
+      { label: "Tim Carl, Under the Hood: Napa County’s Wine Market Is Clearing, Not Recovering, Napa Valley Features, January 2026", url: "https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" },
+      { label: "Silicon Valley Bank, State of the U.S. Wine Industry, 2024 and 2025 editions", url: "https://www.svb.com/trends-insights/reports/wine-report" },
+    ],
+    methodology: "This piece treats five discrete public events — an editorial essay, a corporate earnings release, an appellate court revival, a trade-group petition, and a hospitality reopening — as data points in an industry-pivot pattern. Financial figures are reported directly from Constellation Brands’ Q4 FY26 disclosures. The 100-to-170 estimate and its underlying methodology are drawn from Ted Hall’s April 5, 2026 essay, which itself applies Silicon Valley Bank wine-industry profitability data to the subset of Napa Valley Vintners members producing fewer than 10,000 cases annually. The stages-of-correction framing is analytical, not clinical.",
+  },
   "napa-structural-reset-2026": {
     headline: "The Reset Spreads",
     publication: "Napa Valley Features",

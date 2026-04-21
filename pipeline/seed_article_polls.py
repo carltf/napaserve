@@ -206,6 +206,44 @@ POLLS = [
             "Depends on the asset class",
         ],
     },
+
+    # ── Napa Constellation 2026 ──────────────────────────────────
+    {
+        "article_slug": "napa-constellation-2026",
+        "sort_order": 1,
+        "question": "Which signal most clearly marks the pivot from marketing to defense?",
+        "options": [
+            "Constellation's Q4 collapse",
+            "Hall's 100–170 estimate",
+            "The Ninth Circuit revival",
+            "The four-group petition",
+            "Mondavi's reopening",
+        ],
+    },
+    {
+        "article_slug": "napa-constellation-2026",
+        "sort_order": 2,
+        "question": "Where is the valley in the stages of the correction?",
+        "options": [
+            "Still in denial",
+            "Anger and bargaining",
+            "Entering depression",
+            "Beginning acceptance",
+            "The framework doesn't fit",
+        ],
+    },
+    {
+        "article_slug": "napa-constellation-2026",
+        "sort_order": 3,
+        "question": "How will the Board of Supervisors respond to the petition?",
+        "options": [
+            "Hold the line on ag preserve",
+            "Adopt most reforms",
+            "Split the difference",
+            "Defer past June",
+            "Too early to call",
+        ],
+    },
 ]
 
 

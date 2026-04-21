@@ -1,0 +1,662 @@
+// UNDER THE HOOD — Napa Constellation (From Selling Napa to Defending It)
+// ---------------------------------------------------------------
+// Created from under-the-hood-template.jsx. Do not edit the template.
+// ---------------------------------------------------------------
+
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Chart, registerables } from "chart.js";
+import NavBar from "./NavBar";
+import Footer from "./Footer";
+import useDraftGate from "./hooks/useDraftGate";
+import DraftBanner from "./components/DraftBanner";
+
+Chart.register(...registerables);
+
+const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
+
+// ── COUNTY + PUBLICATION ───────────────────────────────────────────
+const COUNTY_PREFIX = "napa";
+const PUBLICATION = "Napa Valley Features";
+const SUBSTACK_URL = "https://napavalleyfocus.substack.com/";
+const DATELINE_LOCATION = "NAPA VALLEY, Calif.";
+
+// ── ARTICLE METADATA ───────────────────────────────────────────────
+const ARTICLE_SLUG = "napa-constellation-2026";
+const ARTICLE_DATE = "April 22, 2026";
+const ARTICLE_MONTH_YEAR = "April 2026";
+const SHOW_DECK = true;
+
+// ── THEME ──────────────────────────────────────────────────────────
+const T = {
+  bg: "#F5F0E8",
+  surface: "#EDE8DE",
+  ink: "#2C1810",
+  accent: "#8B5E3C",
+  gold: "#C4A050",
+  muted: "#8B7355",
+  border: "#D4C9B8",
+  rule: "rgba(44,24,16,0.12)",
+};
+const font = "'Source Sans 3','Source Sans Pro',sans-serif";
+const serif = "'Libre Baskerville',Georgia,serif";
+
+const prose = {
+  fontFamily: font,
+  fontSize: 17,
+  lineHeight: 1.75,
+  color: T.ink,
+  marginBottom: 18,
+};
+
+const h2style = {
+  fontFamily: serif,
+  fontSize: 22,
+  fontWeight: 700,
+  color: T.ink,
+  marginTop: 36,
+  marginBottom: 12,
+};
+
+// ── POLLS ──────────────────────────────────────────────────────────
+const POLLS = [
+  {
+    slug: "napa-constellation-2026-p1",
+    question: "Which signal most clearly marks the pivot from marketing to defense?",
+    options: [
+      "Constellation's Q4 collapse",
+      "Hall's 100–170 estimate",
+      "The Ninth Circuit revival",
+      "The four-group petition",
+      "Mondavi's reopening",
+    ],
+  },
+  {
+    slug: "napa-constellation-2026-p2",
+    question: "Where is the valley in the stages of the correction?",
+    options: [
+      "Still in denial",
+      "Anger and bargaining",
+      "Entering depression",
+      "Beginning acceptance",
+      "The framework doesn't fit",
+    ],
+  },
+  {
+    slug: "napa-constellation-2026-p3",
+    question: "How will the Board of Supervisors respond to the petition?",
+    options: [
+      "Hold the line on ag preserve",
+      "Adopt most reforms",
+      "Split the difference",
+      "Defer past June",
+      "Too early to call",
+    ],
+  },
+];
+
+// ── DOWNLOAD HELPER ────────────────────────────────────────────────
+async function downloadComponentPng(containerRef, filename, title) {
+  if (!containerRef.current) return;
+  const { default: html2canvas } = await import("html2canvas");
+  const canvas = await html2canvas(containerRef.current, { scale: 2, useCORS: true, backgroundColor: T.bg });
+  const off = document.createElement("canvas");
+  off.width = canvas.width;
+  off.height = canvas.height + 80;
+  const ctx = off.getContext("2d");
+  ctx.fillStyle = T.bg;
+  ctx.fillRect(0, 0, off.width, off.height);
+  ctx.drawImage(canvas, 0, 64);
+  ctx.save();
+  ctx.globalAlpha = 1.0;
+  ctx.font = "bold 32px 'Libre Baskerville', Georgia, serif";
+  ctx.fillStyle = T.ink;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(title || "", 28, 16);
+  ctx.restore();
+  ctx.save();
+  ctx.globalAlpha = 0.25;
+  ctx.font = "26px 'Source Code Pro', monospace";
+  ctx.fillStyle = T.muted;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom";
+  ctx.fillText("napaserve.org", off.width - 24, off.height - 16);
+  ctx.restore();
+  const a = document.createElement("a");
+  a.href = off.toDataURL("image/png");
+  a.download = filename;
+  a.click();
+}
+
+// ── CHARTCANVAS COMPONENT ──────────────────────────────────────────
+function ChartCanvas({ id, title, buildChart, deps = [], downloadName }) {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+    const ctx = canvasRef.current.getContext("2d");
+    chartRef.current = buildChart(ctx);
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return (
+    <div>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <canvas ref={canvasRef} id={id} />
+      </div>
+      <button
+        onClick={() => downloadComponentPng(containerRef, downloadName, title)}
+        style={{
+          padding: "4px 12px",
+          fontFamily: "monospace",
+          fontSize: 11,
+          fontWeight: 400,
+          letterSpacing: "0.88px",
+          color: T.muted,
+          background: "transparent",
+          border: `1px solid ${T.border}`,
+          borderRadius: 3,
+          cursor: "pointer",
+          marginTop: 12,
+        }}
+      >
+        DOWNLOAD CHART PNG
+      </button>
+    </div>
+  );
+}
+
+// ── LIVE POLL ──────────────────────────────────────────────────────
+function LivePoll({ poll }) {
+  const [voted, setVoted] = useState(null);
+  const [counts, setCounts] = useState(poll.counts || {});
+  const [total, setTotal] = useState(poll.total || 0);
+  const [loading, setLoading] = useState(false);
+  const vote = async (idx) => {
+    if (voted !== null || loading) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${WORKER}/api/article-poll-vote`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ poll_id: poll.id, option_index: idx }),
+      });
+      const data = await res.json();
+      if (data.success) { setCounts(data.counts); setTotal(data.total); setVoted(idx); }
+    } catch(e) {}
+    setLoading(false);
+  };
+  return (
+    <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 8, padding: "20px 20px 16px", marginBottom: 16 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 8px 0" }}>Poll</p>
+      <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: "0 0 14px 0", lineHeight: 1.4 }}>{poll.question}</p>
+      {poll.options.map((opt, idx) => {
+        const count = counts[idx] || 0;
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+        const isVoted = voted === idx;
+        return (
+          <div key={idx} style={{ marginBottom: 8 }}>
+            {voted === null ? (
+              <button onClick={() => vote(idx)} disabled={loading}
+                style={{ width: "100%", textAlign: "center", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "9px 12px", fontFamily: font, fontSize: 14, color: T.ink, cursor: loading ? "default" : "pointer" }}>
+                {opt}
+              </button>
+            ) : (
+              <div style={{ position: "relative", overflow: "hidden", borderRadius: 4, border: `1px solid ${isVoted ? T.accent : T.border}` }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: pct + "%", background: isVoted ? "rgba(139,94,60,0.15)" : "rgba(139,94,60,0.06)", transition: "width 0.5s ease" }} />
+                <div style={{ position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 12px" }}>
+                  <span style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: isVoted ? 600 : 400 }}>{opt}</span>
+                  <span style={{ fontFamily: font, fontSize: 13, color: T.muted, marginLeft: 12, whiteSpace: "nowrap" }}>{pct}%</span>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      {voted !== null && <p style={{ fontFamily: font, fontSize: 12, color: T.muted, margin: "10px 0 0 0" }}>{total} {total === 1 ? "vote" : "votes"} · Results update in real time</p>}
+    </div>
+  );
+}
+
+// ── POLLS SECTION ──────────────────────────────────────────────────
+function PollsSection({ slug }) {
+  const [polls, setPolls] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch(`${WORKER}/api/article-polls?slug=${slug}`)
+      .then(r => r.json())
+      .then(data => { setPolls(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [slug]);
+  if (loading) return <div style={{ padding: "24px 0", fontFamily: font, fontSize: 14, color: T.muted }}>Loading polls...</div>;
+  if (!polls.length) return null;
+  return (
+    <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>{"Today’s Polls"}</p>
+      <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 20px 0" }}>What do you think?</h2>
+      {polls.map(poll => <LivePoll key={poll.id} poll={poll} />)}
+      <p style={{ fontFamily: font, fontSize: 12, color: T.muted, marginTop: 8, lineHeight: 1.5 }}>
+        Poll results are anonymous and stored on NapaServe. Results shown after you vote.{" "}
+        Historical reader polls from Napa Valley Features are searchable in the{" "}
+        <a href="/dashboard" style={{ color: T.accent }}>Community Pulse dashboard</a>.
+      </p>
+    </div>
+  );
+}
+
+// ── MAIN COMPONENT ─────────────────────────────────────────────────
+export default function UnderTheHoodNapaConstellation() {
+  const navigate = useNavigate();
+  const status = useDraftGate(ARTICLE_SLUG);
+  const isDraft = status === "draft";
+
+  useEffect(() => {
+    if (status === "redirect") navigate("/under-the-hood");
+  }, [status, navigate]);
+
+  if (status === "loading") {
+    return (
+      <div style={{ background: T.bg, minHeight: "100vh" }}>
+        <NavBar />
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "60px 20px" }}>
+          <p style={{ ...prose, color: T.muted }}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ background: T.bg, minHeight: "100vh" }}>
+      {isDraft && <DraftBanner />}
+      <NavBar />
+
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: isDraft ? "80px 20px 60px" : "60px 20px 60px" }}>
+
+        {/* ── EYEBROW ────────────────────────────────────────────── */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.muted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
+          Under the Hood · {PUBLICATION}
+        </p>
+
+        {/* ── HEADLINE ───────────────────────────────────────────── */}
+        <h1 style={{ fontFamily: serif, fontSize: 34, fontWeight: 700, color: T.ink, lineHeight: 1.25, marginBottom: 16 }}>
+          From Selling Napa to Defending It
+        </h1>
+
+        {/* ── BYLINE + DATE ──────────────────────────────────────── */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.muted, marginBottom: 16 }}>
+          By Tim Carl · {ARTICLE_DATE}
+        </p>
+
+        {/* ── DECK ───────────────────────────────────────────────── */}
+        {SHOW_DECK && (
+          <p style={{ fontFamily: serif, fontSize: 18, color: T.muted, lineHeight: 1.6, marginBottom: 24, fontStyle: "italic" }}>
+            Five signals in two weeks describe an industry pivoting from marketing to defense — and a former Mondavi chairman naming the scale of what this reporting has documented for years.
+          </p>
+        )}
+
+        {/* ── SUBSTACK LINK ──────────────────────────────────────── */}
+        <p style={{ fontFamily: font, fontSize: 13, color: T.muted, marginBottom: 32, borderBottom: `1px solid ${T.border}`, paddingBottom: 20 }}>
+          Read on{" "}
+          <a href={SUBSTACK_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>
+            {PUBLICATION} · Substack →
+          </a>
+        </p>
+
+        {/* ── ARTICLE SUMMARY ────────────────────────────────────── */}
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: "16px 20px", marginBottom: 32 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Article Summary</p>
+          <p style={{ ...prose, fontSize: 15, marginBottom: 0 }}>
+            Between April 5 and April 20, five public events revealed an industry reorienting itself under pressure. Constellation Brands reported a collapsing wine segment. A former Robert Mondavi chairman published an economic diagnosis estimating that 25% to 40% of small Napa wineries are not structurally viable. Three Napa producers won a Ninth Circuit revival of an economic-harm suit. Four trade groups filed a unified 23-reform petition with the county. And Constellation reopened Robert Mondavi Winery in Oakville after a major renovation. Each is a distinct event. Together they describe an industry whose marketing audience has shifted — from consumers to regulators, courts, and the investors watching its capital decisions.
+          </p>
+        </div>
+
+        {/* ── SECTION 1 ──────────────────────────────────────────── */}
+        <h2 style={h2style}>The Two Weeks Napa Stopped Pretending</h2>
+        <p style={{ ...prose, marginBottom: 18 }}>
+          <span style={{ fontWeight: 700 }}>{DATELINE_LOCATION} —</span>{" "}In two weeks this April, five public events arrived that together read as something closer to a structural confession than a news cycle. A former chairman of Robert Mondavi Corporation published an essay estimating that 100 to 170 small Napa wineries are operating below long-term viability. Three days later, the largest corporate owner of Napa brands reported a 51% collapse in annual wine-segment revenue and withdrew its long-term guidance. Five days after that, a federal appellate panel revived an economic-harm suit from three Napa producers. The next day, four of the valley's principal trade groups filed a joint petition asking the county to rewrite the rules that govern how wineries can operate. A week later, Constellation Brands reopened its Robert Mondavi flagship after a three-year renovation.
+        </p>
+        <p style={prose}>
+          The signals arrived from different directions — editorial, capital, legal, regulatory, hospitality — and from actors with little apparent coordination. But read together, they describe an industry that has changed its marketing audience. For two decades, Napa sold itself to consumers: through Visit Napa Valley, Auction Napa Valley, Premiere Napa Valley, the tasting-room network, the brand campaigns. The pivot visible this month is not that Napa has stopped marketing. It is that the audience has shifted. The industry is now marketing to regulators, to courts, to investors, and, in some quarters, to itself.
+        </p>
+
+        {/* ── CHART 1 ────────────────────────────────────────────── */}
+        <div style={{ marginBottom: 48 }}>
+          <h2 style={{ ...h2style, marginTop: 36, marginBottom: 16 }}>Five Signals in Two Weeks</h2>
+          <ChartCanvas
+            id="chart-1-five-signals"
+            title="Five Signals in Two Weeks"
+            downloadName="chart-1_napa-constellation-2026_nvf.png"
+            deps={[]}
+            buildChart={(ctx) => {
+              const CATEGORIES = ["Editorial", "Capital", "Legal", "Regulatory", "Hospitality"];
+              const POINTS = [
+                { x: 5,  y: 0, label: "Apr 5 · Hall's 'Napa's Luxury Squeeze' essay" },
+                { x: 8,  y: 1, label: "Apr 8 · Constellation Q4 FY26 earnings; FY28 guidance withdrawn" },
+                { x: 13, y: 2, label: "Apr 13 · Ninth Circuit revives Hoopes/Smith-Madrone/Summit Lake claims" },
+                { x: 14, y: 3, label: "Apr 14 · Four trade groups file unified 23-reform petition" },
+                { x: 20, y: 4, label: "Apr 20 · Mondavi reopens after three-year renovation" },
+              ];
+              return new Chart(ctx, {
+                type: "scatter",
+                data: {
+                  datasets: [{
+                    label: "Signal",
+                    data: POINTS,
+                    backgroundColor: T.accent,
+                    borderColor: T.accent,
+                    pointRadius: 8,
+                    pointHoverRadius: 9,
+                  }],
+                },
+                options: {
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                      callbacks: {
+                        label: (item) => item.raw.label || "",
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      min: 1, max: 22,
+                      ticks: {
+                        stepSize: 3,
+                        callback: (v) => "Apr " + v,
+                        color: T.muted,
+                        font: { family: font },
+                      },
+                      grid: { color: T.rule },
+                      title: { display: true, text: "April 2026", color: T.muted, font: { family: font } },
+                    },
+                    y: {
+                      min: -0.5, max: 4.5,
+                      reverse: true,
+                      ticks: {
+                        stepSize: 1,
+                        callback: (v) => CATEGORIES[v] || "",
+                        color: T.muted,
+                        font: { family: font },
+                      },
+                      grid: { color: T.rule },
+                    },
+                  },
+                },
+              });
+            }}
+          />
+          <p style={{ fontStyle: "italic", fontSize: 14, color: T.muted, lineHeight: 1.6, margin: "12px 0 24px 0" }}>
+            Five Signals in Two Weeks. Between April 5 and April 20, five public events from actors with little apparent coordination described the same industry pivot — from marketing to consumers toward marketing to regulators, courts, and investors. Sources: <a href="https://ted241.substack.com/p/napas-luxury-squeeze" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Ted Hall Substack</a> (April 5, 2026); Constellation Brands Q4 FY26 Earnings Release (April 8, 2026); Ninth Circuit Court of Appeals docket (April 13, 2026); Napa County Board of Supervisors (April 14, 2026); <a href="https://www.sfchronicle.com/food/wine/article/robert-mondavi-winery-napa-22081753.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>San Francisco Chronicle</a> (April 17, 2026).
+          </p>
+        </div>
+
+        {/* ── SECTION 2 ──────────────────────────────────────────── */}
+        <h2 style={h2style}>Capital: Constellation's Verdict</h2>
+        <p style={prose}>
+          Constellation Brands released its fiscal fourth-quarter results on April 8. The company reports its Wine & Spirits segment separately from its much larger Beer business — Modelo, Corona, Pacifico — which has driven most of Constellation's growth for the past decade. The Wine segment includes wineries across Napa, Sonoma, Washington, and several international portfolios.
+        </p>
+        <p style={prose}>
+          For the full fiscal year, Wine & Spirits net sales fell 51% to $823.8 million. In the fourth quarter alone, net sales fell 58% to $194 million. The reported figures include the 2025 divestitures of Mondavi Private Selection, Ruffino, Cook's, and J. Rogét, which were sold to The Wine Group. Those brands represented most of the company's mid-tier volume, and their removal accounts for the steepness of the headline decline.
+        </p>
+        <p style={prose}>
+          The organic numbers — the underlying demand signal — are more diagnostic. On an organic basis, stripping out the divested brands, Wine & Spirits net sales fell 14% for the year and 6% in the fourth quarter. Organic depletions, the measure of what distributors actually sold through to retailers and restaurants, fell 4.3%. The widening gap across these layers is the diagnostic part. Depletions are what consumers actually bought. Shipments are what Constellation sent to distributors. Net sales are what distributors paid. Constellation shipped less than distributors sold through; distributors sold through less than consumers bought. Inventory is backing up at every point in the chain.
+        </p>
+        <p style={prose}>
+          One measure of how far Constellation has pulled back: it fell from the fifth-largest U.S. wine company in 2025 to the 28th-largest in 2026, according to Wine Business. Its wine-and-spirits segment made up just 9% of the fourth quarter's overall sales. The remaining ~91% is beer. That is the structural reality behind the restructured language in Fink's announcement — Constellation is now primarily a beer company that owns a handful of premium wine estates.
+        </p>
+        <p style={prose}>
+          On the earnings call, chief financial officer Garth Hankinson cited tasting-room softness at the company's Napa-based wineries as a specific drag on the quarter. Five days later, on April 13, the company announced that chief executive Bill Newlands would be succeeded by Nicholas Fink. In the announcement, Fink described the Wine & Spirits business as having been restructured — a word that acknowledges the divestitures but also signals that the remaining portfolio is the one the new leadership intends to stand behind. Constellation withdrew its fiscal 2028 forward guidance entirely, citing limited near-term visibility.
+        </p>
+        <p style={prose}>
+          The market read the release as confirmation of the company's beer-forward strategy. Shares of Constellation rose from $150 to $165 on the news. Investors were not rewarding the wine portfolio. They were rewarding the discipline of shrinking it.
+        </p>
+
+        {/* ── CHART 2 ────────────────────────────────────────────── */}
+        <div style={{ marginBottom: 48 }}>
+          <h2 style={{ ...h2style, marginTop: 36, marginBottom: 16 }}>Constellation Wine & Spirits, Full-Year FY26</h2>
+          <ChartCanvas
+            id="chart-2-constellation-ws"
+            title="Constellation Wine & Spirits, Full-Year FY26"
+            downloadName="chart-2_napa-constellation-2026_nvf.png"
+            deps={[]}
+            buildChart={(ctx) => {
+              const VALUE_LABELS = ["–51%", "–14%"];
+              const valueLabelsPlugin = {
+                id: "valueLabels",
+                afterDatasetsDraw(chart) {
+                  const { ctx: c } = chart;
+                  const meta = chart.getDatasetMeta(0);
+                  c.save();
+                  c.font = "600 13px 'Source Sans 3', sans-serif";
+                  c.fillStyle = T.ink;
+                  c.textAlign = "right";
+                  c.textBaseline = "middle";
+                  meta.data.forEach((bar, i) => {
+                    c.fillText(VALUE_LABELS[i], bar.x - 8, bar.y);
+                  });
+                  c.restore();
+                },
+              };
+              return new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: ["Reported (incl. divestitures)", "Organic (demand signal)"],
+                  datasets: [{
+                    data: [-51, -14],
+                    backgroundColor: T.accent,
+                    borderRadius: 3,
+                  }],
+                },
+                options: {
+                  indexAxis: "y",
+                  responsive: true,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      min: -60, max: 0,
+                      ticks: {
+                        callback: (v) => v + "%",
+                        color: T.muted,
+                        font: { family: font },
+                      },
+                      grid: { color: T.rule },
+                    },
+                    y: {
+                      ticks: {
+                        color: T.ink,
+                        font: { family: font, size: 13 },
+                      },
+                      grid: { display: false },
+                    },
+                  },
+                },
+                plugins: [valueLabelsPlugin],
+              });
+            }}
+          />
+          <p style={{ fontStyle: "italic", fontSize: 14, color: T.muted, lineHeight: 1.6, margin: "12px 0 24px 0" }}>
+            Constellation Wine & Spirits, Full-Year FY26. Reported net sales fell 51% to $823.8 million, including the 2025 divestitures of Mondavi Private Selection, Ruffino, Cook's, and J. Rogét. Stripping those out, organic net sales fell 14% — the underlying demand signal. Source: Constellation Brands Q4 FY26 Earnings Release (April 8, 2026).
+          </p>
+        </div>
+
+        {/* ── SECTION 3 ──────────────────────────────────────────── */}
+        <h2 style={h2style}>Diagnosis: Denial Ends When the Insider Says It</h2>
+        <p style={prose}>
+          On April 5, three days before Constellation reported, Ted Hall published an essay titled "<a href="https://ted241.substack.com/p/napas-luxury-squeeze" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa's Luxury Squeeze</a>" on his Substack. Hall entered Napa in 2004 as chairman of Robert Mondavi Corporation during the year that ended with its sale to Constellation. He is a former senior partner at McKinsey & Company and a founder of the McKinsey Global Institute, and he now owns Long Meadow Ranch.
+        </p>
+        <p style={prose}>
+          Hall's central estimate is that 100 to 170 Napa wineries — roughly 25% to 40% of a specific segment — are under significant economic pressure and unlikely to meet a standard of long-term viability without material change. He is careful about the framing. The estimate is not a forecast of failures, he writes; it is a description of current condition. The relevant population he identifies is the 424 Napa Valley Vintners members producing fewer than 10,000 cases a year. Within that segment, Silicon Valley Bank's wine-industry data show the share of profitable wineries fell from roughly 76% in 2021 to approximately 50% in 2024. Applied to the small-winery cohort, that implies roughly 200 wineries operating at or near break-even. Applied against a more demanding standard of long-term viability — debt service, facility maintenance, customer acquisition, reasonable return on capital — the at-risk cohort narrows to the 100-to-170 range.
+        </p>
+        <p style={prose}>
+          Hall's comparison is with Bordeaux, which has 81 Classified Growths across red and white wines and a broader cru bourgeois category of roughly 250 estates, many priced below Napa's core luxury tier. Napa, he writes, has created several hundred wines aspiring to similar ultra-premium positioning at equal or higher prices from a valley one-sixth the size of Bordeaux. He calls the result unprecedented dilution rather than congestion — a region that overshot not in price but in positioning. To work through the resulting overcapacity at a reasonable pace, Hall arrives at roughly 35 to 40 exits, reversions, mergers, or major restructurings each year for the next three years. Not a natural rate of attrition. A serious structural reset.
+        </p>
+        <p style={prose}>
+          None of Hall's underlying data is new. This publication and its contributors have been documenting the same structural condition for more than a decade — through the Vine Wise column in NorthBay Biz, through years of coverage in the Napa Valley Register, through reporting for The Washington Post, and, for the past three years, through Napa Valley Features. In <a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>October 2023</a> we described the valley as caught between a rock and a hard place. In <a href="https://napavalleyfocus.substack.com/p/the-wine-boom-is-over" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>January 2024</a> we asked whether the wine boom was over. In <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>January 2026</a>, two years of accumulated data let us answer the question plainly: yes, the boom is over. A companion piece the same month — "<a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa County's Wine Market Is Clearing, Not Recovering</a>" — framed what was happening not as a downturn but as a market clearing. The structural diagnosis has never been the scarce resource. Willingness inside the industry to name it has been.
+        </p>
+        <p style={prose}>
+          That is what April 5 changed. Hall is not an outside critic. He is a former chairman of Mondavi and a senior figure in the valley's own agricultural establishment. When the diagnosis is published under that name, the industry's long internal posture — that the pressure was cyclical, that the valley's halo would absorb it, that aggressive marketing could restore the conditions of the previous decade — becomes harder to sustain. Hall did not break news. He ended a stance.
+        </p>
+        <p style={prose}>
+          The stages of what comes next are already visible across the other four signals this month. The framework is a familiar one. Denial is the stance that is ending. What follows it, before acceptance, are anger, bargaining, and depression. The trade-group petition filed on April 14 is a textbook bargaining move: a request that the rules be rewritten so that the current operating model, which the market is rejecting, can continue. The Ninth Circuit suit revived on April 13 carries an edge of anger — three producers arguing that the framework itself is the cause of harm. Depression, the quiet, unglamorous stage of closures, reversions, and exits that no one announces, is already underway for some operators, and Hall's estimate is, in effect, a measurement of how far into it the valley already is. Acceptance, which is the stage at which the structure actually changes, is not yet present in the public record.
+        </p>
+        <p style={prose}>
+          Read against the Constellation release three days later, the pairing is diagnostic. Hall described the condition. Constellation disclosed its exposure. Both describe the same underlying market. The difference is that Constellation has already moved to acceptance: it divested the brands that would not clear, invested behind the ones that would, and restructured around both. That is what the valley has not yet done.
+        </p>
+
+        {/* ── SECTION 4 ──────────────────────────────────────────── */}
+        <h2 style={h2style}>Policy and the Courts: Anger and Bargaining, Arriving Together</h2>
+        <p style={prose}>
+          On April 13, the same day Constellation announced its leadership transition, the Ninth Circuit Court of Appeals reversed a district-court dismissal and revived constitutional claims brought by three Napa producers — Hoopes Vineyard, Smith-Madrone Winery, and Summit Lake Vineyards — against Napa County. A panel of the appeals court ruled that the producers' retaliation and First Amendment claims deserved adjudication rather than dismissal and sent the case back to federal district court. The producers argue that current regulatory restrictions — rules shaped over the past two decades with the industry's own participation — now prevent viable operation under present market conditions. The revival moves the case toward a substantive record, which, if the litigation proceeds, will begin to document in public filings the specific economics that the trade groups themselves are describing in policy language.
+        </p>
+        <p style={prose}>
+          That trade-group petition arrived the next day. On April 14, four of the valley's principal industry organizations — the Napa Valley Vintners, the Napa Valley Grapegrowers, Coalition Napa Valley, and the Napa County Farm Bureau — filed a joint petition with the Napa County Board of Supervisors requesting 23 reforms to the regulatory framework governing winery operations. The requests include substantial changes to the Winery Definition Ordinance, revisions to visitation caps, adjustments to event-hosting rules, and expanded direct-to-consumer sales permissions.
+        </p>
+        <p style={prose}>
+          What is unusual is not the content of the petition — most of its individual elements have been debated for years — but the signatories. The four groups represent nearly every organized producer interest in the valley. They have rarely acted in concert on substantive regulatory reform. Their joint filing is not an expansion request. It is, in the language of Hall's diagnosis, a collective acknowledgment that the rules as currently written assume a market that no longer exists.
+        </p>
+        <p style={prose}>
+          The Ninth Circuit revival and the four-group petition point at the same underlying condition from opposite directions. The producers' suit argues that the rules prevent viable operation. The trade-group petition asks the county to rewrite the rules so operation becomes viable. Both concede what the earnings call, the essay, and the reopening confirm: the current framework does not fit the current market. Both also stop short of the recognition Hall names directly — that the number of operators the framework is meant to protect may itself be larger than the market can support. On the hospitality side, our <a href="https://napavalleyfocus.substack.com/p/under-the-hood-napas-tasting-rooms" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>July 2025</a> analysis of tasting-room arithmetic and the <a href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>August 2025</a> analysis of rooms-versus-jobs have already shown why volume strategies no longer reach their historical payoff. The current petition does not address that arithmetic.
+        </p>
+        <p style={prose}>
+          The Board of Supervisors is expected to respond by the June hearing cycle. That response will signal the direction the county intends to take — holding up the ag preserve or the market forces as the framework for the future.
+        </p>
+
+        {/* ── SECTION 5 ──────────────────────────────────────────── */}
+        <h2 style={h2style}>The Barbell: Mondavi and What Capital Is Saying</h2>
+        <p style={prose}>
+          On April 20, after a three-year closure, Constellation reopened Robert Mondavi Winery in Oakville. As Jess Lander reported for the <a href="https://www.sfchronicle.com/food/wine/article/robert-mondavi-winery-napa-22081753.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>San Francisco Chronicle</a>, the renovation was the most ambitious in recent Napa Valley history — a reconstruction whose cost Constellation has not publicly disclosed but that observers place in the hundreds of millions. Mondavi, which hosted more than 350,000 visitors a year before the closure, had drifted over two decades into what Lander describes as a gateway or "Disneyland" winery for first-time visitors. The reopening repositions it toward the high end: entry tastings rise to $60 from $45 before closure, a Mondavi Table experience runs $95, and a full tour-and-tasting runs $150.
+        </p>
+        <p style={prose}>
+          Constellation did not divest Mondavi as it divested Private Selection, Ruffino, Cook's, and J. Rogét. It invested at scale. The statement embedded in that decision is that Constellation believes Napa's future is barbell-shaped. The pattern is five years in the making: a 2021 sale of thirty lower-priced brands to Gallo for $810 million, followed by the 2025 sale of the remaining entry-level portfolio to The Wine Group, followed by a January 2026 closure of the Madera production facility. The capital that came out of those moves is being redirected to a trophy asset and a narrow band of premium labels above it. Everything in the middle — the crowded luxury lane Hall describes — gets neither.
+        </p>
+        <p style={prose}>
+          That is the strategic message. Volume wine is going somewhere else. Beer, which is growing, absorbs most of Constellation's capital. The top of Napa's pyramid, which has historically been more defensive during category downturns, absorbs the rest. In that middle lane, owners are being asked to compete against the reopened Mondavi above them, against flexible formats below them, and against peers speaking the same language at the same price point all around.
+        </p>
+        <p style={prose}>
+          Read beside Hall's diagnosis, the Mondavi reopening is not a contradiction. It is the complement. Hall describes what the middle is unlikely to sustain. Mondavi, reopened with a hundred-million-dollar-range investment, describes where the largest corporate owner of Napa brands believes the defensible position is. The five events across two weeks do not add up to a crisis narrative. They add up to something harder for the valley to absorb: a public, multi-sourced agreement — across an essay, an earnings call, a federal court docket, a regulatory petition, and a hospitality reinvestment — that the structure has to change, and that the change is large.
+        </p>
+        <p style={prose}>
+          None of that agreement is yet acceptance. The Board of Supervisors has not responded. The Ninth Circuit docket has not been scheduled. The trade groups' petition asks for adaptation, not reduction. The 100-to-170 figure has not been addressed by any industry body that could act on it. Capital has moved. Policy has not. The reporting record has documented this transition for more than a decade, and as of this month the industry's own senior figures are, at last, naming it out loud.
+        </p>
+        <p style={prose}>
+          Whether the next 90 days mark the beginning of acceptance or another round of bargaining is the question that will determine what kind of valley this becomes. Napa Valley Features will return to the marketing-machine arithmetic next Saturday, and to the demographic record the Saturday after that.
+        </p>
+
+        {/* ── BYLINE (inline italic, AFTER final section, BEFORE Related Coverage) ── */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.ink, fontStyle: "italic", lineHeight: 1.65, margin: "28px 0 0 0" }}>
+          Tim Carl is a Napa Valley–based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
+        </p>
+
+        {/* ── RELATED COVERAGE (4 cards) ─────────────────────────── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 28, marginBottom: 28 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center", marginBottom: 20 }}>
+            Related Coverage
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
+            <a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
+              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
+                Napa Valley Finds Itself Between a Rock and a Hard Place
+              </p>
+              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
+                OCTOBER 2023
+              </p>
+            </a>
+            <a href="https://napavalleyfocus.substack.com/p/the-wine-boom-is-over" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
+              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
+                Is the Wine Boom Over?
+              </p>
+              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
+                JANUARY 2024
+              </p>
+            </a>
+            <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
+              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
+                Under the Hood: How Accelerants — From GLP-1s to Politics — Are Reshaping Wine Demand
+              </p>
+              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
+                JANUARY 2026
+              </p>
+            </a>
+            <a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
+              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
+                Under the Hood: Napa County's Wine Market Is Clearing, Not Recovering
+              </p>
+              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
+                JANUARY 2026
+              </p>
+            </a>
+          </div>
+          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, textAlign: "center", margin: 0 }}>
+            <a href={SUBSTACK_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "none" }}>
+              Napa Valley Features on Substack →
+            </a>
+          </p>
+        </div>
+
+        {/* ── ARCHIVE SEARCH ─────────────────────────────────────── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 28, paddingTop: 28, marginBottom: 28 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
+            Archive
+          </p>
+          <h2 style={{ fontFamily: serif, fontSize: 24, fontWeight: 700, color: T.ink, margin: "0 0 8px 0" }}>Search the Archive</h2>
+          <p style={{ fontFamily: font, fontSize: 15, color: T.muted, marginBottom: 16 }}>
+            Search 1,000+ articles and reports from {PUBLICATION}.
+          </p>
+          <div style={{ display: "flex", gap: 10 }}>
+            <input
+              type="text"
+              placeholder="Search GDP, employment, wine economics, tax revenue..."
+              style={{ flex: 1, padding: "10px 14px", fontFamily: font, fontSize: 15, color: T.ink, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 3, outline: "none" }}
+              onKeyDown={(e) => { if (e.key === "Enter" && e.target.value.trim()) { window.location.href = `/archive?q=${encodeURIComponent(e.target.value.trim())}`; } }}
+            />
+            <button
+              onClick={(e) => { const input = e.currentTarget.previousElementSibling; if (input.value.trim()) { window.location.href = `/archive?q=${encodeURIComponent(input.value.trim())}`; } }}
+              style={{ padding: "10px 20px", fontFamily: font, fontSize: 15, fontWeight: 600, color: "#FFFFFF", background: T.accent, border: "none", borderRadius: 3, cursor: "pointer" }}
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        {/* ── POLLS SECTION ──────────────────────────────────────── */}
+        <PollsSection slug={ARTICLE_SLUG} />
+
+        {/* ── SOURCES ────────────────────────────────────────────── */}
+        <section style={{ marginTop: 48, borderTop: `2px solid ${T.border}`, paddingTop: 24 }}>
+          <h3 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 16px 0" }}>Sources</h3>
+          <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.7, paddingLeft: 20 }}>
+            <li style={{ marginBottom: 8 }}>Ted Hall, "<a href="https://ted241.substack.com/p/napas-luxury-squeeze" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa's Luxury Squeeze</a>," <em>Tell the Truth and Do the Right Thing</em> Substack, April 5, 2026.</li>
+            <li style={{ marginBottom: 8 }}>Constellation Brands, "<a href="https://www.cbrands.com/investors" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Fourth Quarter and Fiscal Year 2026 Results</a>," April 8, 2026.</li>
+            <li style={{ marginBottom: 8 }}><em>Press Democrat</em>, "<a href="https://www.pressdemocrat.com/2026/04/14/constellation-brands-napa-mondavi-q4-wine-spirits-beer/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Constellation Brands flags Napa tasting-room softness; Mondavi to reopen April 20</a>," April 14, 2026.</li>
+            <li style={{ marginBottom: 8 }}><em>Press Democrat</em>, "<a href="https://www.pressdemocrat.com/2026/04/14/federal-appeals-court-reverses-dismissal-of-some-claims-against-napa-county-in-hoopes-vineyard-case/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Federal appeals court reverses dismissal of some claims against Napa County in Hoopes Vineyard case</a>," April 14, 2026.</li>
+            <li style={{ marginBottom: 8 }}>Napa Valley Vintners, Napa Valley Grapegrowers, Coalition Napa Valley, and Napa County Farm Bureau, joint petition to the Napa County Board of Supervisors, April 14, 2026.</li>
+            <li style={{ marginBottom: 8 }}>Jess Lander, "<a href="https://www.sfchronicle.com/food/wine/article/robert-mondavi-winery-napa-22081753.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Inside the most anticipated California winery opening of the year, or maybe ever</a>," <em>San Francisco Chronicle</em>, April 17, 2026.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa Valley Finds Itself Between a Rock and a Hard Place</a>," <em>Napa Valley Features</em>, October 3, 2023.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/the-wine-boom-is-over" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Is the Wine Boom Over?</a>" <em>Napa Valley Features</em>, January 4, 2024.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/under-the-hood-napas-tasting-rooms" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: Napa's Tasting Rooms Face a Numbers Problem</a>," <em>Napa Valley Features</em>, July 5, 2025.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: More Rooms Has Equaled Fewer Jobs in Napa County</a>," <em>Napa Valley Features</em>, August 23, 2025.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: How Accelerants — From GLP-1s to Politics — Are Reshaping Wine Demand</a>," <em>Napa Valley Features</em>, January 2026.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: Napa County's Wine Market Is Clearing, Not Recovering</a>," <em>Napa Valley Features</em>, January 2026.</li>
+            <li style={{ marginBottom: 8 }}>Silicon Valley Bank, <em>State of the U.S. Wine Industry</em>, 2024 and 2025 editions.</li>
+          </ol>
+        </section>
+
+        {/* ── METHODOLOGY ────────────────────────────────────────── */}
+        <section style={{ marginTop: 48, borderTop: `2px solid ${T.border}`, paddingTop: 24 }}>
+          <h3 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 16px 0" }}>Methodology</h3>
+          <p style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.7 }}>
+            This piece treats five discrete public events — an editorial essay, a corporate earnings release, an appellate court revival, a trade-group petition, and a hospitality reopening — as data points in an industry-pivot pattern. Financial figures are reported directly from Constellation Brands' Q4 FY26 disclosures. The 100-to-170 estimate and its underlying methodology are drawn from Ted Hall's April 5, 2026 essay, which itself applies Silicon Valley Bank wine-industry profitability data to the subset of Napa Valley Vintners members producing fewer than 10,000 cases annually. The stages-of-correction framing is analytical, not clinical. Napa Valley Features has documented the structural condition described here since its founding in 2023, building on more than a decade of prior reporting by this author in NorthBay Biz, the Napa Valley Register, and The Washington Post.
+          </p>
+        </section>
+
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
