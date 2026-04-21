@@ -310,11 +310,13 @@ jobs:
           # Fetch last 7 days of coverage_gaps
           week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
           r = requests.get(
-              f"{SUPABASE_URL}/rest/v1/coverage_gaps"
-              f"?select=query,category,tier,chunk_count,top_similarity,asked_at"
-              f"&asked_at=gte.{week_ago}"
-              f"&order=asked_at.desc",
+              f"{SUPABASE_URL}/rest/v1/coverage_gaps",
               headers=headers,
+              params={
+                  "select": "query,category,tier,chunk_count,top_similarity,asked_at",
+                  "asked_at": f"gte.{week_ago}",
+                  "order": "asked_at.desc",
+              },
           )
           r.raise_for_status()
           gaps = r.json()
