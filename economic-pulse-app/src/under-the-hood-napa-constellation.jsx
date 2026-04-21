@@ -334,11 +334,11 @@ export default function UnderTheHoodNapaConstellation() {
             buildChart={(ctx) => {
               const CATEGORIES = ["Editorial", "Capital", "Legal", "Regulatory", "Hospitality"];
               const POINTS = [
-                { x: 5,  y: 0, label: "Apr 5 · Hall's 'Napa's Luxury Squeeze' essay" },
-                { x: 8,  y: 1, label: "Apr 8 · Constellation Q4 FY26 earnings; FY28 guidance withdrawn" },
-                { x: 13, y: 2, label: "Apr 13 · Ninth Circuit revives Hoopes/Smith-Madrone/Summit Lake claims" },
-                { x: 14, y: 3, label: "Apr 14 · Four trade groups file unified 23-reform petition" },
-                { x: 20, y: 4, label: "Apr 20 · Mondavi reopens after three-year renovation" },
+                { x: 5,  y: "Editorial",   label: "Apr 5 · Hall's 'Napa's Luxury Squeeze' essay" },
+                { x: 8,  y: "Capital",     label: "Apr 8 · Constellation Q4 FY26 earnings; FY28 guidance withdrawn" },
+                { x: 13, y: "Legal",       label: "Apr 13 · Ninth Circuit revives Hoopes/Smith-Madrone/Summit Lake claims" },
+                { x: 14, y: "Regulatory",  label: "Apr 14 · Four trade groups file unified 23-reform petition" },
+                { x: 20, y: "Hospitality", label: "Apr 20 · Mondavi reopens after three-year renovation" },
               ];
               return new Chart(ctx, {
                 type: "scatter",
@@ -354,6 +354,9 @@ export default function UnderTheHoodNapaConstellation() {
                 },
                 options: {
                   responsive: true,
+                  layout: {
+                    padding: { left: 12, right: 12, top: 8, bottom: 8 },
+                  },
                   plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -375,15 +378,17 @@ export default function UnderTheHoodNapaConstellation() {
                       title: { display: true, text: "April 2026", color: T.muted, font: { family: font } },
                     },
                     y: {
-                      min: -0.5, max: 4.5,
+                      type: "category",
+                      labels: CATEGORIES,
                       reverse: true,
+                      offset: true,
                       ticks: {
-                        stepSize: 1,
-                        callback: (v) => CATEGORIES[v] || "",
                         color: T.muted,
-                        font: { family: font },
+                        font: { family: font, size: 13 },
+                        padding: 8,
                       },
                       grid: { color: T.rule },
+                      afterFit: (scale) => { scale.width = 110; },
                     },
                   },
                 },
@@ -552,50 +557,29 @@ export default function UnderTheHoodNapaConstellation() {
           Tim Carl is a Napa Valley–based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
         </p>
 
-        {/* ── RELATED COVERAGE (4 cards) ─────────────────────────── */}
+        {/* ── RELATED COVERAGE (inline, curated list) ── */}
         <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 28, marginBottom: 28 }}>
           <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center", marginBottom: 20 }}>
             Related Coverage
           </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
-            <a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
-              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
-                Napa Valley Finds Itself Between a Rock and a Hard Place
-              </p>
-              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
-                OCTOBER 2023
-              </p>
-            </a>
-            <a href="https://napavalleyfocus.substack.com/p/the-wine-boom-is-over" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
-              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
-                Is the Wine Boom Over?
-              </p>
-              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
-                JANUARY 2024
-              </p>
-            </a>
-            <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
-              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
-                Under the Hood: How Accelerants — From GLP-1s to Politics — Are Reshaping Wine Demand
-              </p>
-              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
-                JANUARY 2026
-              </p>
-            </a>
-            <a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" target="_blank" rel="noopener noreferrer" style={{ flex: "1 1 280px", textDecoration: "none", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: "14px 16px", display: "block" }}>
-              <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 8px 0", lineHeight: 1.35 }}>
-                Under the Hood: Napa County's Wine Market Is Clearing, Not Recovering
-              </p>
-              <p style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, margin: 0, letterSpacing: "0.06em" }}>
-                JANUARY 2026
-              </p>
-            </a>
-          </div>
-          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, textAlign: "center", margin: 0 }}>
-            <a href={SUBSTACK_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "none" }}>
-              Napa Valley Features on Substack →
-            </a>
-          </p>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"Napa Valley Finds Itself Between a Rock and a Hard Place"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — Napa Valley Features · October 2023</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/the-wine-boom-is-over" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"Is the Wine Boom Over?"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — Napa Valley Features · January 2024</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"Under the Hood: How Accelerants — From GLP-1s to Politics — Are Reshaping Wine Demand"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — Napa Valley Features · January 2026</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"Under the Hood: Napa County's Wine Market Is Clearing, Not Recovering"</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — Napa Valley Features · January 2026</span>
+            </li>
+          </ul>
         </div>
 
         {/* ── ARCHIVE SEARCH ─────────────────────────────────────── */}
