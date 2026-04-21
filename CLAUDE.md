@@ -394,3 +394,31 @@ When the user arrives with a block of JSX object literals (like this):
 - **Event count is `TRACKER_EVENTS.length`** — the counter on the page reads from this. Don't assume a commit added N events without counting.
 
 ---
+
+## PostgREST URL encoding
+
+When filtering Supabase REST calls on a `timestamptz` column, never f-string the ISO timestamp into the URL — the `+00:00` timezone offset contains a raw `+` that PostgREST interprets as a space, returning `400 Bad Request`.
+
+**Wrong:**
+```python
+r = requests.get(
+    f"{SUPABASE_URL}/rest/v1/table"
+    f"?select=cols&asked_at=gte.{iso_timestamp}&order=asked_at.desc",
+    headers=headers,
+)
+```
+
+**Right:**
+```python
+r = requests.get(
+    f"{SUPABASE_URL}/rest/v1/table",
+    headers=headers,
+    params={
+        "select": "cols",
+        "asked_at": f"gte.{iso_timestamp}",
+        "order": "asked_at.desc",
+    },
+)
+```
+
+`requests` URL-encodes `params=` values automatically. Applies to any filter value containing `+`, `&`, `#`, or spaces. First hit: `coverage-gaps-digest` job in `poll_pipeline.yml`, fixed 2026-04-20 (commit `0ad72bd`).
