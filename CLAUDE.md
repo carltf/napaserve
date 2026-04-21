@@ -422,3 +422,88 @@ r = requests.get(
 ```
 
 `requests` URL-encodes `params=` values automatically. Applies to any filter value containing `+`, `&`, `#`, or spaces. First hit: `coverage-gaps-digest` job in `poll_pipeline.yml`, fixed 2026-04-20 (commit `0ad72bd`).
+
+---
+
+## Update — April 21, 2026
+
+### New Article Live (as Draft)
+
+- **Slug:** `napa-constellation-2026`
+- **Headline:** "From Selling Napa to Defending It"
+- **Publication:** Napa Valley Features
+- **Byline date:** April 21, 2026
+- **Status:** `published=false`, `polls_seeded=true`, `admin_cards_added=true`, `related_coverage_added=true`
+- **Polls:** IDs 27, 28, 29
+- **URL:** https://napaserve.org/under-the-hood/napa-constellation-2026
+- **Commits:** de0fcee, 30f277a, f78b73f
+- **Bundle:** index-KAJdoyJ_.js
+- **Known issue:** EXPORT_DATA shape broken; admin Word export returns "Chart undefined" placeholders. Fix pending next session.
+- Week 1 of three-part April series (Constellation / Marketing Machine / Population).
+
+### Section 0 — Ground Truth Verification (PLATFORM-WIDE)
+
+Before any Claude Code prompt, SQL query, or content deliverable:
+
+- **Code:** verify against the actual file in the repo at `main` (grep/view).
+- **Data:** verify against the current Supabase table state (curl to REST).
+- **Rendering:** verify against the live production page (Chrome).
+- **Infrastructure:** verify against current worker.js, admin.jsx, workflow files.
+
+Pre-execution checklist required in thread:
+1. What am I assuming? (3–5 assumptions)
+2. How have I verified each? (cite file/query/URL)
+3. If unverified, verify or flag.
+
+**Reality wins when docs disagree.** Fix whichever is wrong and update docs.
+
+**Stop, don't reinterpret.** When verification returns unexpected output, re-verify — don't guess around the gap.
+
+### UTH Template Canonical Patterns (LOCKED April 21, 2026)
+
+- **Related Coverage:** simple `<ul>` list, NOT 4-card grid. Bold serif title in quotes, em-dash, muted publication·date attribution. Matches template lines 518–541.
+- **Component order:** prose → byline → Related Coverage → Archive Search → PollsSection → Sources → Methodology.
+- **Sources:** hand-written JSX ordered list at article bottom, scientific-paper style. No const SOURCES array.
+- **Archive Search heading:** "Search the Archive"
+
+### Chart.js Category Y-Axis Pattern (NEW)
+
+For charts with discrete categorical y-values, use `type: "category"` with explicit `labels` array — NOT numeric linear axis with callback (labels clip to zero width).
+
+```javascript
+y: {
+  type: "category",
+  labels: CATEGORIES,
+  reverse: true,  // optional
+  offset: true,
+  ticks: { color: T.muted, font: { family: font, size: 13 }, padding: 8 },
+  grid: { color: T.rule },
+  afterFit: (scale) => { scale.width = 110; },
+}
+```
+
+Add `layout.padding` at options top level. POINTS y-values are category strings, not numeric indices.
+
+### Formatting Standards (LOCKED)
+
+- `%` default; "percent" only when word form required
+- Title Case section headings with optional colon
+- No "Under the Hood:" prefix in headline
+- Real em/en-dashes, never `--` or `\u2014`
+- `$823.8 million` in prose; short forms in chart labels only
+- AP date style (April 5, April 20, 2026)
+- No bullets in body prose — lists go in charts/tables/three-card sections
+- One-through-nine spelled; 10+ numerals
+- Org shortforms on 2nd reference: NVV, NVG, CNV, Farm Bureau, Constellation, Mondavi, Ninth Circuit, SVB
+
+### Poll Seeder Reminder
+
+`pipeline/seed_article_polls.py` has hardcoded POLLS list (lines 21–209). For every new article, three poll dicts must be added to the Python file BEFORE live seed. Dry-run must confirm 3 polls.
+
+### Resource Hierarchy for Editorial Research
+
+1. NapaServe archive (Chrome at /archive; SQL for bulk)
+2. NVF Research Agent (/agent)
+3. Regional Contraction Tracker
+4. Coverage Gap Intelligence (`coverage_gaps` table)
+5. External web_search/web_fetch (last resort)
