@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Document, Packer, Paragraph, TextRun } from "docx";
+import { Document, Packer, Paragraph, TextRun, ExternalHyperlink } from "docx";
 
 const FONT = "Times New Roman";
 const SIZE = 24; // 12pt in half-points
@@ -10,16 +10,60 @@ function tr(text) {
   return new TextRun({ text, size: SIZE, font: FONT });
 }
 
-function p(text) {
-  return new Paragraph({ spacing: BODY_SPACING, children: [tr(text)] });
+function trItalic(text) {
+  return new TextRun({ text, size: SIZE, font: FONT, italics: true });
 }
 
-function headerP(text) {
-  return new Paragraph({ spacing: HEADER_SPACING, children: [tr(text)] });
+function italicP(text) {
+  return new Paragraph({ spacing: BODY_SPACING, children: [trItalic(text)] });
 }
 
 function blank() {
   return new Paragraph({ spacing: BODY_SPACING, children: [tr("")] });
+}
+
+// ── Inline markdown link parser ──
+// Converts "text [linkLabel](https://url) more text" into an array of runs
+// mixing plain TextRun and ExternalHyperlink-wrapped runs.
+// Safe for strings without any links — returns a single TextRun.
+const LINK_RX = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+function parseInline(text) {
+  const parts = [];
+  let lastEnd = 0;
+  let match;
+  LINK_RX.lastIndex = 0;
+  while ((match = LINK_RX.exec(text)) !== null) {
+    if (match.index > lastEnd) {
+      parts.push(new TextRun({ text: text.slice(lastEnd, match.index), size: SIZE, font: FONT }));
+    }
+    parts.push(
+      new ExternalHyperlink({
+        link: match[2],
+        children: [
+          new TextRun({
+            text: match[1],
+            size: SIZE,
+            font: FONT,
+            style: "Hyperlink",
+          }),
+        ],
+      })
+    );
+    lastEnd = match.index + match[0].length;
+  }
+  if (lastEnd < text.length) {
+    parts.push(new TextRun({ text: text.slice(lastEnd), size: SIZE, font: FONT }));
+  }
+  return parts.length > 0 ? parts : [new TextRun({ text, size: SIZE, font: FONT })];
+}
+
+function p(text) {
+  return new Paragraph({ spacing: BODY_SPACING, children: parseInline(text) });
+}
+
+function headerP(text) {
+  return new Paragraph({ spacing: HEADER_SPACING, children: parseInline(text) });
 }
 
 export default function WordExporter({ article }) {
@@ -42,7 +86,20 @@ export default function WordExporter({ article }) {
       // 4. Blank line
       children.push(blank());
 
-      // 5. Body — handles paragraph, header, and chart types
+      // 5. Deck (optional)
+      if (article.deck) {
+        children.push(italicP(article.deck));
+        children.push(blank());
+      }
+
+      // 6. Article Summary (optional)
+      if (article.summary) {
+        children.push(p("Article Summary:"));
+        children.push(p(article.summary));
+        children.push(blank());
+      }
+
+      // 7. Body — handles paragraph, header, and chart types
       if (article.body && article.body.length > 0) {
         for (const item of article.body) {
           if (item.type === "header") {
@@ -50,46 +107,32 @@ export default function WordExporter({ article }) {
           } else if (item.type === "chart") {
             children.push(p(`[Chart ${item.number}]`));
           } else {
-            // paragraph (default)
             children.push(p(item.text));
           }
         }
       }
 
-      // 6. Blank line
+      // 8. Blank line
       children.push(blank());
 
-      // 7. Author bio
+      // 9. Author bio
       children.push(
         p(
           "Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features."
         )
       );
 
-      // 8. Blank line
-      children.push(blank());
-
-      // 9. Suggested pull quote
-      if (article.pullQuote) {
-        children.push(p("Suggested Pull Quote:"));
-        children.push(p(article.pullQuote));
-      }
-
       // 10. Blank line
       children.push(blank());
 
-      // 11. Links
-      if (article.links && article.links.length > 0) {
-        children.push(p("Links:"));
-        for (const link of article.links) {
-          children.push(p(`${link.label}: ${link.url}`));
-        }
+      // 11. Pull quote
+      if (article.pullQuote) {
+        children.push(p("Suggested Pull Quote:"));
+        children.push(p(article.pullQuote));
+        children.push(blank());
       }
 
-      // 12. Blank line
-      children.push(blank());
-
-      // 13. Captions — each as its own paragraph
+      // 12. Captions
       if (article.captions && article.captions.length > 0) {
         children.push(p("Captions:"));
         children.push(
@@ -107,12 +150,21 @@ export default function WordExporter({ article }) {
               })
           )
         );
+        children.push(blank());
       }
 
-      // 14. Blank line
-      children.push(blank());
+      // 13. Related Coverage (NEW)
+      if (article.relatedCoverage && article.relatedCoverage.length > 0) {
+        children.push(p("Related Coverage:"));
+        for (const item of article.relatedCoverage) {
+          // Render as markdown link so parseInline turns title into a clickable hyperlink
+          const line = `[${item.title}](${item.url}) \u2014 ${item.publication} \u00B7 ${item.date}`;
+          children.push(p(line));
+        }
+        children.push(blank());
+      }
 
-      // 15. Sources
+      // 14. Sources (last)
       if (article.sources && article.sources.length > 0) {
         children.push(p("Sources:"));
         for (const src of article.sources) {
