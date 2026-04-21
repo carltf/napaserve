@@ -23,7 +23,7 @@ const DATELINE_LOCATION = "NAPA VALLEY, Calif.";
 
 // ── ARTICLE METADATA ───────────────────────────────────────────────
 const ARTICLE_SLUG = "napa-constellation-2026";
-const ARTICLE_DATE = "April 22, 2026";
+const ARTICLE_DATE = "April 21, 2026";
 const ARTICLE_MONTH_YEAR = "April 2026";
 const SHOW_DECK = true;
 
