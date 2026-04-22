@@ -919,6 +919,14 @@ export default function UnderTheHoodNapaConstellation() {
           </p>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <Link to="/under-the-hood/napa-gdp-2024" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"\"Napa’s Economy Looks Bigger Than It Is\""}</Link>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — Napa Valley Features · March 2026</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <Link to="/under-the-hood/napa-cab-2025" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"2025 Napa Grape Prices Slip After a Record High"</Link>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — Napa Valley Features · March 2026</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
               <a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>"Napa Valley Finds Itself Between a Rock and a Hard Place"</a>
               <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> — Napa Valley Features · October 2023</span>
             </li>
