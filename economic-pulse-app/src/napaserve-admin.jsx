@@ -99,7 +99,7 @@ const EXPORT_DATA = {
   "napa-constellation-2026": {
     headline: "From Selling Napa to Defending It",
     publication: "Napa Valley Features",
-    deck: "Five signals in two weeks describe an industry pivoting from marketing to defense — and a former Mondavi chairman naming the scale of what this reporting has documented for years.",
+    deck: "Napa's four producer tiers are at four different stages of the same correction — and none of them yet name its cause.",
     summary: "Between April 5 and April 20, five public events revealed an industry reorienting itself under pressure. Constellation Brands reported a collapsing wine segment. A former Robert Mondavi chairman published an economic diagnosis estimating that 25% to 40% of small Napa wineries are not structurally viable. Three Napa producers won a Ninth Circuit revival of an economic-harm suit. Four trade groups filed a unified 23-reform petition with the county. And Constellation reopened Robert Mondavi Winery in Oakville after a major renovation. Each is a distinct event. Together they describe an industry whose marketing audience has shifted — from consumers to regulators, courts, and the investors watching its capital decisions.",
     slug: "napa-constellation-2026",
     dateline: "NAPA VALLEY, Calif.",
