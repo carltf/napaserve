@@ -375,7 +375,7 @@ export default function UnderTheHoodNapaConstellation() {
         {/* ── DECK ───────────────────────────────────────────────── */}
         {SHOW_DECK && (
           <p style={{ fontFamily: serif, fontSize: 18, color: T.muted, lineHeight: 1.6, marginBottom: 24, fontStyle: "italic" }}>
-            Napa's producer tiers are not synchronized, and the small tier is not uniform within itself. The two largest U.S. wine companies have written down their U.S. mid-tier holdings and withdrawn forward guidance. Mid-size producers are cutting production. Among small producers, three are suing the county in anger, one former Mondavi chairman is proposing a structured bargain on behalf of the cohort, and roughly 100 to 170 are quietly operating beyond the point of viability. The valley's four principal trade groups are asking the county to rewrite the rules that built Napa. Each action names a different stage of response to the same condition — and none yet name the cause.
+            Napa's four producer tiers are at four different stages of the same correction — and none of them yet name its cause.
           </p>
         )}
 
