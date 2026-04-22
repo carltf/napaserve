@@ -374,7 +374,7 @@ export default function UnderTheHoodNapaConstellation() {
         {/* ── DECK ───────────────────────────────────────────────── */}
         {SHOW_DECK && (
           <p style={{ fontFamily: serif, fontSize: 18, color: T.muted, lineHeight: 1.6, marginBottom: 24, fontStyle: "italic" }}>
-            Five signals in two weeks describe an industry pivoting from marketing to defense — and a former Mondavi chairman naming the scale of what this reporting has documented for years.
+            Napa's producer tiers are not synchronized, and the small tier is not uniform within itself. The two largest U.S. wine companies have written down their U.S. mid-tier holdings and withdrawn forward guidance. Mid-size producers are cutting production. Among small producers, three are suing the county in anger, one former Mondavi chairman is proposing a structured bargain on behalf of the cohort, and roughly 100 to 170 are quietly operating beyond the point of viability. The valley's four principal trade groups are asking the county to rewrite the rules that built Napa. Each action names a different stage of response to the same condition — and none yet name the cause.
           </p>
         )}
 
@@ -390,85 +390,104 @@ export default function UnderTheHoodNapaConstellation() {
         <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: "16px 20px", marginBottom: 32 }}>
           <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Article Summary</p>
           <p style={{ ...prose, fontSize: 15, marginBottom: 0 }}>
-            Between April 5 and April 20, five public events revealed an industry reorienting itself under pressure. Constellation Brands reported a collapsing wine segment. A former Robert Mondavi chairman published an economic diagnosis estimating that 25% to 40% of small Napa wineries are not structurally viable. Three Napa producers won a Ninth Circuit revival of an economic-harm suit. Four trade groups filed a unified 23-reform petition with the county. And Constellation reopened Robert Mondavi Winery in Oakville after a major renovation. Each is a distinct event. Together they describe an industry whose marketing audience has shifted — from consumers to regulators, courts, and the investors watching its capital decisions.
+            Between April 5 and April 20, 2026, Napa Valley's producer base revealed its tier-stratified response to a decade-long contraction in U.S. wine demand. Two of the four largest producers — Constellation Brands and Treasury Wine Estates — have written down their U.S. assets and withdrawn forward guidance, Treasury in October and Constellation in April. Two others — Gallo and Trinchero — are selectively divesting: Gallo closing its super-premium Ranch Winery in St. Helena, Trinchero listing its Haystack and Clouds Nest vineyards for sale. Among smaller producers, Ted Hall — former chairman of Robert Mondavi Corporation — estimates 100 to 170 of roughly 400 Napa Valley Vintners members producing under 10,000 cases are economically unviable. Three Napa wineries won a Ninth Circuit revival of their First Amendment suit against the county. And the four principal trade groups jointly petitioned the county for 23 regulatory changes to the framework they themselves helped build. Read together, the events describe actors at different stages of response to a market that has itself shrunk — for demographic, health, income, and competitive reasons no rule change can reverse. An interactive calculator lets readers test assumptions about how winery contraction across tiers flows through to the 55,875 jobs, $3.82 billion in wages, and $507 million in tax revenue the wine-related economy anchors.
           </p>
         </div>
 
         {/* ── SECTION 1 ──────────────────────────────────────────── */}
         <h2 style={h2style}>The Two Weeks Napa Stopped Pretending</h2>
         <p style={{ ...prose, marginBottom: 18 }}>
-          <span style={{ fontWeight: 700 }}>{DATELINE_LOCATION} —</span>{" "}In two weeks this April, five public events arrived that together read as something closer to a structural confession than a news cycle. A former chairman of Robert Mondavi Corporation published an essay estimating that 100 to 170 small Napa wineries are operating below long-term viability. Three days later, the largest corporate owner of Napa brands reported a 51% collapse in annual wine-segment revenue and withdrew its long-term guidance. Five days after that, a federal appellate panel revived an economic-harm suit from three Napa producers. The next day, four of the valley's principal trade groups filed a joint petition asking the county to rewrite the rules that govern how wineries can operate. A week later, Constellation Brands reopened its Robert Mondavi flagship after a three-year renovation.
+          <span style={{ fontWeight: 700 }}>{DATELINE_LOCATION} —</span>{" "}Between April 5 and April 20, 2026, a series of public actions from across the Napa wine industry arrived from actors with little apparent coordination: a former chairman of Robert Mondavi Corporation publishing an economic diagnosis, an Australian-listed global wine company confirming a US$700 million impairment against its U.S. assets, Constellation Brands reporting a collapsing wine segment, three small Napa wineries winning a federal appellate revival of their suit against the county, four trade groups filing a joint regulatory petition, and Constellation reopening its Robert Mondavi flagship in Oakville after a renovation at the top of the market.
         </p>
         <p style={prose}>
-          The signals arrived from different directions — editorial, capital, legal, regulatory, hospitality — and from actors with little apparent coordination. But read together, they describe an industry that has changed its marketing audience. For two decades, Napa sold itself to consumers: through Visit Napa Valley, Auction Napa Valley, Premiere Napa Valley, the tasting-room network, the brand campaigns. The pivot visible this month is not that Napa has stopped marketing. It is that the audience has shifted. The industry is now marketing to regulators, to courts, to investors, and, in some quarters, to itself.
+          Read together, the actions describe an industry in which different tiers of the producer base are at different stages of response to the same underlying condition. The framework is familiar — the five stages psychiatrist Elisabeth Kübler-Ross first described for individuals confronting terminal diagnosis, later adapted for industries and institutions absorbing structural change: denial, anger, bargaining, depression, acceptance. Denial is the stage one does not announce; its evidence is continuation unchanged. Anger looks for a cause outside the self and often arrives in litigation. Bargaining offers modified terms in exchange for preserving the current posture. Depression is the quiet winding-down visible only to those inside it. Acceptance is the stage at which structure actually changes. The tiers of Napa's producer base are distributed across all five simultaneously, and they are not moving together.
+        </p>
+        <p style={prose}>
+          Large producers have moved through denial and bargaining and arrived at a kind of acceptance: they are writing down their U.S. positions, divesting what cannot clear, and concentrating on what can. Mid-size producers are still in bargaining. Small producers are dispersed — some continuing unchanged, some suing in anger, some absorbing Ted Hall's April 5 diagnosis that 100 to 170 of their cohort are operating beyond the point of long-term viability. The four trade groups representing the valley's producer base are at system-level bargaining: asking the county to rewrite the rules that built Napa so the current operator count can continue.
+        </p>
+        <p style={prose}>
+          What makes the two-week window analytically useful is that no institutional actor in it names the condition the large producers have already implicitly accepted: that U.S. wine consumption has been contracting for reasons demographic, health-related, income-related, and competitive, that the contraction is structural rather than cyclical, and that no regulatory change restores a market that has itself shrunk. This publication has documented that condition for more than a decade. Its naming inside the valley's senior institutions remains incomplete.
         </p>
 
         {/* ── CHART 1 ────────────────────────────────────────────── */}
         <div style={{ marginBottom: 48 }}>
-          <h2 style={{ ...h2style, marginTop: 36, marginBottom: 16 }}>Five Signals in Two Weeks</h2>
+          <h2 style={{ ...h2style, marginTop: 36, marginBottom: 16 }}>The Stages-of-Grief Grid — Napa Wine Producers, April 2026</h2>
           <ChartCanvas
-            id="chart-1-five-signals"
-            title="Five Signals in Two Weeks"
-            downloadName="chart-1_napa-constellation-2026_nvf.png"
+            id="chart-1-stages-grid"
+            title="The Stages-of-Grief Grid — Napa Wine Producers, April 2026"
+            downloadName="chart-1_stages-grid_napa-constellation-2026_nvf.png"
             deps={[]}
             buildChart={(ctx) => {
-              const CATEGORIES = ["Editorial", "Capital", "Legal", "Regulatory", "Hospitality"];
-              const POINTS = [
-                { x: 5,  y: "Editorial",   label: "Apr 5 · Hall's 'Napa's Luxury Squeeze' essay" },
-                { x: 8,  y: "Capital",     label: "Apr 8 · Constellation Q4 FY26 earnings; FY28 guidance withdrawn" },
-                { x: 13, y: "Legal",       label: "Apr 13 · Ninth Circuit revives Hoopes/Smith-Madrone/Summit Lake claims" },
-                { x: 14, y: "Regulatory",  label: "Apr 14 · Four trade groups file unified 23-reform petition" },
-                { x: 20, y: "Hospitality", label: "Apr 20 · Mondavi reopens after three-year renovation" },
+              const STAGES = ["Denial", "Anger", "Bargaining", "Depression", "Acceptance"];
+              const TIERS = ["Institutional", "Small (<10K cases)", "Mid-size (10K-100K)", "Large (>100K cases)"];
+              const GRID_EVENTS = [
+                { stage: 0, tier: 1, label: "Small producers operating unchanged", color: "#C4A050", date: "Ongoing", muted: true },
+                { stage: 1, tier: 1, label: "Hoopes · Smith-Madrone · Summit Lake — Ninth Circuit revival", color: "#C4A050", date: "Apr 13, 2026" },
+                { stage: 2, tier: 3, label: "Gallo — Ranch Winery closure + 93 layoffs", color: "#A63D2A", date: "Feb 12, 2026" },
+                { stage: 2, tier: 3, label: "Trinchero — Haystack & Clouds Nest listed for sale", color: "#A63D2A", date: "Feb 2026" },
+                { stage: 2, tier: 2, label: "Anonymous mid-size — 50K→10K case workout", color: "#8B7355", date: "Jan 2026" },
+                { stage: 2, tier: 1, label: "Hall — 35-40 exits per year for three years", color: "#C4A050", date: "Apr 5, 2026" },
+                { stage: 2, tier: 0, label: "Four-group petition — 23 reforms to WDO/visitation/events", color: T.accent, date: "Apr 14, 2026" },
+                { stage: 3, tier: 1, label: "Hall diagnosis — 100-170 operating beyond viability", color: "#C4A050", date: "Apr 5, 2026" },
+                { stage: 4, tier: 3, label: "Treasury — US$700M impairment, dividend cancellation, vineyard fallowing", color: "#A63D2A", date: "Feb 16, 2026" },
+                { stage: 4, tier: 3, label: "Constellation — Q4 collapse + guidance withdrawal", color: "#A63D2A", date: "Apr 8-13, 2026" },
+                { stage: 4, tier: 3, label: "Constellation — Mondavi reopening at premium tier", color: "#A63D2A", date: "Apr 20, 2026" },
               ];
+              const hexToRgba = (hex, alpha) => {
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+              };
+              const pointColors = GRID_EVENTS.map(e => e.muted ? hexToRgba(e.color, 0.4) : e.color);
               return new Chart(ctx, {
                 type: "scatter",
                 data: {
                   datasets: [{
-                    label: "Signal",
-                    data: POINTS,
-                    backgroundColor: T.accent,
-                    borderColor: T.accent,
+                    label: "Event",
+                    data: GRID_EVENTS.map(e => ({ x: e.stage, y: e.tier })),
+                    backgroundColor: pointColors,
+                    borderColor: pointColors,
                     pointRadius: 8,
-                    pointHoverRadius: 9,
+                    pointHoverRadius: 10,
                   }],
                 },
                 options: {
                   responsive: true,
-                  layout: {
-                    padding: { left: 12, right: 12, top: 8, bottom: 8 },
-                  },
+                  layout: { padding: { left: 12, right: 12, top: 8, bottom: 8 } },
                   plugins: {
                     legend: { display: false },
                     tooltip: {
                       callbacks: {
-                        label: (item) => item.raw.label || "",
+                        label: (item) => `${GRID_EVENTS[item.dataIndex].label} (${GRID_EVENTS[item.dataIndex].date})`,
                       },
                     },
                   },
                   scales: {
                     x: {
-                      min: 1, max: 22,
+                      min: -0.5, max: 4.5,
                       ticks: {
-                        stepSize: 3,
-                        callback: (v) => "Apr " + v,
+                        stepSize: 1,
+                        callback: (v) => STAGES[v] || "",
                         color: T.muted,
                         font: { family: font },
                       },
                       grid: { color: T.rule },
-                      title: { display: true, text: "April 2026", color: T.muted, font: { family: font } },
+                      title: { display: true, text: "Stage of response", color: T.muted, font: { family: font } },
                     },
                     y: {
-                      type: "category",
-                      labels: CATEGORIES,
+                      min: -0.5, max: 3.5,
                       reverse: true,
-                      offset: true,
                       ticks: {
+                        stepSize: 1,
+                        callback: (v) => TIERS[v] || "",
                         color: T.muted,
                         font: { family: font, size: 13 },
                         padding: 8,
                       },
                       grid: { color: T.rule },
-                      afterFit: (scale) => { scale.width = 110; },
+                      title: { display: true, text: "Producer tier", color: T.muted, font: { family: font } },
+                      afterFit: (scale) => { scale.width = 180; },
                     },
                   },
                 },
@@ -476,7 +495,7 @@ export default function UnderTheHoodNapaConstellation() {
             }}
           />
           <p style={{ fontStyle: "italic", fontSize: 14, color: T.muted, lineHeight: 1.6, margin: "12px 0 24px 0" }}>
-            Five Signals in Two Weeks. Between April 5 and April 20, five public events from actors with little apparent coordination described the same industry pivot — from marketing to consumers toward marketing to regulators, courts, and investors. Sources: <a href="https://ted241.substack.com/p/napas-luxury-squeeze" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Ted Hall Substack</a> (April 5, 2026); Constellation Brands Q4 FY26 Earnings Release (April 8, 2026); Ninth Circuit Court of Appeals docket (April 13, 2026); Napa County Board of Supervisors (April 14, 2026); <a href="https://www.sfchronicle.com/food/wine/article/robert-mondavi-winery-napa-22081753.php" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>San Francisco Chronicle</a> (April 17, 2026).
+            Eleven named events, observations, and analytical positions from between January and April 2026, the majority concentrated in the April 5-20 window, plotted by producer tier and stage of response. The Kübler-Ross stages — denial, anger, bargaining, depression, acceptance — describe how individuals and institutions absorb structural change; the framework applies naturally to an industry absorbing long-documented contraction. Large producers (brick) appear at acceptance — Treasury Wine Estates has written down US$700 million in U.S. goodwill and cancelled its dividend; Constellation Brands has reported a 51 percent collapse in its wine segment and withdrawn forward guidance; Constellation's reopening of Robert Mondavi at premium tier is the expression of the market those producers have accepted. Gallo and Trinchero are at bargaining — closing a super-premium facility and listing two Napa vineyards for sale while preserving their broader operating bases. The mid-size tier (taupe) is at bargaining, visible in one Napa winery's publicly reported workout from 50,000 to 10,000 cases. Small producers (gold) are dispersed: some continuing unchanged (denial is the stage one does not announce); three pressing a First Amendment suit at the Ninth Circuit (anger); Hall's essay naming 100 to 170 of his cohort as operating beyond viability (depression) and proposing 35 to 40 exits per year for three years (bargaining, on behalf of the cohort). The four trade groups' joint petition (accent) is a system-level bargain. No institutional actor sits at acceptance. The stage that produces structural change is not yet present at the scale that would match what the data show.
           </p>
         </div>
 
@@ -702,7 +721,7 @@ export default function UnderTheHoodNapaConstellation() {
 
         <h3 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "32px 0 12px" }}>A Note About Assumptions</h3>
         <p style={prose}>
-          Every number in the chart above rests on estimates — how Napa's $4.4 billion in winery revenue distributes across tiers, how severely each tier contracts under pressure, how winery contraction flows through to growers, tourism workers, suppliers, and the rest of the wine-related economy. Reasonable analysts will land on different numbers for every one of those variables. The defaults shown here are NVF's best synthesis of the published evidence — the Insel &amp; Company 2022 study for the baseline, Ted Hall's April 2026 essay for the small-winery range, Constellation Brands' disclosed organic decline for the large tier, this publication's 2024 grape bifurcation analysis for the mid-size tier. But defensible is not the same as correct. Rather than defend a single scenario, the calculator below lets you substitute your own assumptions and see what they imply. The chart updates live. If your version of the numbers produces a different answer, that is the point.
+          Every number in the chart above rests on estimates — how Napa's $4.4 billion in winery revenue distributes across tiers, how severely each tier contracts under pressure, how winery contraction flows through to growers, tourism workers, suppliers, and the rest of the wine-related economy. Reasonable analysts will land on different numbers for every one of those variables. The defaults shown here are NVF's best synthesis of the published evidence — the Insel &amp; Company 2022 study for the baseline, Ted Hall's April 2026 essay for the small-winery range, Treasury Wine Estates' and Constellation Brands' disclosed writedowns for the large tier, this publication's 2024 grape bifurcation analysis for the mid-size tier. But defensible is not the same as correct. Nor is the calculator's purpose predictive. Its purpose is to show how the documented evidence — which this publication has been accumulating for more than a decade — already exceeds what the public statements this month acknowledge. Rather than defend a single scenario, the calculator below lets you substitute your own assumptions and see what they imply. The chart updates live. If your version of the numbers produces a different answer, that is the point.
         </p>
 
         {/* ── INTERACTIVE CALCULATOR ─────────────────────────────── */}
@@ -901,10 +920,16 @@ export default function UnderTheHoodNapaConstellation() {
           Read beside Hall's diagnosis, the Mondavi reopening is not a contradiction. It is the complement. Hall describes what the middle is unlikely to sustain. Mondavi, reopened with a hundred-million-dollar-range investment, describes where the largest corporate owner of Napa brands believes the defensible position is. The five events across two weeks do not add up to a crisis narrative. They add up to something harder for the valley to absorb: a public, multi-sourced agreement — across an essay, an earnings call, a federal court docket, a regulatory petition, and a hospitality reinvestment — that the structure has to change, and that the change is large.
         </p>
         <p style={prose}>
-          None of that agreement is yet acceptance. The Board of Supervisors has not responded. The Ninth Circuit docket has not been scheduled. The trade groups' petition asks for adaptation, not reduction. The 100-to-170 figure has not been addressed by any industry body that could act on it. Capital has moved. Policy has not. The reporting record has documented this transition for more than a decade, and as of this month the industry's own senior figures are, at last, naming it out loud.
+          None of that agreement is yet acceptance at the scale that would produce structural change. The Board of Supervisors has not responded to the petition. The Ninth Circuit docket has not been scheduled. The trade groups' petition asks for the rules to change so the current operator count can continue. The 100-to-170 figure — the proposition that the current operator count itself exceeds what the market can support — has not been addressed by any institutional body that could act on it. Capital has moved. Policy has not.
         </p>
         <p style={prose}>
-          Whether the next 90 days mark the beginning of acceptance or another round of bargaining is the question that will determine what kind of valley this becomes. Napa Valley Features will return to the marketing-machine arithmetic next Saturday, and to the demographic record the Saturday after that.
+          Denial has largely ended. Anger and bargaining are visible across every tier: small producers litigating at the Ninth Circuit, mid-size producers cutting production under workout agreements, Gallo and Trinchero trimming premium bets while holding their broader bases, the four trade groups asking the county to rewrite the framework they helped build. Depression is present in Hall's diagnosis of the 100-to-170 cohort. Acceptance — the stage that actually produces change — is present so far only in the write-down decisions of the two largest producers, Treasury and Constellation, each of which has looked at its own U.S. wine business and decided the market cannot support it at its previous scale. Neither of those decisions names why the market cannot support it. Neither yet extends to the valley's institutional representatives or to the regulatory framework.
+        </p>
+        <p style={prose}>
+          The reason acceptance at the cohort and institutional scale has not arrived is that acceptance requires naming what the institutions have been built not to name: that U.S. wine consumption has been contracting for more than a decade, for reasons that are demographic (aging boomers and smaller millennial and Gen Z cohorts of wine drinkers), health-related (rising awareness of alcohol's relationship to multiple cancers and cardiovascular disease), income-related (flat real wages for most working-age consumers while premium wine prices rose 40 percent), and competitive (spirits, beer, cannabis, THC beverages, and non-alcohol alternatives taking share), and that no regulatory flexibility restores a market that has structurally shrunk. That is the conversation the next 90 days will determine whether the valley is willing to begin.
+        </p>
+        <p style={prose}>
+          This publication will continue documenting the transition as it unfolds. The marketing-machine arithmetic — how Napa's tourism and direct-to-consumer engines are absorbing the same pressure — comes in next Saturday's edition. The demographic record — the population, workforce, and aging data underlying the demand-side contraction — comes the Saturday after. Together with the interactive calculator introduced in this piece, they are meant to give readers the tools to form their own judgment about what happens next, and to see the patterns the institutional record has so far declined to name.
         </p>
 
         {/* ── BYLINE (inline italic, AFTER final section, BEFORE Related Coverage) ── */}
@@ -978,7 +1003,7 @@ export default function UnderTheHoodNapaConstellation() {
           <h3 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "0 0 16px 0" }}>Sources</h3>
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.7, paddingLeft: 20 }}>
             <li style={{ marginBottom: 8 }}>Ted Hall, "<a href="https://ted241.substack.com/p/napas-luxury-squeeze" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa's Luxury Squeeze</a>," <em>Tell the Truth and Do the Right Thing</em> Substack, April 5, 2026.</li>
-            <li style={{ marginBottom: 8 }}>Constellation Brands, "<a href="https://www.cbrands.com/investors" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Fourth Quarter and Fiscal Year 2026 Results</a>," April 8, 2026.</li>
+            <li style={{ marginBottom: 8 }}>Constellation Brands, "<a href="https://www.cbrands.com/blogs/press-releases/constellation-brands-reports-full-fiscal-year-and-fourth-quarter-2026-financial-results" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Fourth Quarter and Fiscal Year 2026 Results</a>," April 8, 2026.</li>
             <li style={{ marginBottom: 8 }}>Wine Business Monthly, "<a href="https://www.winebusiness.com/wbm/article/297349" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Top 50 Largest U.S. Wineries</a>," Review of the Industry issue, March 2026.</li>
             <li style={{ marginBottom: 8 }}><em>Press Democrat</em>, "<a href="https://www.pressdemocrat.com/2026/04/14/constellation-brands-napa-mondavi-q4-wine-spirits-beer/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Constellation Brands flags Napa tasting-room softness; Mondavi to reopen April 20</a>," April 14, 2026.</li>
             <li style={{ marginBottom: 8 }}><em>Press Democrat</em>, "<a href="https://www.pressdemocrat.com/2026/04/14/federal-appeals-court-reverses-dismissal-of-some-claims-against-napa-county-in-hoopes-vineyard-case/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Federal appeals court reverses dismissal of some claims against Napa County in Hoopes Vineyard case</a>," April 14, 2026.</li>
@@ -991,6 +1016,15 @@ export default function UnderTheHoodNapaConstellation() {
             <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: How Accelerants — From GLP-1s to Politics — Are Reshaping Wine Demand</a>," <em>Napa Valley Features</em>, January 2026.</li>
             <li style={{ marginBottom: 8 }}>Tim Carl, "<a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: Napa County's Wine Market Is Clearing, Not Recovering</a>," <em>Napa Valley Features</em>, January 2026.</li>
             <li style={{ marginBottom: 8 }}>Silicon Valley Bank, <em>State of the U.S. Wine Industry</em>, 2024 and 2025 editions.</li>
+            <li style={{ marginBottom: 8 }}><em>Business News Australia</em>, "<a href="https://www.businessnewsaustralia.com/articles/treasury-wine-estates-in-687m-goodwill-wipeout-for-americas-business.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Treasury Wine Estates' $687m goodwill wipeout for Americas</a>," December 1, 2025.</li>
+            <li style={{ marginBottom: 8 }}><em>Just-Drinks</em>, "<a href="https://www.just-drinks.com/news/treasury-wine-estates-losses-widen-as-us-impairment-confirmed/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Treasury Wine Estates losses widen as US impairment confirmed</a>," February 16, 2026.</li>
+            <li style={{ marginBottom: 8 }}><em>Markets Daily</em>, "<a href="https://www.themarketsdaily.com/2026/02/18/treasury-wine-estates-h1-earnings-call-highlights.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Treasury Wine Estates H1 Earnings Call Highlights</a>," February 18, 2026.</li>
+            <li style={{ marginBottom: 8 }}><em>Press Democrat</em>, "<a href="https://www.pressdemocrat.com/2026/02/18/gallo-napa-ranch-winery-closure-j-sonoma-martini-orin-swift-layoffs/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Gallo plans to close large Napa Valley winery and cut nearly 100 North Coast jobs at 5 locations</a>," February 18, 2026 (updated February 25).</li>
+            <li style={{ marginBottom: 8 }}><em>Yahoo Finance</em> (syndicated from <em>San Francisco Chronicle</em>), "<a href="https://finance.yahoo.com/news/third-largest-u-wine-company-210509237.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>The third-largest U.S. wine company is selling two of its best Napa vineyards</a>," February 18, 2026.</li>
+            <li style={{ marginBottom: 8 }}>Ted Hall, "<a href="https://ted241.substack.com/p/the-great-napa-valley-overpour" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>The Great Napa Valley Overpour</a>," <em>Tell the Truth and Do the Right Thing</em> Substack, April 2026.</li>
+            <li style={{ marginBottom: 8 }}><em>Wine Industry Advisor</em>, "<a href="https://wineindustryadvisor.com/2026/04/14/decision-against-hoopes-smith-madrone-summit-lake-is-reversed-case-moves-back-to-district-court/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Decision Against Hoopes/Smith-Madrone/Summit Lake Is Reversed — Case Moves Back to District Court</a>," April 14, 2026.</li>
+            <li style={{ marginBottom: 8 }}><em>Wine Industry Advisor</em>, "<a href="https://wineindustryadvisor.com/2026/04/14/napas-four-leading-agriculture-and-wine-organizations-speak-with-one-voice-before-board-of-supervisors/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa's Four Leading Agriculture and Wine Organizations Speak with One Voice Before Board of Supervisors</a>," April 14, 2026.</li>
+            <li style={{ marginBottom: 8 }}><em>Press Democrat</em>, "<a href="https://www.pressdemocrat.com/2026/04/15/napa-county-winery-vineyard-land-use-policy/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Wine groups ask Napa County for two dozen reforms to help industry survive</a>," April 15, 2026.</li>
           </ol>
         </section>
 
