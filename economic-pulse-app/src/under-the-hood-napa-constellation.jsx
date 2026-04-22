@@ -700,6 +700,11 @@ export default function UnderTheHoodNapaConstellation() {
           </p>
         </div>
 
+        <h3 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "32px 0 12px" }}>A Note About Assumptions</h3>
+        <p style={prose}>
+          Every number in the chart above rests on estimates — how Napa's $4.4 billion in winery revenue distributes across tiers, how severely each tier contracts under pressure, how winery contraction flows through to growers, tourism workers, suppliers, and the rest of the wine-related economy. Reasonable analysts will land on different numbers for every one of those variables. The defaults shown here are NVF's best synthesis of the published evidence — the Insel &amp; Company 2022 study for the baseline, Ted Hall's April 2026 essay for the small-winery range, Constellation Brands' disclosed organic decline for the large tier, this publication's 2024 grape bifurcation analysis for the mid-size tier. But defensible is not the same as correct. Rather than defend a single scenario, the calculator below lets you substitute your own assumptions and see what they imply. The chart updates live. If your version of the numbers produces a different answer, that is the point.
+        </p>
+
         {/* ── INTERACTIVE CALCULATOR ─────────────────────────────── */}
         <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "28px 24px", marginBottom: 36 }}>
           <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.gold, fontWeight: 700, margin: "0 0 6px" }}>Interactive</p>
