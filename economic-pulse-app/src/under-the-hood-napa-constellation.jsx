@@ -793,13 +793,13 @@ export default function UnderTheHoodNapaConstellation() {
                 {
                   id: "hallHigh",
                   label: "Hall High",
-                  sub: "170 small wineries\n+ Constellation −14%",
+                  sub: "170 small wineries\nat risk",
                   onClick: () => { resetToHallHigh(); setActiveScenario("hallHigh"); }
                 },
                 {
                   id: "beyondHall",
                   label: "Beyond Hall",
-                  sub: "Stress test\nbeyond public record",
+                  sub: "Adds mid-size and\nlarge tier pressure",
                   onClick: () => { resetToBeyondHall(); setActiveScenario("beyondHall"); }
                 },
                 {
