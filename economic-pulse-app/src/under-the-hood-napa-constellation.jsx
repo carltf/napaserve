@@ -327,6 +327,28 @@ export default function UnderTheHoodNapaConstellation() {
     );
   }
 
+  // Derived values for the live tier calculator output.
+  // Sliders store positive 0-100 (post-4a.5); these formulas produce positive magnitudes.
+  const wineryContraction = (contractS * weightS + contractM * weightM + contractL * weightL) / 10000;
+  const economyImpact = wineryContraction * (passThrough / 100);
+  const jobsLost = Math.round(economyImpact * JOBS);
+  const wagesLost = Math.round(economyImpact * WAGES);
+  const taxLost = Math.round(economyImpact * TAX);
+  const propLost = Math.round(economyImpact * PROP);
+  const sContrib = (contractS * weightS / 10000) * (passThrough / 100) * 100;
+  const mContrib = (contractM * weightM / 10000) * (passThrough / 100) * 100;
+  const lContrib = (contractL * weightL / 10000) * (passThrough / 100) * 100;
+  const combinedPct = economyImpact * 100;
+
+  const isDefault = (
+    weightS === 30 && weightM === 55 && weightL === 15 &&
+    contractS === 40 && contractM === 20 && contractL === 10 &&
+    passThrough === 70
+  );
+  const interpretationTag = isDefault
+    ? "At the Hall High defaults: tier revenue weights 30/55/15, contractions −40/−20/−10, and a 70% pass-through rate. Click a scenario preset above or drag any slider to test your own assumptions."
+    : `Your current settings model a ${combinedPct.toFixed(1)}% contraction in Napa's wine-related economy. Click 'Hall High' above to return to the chart's baseline scenario.`;
+
   return (
     <div style={{ background: T.bg, minHeight: "100vh" }}>
       {isDraft && <DraftBanner />}
@@ -774,8 +796,88 @@ export default function UnderTheHoodNapaConstellation() {
               style={{ width: "100%", accentColor: T.accent }} />
           </div>
 
-          <div style={{ padding: 16, background: T.bg, border: `1px dashed ${T.rule}`, color: T.muted, fontStyle: "italic", textAlign: "center", marginTop: 20 }}>
-            Live chart and impact cards ship in next commit.
+          <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "24px 0 12px", lineHeight: 1.5 }}>
+            {interpretationTag}
+          </p>
+
+          <ChartCanvas
+            id="calc-live-chart"
+            title="Wine-Related Economy Impact — Your Settings"
+            downloadName="calculator-wine-economy-impact_napa-constellation-2026_nvf.png"
+            deps={[weightS, weightM, weightL, contractS, contractM, contractL, passThrough]}
+            buildChart={(ctx) => new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: ["Small tier", "Mid-size tier", "Large tier", "Combined"],
+                datasets: [{
+                  label: "Wine-economy impact (%)",
+                  data: [
+                    +sContrib.toFixed(2),
+                    +mContrib.toFixed(2),
+                    +lContrib.toFixed(2),
+                    +combinedPct.toFixed(2),
+                  ],
+                  backgroundColor: ["#C4A050", "#8B7355", "#A63D2A", T.accent],
+                  borderRadius: 3,
+                }],
+              },
+              options: {
+                indexAxis: "x",
+                responsive: true,
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: {
+                      label: (item) => `${item.parsed.y.toFixed(1)}% impact`,
+                    },
+                  },
+                },
+                scales: {
+                  y: {
+                    min: 0,
+                    max: 30,
+                    ticks: { callback: (v) => v + "%", color: T.muted, font: { family: font } },
+                    grid: { color: T.rule },
+                    title: { display: true, text: "Wine-related economy impact (%)", color: T.muted, font: { family: font } },
+                  },
+                  x: {
+                    ticks: { color: T.muted, font: { family: font } },
+                    grid: { display: false },
+                    title: { display: true, text: "Contribution by tier", color: T.muted, font: { family: font } },
+                  },
+                },
+              },
+            })}
+          />
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, margin: "20px 0" }}>
+            <div style={{ background: T.bg, border: `1px solid ${T.rule}`, padding: "16px 14px", borderRadius: 4 }}>
+              <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, fontFamily: font, margin: 0, fontWeight: 700 }}>Jobs affected</p>
+              <p style={{ fontSize: 22, fontWeight: 700, color: T.ink, fontFamily: serif, margin: "4px 0 0" }}>{jobsLost.toLocaleString()}</p>
+              <p style={{ fontSize: 11, color: T.muted, fontFamily: font, margin: "4px 0 0" }}>of {JOBS.toLocaleString()} total</p>
+            </div>
+            <div style={{ background: T.bg, border: `1px solid ${T.rule}`, padding: "16px 14px", borderRadius: 4 }}>
+              <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, fontFamily: font, margin: 0, fontWeight: 700 }}>Wages lost</p>
+              <p style={{ fontSize: 22, fontWeight: 700, color: T.ink, fontFamily: serif, margin: "4px 0 0" }}>${wagesLost}M</p>
+              <p style={{ fontSize: 11, color: T.muted, fontFamily: font, margin: "4px 0 0" }}>of ${WAGES}M total</p>
+            </div>
+            <div style={{ background: T.bg, border: `1px solid ${T.rule}`, padding: "16px 14px", borderRadius: 4 }}>
+              <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, fontFamily: font, margin: 0, fontWeight: 700 }}>County tax lost</p>
+              <p style={{ fontSize: 22, fontWeight: 700, color: T.ink, fontFamily: serif, margin: "4px 0 0" }}>${taxLost}M</p>
+              <p style={{ fontSize: 11, color: T.muted, fontFamily: font, margin: "4px 0 0" }}>of ${TAX}M total</p>
+            </div>
+            <div style={{ background: T.bg, border: `1px solid ${T.rule}`, padding: "16px 14px", borderRadius: 4 }}>
+              <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, fontFamily: font, margin: 0, fontWeight: 700 }}>Property tax lost<sup style={{ color: T.accent }}>†</sup></p>
+              <p style={{ fontSize: 22, fontWeight: 700, color: T.ink, fontFamily: serif, margin: "4px 0 0" }}>${propLost}M</p>
+              <p style={{ fontSize: 11, color: T.muted, fontFamily: font, margin: "4px 0 0" }}>of ${PROP}M total</p>
+            </div>
+          </div>
+
+          <div style={{ background: T.bg, border: `1px solid ${T.rule}`, padding: "16px 18px", borderRadius: 4, marginTop: 20 }}>
+            <p style={{ fontFamily: font, fontSize: 12, color: T.muted, margin: 0, lineHeight: 1.6 }}>
+              <strong style={{ color: T.ink, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Methodology</strong>
+              Baseline figures are from the Insel &amp; Company 2022 economic impact study for Napa Valley Vintners: 55,875 jobs, $3.82 billion in wages, $507 million in county and local tax revenue, and $156 million in property tax. Tier revenue weights (30/55/15 for Small/Mid/Large) are NVF's illustrative estimates of how Napa's $4.4 billion in 2022 winery revenue breaks down by producer size — no authoritative published source confirms these weights, so they are adjustable inputs. The pass-through rate represents how winery contraction flows through to the broader wine-related economy (growers, tourism, hospitality, suppliers, transport, induced spending). Impact figures scale linearly with (winery contraction × pass-through rate). <sup style={{ color: T.accent }}>†</sup> Property tax effects are subject to Proposition 13 constraints on reassessment; actual tax impact depends on which parcels change hands and how quickly. <em>Illustrative only — not a forecast.</em>
+            </p>
           </div>
         </div>
 
