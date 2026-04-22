@@ -266,6 +266,52 @@ export default function UnderTheHoodNapaConstellation() {
   const status = useDraftGate(ARTICLE_SLUG);
   const isDraft = status === "draft";
 
+  // Tier calculator state — defaults match Hall High scenario in Chart 3.
+  const [weightS, setWeightS] = useState(30);
+  const [weightM, setWeightM] = useState(55);
+  const [weightL, setWeightL] = useState(15);
+  const [contractS, setContractS] = useState(-40);
+  const [contractM, setContractM] = useState(-20);
+  const [contractL, setContractL] = useState(-10);
+  const [passThrough, setPassThrough] = useState(70);
+
+  // Weights always sum to 100. Moving one slider redistributes the remainder across
+  // the other two, preserving their current ratio.
+  function rebalanceWeights(which, newValue) {
+    const v = Math.max(0, Math.min(100, Math.round(newValue)));
+    const remaining = 100 - v;
+    let a, b, setA, setB;
+    if (which === "S") { a = weightM; b = weightL; setA = setWeightM; setB = setWeightL; setWeightS(v); }
+    else if (which === "M") { a = weightS; b = weightL; setA = setWeightS; setB = setWeightL; setWeightM(v); }
+    else { a = weightS; b = weightM; setA = setWeightS; setB = setWeightM; setWeightL(v); }
+    const otherSum = a + b;
+    if (otherSum === 0) {
+      const half = Math.round(remaining / 2);
+      setA(half);
+      setB(remaining - half);
+    } else {
+      const newA = Math.round((a / otherSum) * remaining);
+      setA(newA);
+      setB(remaining - newA);
+    }
+  }
+
+  function resetToHallLow() {
+    setWeightS(30); setWeightM(55); setWeightL(15);
+    setContractS(-25); setContractM(-10); setContractL(-5);
+    setPassThrough(70);
+  }
+  function resetToHallHigh() {
+    setWeightS(30); setWeightM(55); setWeightL(15);
+    setContractS(-40); setContractM(-20); setContractL(-10);
+    setPassThrough(70);
+  }
+  function resetToBeyondHall() {
+    setWeightS(30); setWeightM(55); setWeightL(15);
+    setContractS(-55); setContractM(-30); setContractL(-15);
+    setPassThrough(70);
+  }
+
   useEffect(() => {
     if (status === "redirect") navigate("/under-the-hood");
   }, [status, navigate]);
@@ -630,6 +676,98 @@ export default function UnderTheHoodNapaConstellation() {
           <p style={{ fontStyle: "italic", fontSize: 14, color: T.muted, lineHeight: 1.6, margin: "12px 0 24px 0" }}>
             Three illustrative scenarios applied to Napa's wine-related economy baseline from Insel &amp; Company 2022: 55,875 jobs, $3.82 billion in wages, $507 million in county and local tax revenue. Hall Low and Hall High apply Ted Hall's 25 percent and 40 percent small-winery contraction estimates plus smaller proportional pressure on the mid-size and large tiers (anchored to the 2024 grape bifurcation and Constellation's organic decline). Beyond Hall is a stress test that visibly exceeds Hall's range. All three assume tier revenue weights of 30/55/15 for small/mid/large producers and a 70 percent pass-through rate from winery contraction to the broader wine-related economy. The calculator that follows lets the reader adjust both layers. Illustrative only — not a forecast.
           </p>
+        </div>
+
+        {/* ── INTERACTIVE CALCULATOR ─────────────────────────────── */}
+        <div style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "28px 24px", marginBottom: 36 }}>
+          <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.gold, fontWeight: 700, margin: "0 0 6px" }}>Interactive</p>
+          <h3 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 16px" }}>Test Your Own Assumptions</h3>
+          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, margin: "0 0 20px", lineHeight: 1.5 }}>
+            Adjust the tier revenue weights and contraction rates below. The output at bottom updates live. Use the scenario presets to match the chart above.
+          </p>
+
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, fontFamily: font, margin: "0 0 10px" }}>Scenario Presets</p>
+            <button onClick={resetToHallLow} style={{ padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: font, background: T.bg, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 4, cursor: "pointer", marginRight: 8 }}>Hall Low</button>
+            <button onClick={resetToHallHigh} style={{ padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: font, background: T.bg, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 4, cursor: "pointer", marginRight: 8 }}>Hall High</button>
+            <button onClick={resetToBeyondHall} style={{ padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: font, background: T.bg, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 4, cursor: "pointer", marginRight: 8 }}>Beyond Hall</button>
+          </div>
+
+          <h4 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "24px 0 12px" }}>Revenue Weights (must sum to 100%)</h4>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Small wineries (&lt;10K cases)</label>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{weightS}%</span>
+            </div>
+            <input type="range" min={0} max={100} step={1} value={weightS}
+              onChange={e => rebalanceWeights("S", Number(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }} />
+          </div>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Mid-size wineries (10K–100K cases)</label>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{weightM}%</span>
+            </div>
+            <input type="range" min={0} max={100} step={1} value={weightM}
+              onChange={e => rebalanceWeights("M", Number(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }} />
+          </div>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Large wineries (&gt;100K cases)</label>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{weightL}%</span>
+            </div>
+            <input type="range" min={0} max={100} step={1} value={weightL}
+              onChange={e => rebalanceWeights("L", Number(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }} />
+          </div>
+          <p style={{ fontFamily: font, fontSize: 12, color: T.muted, textAlign: "right", marginTop: 4 }}>
+            Total: {weightS + weightM + weightL}%
+          </p>
+
+          <h4 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "24px 0 12px" }}>Tier Contractions</h4>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Small wineries ceasing (%)</label>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractS}%</span>
+            </div>
+            <input type="range" min={-50} max={0} step={1} value={contractS}
+              onChange={e => setContractS(Number(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }} />
+          </div>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Mid-size production cut (%)</label>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractM}%</span>
+            </div>
+            <input type="range" min={-50} max={0} step={1} value={contractM}
+              onChange={e => setContractM(Number(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }} />
+          </div>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Large production cut (%)</label>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractL}%</span>
+            </div>
+            <input type="range" min={-50} max={0} step={1} value={contractL}
+              onChange={e => setContractL(Number(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }} />
+          </div>
+
+          <h4 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "24px 0 12px" }}>Pass-Through Rate</h4>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Winery contraction → wine-related economy (%)</label>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{passThrough}%</span>
+            </div>
+            <input type="range" min={0} max={100} step={1} value={passThrough}
+              onChange={e => setPassThrough(Number(e.target.value))}
+              style={{ width: "100%", accentColor: T.accent }} />
+          </div>
+
+          <div style={{ padding: 16, background: T.bg, border: `1px dashed ${T.rule}`, color: T.muted, fontStyle: "italic", textAlign: "center", marginTop: 20 }}>
+            Live chart and impact cards ship in next commit.
+          </div>
         </div>
 
         {/* ── SECTION 5 ──────────────────────────────────────────── */}
