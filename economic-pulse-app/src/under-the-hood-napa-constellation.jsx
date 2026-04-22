@@ -270,9 +270,9 @@ export default function UnderTheHoodNapaConstellation() {
   const [weightS, setWeightS] = useState(30);
   const [weightM, setWeightM] = useState(55);
   const [weightL, setWeightL] = useState(15);
-  const [contractS, setContractS] = useState(-40);
-  const [contractM, setContractM] = useState(-20);
-  const [contractL, setContractL] = useState(-10);
+  const [contractS, setContractS] = useState(40);
+  const [contractM, setContractM] = useState(20);
+  const [contractL, setContractL] = useState(10);
   const [passThrough, setPassThrough] = useState(70);
 
   // Weights always sum to 100. Moving one slider redistributes the remainder across
@@ -298,17 +298,17 @@ export default function UnderTheHoodNapaConstellation() {
 
   function resetToHallLow() {
     setWeightS(30); setWeightM(55); setWeightL(15);
-    setContractS(-25); setContractM(-10); setContractL(-5);
+    setContractS(25); setContractM(10); setContractL(5);
     setPassThrough(70);
   }
   function resetToHallHigh() {
     setWeightS(30); setWeightM(55); setWeightL(15);
-    setContractS(-40); setContractM(-20); setContractL(-10);
+    setContractS(40); setContractM(20); setContractL(10);
     setPassThrough(70);
   }
   function resetToBeyondHall() {
     setWeightS(30); setWeightM(55); setWeightL(15);
-    setContractS(-55); setContractM(-30); setContractL(-15);
+    setContractS(55); setContractM(30); setContractL(15);
     setPassThrough(70);
   }
 
@@ -729,27 +729,27 @@ export default function UnderTheHoodNapaConstellation() {
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
               <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Small wineries ceasing (%)</label>
-              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractS}%</span>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractS === 0 ? "0%" : `−${contractS}%`}</span>
             </div>
-            <input type="range" min={-50} max={0} step={1} value={contractS}
+            <input type="range" min={0} max={100} step={1} value={contractS}
               onChange={e => setContractS(Number(e.target.value))}
               style={{ width: "100%", accentColor: T.accent }} />
           </div>
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
               <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Mid-size production cut (%)</label>
-              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractM}%</span>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractM === 0 ? "0%" : `−${contractM}%`}</span>
             </div>
-            <input type="range" min={-50} max={0} step={1} value={contractM}
+            <input type="range" min={0} max={100} step={1} value={contractM}
               onChange={e => setContractM(Number(e.target.value))}
               style={{ width: "100%", accentColor: T.accent }} />
           </div>
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
               <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Large production cut (%)</label>
-              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractL}%</span>
+              <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractL === 0 ? "0%" : `−${contractL}%`}</span>
             </div>
-            <input type="range" min={-50} max={0} step={1} value={contractL}
+            <input type="range" min={0} max={100} step={1} value={contractL}
               onChange={e => setContractL(Number(e.target.value))}
               style={{ width: "100%", accentColor: T.accent }} />
           </div>
