@@ -562,6 +562,76 @@ export default function UnderTheHoodNapaConstellation() {
           The chart below presents three scenarios applied to Napa's wine-related economy baseline — the 55,875 jobs, $3.82 billion in wages and $507 million in county and local tax revenue identified by the Insel study. The scenarios work in two layers. Layer one measures how much wineries contract, by tier. Layer two measures how much of that winery contraction flows through to the broader wine-related economy: growers, tourism, hospitality workers, suppliers, transport, and the induced spending of all of them. A contraction concentrated in small wineries alone likely flows through modestly. A contraction that reaches mid-size and large producers — or that pulls down visitor numbers — flows through more. The chart below assumes a 70 percent pass-through rate. The calculator that follows lets the reader adjust both the tier contractions and the pass-through rate to test their own assumptions. Illustrative only — not a forecast.
         </p>
 
+        {/* ── CHART 3 ────────────────────────────────────────────── */}
+        <div style={{ marginBottom: 48 }}>
+          <h2 style={{ ...h2style, marginTop: 36, marginBottom: 16 }}>Three Contraction Scenarios for the Wine-Related Economy</h2>
+          <ChartCanvas
+            id="chart-3-contraction-scenarios"
+            title="Three Contraction Scenarios for the Wine-Related Economy"
+            downloadName="chart-3_napa-constellation-2026_nvf.png"
+            deps={[]}
+            buildChart={(ctx) => {
+              const SCENARIOS = [
+                { label: "Hall Low",    impact: 9.6,  jobs: 5364,  wages: 366.7, taxes: 48.7 },
+                { label: "Hall High",   impact: 17.2, jobs: 9583,  wages: 655.1, taxes: 86.9 },
+                { label: "Beyond Hall", impact: 24.7, jobs: 13788, wages: 942.6, taxes: 125.1 },
+              ];
+              return new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: SCENARIOS.map(s => s.label),
+                  datasets: [{
+                    label: "Wine-economy impact (%)",
+                    data: SCENARIOS.map(s => s.impact),
+                    backgroundColor: T.accent,
+                    borderRadius: 3,
+                  }],
+                },
+                options: {
+                  indexAxis: "x",
+                  responsive: true,
+                  layout: { padding: { left: 12, right: 12, top: 8, bottom: 8 } },
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                      callbacks: {
+                        afterBody: (items) => {
+                          const s = SCENARIOS[items[0].dataIndex];
+                          return [
+                            `Jobs at risk: ${s.jobs.toLocaleString()}`,
+                            `Wages lost: $${s.wages.toFixed(1)}M`,
+                            `County/local taxes lost: $${s.taxes.toFixed(1)}M`,
+                          ];
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      ticks: { color: T.muted, font: { family: font } },
+                      grid: { display: false },
+                      title: { display: true, text: "Scenario", color: T.muted, font: { family: font } },
+                    },
+                    y: {
+                      min: 0, max: 30,
+                      ticks: {
+                        callback: (v) => v + "%",
+                        color: T.muted,
+                        font: { family: font },
+                      },
+                      grid: { color: T.rule },
+                      title: { display: true, text: "Wine-related economy impact (%)", color: T.muted, font: { family: font } },
+                    },
+                  },
+                },
+              });
+            }}
+          />
+          <p style={{ fontStyle: "italic", fontSize: 14, color: T.muted, lineHeight: 1.6, margin: "12px 0 24px 0" }}>
+            Three illustrative scenarios applied to Napa's wine-related economy baseline from Insel &amp; Company 2022: 55,875 jobs, $3.82 billion in wages, $507 million in county and local tax revenue. Hall Low and Hall High apply Ted Hall's 25 percent and 40 percent small-winery contraction estimates plus smaller proportional pressure on the mid-size and large tiers (anchored to the 2024 grape bifurcation and Constellation's organic decline). Beyond Hall is a stress test that visibly exceeds Hall's range. All three assume tier revenue weights of 30/55/15 for small/mid/large producers and a 70 percent pass-through rate from winery contraction to the broader wine-related economy. The calculator that follows lets the reader adjust both layers. Illustrative only — not a forecast.
+          </p>
+        </div>
+
         {/* ── SECTION 5 ──────────────────────────────────────────── */}
         <h2 style={h2style}>The Barbell: Mondavi and What Capital Is Saying</h2>
         <p style={prose}>
