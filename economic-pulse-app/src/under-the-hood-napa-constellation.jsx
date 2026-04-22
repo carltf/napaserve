@@ -694,6 +694,9 @@ export default function UnderTheHoodNapaConstellation() {
           </div>
 
           <h4 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "24px 0 12px" }}>Revenue Weights (must sum to 100%)</h4>
+          <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "0 0 12px", lineHeight: 1.5 }}>
+            How much of Napa's $4.4 billion in wine revenue each winery tier represents. Defaults are NVF's illustrative estimate — no authoritative published source breaks this down. Adjust the sliders to test your own estimate; the others rebalance automatically to keep the total at 100%.
+          </p>
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
               <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Small wineries (&lt;10K cases)</label>
@@ -726,6 +729,9 @@ export default function UnderTheHoodNapaConstellation() {
           </p>
 
           <h4 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "24px 0 12px" }}>Tier Contractions</h4>
+          <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "0 0 12px", lineHeight: 1.5 }}>
+            How much each tier contracts. For small wineries, this is the share of the cohort ceasing operation (closing, selling, reverting to grower-only). For mid-size and large producers, it's the weighted-average production cut across the tier. Zero is no contraction; drag the slider leftward to model increasing pressure.
+          </p>
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
               <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Small wineries ceasing (%)</label>
@@ -733,7 +739,7 @@ export default function UnderTheHoodNapaConstellation() {
             </div>
             <input type="range" min={0} max={100} step={1} value={contractS}
               onChange={e => setContractS(Number(e.target.value))}
-              style={{ width: "100%", accentColor: T.accent }} />
+              style={{ width: "100%", accentColor: "#A63D2A", direction: "rtl" }} />
           </div>
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
@@ -742,7 +748,7 @@ export default function UnderTheHoodNapaConstellation() {
             </div>
             <input type="range" min={0} max={100} step={1} value={contractM}
               onChange={e => setContractM(Number(e.target.value))}
-              style={{ width: "100%", accentColor: T.accent }} />
+              style={{ width: "100%", accentColor: "#A63D2A", direction: "rtl" }} />
           </div>
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
@@ -751,10 +757,13 @@ export default function UnderTheHoodNapaConstellation() {
             </div>
             <input type="range" min={0} max={100} step={1} value={contractL}
               onChange={e => setContractL(Number(e.target.value))}
-              style={{ width: "100%", accentColor: T.accent }} />
+              style={{ width: "100%", accentColor: "#A63D2A", direction: "rtl" }} />
           </div>
 
           <h4 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "24px 0 12px" }}>Pass-Through Rate</h4>
+          <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "0 0 12px", lineHeight: 1.5 }}>
+            How much of winery contraction flows through to the broader wine-related economy — growers, tourism, hospitality workers, suppliers, transport, and induced spending. A contraction concentrated in small wineries alone flows through modestly. A contraction that reaches all three tiers — or that pulls down visitor numbers — flows through more. The 70% default reflects the mix of direct, indirect, and induced dependencies Insel documents.
+          </p>
           <div style={{ marginBottom: 18 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
               <label style={{ fontFamily: font, fontSize: 14, color: T.ink, fontWeight: 600 }}>Winery contraction → wine-related economy (%)</label>
