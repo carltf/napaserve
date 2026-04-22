@@ -4,12 +4,24 @@
 // ---------------------------------------------------------------
 
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import useDraftGate from "./hooks/useDraftGate";
 import DraftBanner from "./components/DraftBanner";
+
+/* Insel & Company 2022 baseline (Napa wine economy) */
+const JOBS  = 55875;          // headcount
+const WAGES = 3820;           // $M annual
+const TAX   = 507;            // $M annual
+const PROP  = 156;            // $M annual (property tax component of TAX)
+const WINE_REVENUE = 4440;    // $M total winery revenue 2022
+
+/* NVF illustrative tier revenue weight defaults */
+const WEIGHT_S_DEFAULT = 0.30;  // small (<10K cases)
+const WEIGHT_M_DEFAULT = 0.55;  // mid (10K-100K cases)
+const WEIGHT_L_DEFAULT = 0.15;  // large (>100K cases)
 
 Chart.register(...registerables);
 
