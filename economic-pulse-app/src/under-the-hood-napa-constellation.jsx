@@ -543,6 +543,25 @@ export default function UnderTheHoodNapaConstellation() {
           The Board of Supervisors is expected to respond by the June hearing cycle. That response will signal the direction the county intends to take — holding up the ag preserve or the market forces as the framework for the future.
         </p>
 
+        {/* SECTION 4.5: CONTRACTION SCENARIOS */}
+        <h2 style={h2style}>What Contraction Looks Like Across the Wine Economy</h2>
+
+        <p style={prose}>
+          In March of this year, this publication examined what percentage changes to Napa's wine-related economy would mean for the county's jobs, wages and tax revenue. The framework applied proportional scaling to the 2022 <a href="https://napavintners.com/downloads/ECONOMIC-IMPACT-REPORT-NVV-2022.pdf" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Insel &amp; Company economic impact study</a> commissioned by Napa Valley Vintners, which found the wine-related economy — wineries, growers, tourism, hospitality workers, suppliers, warehousing and transport combined — accounts for 72 percent of Napa County employment and 73.7 percent of wages paid in the county. The question at the time was largely theoretical. The evidence that has accumulated since has made it less so.
+        </p>
+
+        <p style={prose}>
+          Napa's wineries are not one thing. They are three. Small wineries producing fewer than 10,000 cases a year — the cohort Hall describes, roughly 424 Napa Valley Vintners members — tend toward ceasing operation: sold, reverted to grower-only, closed. Mid-size wineries between 10,000 and 100,000 cases rarely vanish; they cut production. One such Napa winery, reported in <a href="https://napavalleyfocus.substack.com/p/under-the-hood-two-reports-one-warning" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>January of this year</a>, is planning to reduce production by 80 percent, from roughly 50,000 cases to 10,000, in a five-year workout with its bank. Large producers — Constellation, Gallo, Trinchero, Treasury — restructure. Constellation's wine segment dropped from the nation's fourth-largest wine producer to approximately the 23rd as it divested Mondavi Private Selection, Ruffino, Cook's and J. Rogét. No tier is growing production.
+        </p>
+
+        <p style={prose}>
+          Hall's estimate is scoped to the small-winery tier. It does not include the county's largest producers, which are not NVV members, and it does not include the mid-size tier where this publication's reporting has documented the sharpest pressure. The <a href="https://napavalleyfocus.substack.com/p/under-the-hood-2024-harvest-report" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>2024 grape bifurcation analysis</a>, published a year before Hall's essay, showed mid-tier fruit volumes down 27 percent with chi-square significance. In <Link to="/under-the-hood/napa-cab-2025" style={{ color: T.accent }}>March</Link>, that pattern extended into 2025, with the high-end insulation visible the prior year beginning to erode. Hall's 100-to-170 figure describes one tier of the winery base. It is useful precisely because it is specific. It is not the ceiling of what the data show.
+        </p>
+
+        <p style={prose}>
+          The chart below presents three scenarios applied to Napa's wine-related economy baseline — the 55,875 jobs, $3.82 billion in wages and $507 million in county and local tax revenue identified by the Insel study. The scenarios work in two layers. Layer one measures how much wineries contract, by tier. Layer two measures how much of that winery contraction flows through to the broader wine-related economy: growers, tourism, hospitality workers, suppliers, transport, and the induced spending of all of them. A contraction concentrated in small wineries alone likely flows through modestly. A contraction that reaches mid-size and large producers — or that pulls down visitor numbers — flows through more. The chart below assumes a 70 percent pass-through rate. The calculator that follows lets the reader adjust both the tier contractions and the pass-through rate to test their own assumptions. Illustrative only — not a forecast.
+        </p>
+
         {/* ── SECTION 5 ──────────────────────────────────────────── */}
         <h2 style={h2style}>The Barbell: Mondavi and What Capital Is Saying</h2>
         <p style={prose}>
