@@ -142,7 +142,7 @@ async function downloadComponentPng(containerRef, filename, title) {
 }
 
 // ── CHARTCANVAS COMPONENT ──────────────────────────────────────────
-function ChartCanvas({ id, title, buildChart, deps = [], downloadName }) {
+function ChartCanvas({ id, title, buildChart, deps = [], downloadName, legend }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
@@ -160,6 +160,7 @@ function ChartCanvas({ id, title, buildChart, deps = [], downloadName }) {
     <div>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <canvas ref={canvasRef} id={id} />
+        {legend}
       </div>
       <button
         onClick={() => downloadComponentPng(containerRef, downloadName, title)}
@@ -411,12 +412,45 @@ export default function UnderTheHoodNapaConstellation() {
 
         {/* ── CHART 1 ────────────────────────────────────────────── */}
         <div style={{ marginBottom: 48 }}>
-          <h2 style={{ ...h2style, marginTop: 36, marginBottom: 16 }}>The Stages-of-Grief Grid — Napa Wine Producers, April 2026</h2>
+          <h2 style={{ ...h2style, marginTop: 36, marginBottom: 16 }}>The Stages-of-Grief Grid</h2>
           <ChartCanvas
             id="chart-1-stages-grid"
             title="The Stages-of-Grief Grid — Napa Wine Producers, April 2026"
             downloadName="chart-1_stages-grid_napa-constellation-2026_nvf.png"
             deps={[]}
+            legend={
+              <div style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "14px",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "8px 12px",
+                fontSize: "10px",
+                color: T.muted,
+                fontFamily: "'Source Sans 3', -apple-system, sans-serif",
+                letterSpacing: "0.2px",
+                borderTop: `1px solid ${T.border}`,
+                marginTop: "8px",
+              }}>
+                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.accent, display: "inline-block" }} />
+                  Institutional
+                </span>
+                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#C4A050", display: "inline-block" }} />
+                  Small producers
+                </span>
+                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#8B7355", display: "inline-block" }} />
+                  Mid-size producers
+                </span>
+                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#A63D2A", display: "inline-block" }} />
+                  Large producers
+                </span>
+              </div>
+            }
             buildChart={(ctx) => {
               const STAGES = ["Denial", "Anger", "Bargaining", "Depression", "Acceptance"];
               const TIERS = ["Institutional", "Small (<10K cases)", "Mid-size (10K-100K)", "Large (>100K cases)"];
@@ -445,7 +479,7 @@ export default function UnderTheHoodNapaConstellation() {
                 data: {
                   datasets: [{
                     label: "Event",
-                    data: GRID_EVENTS.map(e => ({ x: e.stage, y: e.tier })),
+                    data: GRID_EVENTS.map(e => ({ x: STAGES[e.stage], y: TIERS[e.tier] })),
                     backgroundColor: pointColors,
                     borderColor: pointColors,
                     pointRadius: 8,
@@ -473,7 +507,6 @@ export default function UnderTheHoodNapaConstellation() {
                         font: { family: font },
                       },
                       grid: { color: T.rule },
-                      title: { display: true, text: "Stage of response", color: T.muted, font: { family: font } },
                     },
                     y: {
                       type: "category",
@@ -486,7 +519,6 @@ export default function UnderTheHoodNapaConstellation() {
                         padding: 8,
                       },
                       grid: { color: T.rule },
-                      title: { display: true, text: "Producer tier", color: T.muted, font: { family: font } },
                       afterFit: (scale) => { scale.width = 140; },
                     },
                   },
@@ -495,7 +527,7 @@ export default function UnderTheHoodNapaConstellation() {
             }}
           />
           <p style={{ fontStyle: "italic", fontSize: 14, color: T.muted, lineHeight: 1.6, margin: "12px 0 24px 0" }}>
-            Eleven named events, observations, and analytical positions from between January and April 2026, the majority concentrated in the April 5-20 window, plotted by producer tier and stage of response. The Kübler-Ross stages — denial, anger, bargaining, depression, acceptance — describe how individuals and institutions absorb structural change; the framework applies naturally to an industry absorbing long-documented contraction. Large producers (brick) appear at acceptance — Treasury Wine Estates has written down US$700 million in U.S. goodwill and cancelled its dividend; Constellation Brands has reported a 51 percent collapse in its wine segment and withdrawn forward guidance; Constellation's reopening of Robert Mondavi at premium tier is the expression of the market those producers have accepted. Gallo and Trinchero are at bargaining — closing a super-premium facility and listing two Napa vineyards for sale while preserving their broader operating bases. The mid-size tier (taupe) is at bargaining, visible in one Napa winery's publicly reported workout from 50,000 to 10,000 cases. Small producers (gold) are dispersed: some continuing unchanged (denial is the stage one does not announce); three pressing a First Amendment suit at the Ninth Circuit (anger); Hall's essay naming 100 to 170 of his cohort as operating beyond viability (depression) and proposing 35 to 40 exits per year for three years (bargaining, on behalf of the cohort). The four trade groups' joint petition (accent) is a system-level bargain. No institutional actor sits at acceptance. The stage that produces structural change is not yet present at the scale that would match what the data show.
+            <em>Stages of Grief, Distributed by Producer Tier.</em> Eleven named events, observations, and analytical positions from between January and April 2026, the majority concentrated in the April 5–20 window, plotted by producer tier and stage of response. The Kübler-Ross stages — denial, anger, bargaining, depression, acceptance — describe how individuals and institutions absorb structural change; the framework applies naturally to an industry absorbing long-documented contraction. Large producers (brick) appear at acceptance — Treasury Wine Estates has written down US$700 million in U.S. goodwill and cancelled its dividend; Constellation Brands has reported a 51% collapse in its wine segment and withdrawn forward guidance; Constellation's reopening of Robert Mondavi at premium tier is the expression of the market those producers have accepted. Gallo and Trinchero are at bargaining — closing a super-premium facility and listing two Napa vineyards for sale while preserving their broader operating bases. The mid-size tier (taupe) is at bargaining, visible in one Napa winery's publicly reported workout from 50,000 to 10,000 cases. Small producers (gold) are dispersed: some continuing unchanged (denial is the stage one does not announce); three pressing a First Amendment suit at the Ninth Circuit (anger); Hall's essay naming 100 to 170 of his cohort as operating beyond viability (depression) and proposing 35 to 40 exits per year for three years (bargaining, on behalf of the cohort). The four trade groups' joint petition (accent) is a system-level bargain. No institutional actor sits at acceptance. The stage that produces structural change is not yet present at the scale that would match what the data show. The faded dot at Small / Denial represents the cohort of small producers continuing operation unchanged — denial is the stage that does not announce itself. <em>Illustrative only — not a forecast.</em> Sources: Constellation Brands Q4 FY26 Earnings Release (April 8, 2026); Treasury Wine Estates H1 FY26 Results (February 16, 2026); Ted Hall, “Napa's Luxury Squeeze” (April 5, 2026); Ninth Circuit Court of Appeals docket (April 13, 2026); Napa County Board of Supervisors petition filing (April 14, 2026); San Francisco Chronicle on Robert Mondavi reopening (April 17, 2026).
           </p>
         </div>
 
