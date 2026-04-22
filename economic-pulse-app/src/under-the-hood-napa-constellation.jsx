@@ -275,6 +275,7 @@ export default function UnderTheHoodNapaConstellation() {
   const [contractM, setContractM] = useState(20);
   const [contractL, setContractL] = useState(10);
   const [passThrough, setPassThrough] = useState(70);
+  const [activeScenario, setActiveScenario] = useState("hallHigh");
 
   // Weights always sum to 100. Moving one slider redistributes the remainder across
   // the other two, preserving their current ratio.
@@ -295,22 +296,26 @@ export default function UnderTheHoodNapaConstellation() {
       setA(newA);
       setB(remaining - newA);
     }
+    setActiveScenario("custom");
   }
 
   function resetToHallLow() {
     setWeightS(30); setWeightM(55); setWeightL(15);
     setContractS(25); setContractM(10); setContractL(5);
     setPassThrough(70);
+    setActiveScenario("hallLow");
   }
   function resetToHallHigh() {
     setWeightS(30); setWeightM(55); setWeightL(15);
     setContractS(40); setContractM(20); setContractL(10);
     setPassThrough(70);
+    setActiveScenario("hallHigh");
   }
   function resetToBeyondHall() {
     setWeightS(30); setWeightM(55); setWeightL(15);
     setContractS(55); setContractM(30); setContractL(15);
     setPassThrough(70);
+    setActiveScenario("beyondHall");
   }
 
   useEffect(() => {
@@ -764,11 +769,80 @@ export default function UnderTheHoodNapaConstellation() {
             Adjust the tier revenue weights and contraction rates below. The output at bottom updates live. Use the scenario presets to match the chart above.
           </p>
 
-          <div style={{ marginBottom: 24 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, fontFamily: font, margin: "0 0 10px" }}>Scenario Presets</p>
-            <button onClick={resetToHallLow} style={{ padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: font, background: T.bg, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 4, cursor: "pointer", marginRight: 8 }}>Hall Low</button>
-            <button onClick={resetToHallHigh} style={{ padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: font, background: T.bg, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 4, cursor: "pointer", marginRight: 8 }}>Hall High</button>
-            <button onClick={resetToBeyondHall} style={{ padding: "8px 16px", fontSize: 13, fontWeight: 600, fontFamily: font, background: T.bg, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 4, cursor: "pointer", marginRight: 8 }}>Beyond Hall</button>
+          {/* ── SCENARIO PRESETS ─────────────────────────────── */}
+          <div style={{ marginBottom: 28 }}>
+            <p style={{
+              fontFamily: "'Source Code Pro', monospace",
+              fontSize: 11, color: T.muted, letterSpacing: "0.88px",
+              marginBottom: 10, textTransform: "uppercase"
+            }}>
+              Scenario Presets
+            </p>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+              gap: 8
+            }} className="scenario-presets-grid">
+              {[
+                {
+                  id: "hallLow",
+                  label: "Hall Low",
+                  sub: "100 small wineries\nat risk",
+                  onClick: () => { resetToHallLow(); setActiveScenario("hallLow"); }
+                },
+                {
+                  id: "hallHigh",
+                  label: "Hall High",
+                  sub: "170 small wineries\n+ Constellation −14%",
+                  onClick: () => { resetToHallHigh(); setActiveScenario("hallHigh"); }
+                },
+                {
+                  id: "beyondHall",
+                  label: "Beyond Hall",
+                  sub: "Stress test\nbeyond public record",
+                  onClick: () => { resetToBeyondHall(); setActiveScenario("beyondHall"); }
+                },
+                {
+                  id: "custom",
+                  label: "Custom",
+                  sub: "Adjust sliders\nto your own estimate",
+                  onClick: () => {}
+                },
+              ].map(sc => (
+                <div
+                  key={sc.id}
+                  onClick={sc.onClick}
+                  style={{
+                    background: activeScenario === sc.id ? "#2C1810" : T.surface,
+                    border: `1px solid ${activeScenario === sc.id ? "#2C1810" : T.border}`,
+                    borderRadius: 4,
+                    padding: "10px 8px",
+                    textAlign: "center",
+                    cursor: sc.id === "custom" ? "default" : "pointer",
+                    transition: "background 0.15s, border-color 0.15s"
+                  }}
+                >
+                  <div style={{
+                    fontFamily: serif,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: activeScenario === sc.id ? "#F5F0E8" : T.ink,
+                    marginBottom: 4
+                  }}>
+                    {sc.label}
+                  </div>
+                  <div style={{
+                    fontFamily: font,
+                    fontSize: 11,
+                    color: activeScenario === sc.id ? T.gold : T.muted,
+                    lineHeight: 1.3,
+                    whiteSpace: "pre-line"
+                  }}>
+                    {sc.sub}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <h4 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "24px 0 12px" }}>Revenue Weights (must sum to 100%)</h4>
@@ -816,7 +890,7 @@ export default function UnderTheHoodNapaConstellation() {
               <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractS === 0 ? "0%" : `−${contractS}%`}</span>
             </div>
             <input type="range" min={0} max={100} step={1} value={contractS}
-              onChange={e => setContractS(Number(e.target.value))}
+              onChange={e => { setContractS(Number(e.target.value)); setActiveScenario("custom"); }}
               style={{ width: "100%", accentColor: "#A63D2A", direction: "rtl" }} />
           </div>
           <div style={{ marginBottom: 18 }}>
@@ -825,7 +899,7 @@ export default function UnderTheHoodNapaConstellation() {
               <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractM === 0 ? "0%" : `−${contractM}%`}</span>
             </div>
             <input type="range" min={0} max={100} step={1} value={contractM}
-              onChange={e => setContractM(Number(e.target.value))}
+              onChange={e => { setContractM(Number(e.target.value)); setActiveScenario("custom"); }}
               style={{ width: "100%", accentColor: "#A63D2A", direction: "rtl" }} />
           </div>
           <div style={{ marginBottom: 18 }}>
@@ -834,7 +908,7 @@ export default function UnderTheHoodNapaConstellation() {
               <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{contractL === 0 ? "0%" : `−${contractL}%`}</span>
             </div>
             <input type="range" min={0} max={100} step={1} value={contractL}
-              onChange={e => setContractL(Number(e.target.value))}
+              onChange={e => { setContractL(Number(e.target.value)); setActiveScenario("custom"); }}
               style={{ width: "100%", accentColor: "#A63D2A", direction: "rtl" }} />
           </div>
 
@@ -848,7 +922,7 @@ export default function UnderTheHoodNapaConstellation() {
               <span style={{ fontFamily: "monospace", fontSize: 14, color: T.accent, fontWeight: 700 }}>{passThrough}%</span>
             </div>
             <input type="range" min={0} max={100} step={1} value={passThrough}
-              onChange={e => setPassThrough(Number(e.target.value))}
+              onChange={e => { setPassThrough(Number(e.target.value)); setActiveScenario("custom"); }}
               style={{ width: "100%", accentColor: T.accent }} />
           </div>
 
