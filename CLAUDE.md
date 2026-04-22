@@ -425,64 +425,108 @@ r = requests.get(
 
 ---
 
-## Update — April 21, 2026
+## April 21, 2026 — Constellation Build + Word Export Platform Upgrade
 
-### New Article Live (as Draft)
+### Shipped
 
-- **Slug:** `napa-constellation-2026`
-- **Headline:** "From Selling Napa to Defending It"
-- **Publication:** Napa Valley Features
-- **Byline date:** April 21, 2026
-- **Status:** `published=false`, `polls_seeded=true`, `admin_cards_added=true`, `related_coverage_added=true`
-- **Polls:** IDs 27, 28, 29
-- **URL:** https://napaserve.org/under-the-hood/napa-constellation-2026
-- **Commits:** de0fcee, 30f277a, f78b73f
-- **Bundle:** index-KAJdoyJ_.js
-- **Known issue:** EXPORT_DATA shape broken; admin Word export returns "Chart undefined" placeholders. Fix pending next session.
-- Week 1 of three-part April series (Constellation / Marketing Machine / Population).
+- **`napa-constellation-2026`** — Week 1 of April UTH series, live as DRAFT at `/under-the-hood/napa-constellation-2026`.
+  - 5 sections, ~1,990 words, 2 charts, 3 polls (IDs 27/28/29)
+  - `published=false` at session close; publish flip pending user action
+- **Word export platform rebuild** (commit `c9f6dae`): markdown link parser, deck section, Article Summary section, Related Coverage with linked titles, Sources with linked titles. `Links` section removed.
 
-### Section 0 — Ground Truth Verification (PLATFORM-WIDE)
+### Commits (this day, `main`)
 
-Before any Claude Code prompt, SQL query, or content deliverable:
+- `de0fcee` — feat(uth): napa-constellation-2026 initial build
+- `30f277a` — fix(uth): Related Coverage list + Chart 1 y-axis
+- `f78b73f` — fix(uth): byline date April 21, 2026
+- `00c2094` — docs(CLAUDE.md): April 21 session update
+- `c9f6dae` — feat(export): inline hyperlinks + deck/summary/Related Coverage in Word export
 
-- **Code:** verify against the actual file in the repo at `main` (grep/view).
-- **Data:** verify against the current Supabase table state (curl to REST).
-- **Rendering:** verify against the live production page (Chrome).
-- **Infrastructure:** verify against current worker.js, admin.jsx, workflow files.
+Final bundle: `index-BlaOCPCV.js`
 
-Pre-execution checklist required in thread:
-1. What am I assuming? (3–5 assumptions)
-2. How have I verified each? (cite file/query/URL)
-3. If unverified, verify or flag.
+### Section 0 — Ground Truth Verification (PLATFORM-WIDE, LOCKED)
 
-**Reality wins when docs disagree.** Fix whichever is wrong and update docs.
+Before any Claude Code prompt, SQL query, or content deliverable, Claude must verify assumptions against reality, not against docs or memory.
 
-**Stop, don't reinterpret.** When verification returns unexpected output, re-verify — don't guess around the gap.
+**Reality means:**
+- For code: the file in the repo at `main`. Use `grep`, `view`.
+- For data: current Supabase table state. Query it with `curl`.
+- For rendering: live production page or local dev in Chrome. Check URL bar for host.
+- For infrastructure: current Cloudflare Worker routes, current GitHub Actions.
 
-### UTH Template Canonical Patterns (LOCKED April 21, 2026)
+**Pre-execution checklist:**
+1. What am I assuming? (3–5 items)
+2. How have I verified each? (cite file, query, or URL)
+3. If unverified, verify or flag before proceeding.
 
-- **Related Coverage:** simple `<ul>` list, NOT 4-card grid. Bold serif title in quotes, em-dash, muted publication·date attribution. Matches template lines 518–541.
-- **Component order:** prose → byline → Related Coverage → Archive Search → PollsSection → Sources → Methodology.
-- **Sources:** hand-written JSX ordered list at article bottom, scientific-paper style. No const SOURCES array.
-- **Archive Search heading:** "Search the Archive"
+**When docs and reality disagree, reality wins.** Fix whichever is wrong and update the other.
 
-### Chart.js Category Y-Axis Pattern (NEW)
+**Stop, don't reinterpret.** When verification returns unexpected output, re-verify. Don't guess around the gap.
 
-For charts with discrete categorical y-values, use `type: "category"` with explicit `labels` array — NOT numeric linear axis with callback (labels clip to zero width).
+### Resource Hierarchy for Editorial Research
 
-```javascript
-y: {
-  type: "category",
-  labels: CATEGORIES,
-  reverse: true,  // optional
-  offset: true,
-  ticks: { color: T.muted, font: { family: font, size: 13 }, padding: 8 },
-  grid: { color: T.rule },
-  afterFit: (scale) => { scale.width = 110; },
-}
+1. NapaServe archive (Chrome at /archive; SQL for bulk)
+2. NVF Research Agent (/agent)
+3. Regional Contraction Tracker
+4. Coverage Gap Intelligence (`coverage_gaps` table)
+5. External web_search/web_fetch (last resort)
+
+### EXPORT_DATA Shape (COMPLETE)
+
+Working shape for articles with charts. Reference: `napa-cab-2025` entry in `napaserve-admin.jsx` (around line 240+).
+
+**Required fields:**
+- `headline` (string) — exact match to live article title
+- `publication` (string) — `"Napa Valley Features"`
+- `slug` (string) — article URL slug
+- `dateline` (string) — `"NAPA VALLEY, Calif."`
+- `body` (array) — typed objects via `t()`, `h()`, `c(n)` helpers
+
+**Optional fields:**
+- `deck` (string) — italic hook below byline
+- `summary` (string) — labeled "Article Summary" paragraph
+- `pullQuote` (string) — one memorable sentence
+- `captions` (array) — `{number, title, description, source}` objects
+- `relatedCoverage` (array) — `{title, publication, date, url}` objects
+- `sources` (array) — plain strings; wrap title in `[text](url)` for linked output
+
+**Do NOT include (deprecated or unread):**
+- `date`, `chartFilenames`, `methodology`, `links`
+
+**Body array helpers:**
+```js
+const t = (text) => ({ type: "text", text });
+const h = (text) => ({ type: "header", text });
+const c = (n) => ({ type: "chart", chartNumber: n });
 ```
 
-Add `layout.padding` at options top level. POINTS y-values are category strings, not numeric indices.
+### Markdown Link Parser in Word Exporter
+
+`WordExporter.jsx` has `parseInline(text, options)` helper. Any string through `p()` or `headerP()` containing `[text](url)` syntax renders as clickable `ExternalHyperlink` in Word output.
+
+**Where inline links render:** body paragraphs, section headers, deck, summary, pullQuote, sources, relatedCoverage (automatic).
+
+**Where inline links do NOT render (yet):** caption description, caption source line.
+
+### Three New Export Sections
+
+1. **Deck** — italic paragraph below byline, if `article.deck` is set
+2. **Article Summary** — labeled paragraph below deck, if `article.summary` is set
+3. **Related Coverage** — labeled list with linked titles, between captions and sources
+
+**`Links` section REMOVED.** Use `relatedCoverage` + inline `[text](url)` markdown in prose instead.
+
+**Full render order:** Headline → Byline → Deck → Article Summary → Body → Bio → Pull Quote → Chart Captions → Related Coverage → Sources
+
+### UTH Template Canonical Pattern
+
+Source of truth: `under-the-hood-template.jsx` (live at `/under-the-hood/template`).
+
+**Related Coverage = `<ul>` list**, NOT a 4-card flex grid. See template lines 518–541.
+
+**Component order:** prose sections → byline → Related Coverage → Archive Search → PollsSection → Sources → Methodology
+
+**Byline placement:** inline italic `<p>`, AFTER final section prose, BEFORE Related Coverage.
 
 ### Formatting Standards (LOCKED)
 
@@ -496,14 +540,48 @@ Add `layout.padding` at options top level. POINTS y-values are category strings,
 - One-through-nine spelled; 10+ numerals
 - Org shortforms on 2nd reference: NVV, NVG, CNV, Farm Bureau, Constellation, Mondavi, Ninth Circuit, SVB
 
-### Poll Seeder Reminder
+### Chart.js Category Y-Axis Pattern
 
-`pipeline/seed_article_polls.py` has hardcoded POLLS list (lines 21–209). For every new article, three poll dicts must be added to the Python file BEFORE live seed. Dry-run must confirm 3 polls.
+For discrete categorical y-values, use `type: "category"` with explicit labels array — NOT numeric linear axis with callback.
 
-### Resource Hierarchy for Editorial Research
+```js
+y: {
+  type: "category",
+  labels: CATEGORIES,
+  reverse: true,
+  offset: true,
+  ticks: { color: T.muted, font: { family: font, size: 13 }, padding: 8 },
+  grid: { color: T.rule },
+  afterFit: (scale) => { scale.width = 110; },
+},
+```
 
-1. NapaServe archive (Chrome at /archive; SQL for bulk)
-2. NVF Research Agent (/agent)
-3. Regional Contraction Tracker
-4. Coverage Gap Intelligence (`coverage_gaps` table)
-5. External web_search/web_fetch (last resort)
+### Poll Seeder Clarification
+
+`pipeline/seed_article_polls.py` has its own hardcoded POLLS list (lines 21–209). Article JSX `POLLS` array is UI-only.
+
+**Flow:**
+1. Add 3 poll dicts to the Python file
+2. Dry-run: `python3 pipeline/seed_article_polls.py --dry-run` (confirm 3 polls)
+3. Live seed: `python3 pipeline/seed_article_polls.py` (returns DB IDs)
+4. Update article JSX `POLLS` array with returned IDs
+
+### Operational Gotchas
+
+**Edit tool Unicode normalization:** Claude Code's `Edit` tool normalizes `–` / `—`-style escapes during string comparison. When inserting content that must preserve literal `\u####` sequences, use Python heredoc or `Write` tool, NEVER `Edit`.
+
+**Terminal paste discipline:** Do NOT paste JavaScript/JSX/TSX code blocks into zsh — parse errors. Only paste commands from bash-labeled code blocks. Claude Code should use `Write` for JS/JSX inspection, not terminal paste.
+
+**Dev server discipline:** Dedicated terminal. Path: `cd ~/Desktop/napaserve/economic-pulse-app` (NOT repo root). Command: `npm run dev` (port 5173). Do NOT mix with `npm run build` in same terminal. Port check: `lsof -i :5173 -i :5174`.
+
+**Localhost vs production URL:** When testing local dev changes, confirm Chrome URL bar says `http://localhost:5173/...`. If `https://napaserve.org/...`, you're on production and won't see uncommitted local changes.
+
+### Workflow Efficiency Rule
+
+Tim's time is expensive (terminal context-switches, Chrome verifies, iCloud management). Claude's actions are cheap. Defaults should minimize Tim's actions, not Claude's.
+
+- Batch related prompts when logic doesn't branch
+- Wrap long terminal blocks in scripts rather than multi-line pastes
+- Let Claude Code read files directly rather than having Tim paste sections back
+- Use `present_files` tool for deliverables
+- Pre-stage follow-up prompts when sequence is predictable
