@@ -465,10 +465,10 @@ export default function UnderTheHoodNapaConstellation() {
                   },
                   scales: {
                     x: {
-                      min: -0.5, max: 4.5,
+                      type: "category",
+                      labels: STAGES,
+                      offset: true,
                       ticks: {
-                        stepSize: 1,
-                        callback: (v) => STAGES[v] || "",
                         color: T.muted,
                         font: { family: font },
                       },
@@ -476,18 +476,18 @@ export default function UnderTheHoodNapaConstellation() {
                       title: { display: true, text: "Stage of response", color: T.muted, font: { family: font } },
                     },
                     y: {
-                      min: -0.5, max: 3.5,
+                      type: "category",
+                      labels: TIERS,
                       reverse: true,
+                      offset: true,
                       ticks: {
-                        stepSize: 1,
-                        callback: (v) => TIERS[v] || "",
                         color: T.muted,
                         font: { family: font, size: 13 },
                         padding: 8,
                       },
                       grid: { color: T.rule },
                       title: { display: true, text: "Producer tier", color: T.muted, font: { family: font } },
-                      afterFit: (scale) => { scale.width = 180; },
+                      afterFit: (scale) => { scale.width = 140; },
                     },
                   },
                 },
