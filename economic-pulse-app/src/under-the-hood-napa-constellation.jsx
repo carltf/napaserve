@@ -778,11 +778,7 @@ export default function UnderTheHoodNapaConstellation() {
             }}>
               Scenario Presets
             </p>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-              gap: 8
-            }} className="scenario-presets-grid">
+            <div className="scenario-presets-grid">
               {[
                 {
                   id: "hallLow",
