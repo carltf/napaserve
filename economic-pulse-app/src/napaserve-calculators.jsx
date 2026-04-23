@@ -629,6 +629,14 @@ function AssetRepricingCalc() {
 const TRACKER_EVENTS = [
   // ── 2026 ──
   {
+    date: "Apr 20, 2026",
+    category: "Hospitality",
+    headline: "Robert Mondavi Winery reopens in Oakville after three-year transformation",
+    detail: "The Drinks Business reports that Robert Mondavi Winery reopened its Oakville estate April 20 following a multi-year renovation costing more than US$200 million, owner Constellation Brands' first major revamp of the property since its founding. The reimagined estate introduces a new hospitality wing, expanded indoor-outdoor tasting experiences, enhanced culinary spaces and state-of-the-art winemaking facilities, timed to the winery's 60th anniversary.",
+    source: "The Drinks Business",
+    sourceUrl: "https://www.thedrinksbusiness.com/2026/04/robert-mondavi-unveils-napa-estate-following-xxx-facelift/",
+  },
+  {
     date: "Apr 14, 2026",
     category: "Production",
     headline: "Constellation flags tasting-room softness at Napa wineries in Q4 call",
@@ -701,6 +709,14 @@ const TRACKER_EVENTS = [
     sourceUrl: "https://napaserve.org/under-the-hood/napa-structural-reset-2026",
   },
   {
+    date: "Feb 16, 2026",
+    category: "Production",
+    headline: "Treasury confirms A$987.6M US impairment with Sterling and Beringer write-downs",
+    detail: "Just-Drinks reports that Treasury Wine Estates' H1 FY26 results logged a non-cash impairment charge of A$987.6M (US$699.5M) pre-tax, with A$676.1M linked to goodwill, A$257.3M predominantly related to Sterling and Beringer and A$54.2M tied to inventory. Half-year net loss reached A$649.4M. Treasury Americas revenue fell 28.4% to A$283M. CEO Sam Fischer described a TWE Ascent transformation program to sharpen the portfolio, simplify the organisation and optimise costs.",
+    source: "Just-Drinks",
+    sourceUrl: "https://www.just-drinks.com/news/treasury-wine-estates-losses-widen-as-us-impairment-confirmed/",
+  },
+  {
     date: "Feb 12, 2026",
     category: "Production",
     headline: "Gallo files WARN for 93 jobs across 5 North Coast sites",
@@ -726,6 +742,14 @@ const TRACKER_EVENTS = [
   },
   // ── 2025 ──
   {
+    date: "Dec 1, 2025",
+    category: "Production",
+    headline: "Treasury Wine Estates flags US$450M US impairment",
+    detail: "Just-Drinks reports that Treasury Wine Estates expects a non-cash impairment of at least A$687.4M (US$450M) against its Americas goodwill, citing further moderation in US wine category trends. Shares fell to A$5.45 in early Sydney trading, the lowest level since August 2015. Treasury noted that DAOU, Frank Family Vineyards and Matua were growing ahead of market but applied more conservative long-term assumptions.",
+    source: "Just-Drinks",
+    sourceUrl: "https://www.just-drinks.com/news/treasury-wine-estates-forecasts-impairment-on-us-assets/",
+  },
+  {
     date: "Dec 2025",
     category: "Transaction",
     headline: "Cain Vineyards brand acquired by Third Leaf Partners; land sold separately",
@@ -748,6 +772,14 @@ const TRACKER_EVENTS = [
     detail: "Consolidated to Buena Vista Winery estate in Sonoma. Part of broader Boisset tasting room rationalization across Napa and Yountville.",
     source: "SF Chronicle",
     sourceUrl: "https://www.sfchronicle.com/",
+  },
+  {
+    date: "Oct 13, 2025",
+    category: "Production",
+    headline: "Treasury Wine Estates withdraws FY26 guidance citing Penfolds, US troubles",
+    detail: "Just-Drinks reports that Treasury Wine Estates — owner of Beringer, Sterling, Stag's Leap and Frank Family Vineyards — scrapped its fiscal 2026 EBITS guidance, citing an uncertain outlook in Penfolds and Treasury Americas. Shares fell more than 15% to A$5.93, their lowest level in more than a decade. The company cited the impact of RNDC's California exit on Treasury Americas first-quarter shipments.",
+    source: "Just-Drinks",
+    sourceUrl: "https://www.just-drinks.com/news/treasury-wine-estates-pulls-guidance/",
   },
   {
     date: "Oct 2025",
