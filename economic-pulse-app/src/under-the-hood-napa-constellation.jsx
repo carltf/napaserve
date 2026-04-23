@@ -976,7 +976,7 @@ export default function UnderTheHoodNapaConstellation() {
             })}
           />
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, margin: "20px 0" }}>
+          <div className="impact-stats-grid" style={{ margin: "20px 0" }}>
             <div style={{ background: T.bg, border: `1px solid ${T.rule}`, padding: "16px 14px", borderRadius: 4 }}>
               <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, fontFamily: font, margin: 0, fontWeight: 700 }}>Jobs affected</p>
               <p style={{ fontSize: 22, fontWeight: 700, color: T.ink, fontFamily: serif, margin: "4px 0 0" }}>{jobsLost.toLocaleString()}</p>

@@ -48,9 +48,16 @@ button {
   gap: 8px;
 }
 
+.impact-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
 @media (max-width: 600px) {
   .grid-2col, .grid-3col, .grid-4col { grid-template-columns: 1fr !important; }
   .scenario-presets-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .impact-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .calc-section { padding: 20px 16px !important; }
   .calc-card { padding: 16px 16px !important; }
   .donut-chart-container {
