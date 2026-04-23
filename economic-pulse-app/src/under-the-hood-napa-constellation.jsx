@@ -1037,6 +1037,9 @@ export default function UnderTheHoodNapaConstellation() {
         <p style={prose}>
           This publication will continue documenting the transition as it unfolds. The marketing-machine arithmetic — how Napa's tourism and direct-to-consumer engines are absorbing the same pressure — comes in next Saturday's edition. The demographic record — the population, workforce and aging data underlying the demand-side contraction — comes the Saturday after. Together with the interactive calculator introduced in this piece, they are meant to give readers the tools to form their own judgment about what happens next, and to see the patterns the institutional record has so far declined to name.
         </p>
+        <p style={prose}>
+          The pattern above does not end with these five events. Treasury Wine Estates confirmed a $700 million US writedown and cancelled its dividend in February. Gallo closed its super-premium Ranch Winery in St. Helena the same month. Trinchero listed its Haystack and Clouds Nest vineyards for sale. The April two-week window described here is where the signals converged most visibly. It is not where the evidence or impact ends.
+        </p>
 
         {/* ── BYLINE (inline italic, AFTER final section, BEFORE Related Coverage) ── */}
         <p style={{ fontFamily: font, fontSize: 15, color: T.ink, fontStyle: "italic", lineHeight: 1.65, margin: "28px 0 0 0" }}>
