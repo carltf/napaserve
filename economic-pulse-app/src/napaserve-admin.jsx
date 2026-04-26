@@ -151,6 +151,38 @@ const EXPORT_DATA = {
       { title: "\"Under the Hood: Lake County Grape Prices Have Fallen 38% in Two Years — and Chardonnay Has Nearly Vanished\"", publication: "Lake County Features", date: "March 30, 2026", url: "https://lakecountyfeatures.substack.com/p/under-the-hood-lake-county-grape" },
       { title: "\"Under the Hood: Reading Lake County’s Early 2026 Signals\"", publication: "Lake County Features", date: "February 16, 2026", url: "https://lakecountyfeatures.substack.com/p/under-the-hood-reading-lake-countys" },
     ],
+    substackPolls: [
+      {
+        question: "How has your housing situation in Lake County changed in the past year?",
+        options: [
+          "Bought a home or land",
+          "Sold a home",
+          "Tried to buy or sell, no deal",
+          "Stayed in place, watching market",
+          "Moved here or left the county",
+        ],
+      },
+      {
+        question: "Which Lake County community do you know best?",
+        options: [
+          "Clearlake",
+          "Clearlake Oaks",
+          "Kelseyville",
+          "Lakeport or Upper Lake",
+          "Lower Lake or Middletown",
+        ],
+      },
+      {
+        question: "What’s the biggest housing-cost headwind in Lake County?",
+        options: [
+          "Property tax bills",
+          "Insurance premiums",
+          "Mortgage rates",
+          "Maintenance, aging homes",
+          "Wages not keeping up",
+        ],
+      },
+    ],
     sources: [
       "[Zillow Home Value Index, March 31, 2026 — Lake County](https://www.zillow.com/home-values/217/lake-county-ca/).",
       "[Zillow Home Value Index, March 31, 2026 — Upper Lake](https://www.zillow.com/home-values/48103/upper-lake-ca/).",

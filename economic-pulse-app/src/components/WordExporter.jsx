@@ -28,14 +28,15 @@ function blank() {
 // Safe for strings without any links — returns a single TextRun.
 const LINK_RX = /\[([^\]]+)\]\(([^)]+)\)/g;
 
-function parseInline(text) {
+function parseInline(text, opts = {}) {
+  const { bold = false } = opts;
   const parts = [];
   let lastEnd = 0;
   let match;
   LINK_RX.lastIndex = 0;
   while ((match = LINK_RX.exec(text)) !== null) {
     if (match.index > lastEnd) {
-      parts.push(new TextRun({ text: text.slice(lastEnd, match.index), size: SIZE, font: FONT }));
+      parts.push(new TextRun({ text: text.slice(lastEnd, match.index), size: SIZE, font: FONT, bold }));
     }
     parts.push(
       new ExternalHyperlink({
@@ -46,6 +47,7 @@ function parseInline(text) {
             size: SIZE,
             font: FONT,
             style: "Hyperlink",
+            bold,
           }),
         ],
       })
@@ -53,13 +55,17 @@ function parseInline(text) {
     lastEnd = match.index + match[0].length;
   }
   if (lastEnd < text.length) {
-    parts.push(new TextRun({ text: text.slice(lastEnd), size: SIZE, font: FONT }));
+    parts.push(new TextRun({ text: text.slice(lastEnd), size: SIZE, font: FONT, bold }));
   }
-  return parts.length > 0 ? parts : [new TextRun({ text, size: SIZE, font: FONT })];
+  return parts.length > 0 ? parts : [new TextRun({ text, size: SIZE, font: FONT, bold })];
 }
 
 function p(text) {
   return new Paragraph({ spacing: BODY_SPACING, children: parseInline(text) });
+}
+
+function boldP(text) {
+  return new Paragraph({ spacing: BODY_SPACING, children: parseInline(text, { bold: true }) });
 }
 
 function headerP(text) {
@@ -164,7 +170,19 @@ export default function WordExporter({ article }) {
         children.push(blank());
       }
 
-      // 14. Sources (last)
+      // 14. Substack Polls (between Related Coverage and Sources)
+      if (article.substackPolls && article.substackPolls.length > 0) {
+        children.push(p("Substack Polls:"));
+        for (const poll of article.substackPolls) {
+          children.push(boldP(poll.question));
+          for (const option of poll.options) {
+            children.push(p(`    • ${option}`));
+          }
+          children.push(blank());
+        }
+      }
+
+      // 15. Sources (last)
       if (article.sources && article.sources.length > 0) {
         children.push(p("Sources:"));
         for (const src of article.sources) {
