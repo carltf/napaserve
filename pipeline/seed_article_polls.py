@@ -244,6 +244,43 @@ POLLS = [
             "Too early to call",
         ],
     },
+    # ── Lake County Housing Reset 2026 ──────────────────────
+    {
+        "article_slug": "lakeco-housing-reset-2026",
+        "sort_order": 1,
+        "question": "What best explains Lake County’s housing reset pattern?",
+        "options": [
+            "Investor exit, not owner-occupants",
+            "Insurance broke entry-level math",
+            "Buyer-pool composition shifted",
+            "Local income shock in Clearlake",
+            "Too soon to tell",
+        ],
+    },
+    {
+        "article_slug": "lakeco-housing-reset-2026",
+        "sort_order": 2,
+        "question": "Do you own or rent in Lake County?",
+        "options": [
+            "Own, primary residence",
+            "Own, second home or investment",
+            "Rent",
+            "Live elsewhere, follow Lake Co",
+            "Prefer not to say",
+        ],
+    },
+    {
+        "article_slug": "lakeco-housing-reset-2026",
+        "sort_order": 3,
+        "question": "Where will Lake County unemployment be at year end?",
+        "options": [
+            "Below 7%",
+            "7–7.9%",
+            "8–8.9%",
+            "9% or higher",
+            "No idea",
+        ],
+    },
 ]
 
 

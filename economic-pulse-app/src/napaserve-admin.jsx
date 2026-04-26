@@ -25,6 +25,12 @@ const mono = "monospace";
 
 const ARTICLES = [
   {
+    slug: "lakeco-housing-reset-2026",
+    headline: "Lake County’s Housing Reset Is Uneven — and the Labor Market Is Moving First",
+    publication: "Lake County Features",
+    date: "April 26, 2026",
+  },
+  {
     slug: "napa-constellation-2026",
     headline: "From Selling Napa to Defending It",
     publication: "Napa Valley Features",
