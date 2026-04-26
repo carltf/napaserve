@@ -33,12 +33,24 @@ const SLUG_ROUTES = {
   "napa-supply-chain-2026": "/under-the-hood/napa-supply-chain-2026",
   "napa-gdp-2024": "/under-the-hood/napa-gdp-2024",
   "napa-cab-2025": "/under-the-hood/napa-cab-2025",
+  "napa-structural-reset-2026": "/under-the-hood/napa-structural-reset-2026",
+  "napa-price-discovery-2026": "/under-the-hood/napa-price-discovery-2026",
+  "napa-constellation-2026": "/under-the-hood/napa-constellation-2026",
   "sonoma-cab-2025": "/under-the-hood/sonoma-cab-2025",
   "lake-county-cab-2025": "/under-the-hood/lake-county-cab-2025",
+  "lakeco-housing-reset-2026": "/under-the-hood/lakeco-housing-reset-2026",
 };
 
 /* ── Static sections for publications without DB rows yet ─────────────────── */
 const STATIC_SECTIONS = {
+  "Napa Valley Features": {
+    label: "Napa Valley Features",
+    desc: "Data-driven analysis of Napa County's economy, wine industry, housing and workforce.",
+    tiles: [
+      { title: "Napa’s Economy Looks Bigger Than It Is", date: "March 2026", tag: "Napa Valley Features", href: "/under-the-hood/napa-gdp-2024", live: true },
+      { title: "2025 Napa Grape Prices Slip After a Record High", date: "March 19, 2026", tag: "Napa Valley Features", href: "/under-the-hood/napa-cab-2025", live: true },
+    ],
+  },
   "Sonoma County Features": {
     label: "Sonoma County Features",
     desc: "Original reporting on Sonoma County's agricultural economy and community trends.",
@@ -67,30 +79,41 @@ const STATIC_SECTIONS = {
   },
 };
 
-function buildSections(publishedArticles) {
-  const nvfTiles = publishedArticles
-    .filter(a => a.publication === "Napa Valley Features")
-    .map(a => ({
-      title: a.title,
-      date: a.published_at ? new Date(a.published_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "",
-      tag: a.publication,
-      href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
-      live: true,
-    }));
+const PUBLICATIONS_ORDER = ["Napa Valley Features", "Sonoma County Features", "Lake County Features"];
 
-  return [
-    {
-      label: "Napa Valley Features",
-      desc: "Data-driven analysis of Napa County's economy, wine industry, housing and workforce.",
-      tiles: nvfTiles.length > 0 ? nvfTiles : [
-        { title: "Napa\u2019s Economy Looks Bigger Than It Is", date: "March 2026", tag: "Napa Valley Features", href: "/under-the-hood/napa-gdp-2024", live: true },
-        { title: "2025 Napa Grape Prices Slip After a Record High", date: "March 19, 2026", tag: "Napa Valley Features", href: "/under-the-hood/napa-cab-2025", live: true },
-      ],
-    },
-    STATIC_SECTIONS["Sonoma County Features"],
-    STATIC_SECTIONS["Lake County Features"],
-  ];
+const isInternalRoute = (href) => typeof href === "string" && href.startsWith("/under-the-hood/");
+
+function tileDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
+
+function buildSections(publishedArticles) {
+  const buildTiles = (publication) =>
+    publishedArticles
+      .filter(a => a.publication === publication)
+      .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+      .map(a => ({
+        title: a.title,
+        date: tileDate(a.published_at),
+        tag: publication,
+        href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
+        live: true,
+      }));
+
+  return PUBLICATIONS_ORDER.map(publication => {
+    const fallback = STATIC_SECTIONS[publication];
+    const dynamicTiles = buildTiles(publication);
+    return {
+      label: fallback.label,
+      desc: fallback.desc,
+      tiles: dynamicTiles.length > 0 ? dynamicTiles : fallback.tiles,
+    };
+  });
+}
+
 
 /* ── Helpers ──────────────────────────────────────────────────────────────── */
 function fmtDate(iso) {
@@ -486,12 +509,19 @@ export default function UnderTheHoodIndex() {
                   {a.title}
                 </div>
                 <div style={{ fontSize: 13, color: T.muted, marginBottom: 10 }}>{a.pub} · {a.date}</div>
-                <a
-                  href={a.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.gold, textDecoration: "none" }}
-                >Read on Substack →</a>
+                {isInternalRoute(a.href) ? (
+                  <Link
+                    to={a.href}
+                    style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.gold, textDecoration: "none" }}
+                  >Interactive charts · Live data →</Link>
+                ) : (
+                  <a
+                    href={a.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: T.gold, textDecoration: "none" }}
+                  >Read on Substack →</a>
+                )}
               </div>
             ))}
           </div>
