@@ -70,7 +70,7 @@ const h2style = {
 const linkStyle = { color: T.accent, textDecoration: "underline" };
 
 // Placeholder URL (Tim fills via str_replace before publish flip).
-const AFFORDABILITY_URL = "[AFFORDABILITY_URL_PLACEHOLDER]";
+const AFFORDABILITY_URL = "https://lakecountyfeatures.substack.com/p/under-the-hood-lake-countys-affordability";
 
 // ── DOWNLOAD HELPER ────────────────────────────────────────────────
 // Matches napa-constellation-2026 (live precedent):
