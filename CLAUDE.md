@@ -1,587 +1,291 @@
-# NapaServe — Claude Code Reference
-Last updated: April 13, 2026
+# CLAUDE.md Patch — April 22, 2026
 
-## Directory & Commands
-- Repo: ~/Desktop/napaserve
-- Launch: cd ~/Desktop/napaserve && source .env && claude
-- Build: cd economic-pulse-app && npm run build 2>&1 | tail -8
-- Deploy: git add -A && git commit -m "message" && git push
-
-## Critical Rules
-- ctx.waitUntil() is required for ALL background async operations in Cloudflare Worker — without it Cloudflare kills background fetches when the response is sent
-- CoveragePanel component (src/components/CoveragePanel.jsx) is the single source of truth for coverage display — never duplicate inline in agent or evaluator
-- SECONDARY_SOURCES must be updated in BOTH coverageUtils.js (React) AND worker.js (Cloudflare) when adding a new category
-- agent.html at repo root is a REDIRECT ONLY — route is /agent (napaserve-agent.jsx)
-- Research Agent API route: /api/rag-answer — NOT /api/claude (404)
-- All Anthropic API calls use callAnthropicWithRetry() — 3 retries on 529 with linear backoff
-- nvf_polls.substack_url was null until April 13 backfill — never assume it's populated without checking
-- napaserve_articles deck column exists — include in SQL INSERTs for new articles going forward
-- isRecent(publishedAt, 14) — admin page pattern for collapsing old article cards to compact rows
-- digest-send.js enforces preview_only server-side — UI gate alone is not sufficient for broadcast ops
-- Under the Hood index (under-the-hood-index.jsx): read entire file before making any changes — data sources are nvf_polls (archive), nvf_posts (NVF section), napaserve_articles (tile cards)
-
-## Worker Deploy — CRITICAL
-open -a TextEdit ~/Desktop/napaserve/economic-pulse-app/src/worker.js
-→ Select All → Copy → Cloudflare dashboard → misty-bush-fc93 → Save and Deploy
-NEVER use pbcopy — truncates large files
-NEVER save .html files from TextEdit — silently wipes content
-
-## Chart Download — CRITICAL (scale:2 rules — NEVER VIOLATE)
-html2canvas uses scale:2 — ALL drawn text must be at 2x intended display size:
-- Title: bold 32px (renders as 16px), x=28, y=16, color T.ink, globalAlpha 1.0
-- Watermark: 26px Source Code Pro (renders as 13px), bottom-right, globalAlpha 0.25
-- Bare canvas charts: off.height = canvas.height + 48, ctx.drawImage(canvas, 0, 32)
-- Bordered/padded components (calculator, html2canvas on div): off.height = canvas.height + 80, ctx.drawImage(canvas, 0, 64)
-- Captions required: every article build must produce title + 2-3 sentence summary + source for every downloadable chart/calculator
-- napaserve.org watermark on all chart downloads
-- Download button must be OUTSIDE containerRef div — sibling not child
-
-## Publish — If Admin Button Fails
-Go straight to direct Supabase PATCH — do NOT debug HMAC token:
-curl -s -X PATCH "https://csenpchwxxepdvjebsrt.supabase.co/rest/v1/napaserve_articles?slug=eq.[SLUG]" \
-  -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"published": true, "published_at": "now()"}'
-
-## Env Sourcing
-Use: set -a && source .env && set +a
-NOT: source .env alone (variables don't export without set -a)
-Always: unset SUPABASE_KEY after use
-
-## Tech Stack
-- React/Vite · economic-pulse-app/ · Vercel auto-deploys on push to main
-- Supabase: csenpchwxxepdvjebsrt.supabase.co · No @supabase/supabase-js — raw REST fetch only
-- Worker: misty-bush-fc93.tfcarl.workers.dev
-- Theme 02 Cream: bg #F5F0E8, surface #EDE8DE, ink #2C1810, accent #8B5E3C, gold #C4A050, muted #8B7355
-- Fonts: Libre Baskerville (headings), Source Sans 3 (body) — inline styles only
-- Old dark theme #0F0A06 is OBSOLETE
-
-## Mobile/CSS Rules
-NEVER put gridTemplateColumns in inline styles — inline always beats CSS on mobile Safari
-Use CSS classes in index.css with @media (max-width: 600px) overrides
-isMobile useState + resize listener for component layouts
-
-## UTH Component Order — ALL 7 REQUIRED IN THIS EXACT ORDER
-1. Article prose + charts + calculator (inline JSX)
-2. Related Coverage (inline JSX — NOT imported)
-3. ArchiveSearch (inline function — NOT imported)
-4. Sources (specific article URLs — never bare domains)
-5. Author note (bordered div wrapper)
-6. PollsSection (inline function)
-7. Methodology (borderTop: 2px solid + h3)
-Template: under-the-hood-template.jsx — ALWAYS copy from this, never from a live article
-
-## Poll Component Pattern
-Worker returns counts (object keyed by index) and total (scalar) — NOT vote_counts array
-useState(poll.counts || {}) and useState(poll.total || 0)
-After vote: setCounts(data.counts); setTotal(data.total)
-
-## Source Link Standards
-Always use specific article URLs — never bare domain links
-Attribute named journalists inline when citing their reporting
-Substack profile links belong early in prose — not mid-quote
-
-## Poll Slug Registry
-napa-cab-2025: 1-3 | sonoma-cab-2025: 4-6 | lake-county-cab-2025: 7-9
-napa-gdp-2024: 10-14 | napa-supply-chain-2026: 15-17 | napa-population-2025: 18-20 (reserved)
-napa-structural-reset-2026: 21-23 | napa-price-discovery-2026: 24-26
-Next article starts at poll ID 27
-
-## Article Registry (April 12, 2026)
-LIVE: napa-cab-2025, sonoma-cab-2025, lake-county-cab-2025, napa-gdp-2024,
-      napa-supply-chain-2026, napa-structural-reset-2026, napa-price-discovery-2026
-DRAFT: napa-population-2025 (5 open flags — do not publish)
-
-## Key File Locations
-- src/utils/coverageUtils.js — SECONDARY_SOURCES, classifyQuery(), coverageSignal() — shared by Agent + Evaluator
-- src/components/CoveragePanel.jsx — Archive Coverage indicator + Official & Regional Sources UI
-
-## Key Tables
-- napaserve_articles: slug, headline, deck, published, polls_seeded, admin_cards_added, related_coverage_added, topic_seed
-- napaserve_article_polls: article polls (IDs 1-26 used)
-- community_events: status='approved', description NOT NULL, has submitter_name/email/phone
-- nvf_posts: 997 NVF articles with substack_url — always query for confirmed URLs
-- nvf_polls: 1,719 rows — substack_url backfilled from nvf_posts April 13 — archive links use this
-- coverage_gaps: query, category, tier (low/medium/strong), chunk_count, top_similarity, asked_at
-
-## Cloudflare Worker Secrets (all must be present)
-- ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_KEY
-- SUPABASE_KEY — service role key — was missing until April 13, 2026; caused coverage_gaps logging to fail silently
-
-## GitHub Actions
-- poll_pipeline.yml now has 4 jobs: classify-polls, subscriber-digest, events-digest, coverage-gaps-digest (NEW April 13)
-- coverage-gaps-digest: queries coverage_gaps last 7 days, posts tier breakdown to Slack every Monday
-
-## Agent UX Rules
-- Error message pattern: "The CI Agent is temporarily busy — please try again in a moment. (error type)"
-- Scroll: only scroll to bottom on assistant reply — never on user message submit (useEffect on role === assistant)
-
-## Evaluator Rules
-- Disclaimer: "Community Intelligence (CI)-generated" (not "AI-generated")
-- Error messages aligned with agent pattern
-
-## Architecture Rules
-- NavBar.jsx and Footer.jsx: single shared components — never redefine inline
-- agent.html at repo root is meta-refresh redirect only — content is at /agent (React)
-- embed-events.html at repo root — NOT economic-pulse-app/public/
-- Bare / in JSX causes esbuild errors — use · instead
-- ScrollToTop in App.jsx covers all routes — guard scroll effects with state
-- Admin sessionStorage key: admin_token (NOT adminToken)
-- Admin "View article" links must NOT use target="_blank" (loses session token)
-
-## Admin Page
-- Event Moderation: approve/reject community_events pending submissions — Worker routes /api/admin-approve-event and /api/admin-reject-event
-- Digest tool: two-step send — preview required before live send, server enforces preview_only
-- Article cards: isRecent() 14-day threshold, ArchivedArticleRow for older articles
-- ARTICLES array in napaserve-admin.jsx has publishedAt for all 8 articles
-
-## Under the Hood Index — Data Sources
-- Tile cards (NVF section): napaserve_articles table via /api/articles Worker route — includes deck
-- Archive list: nvf_polls table — substack_url now populated (backfilled April 13)
-- Planned: 'From NVF' section → nvf_posts where series='Under the Hood' → substack_url
-- Static tiles: Sonoma and Lake County defined in STATIC_SECTIONS array in JSX
-- CSS grid: uth-article-grid class in index.css with @media (max-width: 600px) override — ready to use
-
-## Secondary Sources — Verified April 13
-- All 36 URLs verified live — all index/landing pages, no PDFs
-- County domain: napacounty.gov (countyofnapa.org retired)
-- Key verified URLs: EDD /geography/msa/napa.html, NVV /napa_valley/, NASS Grape Crush index page, UC Extension ucanr.edu/county/napa-county-ucce
-
-## File Editing Traps
-- grep against assumed filenames frequently fails — check directory listing first
-- sed -n 'X,Yp' reliable for reading specific line ranges before str_replace
-- Claude Code summarizes file output by default — instruct "Do not summarize. Print every line."
-
-## Session April 18, 2026 — Population Article Rewrite + Permanent SOPs
-
-### Article state changes
-- napa-population-2025: rewritten end-to-end from editor memo, frozen in DRAFT. Awaiting May 2026 DOF E-1 release before publish. Poll IDs 18-20 reserved but not seeded.
-- Seven Phase 1 commits (31a9cfa, 7d241fd, c47ecba, 181f183, f889c27, c6cc879).
-- Chart 1 uses authoritative DOF E-4 May 2025 benchmark (2011-2020 with 2010 and 2020 Census Benchmarks): peak 141,119 in 2016.
-
-### Permanent SOPs
-1. Every Claude Code prompt is fully self-contained inside a `cat << 'RULES' ... RULES` heredoc. Backup (cp) commands outside the heredoc as executable shell lines.
-2. NVF canonical Substack domain: napavalleyfocus.substack.com (never napavalleyfeatures).
-3. Data vintage rule: primary-source DOF landing pages take precedence; always use newest E-4 benchmark (currently May 2025).
-4. Caption SOP: single italic block, "Title. Description. Source: [link](url) (range)."
-5. JSX plain attr strings don't interpret \u escapes — use real en-dash/em-dash characters.
-6. DOF release timing: always include year; flag imminent next releases when publishing near April-May cycle.
-7. Chart 1 annotation: Chart.js plugin with afterDatasetsDraw + fillText at peak/current indices.
-8. Document format convention: session-close deliverables produced as real Microsoft Word 2007+ .docx (not plain text with .docx extension). Verify with `file [name].docx` — should say "Microsoft Word 2007+".
-
-### Broken DOF links to fix on sight
-- /forecasting/demographics/estimates-e4/ — 404
-- Correct E-4 URL: /forecasting/demographics/estimates/e-4-population-estimates-for-cities-counties-and-the-state-2011-2020-with-2010-and-2020-census-benchmark/
-- "DOF P-1A" is state-level; county equivalent is P-2A, 2020-2070, Baseline 2024
-# CLAUDE.md Patch — April 18, 2026 (v2 / afternoon)
-
-Append the following to CLAUDE.md in the repo root. These rules are additive to the existing content and capture lessons from today's afternoon session.
+Append to `~/Desktop/napaserve/CLAUDE.md`. This patch captures platform-level rules that apply to every Claude Code session in this repo.
 
 ---
 
-## Git Staging Rules (Added April 18, 2026)
+## Section 0: Verification Discipline (NEW — April 22, 2026)
 
-**CRITICAL: NEVER use `git add -A` or `git add .` in this repo.**
+**Before Claude Code asserts ANY claim about style rules, file state, git state, or primary sources — verify against ground truth FIRST.**
 
-This repo intentionally keeps `.bak-*` files and a `tmp/` directory locally for reference. A blanket `git add -A` picks these up and pollutes commits (as happened in commit 42b1e9c on April 18, 2026).
+Ground truth hierarchy:
 
-### Correct pattern
+1. **Style/formatting rules** → search project knowledge or this CLAUDE.md for "LOCKED" / "style rules" before flagging. Training-data defaults (AP style, Chicago) do NOT override NapaServe LOCKED standards.
+
+2. **File/code state** → grep or view the actual file. Rendered pages, Substack pastes, admin downloads are RENDERINGS or INPUTS, not ground truth. The file is the file.
+
+3. **Primary sources** → web_fetch the full document. Ctrl-F for all instances of the specific claim before asserting what it says. Never stop at the first match.
+
+4. **Thread context** → if there may be concurrent work from another Claude thread, search project knowledge for recent session summaries referencing the slug/topic.
+
+5. **User intent** → if uncertain, ask. Do not assume.
+
+### Confidence threshold rule
+
+If state has not been verified in the last few turns, Claude Code says "I believe X but let's check." Tentative correct beats confident wrong.
+
+### Pre-execution checklist
+
+Before any code edit, SQL query, commit:
+1. What am I assuming?
+2. How have I verified each assumption?
+3. If unverified — verify or flag.
+
+---
+
+## Style Rules (LOCKED — reaffirmed April 22, 2026)
+
+These override AP style, Chicago, and any training-data defaults. They are not debatable.
+
+| Rule | NapaServe Standard |
+|------|-------------------|
+| Percentages in prose | `%` (NOT "percent") |
+| Serial comma (Oxford) | NO Oxford comma — use "x, y and z" not "x, y, and z" |
+| Dashes | Real em-dash (U+2014) — and en-dash (U+2013) – — NEVER `--` or `\u2014` escape sequences |
+| Quotes | Curly/typographic (U+201C " U+201D ") — NOT straight |
+| Punctuation inside quotes | American style — period/comma INSIDE closing quote |
+| USD references | `$700 million` with context — NOT `US$700 million` |
+
+### Before flagging style issues
+
+Check this section FIRST. Do not apply AP/Chicago defaults without verification against NapaServe LOCKED.
+
+---
+
+## DB Insert Template Update (April 22, 2026)
+
+`napaserve_articles` INSERT MUST include title and deck columns non-null:
+
+```sql
+INSERT INTO napaserve_articles (
+  slug, headline, title, deck, publication, published, 
+  polls_seeded, admin_cards_added, related_coverage_added, topic_seed
+) VALUES (...);
+```
+
+Post-INSERT verification required:
+
+```sql
+SELECT slug, headline, title, deck, publication, topic_seed
+FROM napaserve_articles WHERE slug = '[new-slug]';
+```
+
+All six non-null. If any are null, PATCH before publish-flip.
+
+---
+
+## UTH Index Tile Verification (step 18 of UTH build)
+
+After publish-flip on any UTH article:
+
+1. Hard-refresh https://napaserve.org/under-the-hood
+2. Confirm the article's tile renders with eyebrow + title + date
+3. Click → confirm navigation works
+
+Blank tile = likely null DB column. Query, backfill, done.
+
+---
+
+## Scenario Preset Card Pattern (platform convention — April 22, 2026)
+
+Calculator preset cards follow structural-reset → constellation pattern:
+- Active: dark fill (`#2C1810`), light text
+- Inactive: surface background, standard text
+- Custom card: no-op click, default cursor, pure state indicator
+- Slider onChange handlers append `setActiveScenario("custom")`
+- 4-col desktop, 2-col mobile via `.scenario-presets-grid` CSS class
+
+---
+
+## Mobile Responsiveness (REAFFIRMED + audit step — April 22, 2026)
+
+### Rule (unchanged)
+
+NEVER put `gridTemplateColumns` in inline styles on elements needing mobile breakpoints. Inline styles override CSS class rules on mobile Safari regardless of `!important`.
+
+### Audit step (NEW)
+
+After committing any new article JSX:
 
 ```bash
-# Always stage explicit paths:
-git add path/to/file1 path/to/file2
-git commit -m "..."
-
-# For a single-file fix:
-git add economic-pulse-app/src/napaserve-event-finder.jsx
-git commit -m "fix: ..."
+grep -n "gridTemplateColumns" economic-pulse-app/src/under-the-hood-[slug].jsx
 ```
 
-### Enforcement
+Every match is a potential mobile-boundary violation. Move to CSS class before publish.
 
-`.gitignore` was updated April 18, 2026 to exclude:
-- `*.bak-*` — all backup files created during debug sessions
-- `tmp/` — temporary data directory (xlsx exports, test artifacts, etc.)
+### New established classes (April 22, 2026)
 
-These patterns will prevent accidental commits going forward, but the `-A` rule still stands as a best practice.
+- `.scenario-presets-grid` — 4-col desktop, 2-col mobile
+- `.impact-stats-grid` — 4-col desktop, 2-col mobile
+
+All collapse via existing `@media (max-width: 600px)` block in index.css.
 
 ---
 
-## Map Pin Rendering Rules (Added April 18, 2026)
+## Chart.js Category Axis Pattern (LOCKED)
 
-**File:** `economic-pulse-app/src/napaserve-event-finder.jsx`
+For discrete categorical values on either axis, use `type: "category"` with explicit labels array — not numeric linear axis with callback. Pre-map scatter data: `events.map(e => ({ x: STAGES[e.stage], y: TIERS[e.tier] }))`.
 
-### hashJitter constraints
-
-The `hashJitter` function applies a deterministic ~880m offset (scale = 0.008°) to separate visually-stacked map pins. It must **never** be applied to events that share a single venue — this causes the pin-spread bug that was visible for Cameo Cinema (10 events → 10 pins scattered across half a mile of St. Helena).
-
-### Correct pattern
-
-Group events by true coordinate key BEFORE applying jitter:
-
-```javascript
-// 1. Collect raw pins with true coords (no jitter)
-const rawPins = [...(results.map || [])];
-// ... collect DB fallbacks, etc.
-
-// 2. Group by coord key (~11m granularity)
-const coordKey = (p) => `${p.lat.toFixed(4)}|${p.lon.toFixed(4)}`;
-const grouped = new Map();
-rawPins.forEach(p => {
-  const key = coordKey(p);
-  if (!grouped.has(key)) grouped.set(key, { lat: p.lat, lon: p.lon, names: [p.name] });
-  else grouped.get(key).names.push(p.name);
-});
-
-// 3. Build one pin per venue, with event-list label for multi-event venues
-const pins = Array.from(grouped.values()).map(g => ({
-  lat: g.lat, lon: g.lon,
-  name: g.names.length === 1 ? g.names[0] : `${g.names.length} events: ${g.names.slice(0,3).join(' • ')}${g.names.length > 3 ? ` • +${g.names.length - 3} more` : ''}`,
-}));
-
-// 4. Apply jitter ONLY if multiple distinct venues share a near-identical coord (rare)
-```
-
-Landed in commit 4d1caf3.
+Reference: napa-gdp-2024, napa-constellation-2026 Chart 1.
 
 ---
 
-## File Path Corrections (Added April 18, 2026)
-
-The Event Finder component is at:
+## Caption SOP (LOCKED)
 
 ```
-economic-pulse-app/src/napaserve-event-finder.jsx
+*[Title in italics].* [Prose.] *Illustrative only — not a forecast.* Sources: X; Y; Z.
 ```
 
-It is NOT at `src/pages/napaserve-event-finder.jsx`. Any grep/sed operations should use the correct path.
+Illustrative clause for synthesis charts. Omit for pure-data charts.
 
 ---
 
-## Canonical Weekender Format (Added April 18, 2026)
+## Commit Conventions (reaffirmed — April 22, 2026)
 
-The standard structure for Weekender event lists (used in Napa Valley Features Friday Edition):
-
-### Structure
-
-1. **Intro paragraph** referencing specific events in the current list, ending with: "For the full picture, visit our Event Finder at napaserve.org/events."
-2. **Ongoing events FIRST** — multi-day runs that cross the issue date. Lead with "Through [final date]." Then list remaining performances.
-3. **Single-date events AFTER** in strict chronological order (by start date, then start time).
-
-### Each event entry
-
-- Title in H5 style (not bold paragraph text — this matters for Substack publishing).
-- Date and start time on one line.
-- Description: venue, performers/format, what to expect.
-- Price line.
-- "For more information visit their website[, email X]/[, or call Y]." The word "website" is hyperlinked to the source URL.
-- Street address as the final element.
-
-### Example pattern (ongoing event leading the list)
-
-```
-'Harvey'
-Through May 3. UpStage Napa Valley presents Mary Chase's Pulitzer Prize-winning
-comedy about Elwood P. Dowd and his invisible six-foot rabbit at Grace Episcopal
-Church. Remaining performances are Friday, May 1 and Saturday, May 2 at 7:30 p.m.,
-and Sunday, May 3 at 2:30 p.m. Tickets $26.50 to $36.50. For more information
-visit their website. 1314 Spring St., St. Helena.
-```
-
-### Source attribution
-
-The Napa Valley Register community calendar (Samie Hartley, published weekly) is a reliable source for events. Use when Event Finder scraper results are sparse.
-# CLAUDE.md Patch — April 18, 2026 (v3 / evening)
-
-Append the following to CLAUDE.md in the repo root. These rules are additive to existing content and capture lessons from the evening session on April 18, 2026.
+- No Co-Authored-By trailer — explicitly suppress via "No Co-Authored-By" in every commit instruction
+- Explicit file paths when staging — never `git add -A`
+- Commit messages: imperative, scoped (`fix(scope):` / `feat(scope):` / `sync(scope):`)
+- Single commit per logical unit of work; split across multiple commits only when they represent genuinely different changes
 
 ---
 
-## Chart Download Button — UI Standard (Added April 18, 2026)
+## Thread Handoff Discipline (NEW — April 22, 2026)
 
-Every chart with a PNG download button — in Under the Hood articles, the Regional Contraction Tracker, and any future calculator — must use this exact button style and placement.
+When multiple Claude threads touch the same article:
 
-### Rules
+1. **Identify canonical thread** at session start — check project knowledge for recent session summaries
+2. **Before drafting changes** — read referenced resume briefs, session summaries, patch notes
+3. **Handoff briefs must include**:
+   - Current committed state (commit hash)
+   - Pending uncommitted work
+   - Scope recommendation
+   - Gaps requiring user direction
 
-- **Label:** always exactly `DOWNLOAD CHART PNG` — uppercase, no icon, no variation
-- **Position:** bottom-left, below the chart canvas — NOT in a header row above the chart
-- **Button lives OUTSIDE the chart's containerRef** — otherwise it's captured in the PNG export
-
-### Canonical JSX
-
-```jsx
-<button onClick={downloadFn} style={{
-  padding: "4px 12px",
-  fontFamily: "monospace",
-  fontSize: 11,
-  fontWeight: 400,
-  letterSpacing: "0.88px",
-  color: T.muted,        // #8B7355
-  background: "transparent",
-  border: `1px solid ${T.border}`,  // #D4C9B8
-  borderRadius: 3,
-  cursor: "pointer",
-}}>
-  DOWNLOAD CHART PNG
-</button>
-```
-
-### Why this matters
-
-This was an SOP gap. The button styling had been copy-pasted between article components since the first UTH piece, but never documented. When building the tracker's timeline chart, Claude Code reached for the generic accent-color button style and ended up with a non-matching visual that broke consistency. Landing this rule in CLAUDE.md means the next chart build uses the right pattern automatically.
-
-Landed via commits `eba6a1b` (styling) and `c746372` (position).
+Prose referenced but not physically present is NOT a handoff. Prose must be pasteable text.
 
 ---
 
-## Regional Contraction Tracker — Chart Added (April 18, 2026)
+## Research Discipline (NEW — April 22, 2026)
 
-The tracker at `/under-the-hood/calculators#tracker` now includes a Chart.js scatter timeline above the filter pills. Notes for future edits:
+### Primary source reading
 
-### Architecture
+When fetching a primary source to verify a specific claim:
+- Read the whole document OR Ctrl-F for all instances
+- Note variation across instances  
+- Use the author's most specific anchor, not the first match
 
-- **Library:** raw `chart.js` 4.5.1 via `useRef` + `useEffect`. Do NOT add `react-chartjs-2` as a dep — the project uses the raw library pattern throughout.
-- **Data binding:** chart `datasets` derive from the existing `filtered` array in `ContractionTracker`. Do NOT create a separate state for chart data — unified filter behavior depends on this binding.
-- **Jitter:** deterministic ±0.15 y-offset computed from headline string hash. Prevents same-category same-month dots from overlapping. Don't make this random — determinism means the chart doesn't flicker between reloads.
-- **Mobile:** outer wrapper uses `overflowX: auto`, inner div has `minWidth: 720`. Do NOT use CSS media queries — the file is inline-styles-only.
-- **Download:** uses `chart.toBase64Image()` with a temp canvas for title + watermark. No `html2canvas` needed for Chart.js canvases.
+### Resource hierarchy
 
-### Location
+1. Project knowledge first
+2. Primary sources second (full read)
+3. Secondary sources third (corroboration only)
+4. Training memory last (verified against above)
 
-- Component: `ContractionTracker` function in `economic-pulse-app/src/napaserve-calculators.jsx`
-- Array: `TRACKER_EVENTS` at line 627 of the same file
-- Canvas ref + chart ref declared at top of component
-- `useEffect` with `[filtered]` dependency rebuilds the chart when filter changes
+### Contradictions
 
-Landed via commit `910faa9`.
-
----
-
-## Napa Reset Watch — External Scout Project (April 18, 2026)
-
-A standalone Claude project handles the weekly scouting workflow for Tracker candidates and Under the Hood seeds. It lives OUTSIDE this repo — but the handoff pattern matters for anyone working in NapaServe project threads.
-
-### Handoff pattern
-
-When the user arrives with a block of JSX object literals (like this):
-
-```javascript
-{
-  date: "Apr 14, 2026",
-  category: "Transaction",
-  headline: "...",
-  detail: "...",
-  source: "...",
-  sourceUrl: "...",
-},
-```
-
-...they came from Napa Reset Watch. The task is to add those objects to `TRACKER_EVENTS` in chronological order (newest first, under the `// ── 2026 ──` comment).
-
-### Standard Claude Code prompt flow for ingesting JSX blocks
-
-1. Locate where the entries belong chronologically — `grep -nE '^\s*date: "' economic-pulse-app/src/napaserve-calculators.jsx`
-2. Show the bracket context to the user before inserting — confirm placement
-3. Use `str_replace` to insert the block at the confirmed location
-4. `npm run build 2>&1 | tail -8`
-5. Commit with explicit paths (NEVER `git add -A`) and push
-
-### Rules for Napa Reset Watch ingestion
-
-- **Never fabricate dates or URLs.** If the JSX block has a suspicious URL, flag it before inserting.
-- **Respect chronological order.** Entries in `TRACKER_EVENTS` are strictly reverse-chronological. New items go at the top of their date cluster.
-- **Update-in-place vs. insert.** If an entry already exists for the same entity and the new JSX has additional detail, treat it as an update (str_replace the detail field) rather than inserting a duplicate.
-- **Event count is `TRACKER_EVENTS.length`** — the counter on the page reads from this. Don't assume a commit added N events without counting.
+When research surfaces contradictions: document them, show both, let user decide. Don't quietly pick one.
 
 ---
 
-## PostgREST URL encoding
+## Known Gaps Log (NEW — April 22, 2026)
 
-When filtering Supabase REST calls on a `timestamptz` column, never f-string the ISO timestamp into the URL — the `+00:00` timezone offset contains a raw `+` that PostgREST interprets as a space, returning `400 Bad Request`.
+Explicit list of known issues. Review at start of every session so they're not rediscovered:
 
-**Wrong:**
-```python
-r = requests.get(
-    f"{SUPABASE_URL}/rest/v1/table"
-    f"?select=cols&asked_at=gte.{iso_timestamp}&order=asked_at.desc",
-    headers=headers,
-)
-```
+- EXPORT_DATA for napa-constellation-2026 is stale (Word export workflow bypassed today via copy-paste)
+- Tier-section prose (21 paragraphs for Sections 2/3/4/5 of napa-constellation-2026) not drafted — live article in hybrid state
+- Insert-flow gap: napaserve_articles INSERT skipped title + deck for napa-constellation-2026 (both PATCHed; root cause TBD)
+- Related Coverage title font-size too large on all UTH articles (platform polish)
+- Tracker: no "Regulatory" category for Ninth Circuit + four-group petition events
+- Tracker additions for today's research (Treasury × 3, Hall essay, Mondavi reopening, 4-group petition) deferred to calculators thread
+# CLAUDE.md Patch — April 26, 2026
 
-**Right:**
-```python
-r = requests.get(
-    f"{SUPABASE_URL}/rest/v1/table",
-    headers=headers,
-    params={
-        "select": "cols",
-        "asked_at": f"gte.{iso_timestamp}",
-        "order": "asked_at.desc",
-    },
-)
-```
-
-`requests` URL-encodes `params=` values automatically. Applies to any filter value containing `+`, `&`, `#`, or spaces. First hit: `coverage-gaps-digest` job in `poll_pipeline.yml`, fixed 2026-04-20 (commit `0ad72bd`).
+Append this section to CLAUDE.md after the April 22, 2026 patch.
 
 ---
 
-## April 21, 2026 — Constellation Build + Word Export Platform Upgrade
+## April 26, 2026 — Lake County Housing Reset Article + Two Platform Improvements
 
-### Shipped
+### Article shipped
+- **Slug:** lakeco-housing-reset-2026
+- **Headline:** Lake County's Housing Reset Is Uneven — and the Labor Market Is Moving First
+- **Publication:** Lake County Features (now 2 articles live, was 1)
+- **Polls:** 30/31/32 seeded
+- **Substack polls:** 3 distinct polls listed in EXPORT_DATA substackPolls field
+- **Charts:** 3 (submarket spread bar, unemployment trend line, North Bay comparison bar)
+- **Commits:** f8af38a, 2cedbbb, 3772e3d, 6a71534, 566502f, 0b24cf0
+- **Final bundle:** index-LEOdfNmi.js
 
-- **`napa-constellation-2026`** — Week 1 of April UTH series, live as DRAFT at `/under-the-hood/napa-constellation-2026`.
-  - 5 sections, ~1,990 words, 2 charts, 3 polls (IDs 27/28/29)
-  - `published=false` at session close; publish flip pending user action
-- **Word export platform rebuild** (commit `c9f6dae`): markdown link parser, deck section, Article Summary section, Related Coverage with linked titles, Sources with linked titles. `Links` section removed.
+### Platform improvement 1: substackPolls field added to EXPORT_DATA shape
 
-### Commits (this day, `main`)
+WordExporter.jsx now renders Substack Polls section between Related Coverage and Sources. Activated by populating `substackPolls` array on EXPORT_DATA entry. New section in render order (10 of 11):
 
-- `de0fcee` — feat(uth): napa-constellation-2026 initial build
-- `30f277a` — fix(uth): Related Coverage list + Chart 1 y-axis
-- `f78b73f` — fix(uth): byline date April 21, 2026
-- `00c2094` — docs(CLAUDE.md): April 21 session update
-- `c9f6dae` — feat(export): inline hyperlinks + deck/summary/Related Coverage in Word export
+1. Headline
+2. Byline
+3. Deck
+4. Article Summary
+5. Body
+6. Bio
+7. Pull Quote
+8. Chart Captions
+9. Related Coverage
+10. **Substack Polls** — NEW
+11. Sources
 
-Final bundle: `index-BlaOCPCV.js`
-
-### Section 0 — Ground Truth Verification (PLATFORM-WIDE, LOCKED)
-
-Before any Claude Code prompt, SQL query, or content deliverable, Claude must verify assumptions against reality, not against docs or memory.
-
-**Reality means:**
-- For code: the file in the repo at `main`. Use `grep`, `view`.
-- For data: current Supabase table state. Query it with `curl`.
-- For rendering: live production page or local dev in Chrome. Check URL bar for host.
-- For infrastructure: current Cloudflare Worker routes, current GitHub Actions.
-
-**Pre-execution checklist:**
-1. What am I assuming? (3–5 items)
-2. How have I verified each? (cite file, query, or URL)
-3. If unverified, verify or flag before proceeding.
-
-**When docs and reality disagree, reality wins.** Fix whichever is wrong and update the other.
-
-**Stop, don't reinterpret.** When verification returns unexpected output, re-verify. Don't guess around the gap.
-
-### Resource Hierarchy for Editorial Research
-
-1. NapaServe archive (Chrome at /archive; SQL for bulk)
-2. NVF Research Agent (/agent)
-3. Regional Contraction Tracker
-4. Coverage Gap Intelligence (`coverage_gaps` table)
-5. External web_search/web_fetch (last resort)
-
-### EXPORT_DATA Shape (COMPLETE)
-
-Working shape for articles with charts. Reference: `napa-cab-2025` entry in `napaserve-admin.jsx` (around line 240+).
-
-**Required fields:**
-- `headline` (string) — exact match to live article title
-- `publication` (string) — `"Napa Valley Features"`
-- `slug` (string) — article URL slug
-- `dateline` (string) — `"NAPA VALLEY, Calif."`
-- `body` (array) — typed objects via `t()`, `h()`, `c(n)` helpers
-
-**Optional fields:**
-- `deck` (string) — italic hook below byline
-- `summary` (string) — labeled "Article Summary" paragraph
-- `pullQuote` (string) — one memorable sentence
-- `captions` (array) — `{number, title, description, source}` objects
-- `relatedCoverage` (array) — `{title, publication, date, url}` objects
-- `sources` (array) — plain strings; wrap title in `[text](url)` for linked output
-
-**Do NOT include (deprecated or unread):**
-- `date`, `chartFilenames`, `methodology`, `links`
-
-**Body array helpers:**
+Shape:
 ```js
-const t = (text) => ({ type: "text", text });
-const h = (text) => ({ type: "header", text });
-const c = (n) => ({ type: "chart", chartNumber: n });
+substackPolls: [
+  { question: "...", options: ["a", "b", "c", "d", "e"] },
+  // 3 polls per article, 5 options each, ≤ 35 chars
+]
 ```
 
-### Markdown Link Parser in Word Exporter
+### Platform improvement 2: under-the-hood-index.jsx made fully dynamic
 
-`WordExporter.jsx` has `parseInline(text, options)` helper. Any string through `p()` or `headerP()` containing `[text](url)` syntax renders as clickable `ExternalHyperlink` in Word output.
+Pre-fix: only Napa Valley Features section built dynamically from DB. Sonoma and Lake County sections were hardcoded STATIC_SECTIONS arrays.
 
-**Where inline links render:** body paragraphs, section headers, deck, summary, pullQuote, sources, relatedCoverage (automatic).
+Post-fix (commit 0b24cf0):
+- All three publication sections build dynamically from `napaserve_articles` filtered by publication string
+- Sorted newest-first by published_at
+- Date format unified to "Month D, Year"
+- STATIC_SECTIONS retained as empty-state fallback
+- Section 6 "Recent Under the Hood" affordance distinguishes internal (`/under-the-hood/...`) vs external links
 
-**Where inline links do NOT render (yet):** caption description, caption source line.
+Implication: publishing to any publication is now zero-touch on the index. DB row drives the tile.
 
-### Three New Export Sections
+### Two-Platform Polls Strategy (NEW)
 
-1. **Deck** — italic paragraph below byline, if `article.deck` is set
-2. **Article Summary** — labeled paragraph below deck, if `article.summary` is set
-3. **Related Coverage** — labeled list with linked titles, between captions and sources
+NapaServe polls (`napaserve_article_polls`) and Substack polls (`nvf_polls` via monthly extraction) are intentionally distinct, both feeding Community Intelligence. Different audiences, different question shapes, complementary not redundant.
 
-**`Links` section REMOVED.** Use `relatedCoverage` + inline `[text](url)` markdown in prose instead.
+- **NapaServe:** structured, analytical, thesis-testing. Seeded via pipeline.
+- **Substack:** experiential, local, reader-as-expert. Listed in EXPORT_DATA substackPolls; manually created in Substack UI from Word export reference; pulled into nvf_polls via monthly extraction.
 
-**Full render order:** Headline → Byline → Deck → Article Summary → Body → Bio → Pull Quote → Chart Captions → Related Coverage → Sources
+Both undergo Voyage-3 embedding. Both queryable by Research Agent.
 
-### UTH Template Canonical Pattern
+### Single-Prompt UTH Build Template Caveat
 
-Source of truth: `under-the-hood-template.jsx` (live at `/under-the-hood/template`).
+The lakeco-housing-reset-2026 build used a single consolidated Claude Code prompt that omitted Build Sequence steps 13 (EXPORT_DATA), 14 (chart filenames), 15 (Word export end-to-end test). Required mid-session retrofit. New rule: any consolidated prompt MUST include explicit phases for these three steps.
 
-**Related Coverage = `<ul>` list**, NOT a 4-card flex grid. See template lines 518–541.
+### Article Registry update
 
-**Component order:** prose sections → byline → Related Coverage → Archive Search → PollsSection → Sources → Methodology
+LIVE additions: lakeco-housing-reset-2026 (April 26, 2026).
+Next poll IDs start at 33.
 
-**Byline placement:** inline italic `<p>`, AFTER final section prose, BEFORE Related Coverage.
+### Files touched in repo
+- `economic-pulse-app/src/under-the-hood-lakeco-housing-reset.jsx` (created)
+- `economic-pulse-app/src/App.jsx` (route)
+- `economic-pulse-app/src/napaserve-admin.jsx` (admin card + EXPORT_DATA + substackPolls)
+- `economic-pulse-app/src/components/WordExporter.jsx` (substackPolls render section)
+- `economic-pulse-app/src/under-the-hood-index.jsx` (dynamic publication sections + affordance fix)
+- `pipeline/seed_article_polls.py` (3 dicts for polls 30/31/32)
+- `CLAUDE.md` (this patch)
 
-### Formatting Standards (LOCKED)
+### Pending for next session
 
-- `%` default; "percent" only when word form required
-- Title Case section headings with optional colon
-- No "Under the Hood:" prefix in headline
-- Real em/en-dashes, never `--` or `\u2014`
-- `$823.8 million` in prose; short forms in chart labels only
-- AP date style (April 5, April 20, 2026)
-- No bullets in body prose — lists go in charts/tables/three-card sections
-- One-through-nine spelled; 10+ numerals
-- Org shortforms on 2nd reference: NVV, NVG, CNV, Farm Bureau, Constellation, Mondavi, Ninth Circuit, SVB
+- napa-marketing-machine-2026 (Week 2 of April series, deferred from April 26)
+- napa-population-2025 hold pending May 1, 2026 DOF E-1 release
+- Q2 follow-up Lake County piece on lower-cost-areas-falling-faster puzzle
+- Audit other live UTH articles for substackPolls backfill
 
-### Chart.js Category Y-Axis Pattern
+---
 
-For discrete categorical y-values, use `type: "category"` with explicit labels array — NOT numeric linear axis with callback.
-
-```js
-y: {
-  type: "category",
-  labels: CATEGORIES,
-  reverse: true,
-  offset: true,
-  ticks: { color: T.muted, font: { family: font, size: 13 }, padding: 8 },
-  grid: { color: T.rule },
-  afterFit: (scale) => { scale.width = 110; },
-},
-```
-
-### Poll Seeder Clarification
-
-`pipeline/seed_article_polls.py` has its own hardcoded POLLS list (lines 21–209). Article JSX `POLLS` array is UI-only.
-
-**Flow:**
-1. Add 3 poll dicts to the Python file
-2. Dry-run: `python3 pipeline/seed_article_polls.py --dry-run` (confirm 3 polls)
-3. Live seed: `python3 pipeline/seed_article_polls.py` (returns DB IDs)
-4. Update article JSX `POLLS` array with returned IDs
-
-### Operational Gotchas
-
-**Edit tool Unicode normalization:** Claude Code's `Edit` tool normalizes `–` / `—`-style escapes during string comparison. When inserting content that must preserve literal `\u####` sequences, use Python heredoc or `Write` tool, NEVER `Edit`.
-
-**Terminal paste discipline:** Do NOT paste JavaScript/JSX/TSX code blocks into zsh — parse errors. Only paste commands from bash-labeled code blocks. Claude Code should use `Write` for JS/JSX inspection, not terminal paste.
-
-**Dev server discipline:** Dedicated terminal. Path: `cd ~/Desktop/napaserve/economic-pulse-app` (NOT repo root). Command: `npm run dev` (port 5173). Do NOT mix with `npm run build` in same terminal. Port check: `lsof -i :5173 -i :5174`.
-
-**Localhost vs production URL:** When testing local dev changes, confirm Chrome URL bar says `http://localhost:5173/...`. If `https://napaserve.org/...`, you're on production and won't see uncommitted local changes.
-
-### Workflow Efficiency Rule
-
-Tim's time is expensive (terminal context-switches, Chrome verifies, iCloud management). Claude's actions are cheap. Defaults should minimize Tim's actions, not Claude's.
-
-- Batch related prompts when logic doesn't branch
-- Wrap long terminal blocks in scripts rather than multi-line pastes
-- Let Claude Code read files directly rather than having Tim paste sections back
-- Use `present_files` tool for deliverables
-- Pre-stage follow-up prompts when sequence is predictable
+*End of April 26, 2026 patch — Valley Works Collaborative*
