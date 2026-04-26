@@ -163,11 +163,6 @@ const EXPORT_DATA = {
       "Lake County Features, [\"Lake County’s Affordability Edge and the Guenoc Question,\"](https://lakecountyfeatures.substack.com/p/under-the-hood-lake-countys-affordability) March 9, 2026.",
       "Lake County Features, [\"Reading Lake County’s Early 2026 Signals,\"](https://lakecountyfeatures.substack.com/p/under-the-hood-reading-lake-countys) February 16, 2026.",
     ],
-    chartFilenames: {
-      1: "lake-county-submarket-spread-2026.png",
-      2: "lake-county-unemployment-trend-2024-2026.png",
-      3: "north-bay-unemployment-comparison-jan-2026.png",
-    },
   },
   "napa-constellation-2026": {
     headline: "From Selling Napa to Defending It",
