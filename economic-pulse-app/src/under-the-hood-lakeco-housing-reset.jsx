@@ -73,11 +73,11 @@ const linkStyle = { color: T.accent, textDecoration: "underline" };
 const AFFORDABILITY_URL = "[AFFORDABILITY_URL_PLACEHOLDER]";
 
 // ── DOWNLOAD HELPER ────────────────────────────────────────────────
-// LOCKED chart download handler:
+// Matches napa-constellation-2026 (live precedent):
 // - No watermarkPlugin in chart registrations
 // - No inline sources <p> in chart components
-// - Title at x=14 y=10 bold 13px Libre Baskerville #2C1810 globalAlpha 1.0
-// - Canvas height +48, image y=32
+// - Title at x=28 y=16 bold 32px Libre Baskerville #2C1810 globalAlpha 1.0
+// - Canvas height +80, image y=64
 // - Watermark opacity 0.25
 async function downloadComponentPng(containerRef, filename, title) {
   if (!containerRef.current) return;
@@ -85,18 +85,18 @@ async function downloadComponentPng(containerRef, filename, title) {
   const canvas = await html2canvas(containerRef.current, { scale: 2, useCORS: true, backgroundColor: T.bg });
   const off = document.createElement("canvas");
   off.width = canvas.width;
-  off.height = canvas.height + 48;
+  off.height = canvas.height + 80;
   const ctx = off.getContext("2d");
   ctx.fillStyle = T.bg;
   ctx.fillRect(0, 0, off.width, off.height);
-  ctx.drawImage(canvas, 0, 32);
+  ctx.drawImage(canvas, 0, 64);
   ctx.save();
   ctx.globalAlpha = 1.0;
-  ctx.font = "bold 13px 'Libre Baskerville', Georgia, serif";
+  ctx.font = "bold 32px 'Libre Baskerville', Georgia, serif";
   ctx.fillStyle = "#2C1810";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(title || "", 14, 10);
+  ctx.fillText(title || "", 28, 16);
   ctx.restore();
   ctx.save();
   ctx.globalAlpha = 0.25;
