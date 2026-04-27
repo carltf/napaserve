@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import SnapshotTab from "./SnapshotTab";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from "recharts";
@@ -508,13 +509,7 @@ export default function EconomicPulseDashboard(){
         </>}
 
 
-        {section==="snapshot"&&<>
-          <div style={{padding:"40px 24px",background:"#EDE8DE",borderRadius:8,textAlign:"center",border:"1px solid #D4CDB8",marginTop:24}}>
-            <div style={{fontFamily:"'Source Sans 3',sans-serif",fontSize:13,letterSpacing:"0.08em",textTransform:"uppercase",color:"#8B7355",marginBottom:12}}>WEEKLY SNAPSHOT</div>
-            <h2 style={{fontFamily:"'Libre Baskerville',serif",fontSize:28,fontWeight:700,color:"#2C1810",margin:"0 0 12px 0"}}>Coming Soon</h2>
-            <p style={{fontFamily:"'Source Sans 3',sans-serif",fontSize:16,color:"#8B7355",maxWidth:540,margin:"0 auto",lineHeight:1.5}}>A six-signal at-a-glance synthesis of Napa County's economy, refreshed weekly. Designed to support Under the Hood writing and serve as a Substack-ready screenshot.</p>
-          </div>
-        </>}
+        {section==="snapshot"&&<><SnapshotTab latestE={latestE} priorE={priorE} latestW={latestW} macroData={macroData} /></>}
 
         {section==="winery"&&<>
           <div style={{marginBottom:20}}>
