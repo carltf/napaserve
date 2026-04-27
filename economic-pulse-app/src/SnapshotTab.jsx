@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const T = {
   bg: "#F5F0E8",
@@ -167,7 +167,7 @@ function generateTakeaways(signals) {
     parts.push(`${signals.transitionsCount} regional ${word} tracked in the last 30 days.`);
   }
 
-  return parts.join(" ");
+  return parts;
 }
 
 function TransitionsSection({ events, loading, error }) {
@@ -209,12 +209,12 @@ function TransitionsSection({ events, loading, error }) {
       <div
         style={{
           fontFamily: FONT_BODY,
-          fontSize: 11,
-          letterSpacing: "0.1em",
+          fontSize: 13,
+          letterSpacing: "0.12em",
           textTransform: "uppercase",
-          color: T.muted,
-          marginBottom: 12,
-          fontWeight: 600,
+          color: T.accent,
+          marginBottom: 16,
+          fontWeight: 700,
         }}
       >
         WHAT CHANGED THIS WEEK · NAPA COUNTY
@@ -285,6 +285,42 @@ function TransitionsSection({ events, loading, error }) {
 }
 
 export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
+  const cardsRef = useRef(null);
+
+  const downloadPng = async () => {
+    if (!cardsRef.current) return;
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const node = cardsRef.current;
+      const canvas = await html2canvas(node, { scale: 2, backgroundColor: "#F5F0E8" });
+      const out = document.createElement("canvas");
+      out.width = canvas.width;
+      out.height = canvas.height + 160;
+      const ctx = out.getContext("2d");
+      ctx.fillStyle = "#F5F0E8";
+      ctx.fillRect(0, 0, out.width, out.height);
+      ctx.fillStyle = "#2C1810";
+      ctx.font = "bold 32px 'Libre Baskerville', serif";
+      ctx.textBaseline = "top";
+      const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      ctx.fillText(`Napa County · Weekly Snapshot · ${today}`, 28, 16);
+      ctx.drawImage(canvas, 0, 80);
+      ctx.fillStyle = "#8B7355";
+      ctx.globalAlpha = 0.5;
+      ctx.font = "26px 'Source Code Pro', monospace";
+      ctx.textAlign = "right";
+      ctx.fillText("napaserve.org", out.width - 28, out.height - 56);
+      ctx.globalAlpha = 1;
+      const link = document.createElement("a");
+      const dateStr = new Date().toISOString().slice(0, 10);
+      link.download = `napa-snapshot-${dateStr}.png`;
+      link.href = out.toDataURL("image/png");
+      link.click();
+    } catch (e) {
+      console.error("PNG download failed:", e);
+    }
+  };
+
   const [trackerEvents, setTrackerEvents] = useState(null);
   const [trackerLoading, setTrackerLoading] = useState(true);
   const [trackerError, setTrackerError] = useState(null);
@@ -365,17 +401,18 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
       <div
         style={{
           fontFamily: FONT_BODY,
-          fontSize: 13,
-          letterSpacing: "0.08em",
+          fontSize: 14,
+          letterSpacing: "0.12em",
           textTransform: "uppercase",
-          color: T.muted,
-          marginBottom: 8,
-          fontWeight: 600,
+          color: T.accent,
+          marginBottom: 12,
+          fontWeight: 700,
         }}
       >
         NAPA COUNTY · WEEKLY SNAPSHOT
       </div>
 
+      <div ref={cardsRef}>
       <div className="kpi-grid-snapshot">
         <SnapshotCard
           eyebrow="WINE INDUSTRY"
@@ -472,8 +509,29 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
           }
         />
       </div>
+      </div>
 
-      {summary && (
+      <div style={{ marginTop: 16, marginBottom: 8 }}>
+        <button
+          onClick={downloadPng}
+          style={{
+            fontFamily: "'Source Code Pro', monospace",
+            fontSize: 11,
+            letterSpacing: "0.08em",
+            color: T.muted,
+            border: `1px solid ${T.border}`,
+            background: "transparent",
+            padding: "4px 12px",
+            borderRadius: 3,
+            cursor: "pointer",
+            textTransform: "uppercase",
+          }}
+        >
+          Download Snapshot PNG
+        </button>
+      </div>
+
+      {summary && summary.length > 0 && (
         <div
           style={{
             marginTop: 28,
@@ -487,19 +545,21 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
           <div
             style={{
               fontFamily: FONT_BODY,
-              fontSize: 11,
-              letterSpacing: "0.1em",
+              fontSize: 13,
+              letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: T.muted,
-              marginBottom: 8,
-              fontWeight: 600,
+              color: T.accent,
+              marginBottom: 12,
+              fontWeight: 700,
             }}
           >
             KEY LOCAL TAKEAWAYS
           </div>
-          <div style={{ fontFamily: FONT_BODY, fontSize: 15, color: T.ink, lineHeight: 1.55 }}>
-            {summary}
-          </div>
+          <ul style={{ fontFamily: FONT_BODY, fontSize: 15, color: T.ink, lineHeight: 1.6, margin: 0, paddingLeft: 20 }}>
+            {summary.map((line, i) => (
+              <li key={i} style={{ marginBottom: 6 }}>{line}</li>
+            ))}
+          </ul>
         </div>
       )}
 
