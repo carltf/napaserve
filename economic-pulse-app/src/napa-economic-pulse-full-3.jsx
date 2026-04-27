@@ -49,6 +49,7 @@ const WINERY_VIEWS = [
 ];
 const SECTIONS = [
   { key: "overview", label: "Overview" },
+  { key: "snapshot", label: "Snapshot" },
   { key: "winery",   label: "Winery Licenses" },
   { key: "labor",    label: "Labor Market" },
   { key: "housing",  label: "Housing" },
@@ -123,7 +124,18 @@ function Tip({active,payload,fmt}){
 }
 
 export default function EconomicPulseDashboard(){
-  const [section,    setSection]    = useState("overview");
+  const [section,    setSection]    = useState(() => { const p = new URLSearchParams(window.location.search).get("tab"); const valid = ["overview","snapshot","winery","labor","housing","pulse"]; return valid.includes(p) ? p : "overview"; });
+
+  // Sync ?tab= URL param when section changes (deep-link support).
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (section === "overview") {
+      url.searchParams.delete("tab");
+    } else {
+      url.searchParams.set("tab", section);
+    }
+    window.history.replaceState({}, "", url.toString());
+  }, [section]);
   const [wineryView, setWineryView] = useState("weekly");
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState(null);
@@ -495,6 +507,14 @@ export default function EconomicPulseDashboard(){
           )}
         </>}
 
+
+        {section==="snapshot"&&<>
+          <div style={{padding:"40px 24px",background:"#EDE8DE",borderRadius:8,textAlign:"center",border:"1px solid #D4CDB8",marginTop:24}}>
+            <div style={{fontFamily:"'Source Sans 3',sans-serif",fontSize:13,letterSpacing:"0.08em",textTransform:"uppercase",color:"#8B7355",marginBottom:12}}>WEEKLY SNAPSHOT</div>
+            <h2 style={{fontFamily:"'Libre Baskerville',serif",fontSize:28,fontWeight:700,color:"#2C1810",margin:"0 0 12px 0"}}>Coming Soon</h2>
+            <p style={{fontFamily:"'Source Sans 3',sans-serif",fontSize:16,color:"#8B7355",maxWidth:540,margin:"0 auto",lineHeight:1.5}}>A six-signal at-a-glance synthesis of Napa County's economy, refreshed weekly. Designed to support Under the Hood writing and serve as a Substack-ready screenshot.</p>
+          </div>
+        </>}
 
         {section==="winery"&&<>
           <div style={{marginBottom:20}}>
