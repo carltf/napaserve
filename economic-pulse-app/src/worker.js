@@ -1029,6 +1029,33 @@ async function handlePublishArticle(request, env) {
   return json(updated[0], 200, request);
 }
 
+async function handleTrackerEvents(request, env) {
+  const url = new URL(request.url);
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10) || 50, 200);
+  const category = url.searchParams.get("category");
+  const since = url.searchParams.get("since");
+
+  // Public endpoint — only ever returns approved entries.
+  // confidence and status are stripped from the public response;
+  // they exist for the editorial workflow (Reset Watch candidate queue),
+  // not for consumers of this endpoint.
+  let query = `${env.SUPABASE_URL}/rest/v1/napa_transition_tracker`
+    + `?select=id,event_date,event_date_display,category,headline,detail,source,source_url`
+    + `&status=eq.approved`
+    + `&order=event_date.desc,id.desc`
+    + `&limit=${limit}`;
+
+  if (category) query += `&category=eq.${encodeURIComponent(category)}`;
+  if (since) query += `&event_date=gte.${encodeURIComponent(since)}`;
+
+  const res = await fetch(query, {
+    headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` },
+  });
+  const rows = await res.json();
+  const results = Array.isArray(rows) ? rows : [];
+  return json({ ok: true, count: results.length, results }, 200, request);
+}
+
 async function handleArticles(request, env) {
   const url = new URL(request.url);
   const published = url.searchParams.get("published");
@@ -1279,6 +1306,9 @@ export default {
       return handleRejectEvent(request, env);
     }
 
+    if (url.pathname === "/api/tracker-events" && request.method === "GET") {
+      return handleTrackerEvents(request, env);
+    }
     return new Response("Not found", { status: 404 });
   },
 };
