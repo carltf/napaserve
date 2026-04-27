@@ -1056,6 +1056,84 @@ async function handleTrackerEvents(request, env) {
   return json({ ok: true, count: results.length, results }, 200, request);
 }
 
+async function handleLatestSubstackPoll(request, env) {
+  // Returns the most recent Napa Valley Features Substack poll with engagement.
+  // Mirrors the dashboard's exclusion rules (Reader Demographics, Words, Puzzles & Trivia)
+  // and filters total_votes > 0. nvf_polls is single-source from napavalleyfocus.substack.com,
+  // so no publication filter is required.
+  const EXCLUDED_THEMES = new Set([
+    "Reader Demographics",
+    "Words, Puzzles & Trivia",
+  ]);
+
+  const query = `${env.SUPABASE_URL}/rest/v1/nvf_polls`
+    + `?select=poll_id,post_id,post_title,question,options_json,total_votes,published_at,theme,substack_url`
+    + `&total_votes=gt.0`
+    + `&order=published_at.desc`
+    + `&limit=10`;
+
+  try {
+    const res = await fetch(query, {
+      headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` },
+    });
+    if (!res.ok) {
+      return json({ ok: false, error: `Supabase ${res.status}` }, 502, request);
+    }
+    const rows = await res.json();
+    const poll = Array.isArray(rows)
+      ? rows.find(p => !EXCLUDED_THEMES.has(p.theme))
+      : null;
+    if (!poll) {
+      return json({ ok: true, poll: null }, 200, request);
+    }
+
+    // Parse options_json. Schema: [{id, text, votes}].
+    // options_json may be a JSON string or already-parsed array depending on REST settings.
+    let options = poll.options_json;
+    if (typeof options === "string") {
+      try { options = JSON.parse(options); } catch (_) { options = []; }
+    }
+    if (!Array.isArray(options)) options = [];
+
+    const sorted = [...options].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+    const topOption = sorted[0] || null;
+
+    // Strip leading "A. ", "B. ", "1. ", "12. " etc. for clean card display.
+    // Pattern: optional capital letter OR 1-2 digits, then ". ", at the start.
+    const stripPrefix = (s) => {
+      if (typeof s !== "string") return s;
+      return s.replace(/^([A-Z]|\d{1,2})\.\s+/, "");
+    };
+
+    const topAnswerRaw = topOption ? topOption.text : null;
+    const topAnswer = topAnswerRaw ? stripPrefix(topAnswerRaw) : null;
+    const topVotes = topOption ? (topOption.votes || 0) : 0;
+    const topPct = poll.total_votes > 0
+      ? Math.round((topVotes / poll.total_votes) * 100)
+      : 0;
+
+    return json({
+      ok: true,
+      poll: {
+        poll_id: poll.poll_id,
+        post_id: poll.post_id,
+        post_title: poll.post_title,
+        question: poll.question,
+        theme: poll.theme,
+        substack_url: poll.substack_url,
+        top_answer: topAnswer,
+        top_answer_raw: topAnswerRaw,
+        top_answer_votes: topVotes,
+        top_pct: topPct,
+        total_votes: poll.total_votes,
+        published_at: poll.published_at,
+      },
+    }, 200, request);
+  } catch (e) {
+    return json({ ok: false, error: String(e) }, 500, request);
+  }
+}
+
 async function handleArticles(request, env) {
   const url = new URL(request.url);
   const published = url.searchParams.get("published");
@@ -1308,6 +1386,9 @@ export default {
 
     if (url.pathname === "/api/tracker-events" && request.method === "GET") {
       return handleTrackerEvents(request, env);
+    }
+    if (url.pathname === "/api/latest-substack-poll" && request.method === "GET") {
+      return handleLatestSubstackPoll(request, env);
     }
     return new Response("Not found", { status: 404 });
   },
