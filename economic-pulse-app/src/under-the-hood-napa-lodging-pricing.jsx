@@ -9,19 +9,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Chart, registerables } from "chart.js";
+import annotationPlugin from "chartjs-plugin-annotation";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import useDraftGate from "./hooks/useDraftGate";
 import DraftBanner from "./components/DraftBanner";
 
 Chart.register(...registerables);
+Chart.register(annotationPlugin);
 
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 
 // ── ARTICLE METADATA ───────────────────────────────────────────────
 const ARTICLE_SLUG = "napa-lodging-pricing-2026";
-const ARTICLE_TITLE = "Eighty-Seven Cents and Counting";
-const ARTICLE_DECK = "Across GDP, lodging revenue and hospitality jobs, Napa’s growth has been a price story — and a supply expansion now under way could push that pattern further before it bends.";
+const ARTICLE_TITLE = "Napa Valley Adds Rooms While Demand Lags";
+const ARTICLE_DECK = "Data shows Napa County hotel revenue up year to date, but gains are driven more by higher rates than by a meaningful increase in room demand. Occupancy remains well below 2019 and Napa’s year-to-date occupancy growth is the slowest among major California regions, pointing to a recovery stalled on volume even as prices hold. Against that backdrop, downtown projects are under construction and approvals continue. The result is a market expanding on the supply side while demand lags.";
 const ARTICLE_PUBLICATION = "Napa Valley Features";
 const ARTICLE_DATE = "May 2, 2026";
 const POLL_IDS = [33, 34, 35]; // eslint-disable-line no-unused-vars
@@ -55,6 +57,89 @@ const prose = {
   marginBottom: 18,
 };
 
+// ── GDP CHART DATA (verbatim from under-the-hood-gdp-2024.jsx) ─────
+const GDP_YEARS    = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+const GDP_NOMINAL  = [10.75, 11.00, 11.21, 11.46, 11.21, 12.73, 12.76, 14.03, 14.59];
+const GDP_REAL     = [10.81, 11.00, 11.05, 11.00, 10.45, 11.46, 10.97, 11.22, 11.31];
+
+// Inflation-gap shading plugin (ported from napa-gdp-2024)
+const gdpGapPlugin = {
+  id: "gdpGapShading",
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    const nomMeta = chart.getDatasetMeta(0);
+    const realMeta = chart.getDatasetMeta(1);
+    if (!nomMeta.data.length || !realMeta.data.length) return;
+    ctx.save();
+    ctx.beginPath();
+    nomMeta.data.forEach((pt, i) => { if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y); });
+    for (let i = realMeta.data.length - 1; i >= 0; i--) ctx.lineTo(realMeta.data[i].x, realMeta.data[i].y);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(196,160,80,0.22)";
+    ctx.fill();
+    ctx.restore();
+  },
+};
+
+// ── BLS L&H DATA ───────────────────────────────────────────────────
+// 12-month trailing average of NAPA906LEIHN (NSA monthly), 1990-12 → 2026-02.
+// Source CSV: BLS via FRED (https://fred.stlouisfed.org/series/NAPA906LEIHN).
+const BLS_LH_TA = [
+  {d:"1990-12-01",v:5.88}, {d:"1991-01-01",v:5.88}, {d:"1991-02-01",v:5.89}, {d:"1991-03-01",v:5.92}, {d:"1991-04-01",v:5.92}, {d:"1991-05-01",v:5.92}, {d:"1991-06-01",v:5.91}, {d:"1991-07-01",v:5.91},
+  {d:"1991-08-01",v:5.88}, {d:"1991-09-01",v:5.88}, {d:"1991-10-01",v:5.86}, {d:"1991-11-01",v:5.83}, {d:"1991-12-01",v:5.8}, {d:"1992-01-01",v:5.79}, {d:"1992-02-01",v:5.81}, {d:"1992-03-01",v:5.82},
+  {d:"1992-04-01",v:5.8}, {d:"1992-05-01",v:5.79}, {d:"1992-06-01",v:5.77}, {d:"1992-07-01",v:5.77}, {d:"1992-08-01",v:5.77}, {d:"1992-09-01",v:5.75}, {d:"1992-10-01",v:5.75}, {d:"1992-11-01",v:5.75},
+  {d:"1992-12-01",v:5.73}, {d:"1993-01-01",v:5.72}, {d:"1993-02-01",v:5.71}, {d:"1993-03-01",v:5.69}, {d:"1993-04-01",v:5.7}, {d:"1993-05-01",v:5.72}, {d:"1993-06-01",v:5.73}, {d:"1993-07-01",v:5.71},
+  {d:"1993-08-01",v:5.69}, {d:"1993-09-01",v:5.68}, {d:"1993-10-01",v:5.66}, {d:"1993-11-01",v:5.65}, {d:"1993-12-01",v:5.65}, {d:"1994-01-01",v:5.65}, {d:"1994-02-01",v:5.64}, {d:"1994-03-01",v:5.63},
+  {d:"1994-04-01",v:5.62}, {d:"1994-05-01",v:5.61}, {d:"1994-06-01",v:5.62}, {d:"1994-07-01",v:5.63}, {d:"1994-08-01",v:5.64}, {d:"1994-09-01",v:5.64}, {d:"1994-10-01",v:5.64}, {d:"1994-11-01",v:5.64},
+  {d:"1994-12-01",v:5.66}, {d:"1995-01-01",v:5.67}, {d:"1995-02-01",v:5.67}, {d:"1995-03-01",v:5.67}, {d:"1995-04-01",v:5.71}, {d:"1995-05-01",v:5.75}, {d:"1995-06-01",v:5.77}, {d:"1995-07-01",v:5.81},
+  {d:"1995-08-01",v:5.85}, {d:"1995-09-01",v:5.89}, {d:"1995-10-01",v:5.93}, {d:"1995-11-01",v:5.97}, {d:"1995-12-01",v:5.98}, {d:"1996-01-01",v:6.01}, {d:"1996-02-01",v:6.04}, {d:"1996-03-01",v:6.08},
+  {d:"1996-04-01",v:6.12}, {d:"1996-05-01",v:6.14}, {d:"1996-06-01",v:6.19}, {d:"1996-07-01",v:6.23}, {d:"1996-08-01",v:6.26}, {d:"1996-09-01",v:6.29}, {d:"1996-10-01",v:6.35}, {d:"1996-11-01",v:6.41},
+  {d:"1996-12-01",v:6.48}, {d:"1997-01-01",v:6.52}, {d:"1997-02-01",v:6.58}, {d:"1997-03-01",v:6.63}, {d:"1997-04-01",v:6.67}, {d:"1997-05-01",v:6.73}, {d:"1997-06-01",v:6.76}, {d:"1997-07-01",v:6.79},
+  {d:"1997-08-01",v:6.82}, {d:"1997-09-01",v:6.86}, {d:"1997-10-01",v:6.9}, {d:"1997-11-01",v:6.93}, {d:"1997-12-01",v:6.96}, {d:"1998-01-01",v:6.96}, {d:"1998-02-01",v:6.93}, {d:"1998-03-01",v:6.93},
+  {d:"1998-04-01",v:6.98}, {d:"1998-05-01",v:7.0}, {d:"1998-06-01",v:7.04}, {d:"1998-07-01",v:7.07}, {d:"1998-08-01",v:7.12}, {d:"1998-09-01",v:7.16}, {d:"1998-10-01",v:7.16}, {d:"1998-11-01",v:7.17},
+  {d:"1998-12-01",v:7.2}, {d:"1999-01-01",v:7.25}, {d:"1999-02-01",v:7.33}, {d:"1999-03-01",v:7.4}, {d:"1999-04-01",v:7.43}, {d:"1999-05-01",v:7.47}, {d:"1999-06-01",v:7.5}, {d:"1999-07-01",v:7.52},
+  {d:"1999-08-01",v:7.52}, {d:"1999-09-01",v:7.52}, {d:"1999-10-01",v:7.56}, {d:"1999-11-01",v:7.58}, {d:"1999-12-01",v:7.59}, {d:"2000-01-01",v:7.62}, {d:"2000-02-01",v:7.63}, {d:"2000-03-01",v:7.66},
+  {d:"2000-04-01",v:7.65}, {d:"2000-05-01",v:7.63}, {d:"2000-06-01",v:7.61}, {d:"2000-07-01",v:7.62}, {d:"2000-08-01",v:7.64}, {d:"2000-09-01",v:7.66}, {d:"2000-10-01",v:7.64}, {d:"2000-11-01",v:7.64},
+  {d:"2000-12-01",v:7.66}, {d:"2001-01-01",v:7.68}, {d:"2001-02-01",v:7.73}, {d:"2001-03-01",v:7.77}, {d:"2001-04-01",v:7.83}, {d:"2001-05-01",v:7.9}, {d:"2001-06-01",v:7.98}, {d:"2001-07-01",v:8.03},
+  {d:"2001-08-01",v:8.1}, {d:"2001-09-01",v:8.14}, {d:"2001-10-01",v:8.2}, {d:"2001-11-01",v:8.24}, {d:"2001-12-01",v:8.28}, {d:"2002-01-01",v:8.27}, {d:"2002-02-01",v:8.25}, {d:"2002-03-01",v:8.21},
+  {d:"2002-04-01",v:8.18}, {d:"2002-05-01",v:8.15}, {d:"2002-06-01",v:8.12}, {d:"2002-07-01",v:8.11}, {d:"2002-08-01",v:8.09}, {d:"2002-09-01",v:8.08}, {d:"2002-10-01",v:8.07}, {d:"2002-11-01",v:8.06},
+  {d:"2002-12-01",v:8.04}, {d:"2003-01-01",v:8.07}, {d:"2003-02-01",v:8.07}, {d:"2003-03-01",v:8.08}, {d:"2003-04-01",v:8.1}, {d:"2003-05-01",v:8.12}, {d:"2003-06-01",v:8.14}, {d:"2003-07-01",v:8.16},
+  {d:"2003-08-01",v:8.17}, {d:"2003-09-01",v:8.22}, {d:"2003-10-01",v:8.25}, {d:"2003-11-01",v:8.29}, {d:"2003-12-01",v:8.35}, {d:"2004-01-01",v:8.37}, {d:"2004-02-01",v:8.39}, {d:"2004-03-01",v:8.42},
+  {d:"2004-04-01",v:8.42}, {d:"2004-05-01",v:8.43}, {d:"2004-06-01",v:8.46}, {d:"2004-07-01",v:8.47}, {d:"2004-08-01",v:8.5}, {d:"2004-09-01",v:8.51}, {d:"2004-10-01",v:8.53}, {d:"2004-11-01",v:8.53},
+  {d:"2004-12-01",v:8.52}, {d:"2005-01-01",v:8.51}, {d:"2005-02-01",v:8.51}, {d:"2005-03-01",v:8.49}, {d:"2005-04-01",v:8.51}, {d:"2005-05-01",v:8.52}, {d:"2005-06-01",v:8.51}, {d:"2005-07-01",v:8.51},
+  {d:"2005-08-01",v:8.51}, {d:"2005-09-01",v:8.51}, {d:"2005-10-01",v:8.5}, {d:"2005-11-01",v:8.51}, {d:"2005-12-01",v:8.51}, {d:"2006-01-01",v:8.5}, {d:"2006-02-01",v:8.48}, {d:"2006-03-01",v:8.47},
+  {d:"2006-04-01",v:8.43}, {d:"2006-05-01",v:8.42}, {d:"2006-06-01",v:8.41}, {d:"2006-07-01",v:8.42}, {d:"2006-08-01",v:8.41}, {d:"2006-09-01",v:8.42}, {d:"2006-10-01",v:8.44}, {d:"2006-11-01",v:8.47},
+  {d:"2006-12-01",v:8.49}, {d:"2007-01-01",v:8.54}, {d:"2007-02-01",v:8.59}, {d:"2007-03-01",v:8.65}, {d:"2007-04-01",v:8.73}, {d:"2007-05-01",v:8.8}, {d:"2007-06-01",v:8.87}, {d:"2007-07-01",v:8.91},
+  {d:"2007-08-01",v:8.96}, {d:"2007-09-01",v:9.0}, {d:"2007-10-01",v:9.03}, {d:"2007-11-01",v:9.06}, {d:"2007-12-01",v:9.08}, {d:"2008-01-01",v:9.11}, {d:"2008-02-01",v:9.12}, {d:"2008-03-01",v:9.12},
+  {d:"2008-04-01",v:9.15}, {d:"2008-05-01",v:9.16}, {d:"2008-06-01",v:9.17}, {d:"2008-07-01",v:9.18}, {d:"2008-08-01",v:9.19}, {d:"2008-09-01",v:9.22}, {d:"2008-10-01",v:9.24}, {d:"2008-11-01",v:9.25},
+  {d:"2008-12-01",v:9.26}, {d:"2009-01-01",v:9.25}, {d:"2009-02-01",v:9.25}, {d:"2009-03-01",v:9.24}, {d:"2009-04-01",v:9.21}, {d:"2009-05-01",v:9.17}, {d:"2009-06-01",v:9.11}, {d:"2009-07-01",v:9.07},
+  {d:"2009-08-01",v:9.01}, {d:"2009-09-01",v:8.93}, {d:"2009-10-01",v:8.89}, {d:"2009-11-01",v:8.86}, {d:"2009-12-01",v:8.84}, {d:"2010-01-01",v:8.83}, {d:"2010-02-01",v:8.83}, {d:"2010-03-01",v:8.83},
+  {d:"2010-04-01",v:8.84}, {d:"2010-05-01",v:8.88}, {d:"2010-06-01",v:8.92}, {d:"2010-07-01",v:8.98}, {d:"2010-08-01",v:9.07}, {d:"2010-09-01",v:9.14}, {d:"2010-10-01",v:9.2}, {d:"2010-11-01",v:9.26},
+  {d:"2010-12-01",v:9.31}, {d:"2011-01-01",v:9.36}, {d:"2011-02-01",v:9.41}, {d:"2011-03-01",v:9.47}, {d:"2011-04-01",v:9.53}, {d:"2011-05-01",v:9.59}, {d:"2011-06-01",v:9.66}, {d:"2011-07-01",v:9.69},
+  {d:"2011-08-01",v:9.75}, {d:"2011-09-01",v:9.83}, {d:"2011-10-01",v:9.88}, {d:"2011-11-01",v:9.95}, {d:"2011-12-01",v:10.01}, {d:"2012-01-01",v:10.06}, {d:"2012-02-01",v:10.12}, {d:"2012-03-01",v:10.2},
+  {d:"2012-04-01",v:10.27}, {d:"2012-05-01",v:10.34}, {d:"2012-06-01",v:10.42}, {d:"2012-07-01",v:10.47}, {d:"2012-08-01",v:10.52}, {d:"2012-09-01",v:10.55}, {d:"2012-10-01",v:10.59}, {d:"2012-11-01",v:10.63},
+  {d:"2012-12-01",v:10.67}, {d:"2013-01-01",v:10.7}, {d:"2013-02-01",v:10.74}, {d:"2013-03-01",v:10.77}, {d:"2013-04-01",v:10.81}, {d:"2013-05-01",v:10.87}, {d:"2013-06-01",v:10.91}, {d:"2013-07-01",v:10.97},
+  {d:"2013-08-01",v:11.03}, {d:"2013-09-01",v:11.09}, {d:"2013-10-01",v:11.16}, {d:"2013-11-01",v:11.23}, {d:"2013-12-01",v:11.33}, {d:"2014-01-01",v:11.45}, {d:"2014-02-01",v:11.53}, {d:"2014-03-01",v:11.62},
+  {d:"2014-04-01",v:11.7}, {d:"2014-05-01",v:11.74}, {d:"2014-06-01",v:11.79}, {d:"2014-07-01",v:11.81}, {d:"2014-08-01",v:11.81}, {d:"2014-09-01",v:11.81}, {d:"2014-10-01",v:11.83}, {d:"2014-11-01",v:11.85},
+  {d:"2014-12-01",v:11.87}, {d:"2015-01-01",v:11.89}, {d:"2015-02-01",v:11.93}, {d:"2015-03-01",v:11.97}, {d:"2015-04-01",v:12.02}, {d:"2015-05-01",v:12.08}, {d:"2015-06-01",v:12.12}, {d:"2015-07-01",v:12.22},
+  {d:"2015-08-01",v:12.33}, {d:"2015-09-01",v:12.42}, {d:"2015-10-01",v:12.49}, {d:"2015-11-01",v:12.56}, {d:"2015-12-01",v:12.61}, {d:"2016-01-01",v:12.62}, {d:"2016-02-01",v:12.65}, {d:"2016-03-01",v:12.67},
+  {d:"2016-04-01",v:12.72}, {d:"2016-05-01",v:12.72}, {d:"2016-06-01",v:12.72}, {d:"2016-07-01",v:12.72}, {d:"2016-08-01",v:12.72}, {d:"2016-09-01",v:12.71}, {d:"2016-10-01",v:12.7}, {d:"2016-11-01",v:12.71},
+  {d:"2016-12-01",v:12.72}, {d:"2017-01-01",v:12.75}, {d:"2017-02-01",v:12.78}, {d:"2017-03-01",v:12.8}, {d:"2017-04-01",v:12.8}, {d:"2017-05-01",v:12.82}, {d:"2017-06-01",v:12.86}, {d:"2017-07-01",v:12.9},
+  {d:"2017-08-01",v:12.95}, {d:"2017-09-01",v:13.0}, {d:"2017-10-01",v:13.03}, {d:"2017-11-01",v:13.04}, {d:"2017-12-01",v:13.08}, {d:"2018-01-01",v:13.11}, {d:"2018-02-01",v:13.15}, {d:"2018-03-01",v:13.19},
+  {d:"2018-04-01",v:13.24}, {d:"2018-05-01",v:13.29}, {d:"2018-06-01",v:13.33}, {d:"2018-07-01",v:13.33}, {d:"2018-08-01",v:13.35}, {d:"2018-09-01",v:13.37}, {d:"2018-10-01",v:13.41}, {d:"2018-11-01",v:13.44},
+  {d:"2018-12-01",v:13.49}, {d:"2019-01-01",v:13.52}, {d:"2019-02-01",v:13.53}, {d:"2019-03-01",v:13.55}, {d:"2019-04-01",v:13.56}, {d:"2019-05-01",v:13.58}, {d:"2019-06-01",v:13.61}, {d:"2019-07-01",v:13.63},
+  {d:"2019-08-01",v:13.66}, {d:"2019-09-01",v:13.68}, {d:"2019-10-01",v:13.7}, {d:"2019-11-01",v:13.72}, {d:"2019-12-01",v:13.71}, {d:"2020-01-01",v:13.72}, {d:"2020-02-01",v:13.72}, {d:"2020-03-01",v:13.67},
+  {d:"2020-04-01",v:12.92}, {d:"2020-05-01",v:12.23}, {d:"2020-06-01",v:11.71}, {d:"2020-07-01",v:11.28}, {d:"2020-08-01",v:10.83}, {d:"2020-09-01",v:10.38}, {d:"2020-10-01",v:9.97}, {d:"2020-11-01",v:9.57},
+  {d:"2020-12-01",v:9.11}, {d:"2021-01-01",v:8.51}, {d:"2021-02-01",v:8.06}, {d:"2021-03-01",v:7.72}, {d:"2021-04-01",v:8.12}, {d:"2021-05-01",v:8.5}, {d:"2021-06-01",v:8.73}, {d:"2021-07-01",v:8.93},
+  {d:"2021-08-01",v:9.17}, {d:"2021-09-01",v:9.42}, {d:"2021-10-01",v:9.66}, {d:"2021-11-01",v:9.89}, {d:"2021-12-01",v:10.2}, {d:"2022-01-01",v:10.66}, {d:"2022-02-01",v:10.97}, {d:"2022-03-01",v:11.26},
+  {d:"2022-04-01",v:11.51}, {d:"2022-05-01",v:11.73}, {d:"2022-06-01",v:11.92}, {d:"2022-07-01",v:12.1}, {d:"2022-08-01",v:12.26}, {d:"2022-09-01",v:12.38}, {d:"2022-10-01",v:12.5}, {d:"2022-11-01",v:12.62},
+  {d:"2022-12-01",v:12.72}, {d:"2023-01-01",v:12.82}, {d:"2023-02-01",v:12.91}, {d:"2023-03-01",v:12.98}, {d:"2023-04-01",v:13.05}, {d:"2023-05-01",v:13.11}, {d:"2023-06-01",v:13.17}, {d:"2023-07-01",v:13.22},
+  {d:"2023-08-01",v:13.23}, {d:"2023-09-01",v:13.26}, {d:"2023-10-01",v:13.28}, {d:"2023-11-01",v:13.28}, {d:"2023-12-01",v:13.28}, {d:"2024-01-01",v:13.28}, {d:"2024-02-01",v:13.27}, {d:"2024-03-01",v:13.25},
+  {d:"2024-04-01",v:13.24}, {d:"2024-05-01",v:13.23}, {d:"2024-06-01",v:13.22}, {d:"2024-07-01",v:13.22}, {d:"2024-08-01",v:13.25}, {d:"2024-09-01",v:13.26}, {d:"2024-10-01",v:13.28}, {d:"2024-11-01",v:13.3},
+  {d:"2024-12-01",v:13.3}, {d:"2025-01-01",v:13.32}, {d:"2025-02-01",v:13.33}, {d:"2025-03-01",v:13.33}, {d:"2025-04-01",v:13.32}, {d:"2025-05-01",v:13.32}, {d:"2025-06-01",v:13.31}, {d:"2025-07-01",v:13.28},
+  {d:"2025-08-01",v:13.26}, {d:"2025-09-01",v:13.23}, {d:"2025-10-01",v:13.21}, {d:"2025-11-01",v:13.21}, {d:"2025-12-01",v:13.23}, {d:"2026-01-01",v:13.27}, {d:"2026-02-01",v:13.32},
+];
+
 const h2style = {
   fontFamily: serif,
   fontSize: 22,
@@ -85,10 +170,39 @@ function L({ href, children }) {
 }
 
 // ── DOWNLOAD HELPER ────────────────────────────────────────────────
+// onclone: replace any <input type="range"> in the cloned DOM with a
+// styled visual representation. html2canvas cannot render native range
+// inputs reliably; without this they capture as blank rectangles.
 async function downloadComponentPng(containerRef, filename, title) {
   if (!containerRef.current) return;
   const { default: html2canvas } = await import("html2canvas");
-  const canvas = await html2canvas(containerRef.current, { scale: 2, useCORS: true, backgroundColor: T.bg });
+  const canvas = await html2canvas(containerRef.current, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: T.bg,
+    onclone: (clonedDoc) => {
+      clonedDoc.querySelectorAll('input[type="range"]').forEach((input) => {
+        const min = parseFloat(input.min);
+        const max = parseFloat(input.max);
+        const val = parseFloat(input.value);
+        const pct = ((val - min) / (max - min)) * 100;
+        const wrapper = clonedDoc.createElement("div");
+        wrapper.style.cssText = `position: relative; height: 8px; background: #DDD5C7; border-radius: 4px; margin: 18px 0 22px;`;
+        const fill = clonedDoc.createElement("div");
+        fill.style.cssText = `position: absolute; left: 0; top: 0; height: 100%; width: ${pct}%; background: ${T.accent}; border-radius: 4px;`;
+        const marker = clonedDoc.createElement("div");
+        marker.style.cssText = `position: absolute; left: ${pct}%; top: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; background: ${T.gold}; border: 2px solid ${T.ink}; border-radius: 50%;`;
+        const valueLabel = clonedDoc.createElement("div");
+        valueLabel.style.cssText = `position: absolute; left: ${pct}%; top: -22px; transform: translateX(-50%); font-family: 'Source Code Pro', monospace; font-size: 11px; color: ${T.ink}; font-weight: 600; white-space: nowrap;`;
+        const sign = val > 0 ? "+" : "";
+        valueLabel.textContent = `${sign}${val}%`;
+        wrapper.appendChild(fill);
+        wrapper.appendChild(marker);
+        wrapper.appendChild(valueLabel);
+        if (input.parentElement) input.parentElement.replaceChild(wrapper, input);
+      });
+    },
+  });
   const off = document.createElement("canvas");
   off.width = canvas.width;
   off.height = canvas.height + 80;
@@ -649,12 +763,307 @@ function ChartThree() {
   );
 }
 
+// ── CHART GDP — Nominal vs. Real GDP, Napa County, 2016–2024 ──────
+function ChartGdp() {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: GDP_YEARS.map(String),
+        datasets: [
+          {
+            label: "Nominal GDP",
+            data: GDP_NOMINAL,
+            borderColor: "#2c5f8a",
+            backgroundColor: "#2c5f8a",
+            borderWidth: 2.5,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: "#2c5f8a",
+            fill: false,
+          },
+          {
+            label: "Real GDP (chained 2017$)",
+            data: GDP_REAL,
+            borderColor: "#4a6741",
+            backgroundColor: "#4a6741",
+            borderWidth: 2.5,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: "#4a6741",
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: "bottom", labels: { color: T.ink, font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              afterBody(items) {
+                if (items.length < 2) return "";
+                const nom = items.find((i) => i.datasetIndex === 0);
+                const real = items.find((i) => i.datasetIndex === 1);
+                if (nom && real) {
+                  const gap = (nom.parsed.y - real.parsed.y).toFixed(2);
+                  return `Inflation gap: $${gap}B`;
+                }
+                return "";
+              },
+            },
+          },
+        },
+        scales: {
+          y: {
+            min: 9.5,
+            max: 15.0,
+            ticks: { callback: (v) => `$${v.toFixed(1)}B`, color: T.muted, font: { size: 11 } },
+            grid: { color: T.rule },
+          },
+          x: {
+            ticks: { color: T.muted, font: { size: 11 } },
+            grid: { color: T.rule },
+          },
+        },
+      },
+      plugins: [gdpGapPlugin],
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Nominal vs. Real GDP — Napa County, 2016–2024</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <div style={{ position: "relative", height: 320 }}>
+          <canvas ref={canvasRef} id="chart-gdp" />
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-gdp_napa-lodging-pricing-2026_nvf.png", "Nominal vs. Real GDP — Napa County, 2016–2024")} />
+      <p style={{ fontFamily: font, fontSize: 13, color: T.muted, fontStyle: "italic", lineHeight: 1.55, margin: "14px 0 0", maxWidth: 680 }}>
+        <strong style={{ fontWeight: 700, fontStyle: "italic" }}>Nominal vs. Real GDP — Napa County, 2016–2024.</strong>{" "}
+        Nominal GDP (blue) vs. real GDP in chained 2017 dollars (green), with inflation gap shaded.{" "}
+        Source: Bureau of Economic Analysis via FRED — <a href="https://fred.stlouisfed.org/series/GDPALL06055" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>GDPALL06055</a> (nominal),{" "}
+        <a href="https://fred.stlouisfed.org/series/REALGDPALL06055" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>REALGDPALL06055</a> (real).{" "}
+        Full analysis in <a href="/under-the-hood/napa-gdp-2024" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>{"“Under the Hood: Napa Valley’s Economy Looks Bigger Than It Is” (March 24, 2026)"}</a>.
+      </p>
+    </div>
+  );
+}
+
+// ── CHART BLS — Napa MSA L&H Employment: Actual vs. Trendlines to 2035 ──
+function ChartBlsTrendlines() {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+
+    const toYear = (d) => {
+      const [y, m] = d.split("-");
+      return parseInt(y, 10) + (parseInt(m, 10) - 1) / 12;
+    };
+
+    const actualData = BLS_LH_TA.map((p) => ({ x: toYear(p.d), y: p.v }));
+
+    const A09 = BLS_LH_TA.find((p) => p.d === "2009-09-01");
+    const A19 = BLS_LH_TA.find((p) => p.d === "2019-06-01");
+    const A25 = BLS_LH_TA.find((p) => p.d === "2025-06-01");
+    const x09 = toYear(A09.d);
+    const x19 = toYear(A19.d);
+    const x25 = toYear(A25.d);
+    const x35 = 2035 + 11 / 12;
+
+    const slopeA = (A19.v - A09.v) / (x19 - x09);
+    const slopeB = (A25.v - A19.v) / (x25 - x19);
+
+    const yA_2035 = A09.v + slopeA * (x35 - x09);
+    const yB_2035 = A19.v + slopeB * (x35 - x19);
+
+    const projA = [
+      { x: x09, y: A09.v },
+      { x: x35, y: yA_2035 },
+    ];
+    const projB = [
+      { x: x19, y: A19.v },
+      { x: x35, y: yB_2035 },
+    ];
+
+    const fmt1 = (n) => n.toFixed(1);
+
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "line",
+      data: {
+        datasets: [
+          {
+            label: "Actual employment (12-month trailing avg)",
+            data: actualData,
+            borderColor: "#5C3A21",
+            backgroundColor: "#5C3A21",
+            borderWidth: 1.5,
+            pointRadius: 0,
+            tension: 0.1,
+          },
+          {
+            label: "If 2009–2019 slope continued",
+            data: projA,
+            borderColor: "#4A7A5C",
+            backgroundColor: "#4A7A5C",
+            borderWidth: 2,
+            borderDash: [8, 4],
+            pointRadius: 0,
+          },
+          {
+            label: "If 2019–2025 trend continues",
+            data: projB,
+            borderColor: "#A0522D",
+            backgroundColor: "#A0522D",
+            borderWidth: 2,
+            borderDash: [8, 4],
+            pointRadius: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        parsing: false,
+        plugins: {
+          legend: { display: true, position: "bottom", labels: { color: T.ink, font: { size: 11 }, boxWidth: 24 } },
+          tooltip: { enabled: true, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}k` } },
+          annotation: {
+            annotations: {
+              p2009: { type: "point", xValue: x09, yValue: A09.v, backgroundColor: "#5C3A21", borderColor: "#5C3A21", radius: 4 },
+              p2009label: {
+                type: "label", xValue: x09, yValue: A09.v,
+                content: `Sep 2009: ${fmt1(A09.v)}k`,
+                font: { size: 10, family: "monospace", weight: "600" },
+                color: T.ink, backgroundColor: "rgba(245,240,232,0.85)", padding: 3,
+                xAdjust: 50, yAdjust: -16,
+              },
+              p2019: { type: "point", xValue: x19, yValue: A19.v, backgroundColor: "#5C3A21", borderColor: "#5C3A21", radius: 4 },
+              p2019label: {
+                type: "label", xValue: x19, yValue: A19.v,
+                content: `Jun 2019: ${fmt1(A19.v)}k`,
+                font: { size: 10, family: "monospace", weight: "600" },
+                color: T.ink, backgroundColor: "rgba(245,240,232,0.85)", padding: 3,
+                xAdjust: -10, yAdjust: -18,
+              },
+              p2025: { type: "point", xValue: x25, yValue: A25.v, backgroundColor: "#5C3A21", borderColor: "#5C3A21", radius: 4 },
+              p2025label: {
+                type: "label", xValue: x25, yValue: A25.v,
+                content: `Jun 2025: ${fmt1(A25.v)}k`,
+                font: { size: 10, family: "monospace", weight: "600" },
+                color: T.ink, backgroundColor: "rgba(245,240,232,0.85)", padding: 3,
+                xAdjust: 0, yAdjust: 18,
+              },
+              endA: {
+                type: "label", xValue: x35, yValue: yA_2035,
+                content: `2035 if 2009–2019 slope: ${fmt1(yA_2035)}k`,
+                font: { size: 10, family: "monospace", weight: "600" },
+                color: "#4A7A5C", backgroundColor: "rgba(245,240,232,0.85)", padding: 3,
+                xAdjust: -90, yAdjust: -8,
+              },
+              endB: {
+                type: "label", xValue: x35, yValue: yB_2035,
+                content: `2035 if 2019–2025 trend: ${fmt1(yB_2035)}k`,
+                font: { size: 10, family: "monospace", weight: "600" },
+                color: "#A0522D", backgroundColor: "rgba(245,240,232,0.85)", padding: 3,
+                xAdjust: -90, yAdjust: 14,
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            type: "linear",
+            min: 1990,
+            max: 2036,
+            ticks: {
+              stepSize: 5,
+              color: T.muted,
+              font: { size: 11 },
+              callback: (v) => (Number.isInteger(v) && v % 5 === 0 ? String(v) : null),
+            },
+            grid: { color: T.rule },
+          },
+          y: {
+            min: 0,
+            max: 25,
+            ticks: { stepSize: 2.5, color: T.muted, font: { size: 11 }, callback: (v) => `${v}k` },
+            grid: { color: T.rule },
+            title: {
+              display: true,
+              text: "Employment (Thousands of Persons, 12-month trailing average)",
+              color: T.muted,
+              font: { size: 11 },
+            },
+          },
+        },
+      },
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Napa MSA Leisure & Hospitality Employment — Actual vs. Trendlines to 2035</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <div style={{ position: "relative", height: 360 }}>
+          <canvas ref={canvasRef} id="chart-bls-trendlines" />
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-bls-trendlines_napa-lodging-pricing-2026_nvf.png", "Napa MSA Leisure & Hospitality Employment — Actual vs. Trendlines to 2035")} />
+      <p style={{ fontFamily: font, fontSize: 13, color: T.muted, fontStyle: "italic", lineHeight: 1.55, margin: "14px 0 0", maxWidth: 680 }}>
+        <strong style={{ fontWeight: 700, fontStyle: "italic" }}>Napa MSA leisure and hospitality employment: 12-month trailing average vs. projected (2009–2035).</strong>{" "}
+        The trailing average rose from roughly 8,900 in 2009 to 13,600 in mid-2019, a trend that implied roughly 21,500 jobs by 2035 if continued. Instead, the trailing average plateaued near 13,300 in 2025, leaving a substantial gap relative to that earlier trend.{" "}
+        Source: BLS (<a href="https://fred.stlouisfed.org/series/NAPA906LEIHN" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>NAPA906LEIHN</a>), author’s analysis.
+      </p>
+    </div>
+  );
+}
+
 // ── CHART 4 — Three-Surface Scenario Calculator (interactive) ──────
 function ScenarioCalculator() {
   const containerRef = useRef(null);
   const [adr, setAdr] = useState(0);          // Δ ADR  −/+ 10
   const [vis, setVis] = useState(-5);         // Δ Visitors −/+ 20
   const BASE_REV_M = 352;                     // Q1 2026 revenue $88M annualized
+
+  // If user hasn't moved sliders off the no-change scenario (0/0), force
+  // a representative default (+5%/-5%) before capture, then restore. This
+  // ensures the downloaded PNG always shows a meaningful scenario rather
+  // than a flat zero-delta snapshot.
+  const handleDownload = async () => {
+    const wasZero = adr === 0 && vis === 0;
+    const restoreAdr = adr;
+    const restoreVis = vis;
+    if (wasZero) {
+      setAdr(5);
+      setVis(-5);
+      // Wait two animation frames so React commits + the DOM repaints
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    }
+    await downloadComponentPng(
+      containerRef,
+      "chart-4_napa-lodging-pricing-2026_nvf.png",
+      "Three-surface scenario calculator — Napa lodging, jobs and GDP impact"
+    );
+    if (wasZero) {
+      setAdr(restoreAdr);
+      setVis(restoreVis);
+    }
+  };
 
   const newRevM = BASE_REV_M * (1 + adr / 100) * (1 + vis / 100);
   const revDeltaM = newRevM - BASE_REV_M;
@@ -732,7 +1141,7 @@ function ScenarioCalculator() {
           Directional estimates only {"—"} not a BEA or county economic forecast. Inputs model first-order changes against Q1 2026 baselines. Multiplier and per-room assumptions documented in source notes.
         </p>
       </div>
-      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-4_napa-lodging-pricing-2026_nvf.png", "Three-surface scenario calculator — Napa lodging, jobs and GDP impact")} />
+      <DownloadButton onClick={handleDownload} />
       <Caption
         title="Three-surface scenario calculator"
         description={"Adjust the rate and visitor sliders to model first-order changes to lodging revenue, hospitality jobs and indirect GDP impact. Asset base: Q1 2026 STR data."}
@@ -829,7 +1238,7 @@ export default function UnderTheHoodNapaLodgingPricing() {
         </p>
 
         <p style={prose}>
-          Of every dollar of apparent growth in Napa County’s gross domestic product since 2016, roughly 87 cents was inflation. The remaining 13 cents was real output. That is the figure this piece takes as its title because it is the figure most likely to recur {"—"} and it is now recurring on a second surface, on a third, and increasingly visibly on a fourth: the supply of rooms and tasting capacity now in or moving through the pipeline.
+          Of every dollar of apparent growth in Napa County’s gross domestic product since 2016, roughly 87 cents was inflation. The remaining 13 cents was real output. The 87-cent figure is the one most likely to recur {"—"} and it is now recurring on a second surface, on a third, and increasingly visibly on a fourth: the supply of rooms and tasting capacity now in or moving through the pipeline.
         </p>
 
         {/* ── CHART 1 ─────────────────────────────────────────────── */}
@@ -841,7 +1250,7 @@ export default function UnderTheHoodNapaLodgingPricing() {
         <h2 id="forecast" style={h2style}>A Forecast That Landed</h2>
 
         <p style={prose}>
-          <L href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between">In October 2023, Napa Valley Features described</L> a region caught between a luxury-positioning strategy and a structural decline in volume. <L href="https://napavalleyfocus.substack.com/p/under-the-hood-napas-tasting-rooms">In July 2025, this column ran the arithmetic of tasting rooms</L> {"—"} what it would actually take to recover 2023 revenue at 2025 order values {"—"} and found the figures untenable. <L href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled">In August 2025, the column documented</L> what had happened to hospitality employment since 2019: room counts up, jobs down. <L href="https://napavalleyfocus.substack.com/p/under-the-hood-price-continues-to">In January 2026, the column showed</L> the same pattern in the lodging revenue line: rate up, demand sluggish. <L href="https://napavalleyfocus.substack.com/p/when-room-price-can-no-longer-carry">In March 2026, the column noted the first simultaneous decline</L> in both occupancy and ADR since the pandemic. Two weeks later, in a different piece, <L href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-valleys-economy">the column ran the GDP arithmetic</L>. Nominal county output had risen 35.8% since 2016. Real output had risen 4.6%. The remainder was the price level adjusting upward.
+          In <L href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between">{"“Napa Valley finds itself between a rock and a hard place” (October 3, 2023)"}</L>, this publication described a region caught between a luxury-positioning strategy and a structural decline in volume. In <L href="https://napavalleyfocus.substack.com/p/under-the-hood-napas-tasting-rooms">{"“Under the Hood: Napa’s Tasting Rooms Face a Numbers Problem” (July 5, 2025)"}</L>, the column ran the arithmetic of tasting rooms {"—"} what it would actually take to recover 2023 revenue at 2025 order values {"—"} and found the figures untenable. In <L href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled">{"“Under the Hood: More Rooms Has Equaled Fewer Jobs in Napa County” (August 23, 2025)"}</L>, the column documented what had happened to hospitality employment since 2019: room counts up, jobs down. In <L href="https://napavalleyfocus.substack.com/p/under-the-hood-price-continues-to">{"“Under the Hood: Price Continues to Carry Napa Hotel Market as Room-Night Demand Lags” (January 9, 2026)"}</L>, the column showed the same pattern in the lodging revenue line: rate up, demand sluggish. In <L href="https://napavalleyfocus.substack.com/p/when-room-price-can-no-longer-carry">{"“Under the Hood: When Room Price Can No Longer Carry the Load” (March 12, 2026)"}</L>, the column noted the first simultaneous decline in both occupancy and ADR since the pandemic. Two weeks later, in <L href="/under-the-hood/napa-gdp-2024">{"“Under the Hood: Napa Valley’s Economy Looks Bigger Than It Is” (March 24, 2026)"}</L>, the column ran the GDP arithmetic. Nominal county output had risen 35.8% since 2016. Real output had risen 4.6%. The remainder was the price level adjusting upward.
         </p>
 
         <p style={prose}>
@@ -860,6 +1269,9 @@ export default function UnderTheHoodNapaLodgingPricing() {
         <p style={prose}>
           <strong>Surface one: gross domestic product.</strong> Napa County’s nominal GDP rose from $10.75 billion in 2016 to $14.59 billion in 2024, an apparent gain of $3.84 billion. Adjusted for inflation, the same economy grew 4.6% {"—"} a real increase of roughly $500 million. The gap, about $3.34 billion or 87% of the apparent growth, was the price level adjusting upward. The county’s deflator rose 29% since 2017. A worker earning the county’s 2022 average wage of $67,518 needs roughly $87,000 today to maintain equivalent purchasing power. From the county’s perspective, nominal revenues, sales tax receipts and transient occupancy collections look stable. From a worker’s perspective, the same dollars buy substantially less. Both are true simultaneously.
         </p>
+
+        {/* ── CHART GDP (nominal vs. real GDP) ────────────────────── */}
+        <ChartGdp />
 
         <p style={prose}>
           <strong>Surface two: lodging revenue.</strong> Through March 2026, Napa County hotels sold 258,248 room-nights, an increase of 2.3% over the same period last year. Total revenue rose 5% to $88.0 million. Average daily rate rose 2.6%. Supply expanded 0.5%. Revenue per available room rose 4.4%, and most of that increase reflects what hotels charged rather than how many rooms they sold. Earlier installments in this series demonstrated the same pattern at the annual level: in 2025, hotel revenue exceeded recent years even though demand was below pre-pandemic baselines. The Q1 2026 figures continue that trajectory. Napa County’s YTD occupancy at 54.4% remains roughly 17 percentage points below the 71.1% recorded in 2019.
@@ -884,6 +1296,9 @@ export default function UnderTheHoodNapaLodgingPricing() {
         <p style={prose}>
           <strong>Surface three: hospitality employment.</strong> Between 2019 and 2025, Napa County added approximately 382 hotel rooms {"—"} a 7.6% increase in lodging supply. During the same period, the leisure and hospitality sector lost approximately 200 jobs, and the restaurant and bar subsector lost approximately 470 jobs. The combined figure is 670 jobs subtracted from the visitor economy while 382 rooms were added to it. From 2009 through 2019, more rooms in Napa County had reliably meant more jobs. Since 2019, that relationship has reversed. Larger resorts operate with leaner per-guest staffing. On-property dining, retail and tasting capture spending that previously circulated to independent operators. Higher per-room revenue can coexist with {"—"} and contribute to {"—"} fewer per-room jobs.
         </p>
+
+        {/* ── CHART BLS TRENDLINES (actual vs. projected to 2035) ── */}
+        <ChartBlsTrendlines />
 
         <p style={prose}>
           Three surfaces. One arithmetic.
