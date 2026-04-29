@@ -278,6 +278,30 @@ function ChartOne() {
       }));
     }
 
+    if (c2.current) {
+      charts.current.push(new Chart(c2.current.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: ["Revenue", "Demand"],
+          datasets: [{
+            data: [23.2, -4.4],
+            backgroundColor: [T.accent, T.muted],
+            borderRadius: 3,
+          }],
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => (ctx.parsed.x > 0 ? "+" : "") + ctx.parsed.x + "%" } } },
+          scales: {
+            x: { beginAtZero: true, min: -10, max: 30, ticks: { callback: (v) => v + "%", color: T.muted, font: { size: 11 } }, grid: { color: T.rule } },
+            y: { ticks: { color: T.ink, font: { size: 12, weight: "bold" } }, grid: { display: false } },
+          },
+        },
+      }));
+    }
+
     if (c3.current) {
       charts.current.push(new Chart(c3.current.getContext("2d"), {
         type: "bar",
@@ -322,13 +346,8 @@ function ChartOne() {
           </div>
           <div style={panelStyle}>
             <div style={panelTitle}>Lodging since 2019</div>
-            <div style={{ ...canvasWrap, display: "flex", alignItems: "center", justifyContent: "center", padding: 8, background: T.surface, border: `1px dashed ${T.border}`, borderRadius: 3 }}>
-              <div style={{ fontFamily: font, fontSize: 12, color: T.muted, textAlign: "center", lineHeight: 1.45 }}>
-                <strong style={{ color: T.ink, display: "block", marginBottom: 4 }}>Coming soon</strong>
-                Q1 2019 baseline pending
-              </div>
-            </div>
-            <div style={panelNote}>Revenue vs. demand</div>
+            <div style={canvasWrap}><canvas ref={c2} id="chart-1-panel-b" /></div>
+            <div style={panelNote}>Gap: 27.6 pp</div>
           </div>
           <div style={panelStyle}>
             <div style={panelTitle}>Rooms vs Jobs since 2019</div>
@@ -336,8 +355,6 @@ function ChartOne() {
             <div style={panelNote}>+382 rooms {"·"} {"−"}670 jobs</div>
           </div>
         </div>
-        {/* Hidden canvas to keep ref allocated for symmetry */}
-        <canvas ref={c2} id="chart-1-panel-b" style={{ display: "none" }} />
       </div>
       <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-1_napa-lodging-pricing-2026_nvf.png", "Three surfaces, one pattern: Napa County, 2016–2026")} />
       <Caption
@@ -345,7 +362,7 @@ function ChartOne() {
         description={"Across GDP, lodging revenue and hospitality jobs, the post-2019 decade has produced apparent growth driven by price, not volume."}
         sources={[
           { label: "Bureau of Economic Analysis (FRED)", url: "https://fred.stlouisfed.org/series/GDPALL06055" },
-          { label: "Smith Travel Research data via industry monthly reporting", url: "https://www.visitnapavalley.com/" },
+          { label: "Smith Travel Research data via Visit Napa Valley monthly reports", url: "https://www.visitnapavalley.com/" },
           { label: "Bureau of Labor Statistics", url: "https://www.bls.gov/" },
         ]}
       />
@@ -353,22 +370,218 @@ function ChartOne() {
   );
 }
 
-// ── CHART 2 — Demand vs. Rate, Q1 2019 → Q1 2026 (HOLD) ────────────
+// ── CHART 2 — Demand vs. Rate, 2019 → 2025 (annual indexed) ────────
 function ChartTwo() {
   const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+    const labels = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+    const demand = [100.0, 53.6, 82.8, 92.3, 90.9, 93.3, 95.6];
+    const adr = [100.0, 78.5, 118.2, 137.9, 131.2, 127.7, 128.9];
+    const baselinePlugin = {
+      id: "ct2_baseline",
+      afterDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        if (!chartArea || !scales.y) return;
+        const y = scales.y.getPixelForValue(100);
+        ctx.save();
+        ctx.strokeStyle = T.gold;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, y);
+        ctx.lineTo(chartArea.right, y);
+        ctx.stroke();
+        ctx.restore();
+      },
+    };
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Demand (rooms sold)",
+            data: demand,
+            borderColor: T.muted,
+            backgroundColor: T.muted,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointBackgroundColor: T.muted,
+            fill: false,
+            tension: 0.25,
+          },
+          {
+            label: "ADR",
+            data: adr,
+            borderColor: T.accent,
+            backgroundColor: T.accent,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointBackgroundColor: T.accent,
+            fill: false,
+            tension: 0.25,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: { boxWidth: 12, boxHeight: 2, color: T.ink, font: { size: 12 } },
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const idx = ctx.dataIndex;
+                if (ctx.dataset.label === "Demand (rooms sold)") {
+                  return `Demand index: ${demand[idx].toFixed(1)} (2019 = 100)`;
+                }
+                return `ADR index: ${adr[idx].toFixed(1)} (2019 = 100)`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: { ticks: { color: T.muted, font: { size: 12 } }, grid: { color: T.rule } },
+          y: {
+            min: 0,
+            max: 150,
+            ticks: { stepSize: 50, color: T.muted, font: { size: 11 } },
+            grid: { color: T.rule },
+          },
+        },
+      },
+      plugins: [baselinePlugin],
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
   return (
     <div style={{ marginBottom: 48 }}>
-      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>{"Demand vs. Rate, Q1 2019 → Q1 2026"}</h2>
-      <div ref={containerRef} style={{ background: T.surface, border: `1px dashed ${T.border}`, borderRadius: 4, padding: "32px 20px", textAlign: "center" }}>
-        <p style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, marginBottom: 8 }}>Q1 demand-vs-rate decomposition</p>
-        <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.55 }}>Chart populating before publish. STR Q1 archives 2019, 2022, 2023, 2024, 2025, 2026 indexed to Q1 2019 = 100.</p>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>{"Demand vs. Rate, 2019 → 2025"}</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, borderRadius: 4, padding: "20px 16px" }}>
+        <div style={{ position: "relative", height: 280 }}>
+          <canvas ref={canvasRef} id="chart-2" />
+        </div>
       </div>
-      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-2_napa-lodging-pricing-2026_nvf.png", "Demand vs. rate, indexed to Q1 2019 = 100")} />
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-2_napa-lodging-pricing-2026_nvf.png", "Demand vs. rate, indexed to 2019 = 100")} />
       <Caption
-        title="Demand and rate, indexed to Q1 2019"
-        description={"The two lines diverged sharply after 2021. Hotel rates carried the post-pandemic recovery; demand has not closed the gap."}
+        title="Demand and rate, indexed to 2019"
+        description={"Across six years, ADR rose 29 percent while demand fell 4 percent. The two lines diverged in 2021 and have not reconverged."}
         sources={[
-          { label: "Smith Travel Research data via industry monthly reporting", url: "https://www.visitnapavalley.com/" },
+          { label: "Smith Travel Research data via Visit Napa Valley monthly reports", url: "https://www.visitnapavalley.com/" },
+        ]}
+      />
+    </div>
+  );
+}
+
+// ── CHART 2B — Monthly Pace to 2019, 2025 (vertical bar) ──────────
+function ChartMonthlyPace() {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const values = [87, 86, 94, 95, 99, 96, 99, 99, 96, 103, 98, 92];
+    const colors = values.map(v => v >= 100 ? T.accent : T.muted);
+
+    const baselineAndLabels = {
+      id: "ct2b_baseline_labels",
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        if (!chartArea || !scales.y) return;
+
+        // Reference line at y = 100
+        const y = scales.y.getPixelForValue(100);
+        ctx.save();
+        ctx.strokeStyle = T.gold;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, y);
+        ctx.lineTo(chartArea.right, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // Right-side label
+        ctx.font = "11px 'Source Sans 3', sans-serif";
+        ctx.fillStyle = T.gold;
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("2019 baseline", chartArea.right - 4, y - 2);
+        ctx.restore();
+
+        // Bar value labels
+        const meta = chart.getDatasetMeta(0);
+        ctx.save();
+        ctx.font = "11px 'Source Sans 3', sans-serif";
+        ctx.fillStyle = T.ink;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        meta.data.forEach((bar, i) => {
+          const v = values[i];
+          ctx.fillText(String(v), bar.x, bar.y - 4);
+        });
+        ctx.restore();
+      },
+    };
+
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: months,
+        datasets: [{
+          data: values,
+          backgroundColor: colors,
+          borderRadius: 3,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y}% of 2019` } },
+        },
+        scales: {
+          x: { ticks: { color: T.ink, font: { size: 12 } }, grid: { display: false } },
+          y: {
+            min: 80,
+            max: 110,
+            ticks: { stepSize: 10, color: T.muted, font: { size: 11 } },
+            grid: { color: T.rule },
+          },
+        },
+      },
+      plugins: [baselineAndLabels],
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Monthly Pace to 2019, 2025</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, borderRadius: 4, padding: "20px 16px" }}>
+        <div style={{ position: "relative", height: 280 }}>
+          <canvas ref={canvasRef} id="chart-monthly-pace" />
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "napa-lodging-monthly-pace-2019-2025.png", "Napa County Lodging — Monthly Pace to 2019, 2025")} />
+      <Caption
+        title="Monthly pace to 2019"
+        description={"Each bar shows 2025 demand as a share of 2019 demand for that month. Only October exceeded the 2019 baseline. January and February remained the weakest months."}
+        sources={[
+          { label: "Smith Travel Research, December 2025 YTD report (Visit Napa Valley)", url: "https://www.visitnapavalley.com/" },
         ]}
       />
     </div>
@@ -648,10 +861,23 @@ export default function UnderTheHoodNapaLodgingPricing() {
         </p>
 
         <p style={prose}>
-          <strong>Surface two: lodging revenue.</strong> Through March 2026, Napa County hotels sold 258,248 room-nights, an increase of 2.3% over the same period last year. Total revenue rose 5% to $88.0 million. Average daily rate rose 2.6%. Supply expanded 0.5%. Revenue per available room rose 4.4%, and most of that increase reflects what hotels charged rather than how many rooms they sold. Earlier installments in this series demonstrated the same pattern at the annual level: in 2025, hotel revenue exceeded recent years even though demand was below pre-pandemic baselines. The Q1 2026 figures continue that trajectory. Napa County’s YTD occupancy at 54.4% remains roughly 17 percentage points below the 71.7% recorded in 2019.
+          <strong>Surface two: lodging revenue.</strong> Through March 2026, Napa County hotels sold 258,248 room-nights, an increase of 2.3% over the same period last year. Total revenue rose 5% to $88.0 million. Average daily rate rose 2.6%. Supply expanded 0.5%. Revenue per available room rose 4.4%, and most of that increase reflects what hotels charged rather than how many rooms they sold. Earlier installments in this series demonstrated the same pattern at the annual level: in 2025, hotel revenue exceeded recent years even though demand was below pre-pandemic baselines. The Q1 2026 figures continue that trajectory. Napa County’s YTD occupancy at 54.4% remains roughly 17 percentage points below the 71.1% recorded in 2019.
         </p>
 
-        {/* ── CHART 2 ─────────────────────────────────────────────── */}
+        <h3 style={{ fontFamily: serif, fontSize: 19, fontWeight: 700, color: T.ink, marginTop: 28, marginBottom: 14 }}>The Best Year Since 2019 Was Still Below 2019</h3>
+
+        <p style={prose}>
+          The most recent year on the books was also the strongest since the pandemic. Napa County hotels sold 1,253,064 room-nights in 2025, the highest annual demand since 2019 and a 2.5 percent gain over 2024. Occupancy reached 64.6 percent, a six-year high. ADR climbed to $422.52, a six-year high. Revenue reached $529.4 million, a six-year high. And demand still finished 4.4 percent below 2019, against supply that has grown 5.2 percent over the same period. The strongest year of the recovery did not return the county to where it started. It returned the county to 95.6 percent of where it started, with rates 29 percent higher.
+        </p>
+
+        <p style={prose}>
+          The shape of that gap is seasonal. Through 2025, only one month {"—"} October {"—"} exceeded its 2019 demand baseline, at 103 percent. Five months landed within four points of 2019. The recovery is concentrated in fall and softens at the shoulders. January and February closed the year at 87 and 86 percent of 2019, the deepest gap in any month. Spring sits in between. The pattern is consistent with what high-end leisure travel markets have shown across coastal California: peak season is intact, off-season is not.
+        </p>
+
+        {/* ── CHART 2B (monthly pace) ─────────────────────────────── */}
+        <ChartMonthlyPace />
+
+        {/* ── CHART 2 (annual demand vs. rate) ────────────────────── */}
         <ChartTwo />
 
         <p style={prose}>
