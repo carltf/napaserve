@@ -474,7 +474,7 @@ function ChartTwo() {
       <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-2_napa-lodging-pricing-2026_nvf.png", "Demand vs. rate, indexed to 2019 = 100")} />
       <Caption
         title="Demand and rate, indexed to 2019"
-        description={"Across six years, ADR rose 29 percent while demand fell 4 percent. The two lines diverged in 2021 and have not reconverged."}
+        description={"Across six years, ADR rose 29% while demand fell 4%. The two lines diverged in 2021 and have not reconverged."}
         sources={[
           { label: "Smith Travel Research data via Visit Napa Valley monthly reports", url: "https://www.visitnapavalley.com/" },
         ]}
@@ -867,11 +867,11 @@ export default function UnderTheHoodNapaLodgingPricing() {
         <h3 style={{ fontFamily: serif, fontSize: 19, fontWeight: 700, color: T.ink, marginTop: 28, marginBottom: 14 }}>The Best Year Since 2019 Was Still Below 2019</h3>
 
         <p style={prose}>
-          The most recent year on the books was also the strongest since the pandemic. Napa County hotels sold 1,253,064 room-nights in 2025, the highest annual demand since 2019 and a 2.5 percent gain over 2024. Occupancy reached 64.6 percent, a six-year high. ADR climbed to $422.52, a six-year high. Revenue reached $529.4 million, a six-year high. And demand still finished 4.4 percent below 2019, against supply that has grown 5.2 percent over the same period. The strongest year of the recovery did not return the county to where it started. It returned the county to 95.6 percent of where it started, with rates 29 percent higher.
+          The most recent year on the books was also the strongest since the pandemic. Napa County hotels sold 1,253,064 room-nights in 2025, the highest annual demand since 2019 and a 2.5% gain over 2024. Occupancy reached 64.6%, a six-year high. ADR climbed to $422.52, a six-year high. Revenue reached $529.4 million, a six-year high. And demand still finished 4.4% below 2019, against supply that has grown 5.2% over the same period. The strongest year of the recovery did not return the county to where it started. It returned the county to 95.6% of where it started, with rates 29% higher.
         </p>
 
         <p style={prose}>
-          The shape of that gap is seasonal. Through 2025, only one month {"—"} October {"—"} exceeded its 2019 demand baseline, at 103 percent. Five months landed within four points of 2019. The recovery is concentrated in fall and softens at the shoulders. January and February closed the year at 87 and 86 percent of 2019, the deepest gap in any month. Spring sits in between. The pattern is consistent with what high-end leisure travel markets have shown across coastal California: peak season is intact, off-season is not.
+          The shape of that gap is seasonal. Through 2025, only one month {"—"} October {"—"} exceeded its 2019 demand baseline, at 103%. Five months landed within four points of 2019. The recovery is concentrated in fall and softens at the shoulders. January and February closed the year at 87% and 86% of 2019, the deepest gap in any month. Spring sits in between. The pattern is consistent with what high-end leisure travel markets have shown across coastal California: peak season is intact, off-season is not.
         </p>
 
         {/* ── CHART 2B (monthly pace) ─────────────────────────────── */}
