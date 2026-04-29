@@ -5,3 +5,4 @@ API_ROTATION_LOG.md
 # Never commit backup files or temp data
 *.bak-*
 tmp/
+memory/
