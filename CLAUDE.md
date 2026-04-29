@@ -296,26 +296,29 @@ Append this section to CLAUDE.md after the April 26, 2026 patch.
 
 ---
 
-## April 28, 2026 — Lodging Pricing Article + Pulse Tracker Design
+## April 28, 2026 — Lodging Pricing Article + Pulse Tracker Design + Diagnostic Discipline
 
 ### Article shipped
 
 - **Slug:** napa-lodging-pricing-2026
+- **Title:** “Eighty-Seven Cents and Counting”
 - **Charts:** 5
-  1. Three Surfaces (filled)
+  1. Three Surfaces (all 3 panels filled)
   2. Annual Demand vs Rate 2019 → 2025
   3. Monthly Pace to 2019 (NEW)
   4. Coastal Recovery Diverges
   5. Three-Surface Calculator
 - **New prose section added:** “The Best Year Since 2019 Was Still Below 2019”
+- **Polls seeded:** 33, 34, 35
+- **Legistar URLs fixed:** 2 (Inn at Abbey links — see Legistar URL hygiene section below)
 
 ### Hospitality Jobs calculator card — placeholder retired
 
-Converted the Hospitality Jobs card from interactive placeholder to a static historical figure. The post-2019 jobs-revenue inversion (revenue recovered, headcount did not) makes a linear slider dishonest — the relationship the slider implied no longer holds. Static figure preserves the data point without falsely suggesting elasticity.
+Converted the Hospitality Jobs card from interactive placeholder to a static historical figure. The post-2019 jobs-revenue inversion (revenue recovered, headcount did not) makes a slider-driven multiplier dishonest — the relationship the slider implied no longer holds. Static figure preserves the data point without falsely suggesting elasticity.
 
 ### Baseline correction: 71.7% → 71.1%
 
-Occupancy baseline corrected per Gruen Gruen 2023 report (primary source). All references updated. This is the LOCKED figure going forward — flag any drift.
+Occupancy baseline corrected per Gruen Gruen 2023 hotel market report (primary source). All references updated. This is the LOCKED figure going forward — flag any drift.
 
 ### Legistar URL hygiene (LOCKED — NEW)
 
@@ -325,13 +328,19 @@ Two `LegislationDetail.aspx` links to Inn at Abbey legislation were missing the 
 LegislationDetail.aspx?ID={ID}&GUID={GUID}&FullText=1
 ```
 
-**One commit reverted along the way:** an earlier attempt URL-encoded `&` as `%26` to prevent truncation. Wrong fix — broke the param parsing entirely. The right fix is to include `ID` + `GUID` + `FullText=1` raw, not to escape the separator. Pattern to remember: if a Legistar URL looks fragile, the answer is more params, not encoding tricks.
+### Diagnostic discipline lesson (NEW — from the reverted commit)
+
+An earlier attempt URL-encoded `&` as `%26` to prevent truncation. That was the wrong fix — the server treats the whole encoded query as a single param, so the URL parses to nothing useful. Right fix: include `ID` + `GUID` + `FullText=1` raw, do not escape the separator.
+
+**The deeper lesson — diagnostic order of operations:**
+
+When a source-side audit is clean (the JSX strings look correct in `grep`) but runtime is broken (the live page renders the wrong thing), **inspect the rendered DOM via Claude in Chrome before guessing at encoding fixes.** Source-clean + runtime-broken means the gap is in transport, rendering, or server interpretation — not in your string. Encoding tweaks are a guess; rendered-DOM inspection is evidence.
 
 Commits in sequence: `24f495d` (wrong %26 fix) → `68be952` (revert) → `5c54d2b` (correct GUID + FullText fix, shipped).
 
-### Style reaffirmation
+### Style enforcement reaffirmation
 
-`%` symbol in prose — never the word “percent”. Already LOCKED in April 22 patch; reaffirmed today after a draft pass slipped in “percent” several times. Verification step belongs in the pre-publish grep.
+`%` symbol in prose — never the word “percent” spelled out. Already LOCKED in the April 22 patch; reaffirmed today after a draft pass slipped in “percent” several times. The verification step belongs in the pre-publish grep.
 
 ### Verification toolkit expansion: Claude in Chrome (NEW)
 
@@ -340,21 +349,28 @@ Claude in Chrome is now part of the verification toolkit for **public surfaces o
 - ✅ Allowed: live article pages on napaserve.org, public Substack posts, public primary sources (Legistar agendas, DOF tables, Census surfaces)
 - ❌ Never: auth-gated admin config, Supabase studio, internal dashboards, anything behind a login
 
-The reason for the boundary is that auth-gated surfaces leak credentials into a browsing context that is not scoped for them. Public surfaces are fine because they are public.
+The reason for the boundary is that auth-gated surfaces leak credentials into a browsing context that is not scoped for them. Public surfaces are fine because they are public. See the diagnostic discipline lesson above for the canonical use case: inspect the rendered DOM on the live page before guessing at source-side fixes.
 
-### Pulse Tracker — design committed
+### Pulse Tracker — design committed; Phase 1+2 approved as next session's primary work
 
-Pulse Tracker designed end-to-end across Phases 1 – 7. Full design lives in the `PulseTracker_Plan` doc (canonical reference — do not duplicate the phase breakdown here). Implementation has not started; this entry records that the design is the agreed plan of record as of today.
+Pulse Tracker designed end-to-end across Phases 1 – 7. Full design lives in the `PulseTracker_Plan_2026-04-28` doc (canonical reference — do not duplicate the phase breakdown here).
+
+**Approved as next session's primary work:** Phase 1 + Phase 2 — Supabase table + seeder + 85-row backfill. Implementation has not started; this entry records that the design is the agreed plan of record and that the first two phases are the kickoff scope.
+
+### Master Brief and Cheatsheet — v2 shipped
+
+v1 had content drops (sections from the April 27 work were missing from the rolled-up brief). v2 carries forward all April 27 content + adds tonight's new sections (lodging article, diagnostic lesson, Claude in Chrome boundary, Pulse Tracker design + Phase 1+2 approval). v2 is now the canonical reference; treat v1 as superseded.
 
 ### Files touched in repo
 
 - `economic-pulse-app/src/under-the-hood-napa-lodging-pricing.jsx` (article + 5 charts + new prose section + Hospitality Jobs static conversion + legistar URL fix)
 - `economic-pulse-app/src/napaserve-admin.jsx` (legistar URL fix)
+- `pipeline/seed_article_polls.py` (polls 33/34/35)
 - `CLAUDE.md` (this patch)
 
 ### Pending for next session
 
-- Pulse Tracker Phase 1 kickoff (per `PulseTracker_Plan`)
+- **Primary:** Pulse Tracker Phase 1 + Phase 2 — Supabase table, seeder, 85-row backfill (per `PulseTracker_Plan_2026-04-28`)
 - Audit remaining UTH articles for any other bare `LegislationDetail.aspx?ID=` URLs missing GUID + FullText
 - Carry-overs from April 26 still open: napa-marketing-machine-2026, napa-population-2025 (May 1 DOF E-1), Q2 Lake County follow-up, substackPolls backfill audit
 
