@@ -23,7 +23,7 @@ const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 // ── ARTICLE METADATA ───────────────────────────────────────────────
 const ARTICLE_SLUG = "napa-lodging-pricing-2026";
 const ARTICLE_TITLE = "Napa Valley Adds Rooms While Demand Lags";
-const ARTICLE_DECK = "Data shows Napa County hotel revenue up year to date, but gains are driven more by higher rates than by a meaningful increase in room demand. Occupancy remains well below 2019 and Napa’s year-to-date occupancy growth is the slowest among major California regions, pointing to a recovery stalled on volume even as prices hold. Against that backdrop, downtown projects are under construction and approvals continue. The result is a market expanding on the supply side while demand lags.";
+const ARTICLE_DECK = "Across GDP, lodging revenue and hospitality jobs, Napa’s growth has been a price story — and a supply expansion now under way could push that pattern further before it bends.";
 const ARTICLE_PUBLICATION = "Napa Valley Features";
 const ARTICLE_DATE = "May 2, 2026";
 const POLL_IDS = [33, 34, 35]; // eslint-disable-line no-unused-vars
@@ -585,7 +585,7 @@ function ChartTwo() {
           <canvas ref={canvasRef} id="chart-2" />
         </div>
       </div>
-      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-2_napa-lodging-pricing-2026_nvf.png", "Demand vs. rate, indexed to 2019 = 100")} />
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-3_napa-lodging-pricing-2026_nvf.png", "Demand vs. rate, indexed to 2019 = 100")} />
       <Caption
         title="Demand and rate, indexed to 2019"
         description={"Across six years, ADR rose 29% while demand fell 4%. The two lines diverged in 2021 and have not reconverged."}
@@ -690,7 +690,7 @@ function ChartMonthlyPace() {
           <canvas ref={canvasRef} id="chart-monthly-pace" />
         </div>
       </div>
-      <DownloadButton onClick={() => downloadComponentPng(containerRef, "napa-lodging-monthly-pace-2019-2025.png", "Napa County Lodging — Monthly Pace to 2019, 2025")} />
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-4_napa-lodging-pricing-2026_nvf.png", "Napa County Lodging — Monthly Pace to 2019, 2025")} />
       <Caption
         title="Monthly pace to 2019"
         description={"Each bar shows 2025 demand as a share of 2019 demand for that month. Only October exceeded the 2019 baseline. January and February remained the weakest months."}
@@ -751,7 +751,7 @@ function ChartThree() {
           <canvas ref={canvasRef} id="chart-3" />
         </div>
       </div>
-      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-3_napa-lodging-pricing-2026_nvf.png", "YTD-March 2026 occupancy growth — California coastal markets")} />
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-6_napa-lodging-pricing-2026_nvf.png", "YTD-March 2026 occupancy growth — California coastal markets")} />
       <Caption
         title="Year-to-date March 2026 occupancy growth, California coastal markets"
         description={"Napa’s 1.8% trails every major peer, including Sonoma at 7.0% and San Francisco at 13.8%."}
@@ -847,7 +847,7 @@ function ChartGdp() {
           <canvas ref={canvasRef} id="chart-gdp" />
         </div>
       </div>
-      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-gdp_napa-lodging-pricing-2026_nvf.png", "Nominal vs. Real GDP — Napa County, 2016–2024")} />
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-2_napa-lodging-pricing-2026_nvf.png", "Nominal vs. Real GDP — Napa County, 2016–2024")} />
       <p style={{ fontFamily: font, fontSize: 13, color: T.muted, fontStyle: "italic", lineHeight: 1.55, margin: "14px 0 0", maxWidth: 680 }}>
         <strong style={{ fontWeight: 700, fontStyle: "italic" }}>Nominal vs. Real GDP — Napa County, 2016–2024.</strong>{" "}
         Nominal GDP (blue) vs. real GDP in chained 2017 dollars (green), with inflation gap shaded.{" "}
@@ -1023,7 +1023,7 @@ function ChartBlsTrendlines() {
           <canvas ref={canvasRef} id="chart-bls-trendlines" />
         </div>
       </div>
-      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-bls-trendlines_napa-lodging-pricing-2026_nvf.png", "Napa MSA Leisure & Hospitality Employment — Actual vs. Trendlines to 2035")} />
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-5_napa-lodging-pricing-2026_nvf.png", "Napa MSA Leisure & Hospitality Employment — Actual vs. Trendlines to 2035")} />
       <p style={{ fontFamily: font, fontSize: 13, color: T.muted, fontStyle: "italic", lineHeight: 1.55, margin: "14px 0 0", maxWidth: 680 }}>
         <strong style={{ fontWeight: 700, fontStyle: "italic" }}>Napa MSA leisure and hospitality employment: 12-month trailing average vs. projected (2009–2035).</strong>{" "}
         The trailing average rose from roughly 8,900 in 2009 to 13,600 in mid-2019, a trend that implied roughly 21,500 jobs by 2035 if continued. Instead, the trailing average plateaued near 13,300 in 2025, leaving a substantial gap relative to that earlier trend.{" "}
@@ -1056,7 +1056,7 @@ function ScenarioCalculator() {
     }
     await downloadComponentPng(
       containerRef,
-      "chart-4_napa-lodging-pricing-2026_nvf.png",
+      "chart-7_napa-lodging-pricing-2026_nvf.png",
       "Three-surface scenario calculator — Napa lodging, jobs and GDP impact"
     );
     if (wasZero) {
@@ -1206,6 +1206,18 @@ export default function UnderTheHoodNapaLodgingPricing() {
           </p>
         )}
 
+        {/* ── HERO ILLUSTRATION ─────────────────────────────────────── */}
+        <figure style={{ margin: "24px 0 32px", textAlign: "center" }}>
+          <img
+            src="/UtH_April_26_VI.jpg"
+            alt="Illustration: hotels stacked on the supply side of a tipping seesaw with three small visitors on the demand side, a bench beneath the fulcrum labeled JOBS"
+            style={{ width: "100%", maxWidth: 720, height: "auto", display: "block", margin: "0 auto", border: `1px solid ${T.surface}`, borderRadius: 4 }}
+          />
+          <figcaption style={{ fontFamily: font, fontSize: 13, color: T.muted, fontStyle: "italic", marginTop: 8, lineHeight: 1.4 }}>
+            Illustration by Features Graphic.
+          </figcaption>
+        </figure>
+
         {/* ── SUBSTACK LINK ─────────────────────────────────────────── */}
         <p style={{ fontFamily: font, fontSize: 13, color: T.muted, marginBottom: 32, borderBottom: `1px solid ${T.border}`, paddingBottom: 20 }}>
           Read on{" "}
@@ -1218,7 +1230,7 @@ export default function UnderTheHoodNapaLodgingPricing() {
         <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: "16px 20px", marginBottom: 32 }}>
           <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Article Summary</p>
           <p style={{ ...prose, fontSize: 15, marginBottom: 0 }}>
-            Year-to-date through March 2026, Napa County hotel revenue is up 5%, occupancy is up and ADR is up {"—"} but Napa’s 1.8% YTD occupancy growth is the slowest among major California coastal markets. The pattern visible across GDP, lodging revenue and hospitality jobs is one in which apparent growth is driven by price rather than volume. A 627-room downtown lodging pipeline {"—"} including 116 rooms under construction and 513 entitled, and a Board approval on April 28 for a 79-room luxury resort {"—"} would extend supply into a market whose visitor recovery is already lagging.
+            Data shows Napa County hotel revenue up year to date, but gains are driven more by higher rates than by a meaningful increase in room demand. Occupancy remains well below 2019 and Napa’s year-to-date occupancy growth is the slowest among major California regions, pointing to a recovery stalled on volume even as prices hold. Against that backdrop, downtown projects are under construction and approvals continue. The result is a market expanding on the supply side while demand lags.
           </p>
         </div>
 
@@ -1287,11 +1299,11 @@ export default function UnderTheHoodNapaLodgingPricing() {
           The shape of that gap is seasonal. Through 2025, only one month {"—"} October {"—"} exceeded its 2019 demand baseline, at 103%. Five months landed within four points of 2019. The recovery is concentrated in fall and softens at the shoulders. January and February closed the year at 87% and 86% of 2019, the deepest gap in any month. Spring sits in between. The pattern is consistent with what high-end leisure travel markets have shown across coastal California: peak season is intact, off-season is not.
         </p>
 
-        {/* ── CHART 2B (monthly pace) ─────────────────────────────── */}
-        <ChartMonthlyPace />
-
-        {/* ── CHART 2 (annual demand vs. rate) ────────────────────── */}
+        {/* ── CHART 3 — annual demand vs. rate ─────────────────────── */}
         <ChartTwo />
+
+        {/* ── CHART 4 — monthly pace ─────────────────────────────── */}
+        <ChartMonthlyPace />
 
         <p style={prose}>
           <strong>Surface three: hospitality employment.</strong> Between 2019 and 2025, Napa County added approximately 382 hotel rooms {"—"} a 7.6% increase in lodging supply. During the same period, the leisure and hospitality sector lost approximately 200 jobs, and the restaurant and bar subsector lost approximately 470 jobs. The combined figure is 670 jobs subtracted from the visitor economy while 382 rooms were added to it. From 2009 through 2019, more rooms in Napa County had reliably meant more jobs. Since 2019, that relationship has reversed. Larger resorts operate with leaner per-guest staffing. On-property dining, retail and tasting capture spending that previously circulated to independent operators. Higher per-room revenue can coexist with {"—"} and contribute to {"—"} fewer per-room jobs.
@@ -1303,9 +1315,6 @@ export default function UnderTheHoodNapaLodgingPricing() {
         <p style={prose}>
           Three surfaces. One arithmetic.
         </p>
-
-        {/* ── CHART 3 ─────────────────────────────────────────────── */}
-        <ChartThree />
 
         {/* ═════════════════════════════════════════════════════════════ */}
         {/* WHAT'S DIFFERENT IN 2026                                     */}
@@ -1319,6 +1328,9 @@ export default function UnderTheHoodNapaLodgingPricing() {
         <p style={prose}>
           Year-to-date through March, Napa County’s occupancy growth of 1.8% is the smallest of any major coastal California market. San Francisco’s YTD occupancy is up 13.8%. Sonoma is up 7.0%. Monterey is up 6.4%. San Luis Obispo is up 5.4%. Santa Barbara is up 4.0%. The competitive set is recovering on visitors. Napa is recovering on price. A 12-percentage-point gap between gateway-market occupancy growth and Napa County occupancy growth in the same quarter does not resolve as a one-month weather story.
         </p>
+
+        {/* ── CHART 6 — coastal markets comparison ───────────────── */}
+        <ChartThree />
 
         <p style={prose}>
           What is unambiguously new in 2026 is the supply side. <L href="https://www.sfchronicle.com/bayarea/article/napa-downtown-hotel-room-22208332.php">On April 19, the San Francisco Chronicle reported</L> that the city of Napa alone has roughly 627 existing hotel rooms downtown, 116 currently under construction and 513 additional rooms entitled {"—"} a pipeline that, on paper, could push downtown alone past 1,200 rooms. Countywide inventory could grow from approximately 5,500 rooms today to roughly 6,350 by 2030. Some of those entitled projects have languished for years; not all will clear financing. But the direction is clear: more rooms are being approved into a market whose YTD occupancy is the lowest in coastal California.
