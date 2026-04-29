@@ -289,3 +289,75 @@ Next poll IDs start at 33.
 ---
 
 *End of April 26, 2026 patch — Valley Works Collaborative*
+
+# CLAUDE.md Patch — April 28, 2026
+
+Append this section to CLAUDE.md after the April 26, 2026 patch.
+
+---
+
+## April 28, 2026 — Lodging Pricing Article + Pulse Tracker Design
+
+### Article shipped
+
+- **Slug:** napa-lodging-pricing-2026
+- **Charts:** 5
+  1. Three Surfaces (filled)
+  2. Annual Demand vs Rate 2019 → 2025
+  3. Monthly Pace to 2019 (NEW)
+  4. Coastal Recovery Diverges
+  5. Three-Surface Calculator
+- **New prose section added:** “The Best Year Since 2019 Was Still Below 2019”
+
+### Hospitality Jobs calculator card — placeholder retired
+
+Converted the Hospitality Jobs card from interactive placeholder to a static historical figure. The post-2019 jobs-revenue inversion (revenue recovered, headcount did not) makes a linear slider dishonest — the relationship the slider implied no longer holds. Static figure preserves the data point without falsely suggesting elasticity.
+
+### Baseline correction: 71.7% → 71.1%
+
+Occupancy baseline corrected per Gruen Gruen 2023 report (primary source). All references updated. This is the LOCKED figure going forward — flag any drift.
+
+### Legistar URL hygiene (LOCKED — NEW)
+
+Two `LegislationDetail.aspx` links to Inn at Abbey legislation were missing the `GUID` and `FullText` query params. Bare `?ID=NNNNNNN` URLs render but are fragile — Legistar may truncate, redirect, or return a stub depending on session state. Canonical form:
+
+```
+LegislationDetail.aspx?ID={ID}&GUID={GUID}&FullText=1
+```
+
+**One commit reverted along the way:** an earlier attempt URL-encoded `&` as `%26` to prevent truncation. Wrong fix — broke the param parsing entirely. The right fix is to include `ID` + `GUID` + `FullText=1` raw, not to escape the separator. Pattern to remember: if a Legistar URL looks fragile, the answer is more params, not encoding tricks.
+
+Commits in sequence: `24f495d` (wrong %26 fix) → `68be952` (revert) → `5c54d2b` (correct GUID + FullText fix, shipped).
+
+### Style reaffirmation
+
+`%` symbol in prose — never the word “percent”. Already LOCKED in April 22 patch; reaffirmed today after a draft pass slipped in “percent” several times. Verification step belongs in the pre-publish grep.
+
+### Verification toolkit expansion: Claude in Chrome (NEW)
+
+Claude in Chrome is now part of the verification toolkit for **public surfaces only**:
+
+- ✅ Allowed: live article pages on napaserve.org, public Substack posts, public primary sources (Legistar agendas, DOF tables, Census surfaces)
+- ❌ Never: auth-gated admin config, Supabase studio, internal dashboards, anything behind a login
+
+The reason for the boundary is that auth-gated surfaces leak credentials into a browsing context that is not scoped for them. Public surfaces are fine because they are public.
+
+### Pulse Tracker — design committed
+
+Pulse Tracker designed end-to-end across Phases 1 – 7. Full design lives in the `PulseTracker_Plan` doc (canonical reference — do not duplicate the phase breakdown here). Implementation has not started; this entry records that the design is the agreed plan of record as of today.
+
+### Files touched in repo
+
+- `economic-pulse-app/src/under-the-hood-napa-lodging-pricing.jsx` (article + 5 charts + new prose section + Hospitality Jobs static conversion + legistar URL fix)
+- `economic-pulse-app/src/napaserve-admin.jsx` (legistar URL fix)
+- `CLAUDE.md` (this patch)
+
+### Pending for next session
+
+- Pulse Tracker Phase 1 kickoff (per `PulseTracker_Plan`)
+- Audit remaining UTH articles for any other bare `LegislationDetail.aspx?ID=` URLs missing GUID + FullText
+- Carry-overs from April 26 still open: napa-marketing-machine-2026, napa-population-2025 (May 1 DOF E-1), Q2 Lake County follow-up, substackPolls backfill audit
+
+---
+
+*End of April 28, 2026 patch — Valley Works Collaborative*
