@@ -201,7 +201,7 @@ const EXPORT_DATA = {
         options: [
           "Continue rising",
           "Hold roughly steady",
-          "Soften 5 to 10 percent",
+          "Soften 5 to 10%",
           "Drop sharply",
           "Luxury holds, mid-tier falls",
         ],
