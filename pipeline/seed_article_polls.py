@@ -281,6 +281,43 @@ POLLS = [
             "No idea",
         ],
     },
+    # ── Napa Lodging Pricing 2026 (Eighty-Seven Cents and Counting) ──
+    {
+        "article_slug": "napa-lodging-pricing-2026",
+        "sort_order": 1,
+        "question": "What best explains Napa’s recent lodging revenue gains?",
+        "options": [
+            "More visitors are coming",
+            "Same visitors paying higher rates",
+            "A few luxury travelers paying more",
+            "A temporary post-pandemic pattern",
+            "Too soon to tell",
+        ],
+    },
+    {
+        "article_slug": "napa-lodging-pricing-2026",
+        "sort_order": 2,
+        "question": "When did you last book a Napa hotel or inn?",
+        "options": [
+            "In the past 6 months",
+            "6 to 18 months ago",
+            "18 months to 3 years ago",
+            "More than 3 years ago",
+            "I have not booked one",
+        ],
+    },
+    {
+        "article_slug": "napa-lodging-pricing-2026",
+        "sort_order": 3,
+        "question": "What happens to Napa lodging rates over the next 12 months?",
+        "options": [
+            "Continue rising",
+            "Hold roughly steady",
+            "Soften 5 to 10 percent",
+            "Drop sharply",
+            "Luxury holds, mid-tier falls",
+        ],
+    },
 ]
 
 
