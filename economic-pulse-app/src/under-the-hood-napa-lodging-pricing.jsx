@@ -709,12 +709,13 @@ function ScenarioCalculator() {
             <div style={{ fontFamily: font, fontSize: 10, color: T.muted, marginTop: 4 }}>Base: $352M (Q1 2026 annualized)</div>
           </div>
 
-          {/* Card 2 — Approximate jobs delta — HOLD */}
-          <div style={{ background: T.bg, borderRadius: 3, padding: 14, borderLeft: `3px dashed ${T.border}` }}>
-            <div style={{ fontFamily: font, fontSize: 10, color: T.muted, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>Hospitality jobs delta</div>
-            <div style={{ fontFamily: serif, fontSize: 14, fontWeight: 700, color: T.ink, lineHeight: 1.35 }}>Coming soon</div>
-            <div style={{ fontFamily: font, fontSize: 11, color: T.muted, marginTop: 6, lineHeight: 1.45 }}>
-              Per-room ratio under verification against the August 2025 Under the Hood piece.
+          {/* Card 2 — Hospitality jobs (static historical, not slider-tied) */}
+          <div style={{ background: T.bg, borderRadius: 3, padding: 14, borderLeft: `3px solid ${T.muted}` }}>
+            <div style={{ fontFamily: font, fontSize: 10, color: T.muted, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>Hospitality jobs</div>
+            <div style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink }}>{"−"}670</div>
+            <div style={{ fontFamily: "monospace", fontSize: 11, color: T.muted, marginTop: 3 }}>jobs since 2019</div>
+            <div style={{ fontFamily: font, fontSize: 10, color: T.muted, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
+              Lodging revenue rose 23.2% and 382 rooms were added over the same period. The pre-2019 jobs-revenue relationship reversed; this card reflects observed history rather than a projection.
             </div>
           </div>
 
