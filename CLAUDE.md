@@ -431,7 +431,7 @@ NOT NULL columns: `id`, `title`, `description`, `event_date`, `town`, `is_virtua
 | `status` | text | `'pending'` | app whitelist; see status note below |
 | `approved_at` | timestamptz | null | |
 | `admin_notes` | text | null | |
-| `source` | text | `'community'` | values seen so far: `community`, `napaserve_submission`. Full DISTINCT pending — see Known Gaps |
+| `source` | text | `'community'` | Verified values (2026-04-30 distribution): `google_sheet` (801), `weekender` (287), `NapaServe` (273), `NapaLife` (243), `community` (78), `Cameo Cinema` (4), `napaserve_submission` (4). Note: `community` is the column default — 78 rows either explicitly carry it or didn't override. `napaserve_submission` is the value set by `api/event-intake.js` for admin-UI inserts; the low count (4) reflects light usage of that pipeline to date. |
 | `source_url` | text | null | |
 | `submitted_at` | timestamptz | now() | |
 | `created_at` | timestamptz | now() | |
@@ -514,7 +514,8 @@ The `featured` column exists (boolean, default false). The homepage carousel at 
 - **Featured event curation policy pending.** `featured` column exists (default false); no UI / decision process for flagging events. Homepage carousel returns empty until policy + UI defined.
 - **Index duplication on `community_events`.** Three pairs of redundant indexes (`event_date`, `town`, `category`). Low-priority `DROP INDEX` migration to reclaim write overhead.
 - **`SQL/community_events_setup.sql` is stale.** Live schema has 8 columns not in setup file (`featured`, `lat`, `lng`, `include_in_email`, `email_sent_at`, `submitter_phone`, plus `is_virtual` added 2026-04-30, plus parallel `community_events_*_idx` indexes). Either regenerate setup file from current schema or supersede with this CLAUDE.md section as the canonical reference.
-- **`source` column DISTINCT values pending.** This patch lists only the values seen in code (`community`, `napaserve_submission`); a `SELECT DISTINCT source FROM community_events` was not run before this commit. Patch the column note when results are available.
+- **`source` column naming inconsistency + missing scraper tag.** Two conventions exist for the same publication: `NapaServe` (capitalized, no underscore, 273 rows) and `napaserve_submission` (lowercase, underscore, 4 rows). Decision pending: normalize to one, or keep distinct (e.g., `NapaServe` = editorial curation, `napaserve_submission` = admin-UI pipeline). Separately, no distinct scraper source tag is visible in the distribution — the Tier-3 scraper at `napa-event-finder.vercel.app` either writes through an existing `source` value or scraper-ingested rows aren't tagged distinctly. Worth verifying when the scraper pipeline gets next-touched.
+- **Extraction prompt incomplete: `age_restriction` and `indoor_outdoor` not emitted.** `api/event-intake.js` does not emit either field. Every admin-UI ingested event silently defaults to `all_ages` / `indoor` regardless of source content. For events that are 21+ or outdoor, the data is silently wrong. Decision pending: extend extraction prompt to emit both fields, or accept as submit-form-only fields and remove from the inferred-data path.
 
 ### Pending implementation — Virtual Events only
 
