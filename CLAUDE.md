@@ -377,3 +377,160 @@ v1 had content drops (sections from the April 27 work were missing from the roll
 ---
 
 *End of April 28, 2026 patch — Valley Works Collaborative*
+
+# CLAUDE.md Patch — April 30, 2026
+
+Append this section after the April 28, 2026 patch.
+
+---
+
+## April 30, 2026 — `community_events` Schema Reference (VERIFIED) + Virtual Events Convention
+
+Schema verified by direct dump from Supabase on 2026-04-30 after `is_virtual` column added and the Smoke Summit row (id 1764) inserted. Use this section as the canonical reference. The setup file `SQL/community_events_setup.sql` is **stale** — the live schema has drifted (8 columns added, 0 CHECK constraints).
+
+### ⚠️ TOP-LEVEL WARNING — No DB-level whitelist enforcement
+
+**`community_events` has ZERO CHECK constraints.** Verified via `pg_constraint` query on 2026-04-30: zero rows returned. Every whitelist documented below (`town`, `category`, `status`, `age_restriction`, `indoor_outdoor`) is **application-enforced only** — by the extraction prompt at `api/event-intake.js:24–66`, the `TOWNS` / `CATEGORIES` constants in `napaserve-event-finder.jsx:14–34`, and the submit-form dropdowns in the same file (see field-by-field source-of-truth pointers below).
+
+Implications:
+
+- Hand-written SQL inserts with off-whitelist values **succeed silently** — no DB error, but the row will be orphaned from filter UIs that test against the constants.
+- Typos in the extraction prompt produce off-whitelist rows that pass extraction but never appear in town/category-filtered results.
+- Pipeline scripts (`pipeline/04_seed_events.py`, manual imports) that bypass `api/event-intake.js` have **no safety net** — verify whitelist values before INSERT.
+
+**Mitigation:** Always cross-check hand-written SQL or pipeline inserts against the source-of-truth pointers below. Adding CHECK constraints is deferred — would require a migration plus a decision on what to do with any off-whitelist rows already present (run `SELECT DISTINCT town, category, status, age_restriction, indoor_outdoor FROM community_events` before adding constraints).
+
+### Column inventory (36 columns, verified 2026-04-30)
+
+NOT NULL columns: `id`, `title`, `description`, `event_date`, `town`, `is_virtual`. All others nullable.
+
+| Column | Type | Default | Notes |
+|---|---|---|---|
+| `id` | bigint | identity | PK |
+| `title` | text | — | NOT NULL |
+| `description` | text | — | NOT NULL |
+| `event_date` | date | — | NOT NULL; indexed |
+| `town` | text | — | NOT NULL; indexed; app whitelist |
+| `category` | text | `'community'` | app whitelist; indexed |
+| `end_date` | date | null | |
+| `start_time` | text | null | **see format trap below** |
+| `end_time` | text | null | **see format trap below** |
+| `venue_name` | text | null | for virtual: `'Virtual ([platform])'` |
+| `address` | text | null | for virtual: leave null |
+| `price_info` | text | null | |
+| `is_free` | boolean | false | |
+| `age_restriction` | text | `'all_ages'` | app whitelist (submit form only) |
+| `indoor_outdoor` | text | `'indoor'` | app whitelist (submit form only) |
+| `is_recurring` | boolean | false | |
+| `recurrence_desc` | text | null | |
+| `website_url` | text | null | |
+| `ticket_url` | text | null | |
+| `organizer_contact` | text | null | |
+| `accessibility_info` | text | null | |
+| `submitted_by` | text | null | |
+| `status` | text | `'pending'` | app whitelist; see status note below |
+| `approved_at` | timestamptz | null | |
+| `admin_notes` | text | null | |
+| `source` | text | `'community'` | values seen so far: `community`, `napaserve_submission`. Full DISTINCT pending — see Known Gaps |
+| `source_url` | text | null | |
+| `submitted_at` | timestamptz | now() | |
+| `created_at` | timestamptz | now() | |
+| `featured` | boolean | false | drives homepage carousel; **see curation note** |
+| `lat` | numeric | null | map marker |
+| `lng` | numeric | null | map marker |
+| `include_in_email` | boolean | false | digest inclusion; indexed |
+| `email_sent_at` | timestamptz | null | |
+| `submitter_phone` | text | null | |
+| `is_virtual` | boolean | false | NOT NULL; added 2026-04-30 |
+
+`is_virtual` was added with `NOT NULL DEFAULT false`, so all pre-existing rows backfilled automatically. **No manual backfill needed.**
+
+### LOCKED conventions
+
+**1. `start_time` / `end_time` format trap.**
+Both columns are `text`, not `time`. Format is strictly `"H:MM AM/PM"` (e.g. `"11:00 AM"`, `"1:00 PM"`). **Do not use SQL `TIME` literals like `'11:00:00'`** — they bypass the `fmtTimeAP` regex at `napaserve-event-finder.jsx:57` and render as raw `"11:00:00"` on event cards. Surfaced 2026-04-30 by the Smoke Summit insert (id 1764), patched same day. The column name suggests `TIME`; it isn't.
+
+**2. Virtual events convention** *(adopted 2026-04-30)*
+
+| Field | Value |
+|---|---|
+| `is_virtual` | `true` |
+| `venue_name` | `'Virtual ([platform])'` — e.g. `'Virtual (Zoom Webinar)'` |
+| `address` | `null` |
+| `town` | audience anchor — the Napa Valley town the event most plausibly serves; `'napa'` for general/regional audience |
+
+`town` stays NOT NULL; the host-community convention overloads it rather than nulling it. Virtual events are excluded from town-filtered search results by default; an opt-in toggle (planned, not yet implemented) will OR `is_virtual=eq.true` into the filter, with both a per-card "Virtual" badge and a filter-row "Including virtual events" chip so the user understands why a non-Napa virtual event appears under their Calistoga filter.
+
+`is_virtual` is a boolean for now. Do **not** pre-reserve an `event_format` enum column. When the first hybrid event arrives, add `is_hybrid`; reassess at three booleans.
+
+**3. Whitelist values** (application-enforced only — see top-level warning)
+
+- `town`: `napa | yountville | st-helena | calistoga | american-canyon` *(constant: `napaserve-event-finder.jsx:14–21`)*
+- `category`: `art | music | food | community | wellness | nightlife | movies | theatre` *(constant: `napaserve-event-finder.jsx:23–34`; `astronomy` is a UI option that queries a separate table, not a `community_events.category` value)*
+- `age_restriction`: `all_ages | 21_plus | 18_plus` *(submit-form dropdown: `napaserve-event-finder.jsx:1185`. Not emitted by extraction prompt — extracted events default to `'all_ages'`)*
+- `indoor_outdoor`: `indoor | outdoor | both` *(submit-form dropdown: `napaserve-event-finder.jsx:1157`. Not emitted by extraction prompt — extracted events default to `'indoor'`)*
+- `status`: `pending | approved` *(see status note below — `rejected` is never written)*
+
+**4. Status nuance — `rejected` is never written.**
+The setup file lists `rejected` as a status, but the admin reject action at `worker.js:1230–1243` **DELETEs the row** rather than patching status. In practice only `pending` and `approved` ever appear in the live table. This means `idx_ce_status` never sees `rejected` values, and any future code that queries for `status='rejected'` will return zero rows. Treat `rejected` as legacy / aspirational; do not query for it.
+
+**5. `featured` is a curation surface, not a defect.**
+The `featured` column exists (boolean, default false). The homepage carousel at `napaserve-event-finder.jsx:696` filters `featured=eq.true` and currently returns empty because no rows have been flagged. **Open question — curation policy pending:** who decides what gets featured, and through what UI? Tracked in Known Gaps below.
+
+### RLS policies (verified)
+
+| Policy | Cmd | Effect |
+|---|---|---|
+| `read_approved` | SELECT | public can read rows where `status = 'approved'` |
+| `submit_events` | INSERT | public can insert (any values pass — no CHECK constraints) |
+| `service_full` | ALL | service-role full access |
+
+### Indexes (verified — duplication present)
+
+| Index | Column |
+|---|---|
+| `community_events_pkey` | `id` |
+| `idx_ce_date` | `event_date DESC` |
+| `idx_ce_town` | `town` |
+| `idx_ce_category` | `category` |
+| `idx_ce_status` | `status` |
+| `community_events_event_date_idx` | `event_date` |
+| `community_events_town_idx` | `town` |
+| `community_events_category_idx` | `category` |
+| `community_events_include_in_email_idx` | `include_in_email` |
+
+**Note:** `idx_ce_date / town / category` have parallel `community_events_*_idx` versions on the same columns. Not breaking — query planner uses one — but wasted write overhead on every INSERT/UPDATE. Cleanup is a low-priority `DROP INDEX` migration tracked in Known Gaps.
+
+### Source-of-truth pointers for column formats and whitelists
+
+- **Column format contract** → `api/event-intake.js:24–66` (Claude extraction prompt). Canonical reference for `event_date` (`YYYY-MM-DD`), `start_time` / `end_time` (`"H:MM AM/PM"`), `town`, `category`. Does **not** emit `age_restriction` or `indoor_outdoor`.
+- **Towns / Categories filter constants** → `napaserve-event-finder.jsx:14–34`. Must stay in lockstep with the extraction prompt; drift between the two means a row passes extraction but doesn't render under any town/category filter.
+- **`age_restriction` whitelist** → `napaserve-event-finder.jsx:1185` (submit form only).
+- **`indoor_outdoor` whitelist** → `napaserve-event-finder.jsx:1157` (submit form only).
+
+### Known Gaps additions (append to existing log)
+
+- **`community_events` has no DB-level whitelist enforcement.** All whitelists are application-only. CHECK constraints deferred pending decision on what to do with any off-whitelist rows already present.
+- **Featured event curation policy pending.** `featured` column exists (default false); no UI / decision process for flagging events. Homepage carousel returns empty until policy + UI defined.
+- **Index duplication on `community_events`.** Three pairs of redundant indexes (`event_date`, `town`, `category`). Low-priority `DROP INDEX` migration to reclaim write overhead.
+- **`SQL/community_events_setup.sql` is stale.** Live schema has 8 columns not in setup file (`featured`, `lat`, `lng`, `include_in_email`, `email_sent_at`, `submitter_phone`, plus `is_virtual` added 2026-04-30, plus parallel `community_events_*_idx` indexes). Either regenerate setup file from current schema or supersede with this CLAUDE.md section as the canonical reference.
+- **`source` column DISTINCT values pending.** This patch lists only the values seen in code (`community`, `napaserve_submission`); a `SELECT DISTINCT source FROM community_events` was not run before this commit. Patch the column note when results are available.
+
+### Pending implementation — Virtual Events only
+
+Recorded here for traceability; no code changes made on 2026-04-30. Implementation order TBD; this list is scoped to the virtual-events feature only — `featured` curation and index cleanup are tracked in Known Gaps above.
+
+- **Q1 resolved:** `town` stays NOT NULL.
+- **Q2 resolved:** audience-anchor convention (not host).
+- **Q3 resolved:** virtual events excluded from town filters by default; opt-in toggle planned with chip + per-card badge.
+- **Q4 resolved:** `is_virtual` boolean only; do not pre-reserve `event_format`; revisit at first hybrid event.
+
+To-build list (deferred to next session, virtual-events scope only):
+- `is_virtual` extraction in `api/event-intake.js` prompt + JSON schema
+- "Virtual" per-card badge in `napaserve-event-finder.jsx` (search results, featured, upcoming surfaces)
+- Filter-row "Including virtual events" chip + opt-in toggle
+- End-to-end test: insert virtual event via admin UI, verify badge + toggle behavior
+
+---
+
+*End of April 30, 2026 patch — Valley Works Collaborative*
