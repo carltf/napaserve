@@ -22,6 +22,7 @@ import NapaPriceDiscovery from "./napaserve-under-the-hood-napa-price-discovery"
 import UnderTheHoodNapaConstellation from "./under-the-hood-napa-constellation.jsx";
 import UnderTheHoodLakecoHousingReset from "./under-the-hood-lakeco-housing-reset.jsx";
 import UnderTheHoodNapaLodgingPricing from "./under-the-hood-napa-lodging-pricing.jsx";
+import NapaMarketingMachine from "./under-the-hood-napa-marketing-machine.jsx";
 import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="/under-the-hood/napa-constellation-2026" element={<UnderTheHoodNapaConstellation />} />
         <Route path="/under-the-hood/lakeco-housing-reset-2026" element={<UnderTheHoodLakecoHousingReset />} />
         <Route path="/under-the-hood/napa-lodging-pricing-2026" element={<UnderTheHoodNapaLodgingPricing />} />
+        <Route path="/under-the-hood/napa-marketing-machine-2026" element={<NapaMarketingMachine />} />
         <Route path="/under-the-hood/template" element={<UnderTheHoodTemplate />} />
         <Route path="/under-the-hood/calculators" element={<CalculatorsPage />} />
         <Route path="/events/digest" element={<DigestCuration />} />

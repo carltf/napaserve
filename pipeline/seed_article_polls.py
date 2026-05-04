@@ -318,6 +318,43 @@ POLLS = [
             "Luxury holds, mid-tier falls",
         ],
     },
+    # ── Napa Marketing Machine 2026 ─────────────────────────
+    {
+        "article_slug": "napa-marketing-machine-2026",
+        "sort_order": 1,
+        "question": "What is the marketing apparatus actually being asked to defend?",
+        "options": [
+            "The premium pricing model",
+            "The land valuations",
+            "The trade orgs themselves",
+            "A cultural narrative shifting",
+            "All of the above",
+        ],
+    },
+    {
+        "article_slug": "napa-marketing-machine-2026",
+        "sort_order": 2,
+        "question": "Have you visited Napa as a tourist in the past five years?",
+        "options": [
+            "More often than I used to",
+            "About the same",
+            "Less often than I used to",
+            "I have stopped visiting",
+            "I have never visited",
+        ],
+    },
+    {
+        "article_slug": "napa-marketing-machine-2026",
+        "sort_order": 3,
+        "question": "Which institution will most likely cut its budget first?",
+        "options": [
+            "Napa Valley Vintners",
+            "Visit Napa Valley",
+            "Napa Valley Grapegrowers",
+            "A city CVB",
+            "None will cut publicly",
+        ],
+    },
 ]
 
 
