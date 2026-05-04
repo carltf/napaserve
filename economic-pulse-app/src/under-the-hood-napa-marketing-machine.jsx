@@ -532,7 +532,9 @@ function ChartThree() {
           ctx.fillText("Pandemic", bar2020.x, bar2020.y - 6);
         }
 
-        // Boxed callout top-right — "Cumulative 2005–2026 / ~$3.2 billion"
+        // Boxed callout top-left — "Cumulative 2005–2026 / ~$3.2 billion"
+        // Sits in the empty quadrant above the early-year bars (2005–2010 are $50–$80M)
+        // so it doesn't obscure the tall 2023–2026 bars on the right.
         const padX = 10;
         const padY = 8;
         const lineGap = 6;
@@ -544,8 +546,8 @@ function ChartThree() {
         const line2W = ctx.measureText(line2).width;
         const boxW = Math.max(line1W, line2W) + padX * 2;
         const boxH = 11 + lineGap + 18 + padY * 2;
-        const boxX = chartArea.right - boxW - 14;
-        const boxY = chartArea.top + 10;
+        const boxX = chartArea.left + 12;
+        const boxY = chartArea.top + 12;
         const radius = 6;
 
         ctx.fillStyle = "#FAEEDA";
