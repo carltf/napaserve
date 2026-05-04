@@ -26,7 +26,7 @@ const mono = "monospace";
 const ARTICLES = [
   {
     slug: "napa-marketing-machine-2026",
-    headline: "The Downside of Napa's Massive Marketing Machine",
+    headline: "The Challenges of Napa's Massive Marketing Machine",
     publication: "Napa Valley Features",
     date: "May 9, 2026",
   },
@@ -115,10 +115,10 @@ const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
   "napa-marketing-machine-2026": {
-    headline: "The Downside of Napa's Massive Marketing Machine",
+    headline: "The Challenges of Napa's Massive Marketing Machine",
     publication: "Napa Valley Features",
     deck: "For 20 years Napa Valley's wine and hospitality industries have spent in the billions marketing the region. Visit Napa Valley's annual budget alone has grown 1,500% since 2010 to $9.3 million. The brand position the spending was meant to defend has been moving in the opposite direction.",
-    summary: "This piece examines two decades of escalating marketing spend in Napa Valley — Visit Napa Valley, Napa Valley Vintners, the Grapegrowers and Farm Bureau, the city visitor bureaus and individual winery hospitality and direct-to-consumer programs. Conservatively, the wine and hospitality industries have spent between $1.3 billion and $2.9 billion marketing Napa Valley over the past 20 years, with a mid-range estimate near $3.2 billion. The annual apparatus today runs above $200 million. The data on what that spending has produced — visitor count flat since 2018, occupancy below 2019, Napa County population now declining for the first time in this cycle, vineyard contracts walking away, family estates passing to conglomerates, vineyard acres being pulled at scale — describes a region whose brand has migrated from Bentley scarcity toward Mercedes ubiquity. Mercedes is an excellent vehicle. It does not sell at Bentley cachet.",
+    summary: "This piece examines two decades of escalating marketing spend in Napa Valley — Visit Napa Valley, Napa Valley Vintners, the Grapegrowers and Farm Bureau, the city visitor bureaus and individual winery hospitality and direct-to-consumer programs. Conservatively, the wine and hospitality industries have spent between $1.3 billion and $2.9 billion marketing Napa Valley over the past 20 years, with a mid-range estimate near $3.2 billion. The annual apparatus today runs above an estimated $200 million. The data on what that spending has produced — visitor count flat since 2018, occupancy below 2019, Napa County population declining and aging, vineyard contracts walking away, family estates passing to conglomerates, vineyard acres being pulled at scale — describes a region whose brand has migrated from Bentley scarcity toward Mercedes ubiquity. Mercedes is an excellent vehicle. It does not have Bentley cachet.",
     slug: "napa-marketing-machine-2026",
     dateline: "NAPA VALLEY, Calif.",
     body: [
@@ -208,7 +208,7 @@ const EXPORT_DATA = {
       h("What This All Means"),
       t("Napa Valley is at a point where it is behaving as if it can market and build its way out of the current challenges. The data suggest that the headwinds it faces are not optional. They are structural. Wine consumption is declining across generations. The county's visitor count has not recovered to 2018 levels despite continued marketing growth. The county's population is shrinking. The asset base that supports the premium model is contracting through closures, foreclosures, family-to-corporate transitions and vineyard removals at a pace not seen in modern industry memory."),
       t("The potential problem is that spending more in one direction precludes spending in another. And it is the other — better-wage jobs, a diversified economy, young families with paths to stay, elder care, improved environmental stewardship, agricultural and hospitality workers with real wage trajectories — that on the one hand seems on the opposite end of the spectrum from where the apparatus has been pointed for two decades. In reality, the other may be the future's saving bet."),
-      t("The Napa Valley brand was once positioned where Bentley sits. It now sits closer to where Mercedes does. Mercedes is an excellent vehicle. It does not sell at Bentley cachet. The work ahead is to ask better questions for today's world. Whether the region's institutions, the operators who fund them and the community whose well-being underwrites the entire apparatus can together build a different frame for measuring success — one in which the people, the place and the future do both the measuring and the evaluation, not the campaigns."),
+      t("The Napa Valley brand was once positioned where Bentley sits. It now sits closer to where Mercedes does. Mercedes is an excellent vehicle. It does not have Bentley cachet. The work ahead is to ask better questions for today's world. Whether the region's institutions, the operators who fund them and the community whose well-being underwrites the entire apparatus can together build a different frame for measuring success — one in which the people, the place and the future do both the measuring and the evaluation, not the campaigns."),
       t("There are millions being spent each year to market Napa Valley. The honest question is who those millions benefit. If wages are declining, jobs are stalled, the population is shrinking, costs are increasing and the world is increasingly seeing Napa Valley as one place among many, the case that spending more on the same approach will produce different outcomes is harder to make every year. The data has been pointing somewhere else for a long time. The question is whether anyone with the authority to redirect the spending is ready to pursue a new direction."),
     ],
     pullQuote: "The Bentley became a Mercedes.",
