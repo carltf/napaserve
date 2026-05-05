@@ -535,3 +535,44 @@ To-build list (deferred to next session, virtual-events scope only):
 ---
 
 *End of April 30, 2026 patch — Valley Works Collaborative*
+
+---
+
+## Session Update — 2026-05-04
+
+### Shipped
+- **napa-marketing-machine-2026** Under the Hood article published live: *The Challenges of Napa's Massive Marketing Machine* — https://napaserve.org/under-the-hood/napa-marketing-machine-2026
+  - 9 article sections, 3 custom Chart.js charts (ChartOne dual-axis line, ChartTwo stacked horizontal bars, ChartThree vertical bars with cumulative callout)
+  - Polls 36/37/38 seeded
+  - 7 Related Coverage links, 41 Sources, Methodology Note
+  - Database: napaserve_articles.id=13, published=true, polls_seeded=true
+  - Three commits: `59d7828` (initial build, bundle index-B6UK5b2m.js), `337fbec` (chart 3 callout repositioning, bundle index-B-TxDhpW.js), `d26ad7e` (Challenges/Downside title + summary refinement + Section 9 closing, bundle index-B30rtBi_.js)
+- **"We Need Your Guidance" reader-feedback note + 5-option poll** drafted and locked for next Substack column. Marks NVF entering its fourth year. Decision pending: seed as NapaServe poll 39 in addition to Substack, or Substack-only.
+
+### Poll Slug Registry (updated)
+- Last seeded: napa-marketing-machine-2026 → polls 36, 37, 38
+- **Next available poll ID: 39**
+
+### Top Backlog for Next Session
+1. **Word export template fixes** (admin Word export, affects every UTH article past and future):
+   - Caption double-period: source string ends with "." and template appends another "."
+   - Caption "Filename:" injection: chart-N_<slug>_nvf.png renders as inline prose; should be data-only
+   - Sources block markdown-link collapse inconsistency: some entries quoted-title, some plain text
+   - Fix scope: napaserve-admin.jsx export rendering function
+2. Reader-feedback poll seeding decision (NapaServe poll 39 vs Substack-only)
+3. Pulse Tracker Phases 1+2 build (Supabase table napa_lodging_monthly + Python seeder)
+4. Population article unfreeze candidate (DOF E-1 May 1 release integrated into Marketing Machine; standalone article can move forward)
+
+### Operational Learnings (added to Cheatsheet)
+- **iCloud sync mid-session can cascade into EPERM on the project tree.** Symptom: "Working directory was deleted" message; ls/stat work but every open() fails with Operation not permitted. Fix: restart Claude Code from inside the project directory (`cd ~/Desktop/napaserve && ulimit -n 2147483646 && source .env && claude`). The new process gets fresh sandbox trust.
+- **macOS file-descriptor limit**: Claude Code needs `ulimit -n 2147483646`. Persist in `~/.zshrc` to avoid re-running each session.
+- **zsh paste pitfall**: pasting multi-line shell sequences with `#` comments can drop the shell into `if>` continuation. Fix: Ctrl+C; paste one line at a time.
+- **EOS file moves**: ALWAYS `ls Active/` first to see what's actually there before issuing move commands. Never assume prior file dates from memory. Lesson learned 2026-05-04 when an attempted move of a non-existent `2026-04-29_v2` Session Summary failed because the actual prior file was dated `2026-04-28`.
+
+### Editorial Calls Confirmed This Session
+- Word export retains "Under the Hood:" prefix in headline (vs. site eyebrow which displays it separately) — keep as-is
+- Word export retains long founder-and-editor byline at bottom (vs. site short byline) — keep as-is
+- Word export retains "Article Summary:" insertion between deck and body (vs. site which jumps straight to body) — keep as-is
+
+### Single-Prompt Protocol Re-Confirmed
+Every UTH build is one self-contained Claude Code prompt covering verification gates → file scaffold → body prose → charts → captions → polls → related coverage → sources → methodology → admin card → route → DB insert → poll seeding → build → commit → deploy → verify. Long is fine. Splitting into multiple chat-side pieces introduces friction. This was re-confirmed mid-session after a 4-piece chat-side split was correctly flagged.
