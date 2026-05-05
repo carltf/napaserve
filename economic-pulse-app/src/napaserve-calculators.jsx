@@ -629,6 +629,30 @@ function AssetRepricingCalc() {
 const TRACKER_EVENTS = [
   // ── 2026 ──
   {
+    date: "Apr 28, 2026",
+    category: "Transaction",
+    headline: "4 Winds Estate lists for $17.95M in Stags Leap District",
+    detail: "Press Democrat reports the 110-acre 4 Winds Estate at 5870 Silverado Trail near Yountville has gone on the market for $17.95 million. Founded in 1998 by Jane Chapin and Roy Chapin IV, the property includes 3.3 acres of cabernet sauvignon, roughly 13,000 square feet of residential and wine space, and wines made by consulting winemaker Thomas Rivers Brown. The family cited generational considerations.",
+    source: "Press Democrat",
+    sourceUrl: "https://www.pressdemocrat.com/2026/04/28/110-acre-napa-valley-vineyard-estate-offered-for-nearly-18-million/",
+  },
+  {
+    date: "Apr 28, 2026",
+    category: "Hospitality",
+    headline: "Forge Pizza Napa closes after 10 years on south side",
+    detail: "Napa Valley Register reports Forge Pizza Napa, which opened in 2016 at the South Napa Century Center on Gasser Drive, closed Tuesday, April 28. Owner Michael Karp announced the closure on social media. A For Lease sign has been installed at the 155 Gasser Drive site, where NapaSport also closed in June.",
+    source: "Napa Valley Register",
+    sourceUrl: "https://napavalleyregister.com/business/forge-pizza-napa-gasser-foundation-lease/article_1ddd84cc-e544-49f2-8c54-53650abf00d4.html",
+  },
+  {
+    date: "Apr 17, 2026",
+    category: "Hospitality",
+    headline: "Calistoga Motor Lodge defaults on $40M loan while announcing expansion",
+    detail: "Napa Valley Register reports Calistoga Motor Lodge and Spa at 1880 Lincoln Ave., owned by Calistoga Hotel Group LP, an entity of Eagle Point Hotel Partners, defaulted on a $40 million loan. A notice of default was filed March 23 in the Napa County Recorder's Office, with $40,983,711 owed and a 90-day cure period. The Register noted that some hotel owners use default strategically to push lenders toward more favorable terms. Two weeks after the default filing, on April 9, the Lodge announced a multimillion-dollar expansion to 102 rooms and new management. Mayor Don Williams told the Register about half of Calistoga's budget comes from transient occupancy tax.",
+    source: "Napa Valley Register",
+    sourceUrl: "https://napavalleyregister.com/calistogan/news/calistoga-motor-lodge-foreclosure-expansion-eagle-point-hotel-partners/article_87165814-66f0-4130-89aa-768e35822aea.html",
+  },
+  {
     date: "Apr 20, 2026",
     category: "Hospitality",
     headline: "Robert Mondavi Winery reopens in Oakville after three-year transformation",
