@@ -4,6 +4,12 @@ import Footer from "./Footer";
 import NavBar from "./NavBar";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from "recharts";
 import PollSearch from "./components/PollSearch";
+import {
+  wineCAShareStoplight,
+  laborStoplight,
+  workforceStoplight,
+  housingStoplight,
+} from "./stoplights";
 
 const SUPABASE_URL = "https://csenpchwxxepdvjebsrt.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ";
@@ -279,6 +285,36 @@ export default function EconomicPulseDashboard(){
   const latestE=econData.length?econData[econData.length-1]:null;
   const priorE=econData.length>1?econData[econData.length-2]:null;
 
+  const snapshotSignals = useMemo(() => {
+    const wineNapa      = latestW?.napa ?? null;
+    const wineNapaPrior = allNapa.length ? findPriorDifferent(allNapa, "napa", allNapa.length - 1) : null;
+    const wineCA        = latestW?.ca ?? null;
+    const wineCAPrior   = allNapa.length ? findPriorDifferent(allNapa, "ca",   allNapa.length - 1) : null;
+    const wineCAShare   = (wineNapa != null && wineCA != null && wineCA !== 0)
+      ? (wineNapa / wineCA) * 100
+      : null;
+    const wineCAShareLight = wineCAShareStoplight(wineCAShare);
+
+    const laborLight = laborStoplight(latestE?.unemp ?? null);
+
+    const workforcePriorLabor = econData.length
+      ? findPriorDifferent(econData, "labor", econData.length - 1)
+      : null;
+    const workforceLight = workforceStoplight(latestE?.labor ?? null, workforcePriorLabor ?? null);
+
+    const zhviSeries      = econData.filter(d => d.home != null);
+    const housingYoYPrior = zhviSeries.length >= 53
+      ? (zhviSeries[zhviSeries.length - 53]?.home ?? null)
+      : null;
+    const housingLight    = housingStoplight(latestE?.home ?? null, housingYoYPrior);
+
+    return {
+      wineNapa, wineNapaPrior, wineCA, wineCAPrior,
+      wineCAShare, wineCAShareLight,
+      laborLight, workforceLight, housingLight,
+    };
+  }, [latestW, latestE, allNapa, econData]);
+
   if(loading)return(
     <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Source Sans 3',sans-serif"}}>
       <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
@@ -509,7 +545,22 @@ export default function EconomicPulseDashboard(){
         </>}
 
 
-        {section==="snapshot"&&<><SnapshotTab latestE={latestE} priorE={priorE} latestW={latestW} macroData={macroData} /></>}
+        {section==="snapshot"&&<><SnapshotTab
+          latestE={latestE}
+          priorE={priorE}
+          macroData={macroData}
+          wineNapa={snapshotSignals.wineNapa}
+          wineNapaPrior={snapshotSignals.wineNapaPrior}
+          wineCA={snapshotSignals.wineCA}
+          wineCAPrior={snapshotSignals.wineCAPrior}
+          wineCAShare={snapshotSignals.wineCAShare}
+          wineCAShareLight={snapshotSignals.wineCAShareLight}
+          laborLight={snapshotSignals.laborLight}
+          workforceLight={snapshotSignals.workforceLight}
+          housingLight={snapshotSignals.housingLight}
+          transitionsCount={null}
+          transitionsLight={'neutral'}
+        /></>}
 
         {section==="winery"&&<>
           <div style={{marginBottom:20}}>

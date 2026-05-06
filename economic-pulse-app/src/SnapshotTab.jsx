@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { STOPLIGHT_COLORS, transitionsStoplight } from "./stoplights";
 
 const T = {
   bg: "#F5F0E8",
@@ -50,10 +51,11 @@ const fmtDelta = (d, opts = {}) => {
   return sign + abs.toLocaleString();
 };
 
-function SnapshotCard({ eyebrow, primary, unitLabel, deltaLine, footer }) {
+function SnapshotCard({ eyebrow, primary, unitLabel, deltaLine, footer, stoplight }) {
   return (
     <div
       style={{
+        position: "relative",
         background: T.surface,
         border: `1px solid ${T.border}`,
         borderRadius: 6,
@@ -64,6 +66,20 @@ function SnapshotCard({ eyebrow, primary, unitLabel, deltaLine, footer }) {
         minHeight: 168,
       }}
     >
+      {stoplight && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            width: 18,
+            height: 18,
+            borderRadius: "50%",
+            background: STOPLIGHT_COLORS[stoplight] || STOPLIGHT_COLORS.neutral,
+          }}
+        />
+      )}
       <div
         style={{
           fontFamily: FONT_BODY,
@@ -284,7 +300,22 @@ function TransitionsSection({ events, loading, error }) {
   );
 }
 
-export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
+export default function SnapshotTab({
+  latestE,
+  priorE,
+  macroData,
+  wineNapa,
+  wineNapaPrior,
+  wineCA,
+  wineCAPrior,
+  wineCAShare,
+  wineCAShareLight,
+  laborLight,
+  workforceLight,
+  housingLight,
+  transitionsCount: _transitionsCountProp,
+  transitionsLight: _transitionsLightProp,
+}) {
   const cardsRef = useRef(null);
 
   const downloadPng = async () => {
@@ -357,10 +388,7 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
       .finally(() => setPollLoading(false));
   }, []);
 
-  const wineNapa = latestW?.napa ?? null;
-  const winePrior = latestW?.previous_value ?? null;
-  const wineDeltaWoW = delta(wineNapa, winePrior);
-  const caType02 = macroData?.ca_type02 ?? macroData?.california_winery_licenses ?? null;
+  const wineDeltaWoW = delta(wineNapa, wineNapaPrior);
 
   const unemployment = latestE?.unemp ?? null;
   const unemploymentPrior = priorE?.unemp ?? null;
@@ -377,7 +405,9 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
   const homeYoYPct = latestE?.home_value_yoy ?? null;
   const daysPending = latestE?.days_pending ?? null;
 
+  // Hoisted-prop scaffolding present but unused; tracker fetch hoist deferred to 4a-4.
   const transitionsCount = trackerEvents ? trackerEvents.length : null;
+  const transitionsLight = transitionsStoplight(transitionsCount);
   const categoryCounts = trackerEvents
     ? trackerEvents.reduce((acc, e) => {
         acc[e.category] = (acc[e.category] || 0) + 1;
@@ -424,7 +454,8 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
               {fmtDelta(wineDeltaWoW)} <span style={{ color: T.muted, fontSize: 11 }}>WoW</span>
             </span>
           }
-          footer={caType02 ? `CA total: ${fmt(caType02)}` : null}
+          footer={wineCAShare != null ? `${wineCAShare.toFixed(1)}% of California Type-02` : "CA share unavailable"}
+          stoplight={wineCAShareLight}
         />
 
         <SnapshotCard
@@ -439,6 +470,7 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
               {fmtDelta(unemploymentDeltaMoM, { pct: true })} <span style={{ color: T.muted, fontSize: 11 }}>MoM</span>
             </span>
           }
+          stoplight={laborLight}
         />
 
         <SnapshotCard
@@ -451,6 +483,7 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
               {fmtDelta(laborDeltaMoM)} <span style={{ color: T.muted, fontSize: 11 }}>MoM</span>
             </span>
           }
+          stoplight={workforceLight}
         />
 
         <SnapshotCard
@@ -468,6 +501,7 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
               ? `${homeYoYPct >= 0 ? "+" : ""}${homeYoYPct.toFixed(1)}% YoY${daysPending ? ` · ${daysPending} days to pending` : ""}`
               : null
           }
+          stoplight={housingLight}
         />
 
         <SnapshotCard
@@ -479,6 +513,7 @@ export default function SnapshotTab({ latestE, priorE, latestW, macroData }) {
               ? <span>Led by <span style={{ color: T.ink, fontWeight: 600 }}>{topCategory[0]}</span> ({topCategory[1]})</span>
               : <span style={{ color: T.muted }}>{trackerLoading ? "Loading…" : "No transitions recorded"}</span>
           }
+          stoplight={transitionsLight}
         />
 
         <SnapshotCard
