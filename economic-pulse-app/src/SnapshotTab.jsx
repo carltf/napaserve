@@ -516,33 +516,67 @@ export default function SnapshotTab({
           stoplight={transitionsLight}
         />
 
-        <SnapshotCard
-          eyebrow="READER SENTIMENT"
-          primary={poll ? `${poll.top_pct}%` : (pollLoading ? "…" : "—")}
-          unitLabel={poll ? `chose: ${poll.top_answer}` : "Latest reader poll"}
-          deltaLine={
-            poll
-              ? <span style={{ color: T.ink, lineHeight: 1.4 }}>{poll.question}</span>
-              : <span style={{ color: T.muted }}>{pollLoading ? "Loading poll…" : "No recent poll"}</span>
-          }
-          footer={
-            poll
-              ? (
-                <span>
-                  {poll.total_votes} votes · Source: {poll.post_title}
-                  {poll.substack_url && (
-                    <>
-                      {" · "}
-                      <a href={poll.substack_url} target="_blank" rel="noreferrer" style={{ color: T.accent }}>
-                        View on Substack →
-                      </a>
-                    </>
-                  )}
-                </span>
-              )
-              : null
-          }
-        />
+        {poll?.substack_url ? (
+          <a
+            href={poll.substack_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              textDecoration: "none",
+              color: "inherit",
+              cursor: "pointer",
+              display: "block",
+            }}
+          >
+            <SnapshotCard
+              eyebrow="READER SENTIMENT"
+              primary={poll ? `${poll.top_pct}%` : (pollLoading ? "…" : "—")}
+              unitLabel={poll ? `chose: ${poll.top_answer}` : "Latest reader poll"}
+              deltaLine={
+                poll
+                  ? <span style={{ color: T.ink, lineHeight: 1.4 }}>{poll.question}</span>
+                  : <span style={{ color: T.muted }}>{pollLoading ? "Loading poll…" : "No recent poll"}</span>
+              }
+              footer={
+                poll
+                  ? (
+                    <span>
+                      {poll.total_votes} votes · Source: {poll.post_title}
+                      {poll.substack_url && (
+                        <>
+                          {" · "}
+                          <a href={poll.substack_url} target="_blank" rel="noreferrer" style={{ color: T.accent }}>
+                            View on Substack →
+                          </a>
+                        </>
+                      )}
+                    </span>
+                  )
+                  : null
+              }
+            />
+          </a>
+        ) : (
+          <SnapshotCard
+            eyebrow="READER SENTIMENT"
+            primary={poll ? `${poll.top_pct}%` : (pollLoading ? "…" : "—")}
+            unitLabel={poll ? `chose: ${poll.top_answer}` : "Latest reader poll"}
+            deltaLine={
+              poll
+                ? <span style={{ color: T.ink, lineHeight: 1.4 }}>{poll.question}</span>
+                : <span style={{ color: T.muted }}>{pollLoading ? "Loading poll…" : "No recent poll"}</span>
+            }
+            footer={
+              poll
+                ? (
+                  <span>
+                    {poll.total_votes} votes · Source: {poll.post_title}
+                  </span>
+                )
+                : null
+            }
+          />
+        )}
       </div>
       </div>
 
