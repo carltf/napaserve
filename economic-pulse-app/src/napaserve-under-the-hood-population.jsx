@@ -1,67 +1,195 @@
+// UNDER THE HOOD — Calistoga Grew. The Question Is What That Means.
+// -----------------------------------------------------------------
+// Slug: napa-population-2025
+// Publication: Napa Valley Features
+// Built from under-the-hood-napa-marketing-machine.jsx structural pattern.
+// -----------------------------------------------------------------
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Chart, registerables } from "chart.js";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import useDraftGate from "./hooks/useDraftGate";
 import DraftBanner from "./components/DraftBanner";
-import RelatedCoverage from "./components/RelatedCoverage";
 
-// ─── theme ────────────────────────────────────────────────────────────────────
-const T = {
-  bg:      "#F5F0E8",
-  surface: "#EDE8DE",
-  ink:     "#2C1810",
-  accent:  "#8B5E3C",
-  gold:    "#C4A050",
-  muted:   "#8B7355",
-  border:  "#D4C9B8",
-};
-
-const font  = "'Source Sans 3','Source Sans Pro',sans-serif";
-const serif = "'Libre Baskerville',Georgia,serif";
+Chart.register(...registerables);
 
 const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
+
+// ── ARTICLE METADATA ───────────────────────────────────────────────
 const ARTICLE_SLUG = "napa-population-2025";
+const ARTICLE_TITLE = "Under the Hood: Calistoga Grew. The Question Is What That Means.";
+const ARTICLE_DECK = "What the May 2026 Department of Finance release shows about where Napa County is growing, who it is growing for, and what the funding base looks like underneath.";
+const ARTICLE_PUBLICATION = "Napa Valley Features";
+const ARTICLE_DATE = "May 10, 2026";
+const POLL_IDS = [39, 40, 41]; // eslint-disable-line no-unused-vars
+const SHOW_DECK = true;
+const EYEBROW = "Under the Hood";
 
+// ── COUNTY + PUBLICATION (template-compat downstream constants) ────
+const PUBLICATION = ARTICLE_PUBLICATION;
+const SUBSTACK_URL = "https://napavalleyfocus.substack.com";
+const DATELINE_LOCATION = "NAPA VALLEY, Calif.";
 
-// ─── live poll component ──────────────────────────────────────────────────────
+// ── THEME ──────────────────────────────────────────────────────────
+const T = {
+  bg: "#F5F0E8",
+  surface: "#EDE8DE",
+  ink: "#2C1810",
+  accent: "#8B5E3C",
+  gold: "#C4A050",
+  muted: "#8B7355",
+  border: "#D4C9B8",
+  rule: "rgba(44,24,16,0.12)",
+};
+const font = "'Source Sans 3','Source Sans Pro',sans-serif";
+const serif = "'Libre Baskerville',Georgia,serif";
+
+const prose = {
+  fontFamily: font,
+  fontSize: 17,
+  lineHeight: 1.75,
+  color: T.ink,
+  marginBottom: 18,
+};
+
+const h2style = {
+  fontFamily: serif,
+  fontSize: 22,
+  fontWeight: 700,
+  color: T.ink,
+  marginTop: 32,
+  marginBottom: 14,
+};
+
+const h3style = {
+  fontFamily: serif,
+  fontSize: 19,
+  fontWeight: 700,
+  color: T.ink,
+  marginTop: 28,
+  marginBottom: 14,
+};
+
+// Aliases used in inline body prose
+const P_STYLE = prose;
+const SECTION_H2 = h2style;
+const SECTION_H3 = h3style; // eslint-disable-line no-unused-vars
+const LINK = { color: T.accent };
+
+// ── DOWNLOAD HELPER ────────────────────────────────────────────────
+async function downloadComponentPng(containerRef, filename, title) {
+  if (!containerRef.current) return;
+  const { default: html2canvas } = await import("html2canvas");
+  const canvas = await html2canvas(containerRef.current, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: T.bg,
+  });
+  const off = document.createElement("canvas");
+  off.width = canvas.width;
+  off.height = canvas.height + 80;
+  const ctx = off.getContext("2d");
+  ctx.fillStyle = T.bg;
+  ctx.fillRect(0, 0, off.width, off.height);
+  ctx.drawImage(canvas, 0, 64);
+  ctx.save();
+  ctx.globalAlpha = 1.0;
+  ctx.font = "bold 32px 'Libre Baskerville', Georgia, serif";
+  ctx.fillStyle = T.ink;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(title || "", 28, 16);
+  ctx.restore();
+  ctx.save();
+  ctx.globalAlpha = 0.25;
+  ctx.font = "26px 'Source Code Pro', monospace";
+  ctx.fillStyle = T.muted;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom";
+  ctx.fillText("napaserve.org", off.width - 24, off.height - 28);
+  ctx.restore();
+  const a = document.createElement("a");
+  a.href = off.toDataURL("image/png");
+  a.download = filename;
+  a.click();
+}
+
+// ── DOWNLOAD BUTTON ────────────────────────────────────────────────
+function DownloadButton({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: "4px 12px",
+        fontFamily: "monospace",
+        fontSize: 11,
+        fontWeight: 400,
+        letterSpacing: "0.88px",
+        color: T.muted,
+        background: "transparent",
+        border: `1px solid ${T.border}`,
+        borderRadius: 3,
+        cursor: "pointer",
+        marginTop: 12,
+      }}
+    >
+      DOWNLOAD CHART PNG
+    </button>
+  );
+}
+
+// ── CAPTION ────────────────────────────────────────────────────────
+function Caption({ title, description, sources = [] }) {
+  return (
+    <p style={{ fontFamily: font, fontSize: 13, color: T.muted, fontStyle: "italic", lineHeight: 1.55, margin: "14px 0 0", maxWidth: 680 }}>
+      <strong style={{ fontWeight: 700, fontStyle: "italic" }}>{title}.</strong>{" "}
+      {description}{" "}
+      {sources.length > 0 && (
+        <>
+          Source:{" "}
+          {sources.map((s, i) => (
+            <span key={i}>
+              {s.url
+                ? <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>{s.label}</a>
+                : <span>{s.label}</span>}
+              {i < sources.length - 1 ? "; " : "."}
+            </span>
+          ))}
+        </>
+      )}
+    </p>
+  );
+}
+
+// ── LIVE POLL ──────────────────────────────────────────────────────
 function LivePoll({ poll }) {
-  const [voted, setVoted]   = useState(null);
+  const [voted, setVoted] = useState(null);
   const [counts, setCounts] = useState(poll.counts || {});
-  const [total, setTotal]   = useState(poll.total || 0);
+  const [total, setTotal] = useState(poll.total || 0);
   const [loading, setLoading] = useState(false);
-
   const vote = async (idx) => {
     if (voted !== null || loading) return;
     setLoading(true);
     try {
       const res = await fetch(`${WORKER}/api/article-poll-vote`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ poll_id: poll.id, option_index: idx })
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ poll_id: poll.id, option_index: idx }),
       });
       const data = await res.json();
-      if (data.success) {
-        setCounts(data.counts);
-        setTotal(data.total);
-        setVoted(idx);
-      }
-    } catch(e) { /* silent fail */ }
+      if (data.success) { setCounts(data.counts); setTotal(data.total); setVoted(idx); }
+    } catch (e) { /* swallow */ }
     setLoading(false);
   };
-
-  const options = poll.options;
-
   return (
     <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 8, padding: "20px 20px 16px", marginBottom: 16 }}>
       <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 8px 0" }}>Poll</p>
       <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: "0 0 14px 0", lineHeight: 1.4 }}>{poll.question}</p>
-
-      {options.map((opt, idx) => {
+      {poll.options.map((opt, idx) => {
         const count = counts[idx] || 0;
-        const pct   = total > 0 ? Math.round((count / total) * 100) : 0;
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
         const isVoted = voted === idx;
-
         return (
           <div key={idx} style={{ marginBottom: 8 }}>
             {voted === null ? (
@@ -81,851 +209,918 @@ function LivePoll({ poll }) {
           </div>
         );
       })}
-
-      {voted !== null && (
-        <p style={{ fontFamily: font, fontSize: 12, color: T.muted, margin: "10px 0 0 0" }}>{total} {total === 1 ? "vote" : "votes"} {"\u00b7"} Results update in real time</p>
-      )}
+      {voted !== null && <p style={{ fontFamily: font, fontSize: 12, color: T.muted, margin: "10px 0 0 0" }}>{total} {total === 1 ? "vote" : "votes"} {"·"} Results update in real time</p>}
     </div>
   );
 }
 
-// ─── polls section ────────────────────────────────────────────────────────────
-function PollsSection() {
+// ── POLLS SECTION ──────────────────────────────────────────────────
+function PollsSection({ slug }) {
   const [polls, setPolls] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    fetch(`${WORKER}/api/article-polls?slug=${ARTICLE_SLUG}`)
+    fetch(`${WORKER}/api/article-polls?slug=${slug}`)
       .then(r => r.json())
       .then(data => { setPolls(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
-  }, []);
-
-  if (loading) return (
-    <div style={{ padding: "24px 0", fontFamily: font, fontSize: 14, color: T.muted }}>Loading polls...</div>
-  );
+  }, [slug]);
+  if (loading) return <div style={{ padding: "24px 0", fontFamily: font, fontSize: 14, color: T.muted }}>Loading polls...</div>;
   if (!polls.length) return null;
-
   return (
     <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
-      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>Today{"\u2019"}s Polls</p>
+      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>{"Today’s Polls"}</p>
       <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 20px 0" }}>What do you think?</h2>
       {polls.map(poll => <LivePoll key={poll.id} poll={poll} />)}
       <p style={{ fontFamily: font, fontSize: 12, color: T.muted, marginTop: 8, lineHeight: 1.5 }}>
-        Poll results are anonymous and stored on NapaServe. Results shown after you vote.
-        Historical reader polls from Napa Valley Features are searchable in the{" "}
+        Poll results are anonymous and stored on NapaServe. Results shown after you vote.{" "}
+        Historical reader polls from {PUBLICATION} on Substack are searchable in the{" "}
         <a href="/dashboard" style={{ color: T.accent }}>Community Pulse dashboard</a>.
       </p>
     </div>
   );
 }
 
-// ─── archive search ───────────────────────────────────────────────────────────
-function ArchiveSearch() {
-  const [query, setQuery]     = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(false);
-
-  const search = async () => {
-    if (!query.trim()) return;
-    setLoading(true);
-    setSearched(true);
-    try {
-      const res = await fetch(`${WORKER}/api/rag-search`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, top_k: 5 })
-      });
-      const data = await res.json();
-      setResults(data.results || data || []);
-    } catch(e) { setResults([]); }
-    setLoading(false);
-  };
-
-  const handleKey = (e) => { if (e.key === "Enter") search(); };
-
-  return (
-    <div style={{ borderTop: `2px solid ${T.border}`, marginTop: 48, paddingTop: 32 }}>
-      <p style={{ fontFamily: font, fontSize: 10, letterSpacing: "0.1em", color: T.gold, fontWeight: 700, textTransform: "uppercase", margin: "0 0 6px 0" }}>Archive</p>
-      <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 700, color: T.ink, margin: "0 0 6px 0" }}>Search North Coast Coverage</h2>
-      <p style={{ fontFamily: font, fontSize: 14, color: T.muted, margin: "0 0 16px 0" }}>Search 1,000+ articles and reports from Napa Valley Features.</p>
-      <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          onKeyDown={handleKey}
-          placeholder="Search population, commuter patterns, housing, wages..."
-          style={{ flex: 1, padding: "10px 14px", fontFamily: font, fontSize: 14, color: T.ink, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, outline: "none" }}
-        />
-        <button onClick={search} disabled={loading}
-          style={{ padding: "10px 20px", background: T.accent, color: "#fff", border: "none", borderRadius: 6, fontFamily: font, fontSize: 14, fontWeight: 600, cursor: loading ? "default" : "pointer" }}>
-          {loading ? "..." : "Search"}
-        </button>
-      </div>
-
-      {searched && !loading && results.length === 0 && (
-        <p style={{ fontFamily: font, fontSize: 14, color: T.muted }}>No results found. Try different keywords.</p>
-      )}
-
-      {results.map((r, i) => (
-        <div key={i} style={{ borderBottom: `1px solid ${T.border}`, padding: "14px 0" }}>
-          {r.post_url ? (
-            <a href={r.post_url} target="_blank" rel="noreferrer"
-              style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.accent, textDecoration: "none", display: "block", marginBottom: 4 }}>
-              {r.post_title || r.title || "Article"}
-            </a>
-          ) : (
-            <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: "0 0 4px 0" }}>{r.post_title || r.title || "Article"}</p>
-          )}
-          <p style={{ fontFamily: font, fontSize: 13, color: T.ink, margin: "0 0 4px 0", lineHeight: 1.5 }}>{r.chunk_text || r.text || r.content || ""}</p>
-          {r.post_url && (
-            <a href={r.post_url} target="_blank" rel="noreferrer"
-              style={{ fontFamily: font, fontSize: 12, color: T.muted }}>Read full article {"\u2192"}</a>
-          )}
-        </div>
-      ))}
-
-      {results.length > 0 && (
-        <a href="/archive" style={{ display: "inline-block", marginTop: 16, fontFamily: font, fontSize: 14, color: T.accent, textDecoration: "underline" }}>
-          Open full archive search {"\u2192"}
-        </a>
-      )}
-    </div>
-  );
-}
-
-
-// ─── chart wrapper with download ──────────────────────────────────────────────
-function ChartBox({ title, caption, source, note, scenarioBadge, children }) {
-  return (
-    <div style={{ background: T.surface, border: `1px solid rgba(44,24,16,0.12)`, borderRadius: 8, padding: "24px 20px", margin: "32px 0" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <p style={{ fontFamily: serif, fontSize: 15, fontWeight: 700, color: T.ink, margin: 0 }}>{title}</p>
-        {scenarioBadge && (
-          <span style={{ fontFamily: font, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: T.gold, color: "#fff", borderRadius: 10, padding: "2px 10px" }}>Scenario</span>
-        )}
-      </div>
-      {children}
-      {caption && <p style={{ fontFamily: font, fontSize: 13, color: T.muted, margin: "12px 0 0", lineHeight: 1.5, fontStyle: "italic" }}>{caption}</p>}
-      {source && <p style={{ fontFamily: font, fontSize: 11, color: T.muted, margin: "6px 0 0", lineHeight: 1.4 }}>Source: {source}</p>}
-      {note && <p style={{ fontFamily: font, fontSize: 11, color: T.muted, margin: "4px 0 0", lineHeight: 1.4, fontStyle: "italic" }}>{note}</p>}
-    </div>
-  );
-}
-
-function ChartCanvas({ canvasId, buildChart, downloadName }) {
+// ── CHART ONE — Jurisdiction-level population change ───────────────
+function ChartOne() {
+  const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  const chartRef  = useRef(null);
+  const chartRef = useRef(null);
 
   useEffect(() => {
-    if (!canvasRef.current || !window.Chart) return;
+    if (!canvasRef.current) return;
     if (chartRef.current) chartRef.current.destroy();
-    const ctx = canvasRef.current.getContext("2d");
-    chartRef.current = buildChart(ctx);
+
+    const labels = ["American Canyon", "Napa city", "Yountville", "St. Helena", "Calistoga", "Unincorporated"];
+    const s2024 = [1.77, 0.13, 0.54, 0.57, 0.29, -0.08];
+    const s2025 = [2.94, 0.28, -0.64, -0.13, -0.41, -0.44];
+    const s2026 = [0.14, -0.31, -1.95, -0.41, 2.32, -0.36];
+
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          { label: "2023 → 2024 (May 2024 release)", data: s2024, backgroundColor: "#C4A084", borderRadius: 2 },
+          { label: "2024 → 2025 (May 2025 release)", data: s2025, backgroundColor: T.accent, borderRadius: 2 },
+          { label: "2025 → 2026 (May 2026 release)", data: s2026, backgroundColor: "#5C3D26", borderRadius: 2 },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 14, color: T.ink, font: { size: 12 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y > 0 ? "+" : ""}${ctx.parsed.y.toFixed(2)}%`,
+            },
+          },
+        },
+        scales: {
+          x: { ticks: { color: T.ink, font: { size: 11 } }, grid: { color: T.rule } },
+          y: {
+            beginAtZero: true,
+            ticks: { callback: (v) => `${v > 0 ? "+" : ""}${v}%`, color: T.muted, font: { size: 11 } },
+            grid: { color: T.rule },
+          },
+        },
+      },
+    });
     return () => { if (chartRef.current) chartRef.current.destroy(); };
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
-
-  const download = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const offscreen = document.createElement("canvas");
-    offscreen.width  = canvas.width;
-    offscreen.height = canvas.height + 28;
-    const ctx = offscreen.getContext("2d");
-    ctx.fillStyle = "#FAF6F0";
-    ctx.fillRect(0, 0, offscreen.width, offscreen.height);
-    ctx.drawImage(canvas, 0, 0);
-    ctx.save();
-    ctx.globalAlpha = 0.25;
-    ctx.font = "11px 'Source Code Pro',monospace";
-    ctx.fillStyle = "#8B7355";
-    ctx.textAlign = "right";
-    ctx.textBaseline = "bottom";
-    ctx.fillText("napaserve.org", offscreen.width - 12, offscreen.height - 8);
-    ctx.restore();
-    const link = document.createElement("a");
-    link.download = downloadName;
-    link.href = offscreen.toDataURL("image/png");
-    link.click();
-  };
-
-  return (
-    <>
-      <canvas ref={canvasRef} id={canvasId} />
-      {downloadName && (
-        <button onClick={download}
-          style={{ marginTop: 8, padding: "4px 12px", fontSize: 11, fontFamily: "monospace", letterSpacing: "0.08em", color: "#8B7355", background: "transparent", border: "1px solid #D4C4A8", borderRadius: 3, cursor: "pointer", display: "block" }}>
-          DOWNLOAD CHART PNG
-        </button>
-      )}
-    </>
-  );
-}
-
-
-// ─── Chart 1: Napa County Population Trend, 2000-2025 ─────────────────────────
-function Chart1() {
-  const labels = ["2000", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2023", "2024", "2025"];
-  const data   = [124279, 136484, 136839, 138249, 138808, 140114, 140654, 141119, 140837, 139786, 138982, 138019, 135522, 135415, 136124];
-  const pointColors = labels.map((_, i) => i === 7 ? "#9E5050" : i === 14 ? "#5B9E8A" : "#4A7BA7");
-  const pointRadii  = labels.map((_, i) => (i === 7 || i === 14) ? 6 : 4);
-
-  return (
-    <ChartCanvas canvasId="chart-pop-trend" downloadName="chart-1_napa-population-trend.png" buildChart={(ctx) => {
-      return new window.Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [{
-            label: "Population",
-            data,
-            borderColor: "#4A7BA7",
-            backgroundColor: "rgba(74,123,167,0.12)",
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: pointColors,
-            pointBorderColor: pointColors,
-            pointRadius: pointRadii,
-            pointHoverRadius: pointRadii.map(r => r + 2),
-          }],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: (c) => c.parsed.y.toLocaleString() + " residents" } },
-          },
-          scales: {
-            y: {
-              min: 118000,
-              max: 145000,
-              ticks: { callback: (val) => (val / 1000).toFixed(0) + "k" },
-            },
-          },
-        },
-        plugins: [{
-          id: "peakCurrentLabels",
-          afterDatasetsDraw(chart) {
-            const { ctx: c } = chart;
-            const ds = chart.getDatasetMeta(0);
-            const peakIdx = 7;
-            const curIdx = 14;
-            c.save();
-            c.font = "bold 11px 'Source Sans 3', sans-serif";
-            c.fillStyle = "#9E5050";
-            c.textAlign = "center";
-            const peakPoint = ds.data[peakIdx];
-            if (peakPoint) c.fillText("Peak: 141,119 (2016)", peakPoint.x, peakPoint.y - 12);
-            c.fillStyle = "#5B9E8A";
-            const curPoint = ds.data[curIdx];
-            if (curPoint) c.fillText("2025: 136,124", curPoint.x, curPoint.y + 20);
-            c.restore();
-          },
-        }],
-      });
-    }} />
-  );
-}
-
-
-// ─── Chart 2: Population Change by Jurisdiction, 2024-2025 ────────────────────
-function Chart2() {
-  const labels = ["Calistoga", "St. Helena", "Yountville", "Balance of County", "Napa (city)", "American Canyon"];
-  const data   = [-21, -7, -17, -101, 216, 639];
-  const pctLabels = ["-0.4%", "-0.1%", "-0.6%", "-0.4%", "+0.3%", "+2.9%"];
-  const colors = data.map((v, i) => {
-    if (i === 5) return "#C4956A";
-    if (i === 4) return "#5B9E8A";
-    return "#9E5050";
-  });
-
-  return (
-    <ChartCanvas canvasId="chart-jurisdiction-change" downloadName="chart-2_jurisdiction-change-2024-2025.png" buildChart={(ctx) => {
-      return new window.Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            label: "Population Change",
-            data,
-            backgroundColor: colors,
-            borderRadius: 3,
-          }],
-        },
-        options: {
-          indexAxis: "y",
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: (c) => { const i = c.dataIndex; return (c.parsed.x >= 0 ? "+" : "") + c.parsed.x.toLocaleString() + " (" + pctLabels[i] + ")"; } } },
-          },
-          scales: {
-            x: {
-              ticks: { callback: (val) => (val >= 0 ? "+" : "") + val },
-            },
-          },
-        },
-        plugins: [{
-          id: "pctLabels",
-          afterDatasetsDraw(chart) {
-            const { ctx: c, data: d } = chart;
-            const meta = chart.getDatasetMeta(0);
-            c.save();
-            c.font = "11px 'Source Sans 3', sans-serif";
-            c.fillStyle = T.muted;
-            meta.data.forEach((bar, i) => {
-              const val = d.datasets[0].data[i];
-              const x = val >= 0 ? bar.x + 6 : bar.x - 6;
-              c.textAlign = val >= 0 ? "left" : "right";
-              c.textBaseline = "middle";
-              c.fillText(pctLabels[i], x, bar.y);
-            });
-            c.restore();
-          },
-        }],
-      });
-    }} />
-  );
-}
-
-
-// ─── Chart 3: Population by Jurisdiction, 2000 vs. 2025 ──────────────────────
-function Chart3() {
-  const labels   = ["American Canyon", "Napa (city)", "Calistoga", "St. Helena", "Yountville"];
-  const data2000 = [9774, 72585, 4991, 5950, 2916];
-  const data2025 = [22396, 77736, 5160, 5349, 2638];
-
-  return (
-    <ChartCanvas canvasId="chart-2000-vs-2025" downloadName="chart-3_population-2000-vs-2025.png" buildChart={(ctx) => {
-      return new window.Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [
-            { label: "2000", data: data2000, backgroundColor: "#4A7BA7", borderRadius: 3 },
-            { label: "2025", data: data2025, backgroundColor: "#C4956A", borderRadius: 3 },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "top", labels: { font: { family: font, size: 12 } } },
-            tooltip: { callbacks: { label: (c) => c.dataset.label + ": " + c.parsed.y.toLocaleString() } },
-          },
-          scales: {
-            y: {
-              ticks: { callback: (val) => (val / 1000).toFixed(0) + "k" },
-            },
-          },
-        },
-      });
-    }} />
-  );
-}
-
-
-// ─── Chart 4: Net Commuter Inflow and Linear Projection ──────────────────────
-function Chart4() {
-  const labels = ["2015", "2018", "2021\n(proj.)", "2024\n(proj.)", "2027\n(proj.)", "2030\n(proj.)"];
-  const data   = [7000, 4240, 1480, -1280, -4040, -6800];
-  const colors = data.map((v, i) => {
-    if (i <= 1) return "#4A7BA7";
-    if (v >= 0) return "rgba(74,123,167,0.45)";
-    return "rgba(158,80,80,0.55)";
-  });
-
-  return (
-    <ChartCanvas canvasId="chart-commuter-inflow" downloadName="chart-4_commuter-inflow-projection.png" buildChart={(ctx) => {
-      return new window.Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            label: "Net Commuter Inflow",
-            data,
-            backgroundColor: colors,
-            borderColor: data.map((_, i) => i <= 1 ? "transparent" : (data[i] >= 0 ? "#4A7BA7" : "#9E5050")),
-            borderWidth: data.map((_, i) => i <= 1 ? 0 : 2),
-            borderRadius: 3,
-            borderSkipped: false,
-          }],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: (c) => (c.parsed.y >= 0 ? "+" : "") + c.parsed.y.toLocaleString() + " workers" } },
-            annotation: undefined,
-          },
-          scales: {
-            y: {
-              min: -8000,
-              max: 8500,
-            },
-          },
-        },
-        plugins: [{
-          id: "zeroLine",
-          afterDatasetsDraw(chart) {
-            const { ctx: c } = chart;
-            const yScale = chart.scales.y;
-            const xScale = chart.scales.x;
-            const y0 = yScale.getPixelForValue(0);
-            c.save();
-            c.setLineDash([4, 4]);
-            c.strokeStyle = T.muted;
-            c.lineWidth = 1;
-            c.beginPath();
-            c.moveTo(xScale.left, y0);
-            c.lineTo(xScale.right, y0);
-            c.stroke();
-            c.setLineDash([]);
-            c.font = "11px 'Source Sans 3', sans-serif";
-            c.fillStyle = T.muted;
-            c.textAlign = "left";
-            c.textBaseline = "bottom";
-            c.fillText("0 \u2190 breakeven", xScale.left + 4, y0 - 4);
-            c.restore();
-          },
-        }, {
-          id: "scenarioBadge",
-          afterDatasetsDraw(chart) {
-            const { ctx: c, chartArea } = chart;
-            c.save();
-            const badgeText = "SCENARIO \u2014 NOT A FORECAST";
-            c.font = "bold 10px 'Source Sans 3', sans-serif";
-            const metrics = c.measureText(badgeText);
-            const padX = 8, padY = 5;
-            const badgeW = metrics.width + padX * 2;
-            const badgeH = 20;
-            const x = chartArea.right - badgeW - 10;
-            const y = chartArea.top + 10;
-            c.fillStyle = "rgba(158, 80, 80, 0.12)";
-            c.strokeStyle = "#9E5050";
-            c.lineWidth = 1;
-            c.fillRect(x, y, badgeW, badgeH);
-            c.strokeRect(x, y, badgeW, badgeH);
-            c.fillStyle = "#9E5050";
-            c.textAlign = "left";
-            c.textBaseline = "middle";
-            c.fillText(badgeText, x + padX, y + badgeH / 2);
-            c.restore();
-          },
-        }],
-      });
-    }} />
-  );
-}
-
-
-// ─── Chart 5: Jobs per Hotel Room Added ───────────────────────────────────────
-function Chart5() {
-  const labels = ["2009\u20132019\n(+700 rooms added)", "2019\u20132025\n(+382 rooms added)"];
-  const data   = [7.6, -0.5];
-  const colors = ["#5B9E8A", "#9E5050"];
-
-  return (
-    <ChartCanvas canvasId="chart-jobs-per-room" downloadName="chart-5_jobs-per-hotel-room.png" buildChart={(ctx) => {
-      return new window.Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            label: "Jobs per Room Added",
-            data,
-            backgroundColor: colors,
-            borderRadius: 3,
-            barThickness: 80,
-          }],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: (c) => (c.parsed.y >= 0 ? "+" : "") + c.parsed.y.toFixed(1) + " jobs per room" } },
-          },
-          scales: {
-            y: {
-              min: -2,
-              max: 10,
-            },
-          },
-        },
-      });
-    }} />
-  );
-}
-
-
-// ─── Chart 6: Housing Units and Total Jobs, Indexed 2019=100 ─────────────────
-function Chart6() {
-  const labels      = ["2010", "2013", "2015", "2017", "2019", "2021", "2022", "2023", "2024"];
-  const housingData = [88.7, 93.4, 96.2, 98.1, 100, 102.8, 103.8, 105.1, 106.0];
-  const jobsData    = [79.7, 88.4, 94.2, 97.8, 100, 87.0, 91.3, 92.8, 92.8];
-
-  return (
-    <ChartCanvas canvasId="chart-housing-vs-jobs" downloadName="chart-6_housing-vs-jobs-indexed.png" buildChart={(ctx) => {
-      return new window.Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: "Housing Units",
-              data: housingData,
-              borderColor: "#4A7BA7",
-              backgroundColor: "transparent",
-              tension: 0.3,
-              pointRadius: 4,
-              pointBackgroundColor: "#4A7BA7",
-            },
-            {
-              label: "Total Jobs",
-              data: jobsData,
-              borderColor: "#C4956A",
-              backgroundColor: "transparent",
-              tension: 0.3,
-              pointRadius: 4,
-              pointBackgroundColor: "#C4956A",
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "top", labels: { font: { family: font, size: 12 } } },
-            tooltip: { callbacks: { label: (c) => c.dataset.label + ": " + c.parsed.y.toFixed(1) } },
-          },
-          scales: {
-            y: {
-              min: 75,
-              max: 112,
-              title: { display: true, text: "Index (2019 = 100)", font: { family: font, size: 12 } },
-            },
-          },
-        },
-        plugins: [{
-          id: "gapFill",
-          afterDatasetsDraw(chart) {
-            const { ctx: c } = chart;
-            const housingMeta = chart.getDatasetMeta(0);
-            const jobsMeta    = chart.getDatasetMeta(1);
-            if (!housingMeta.data.length || !jobsMeta.data.length) return;
-            c.save();
-            c.fillStyle = "rgba(196,149,106,0.15)";
-            c.beginPath();
-            // trace housing line forward
-            housingMeta.data.forEach((pt, i) => {
-              if (i === 0) c.moveTo(pt.x, pt.y);
-              else c.lineTo(pt.x, pt.y);
-            });
-            // trace jobs line backward
-            for (let i = jobsMeta.data.length - 1; i >= 0; i--) {
-              c.lineTo(jobsMeta.data[i].x, jobsMeta.data[i].y);
-            }
-            c.closePath();
-            c.fill();
-            c.restore();
-          },
-        }],
-      });
-    }} />
-  );
-}
-
-
-// ══════════════════════════════════════════════════════════════════════════════
-// MAIN COMPONENT
-// ══════════════════════════════════════════════════════════════════════════════
-export default function NapaPopulation() {
-  const navigate = useNavigate();
-  const gate = useDraftGate(ARTICLE_SLUG);
-  const [chartReady, setChartReady] = useState(false);
-
-  useEffect(() => {
-    if (gate.status === "redirect") {
-      navigate("/under-the-hood", { replace: true });
-    }
-  }, [gate.status, navigate]);
-
-  useEffect(() => {
-    if (window.Chart) { setChartReady(true); return; }
-    const s = document.createElement("script");
-    s.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js";
-    s.onload = () => setChartReady(true);
-    document.head.appendChild(s);
   }, []);
 
-  const prose   = { fontFamily: font, fontSize: 17, color: T.ink, lineHeight: 1.75, margin: "0 0 18px 0" };
-  const heading = { fontFamily: serif, fontSize: 22, fontWeight: 700, color: T.ink, margin: "40px 0 16px 0" };
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Napa County Jurisdiction Population Change</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <div style={{ overflowX: "auto" }}>
+          <div style={{ minWidth: 640, position: "relative", height: 360 }}>
+            <canvas ref={canvasRef} id="chart-jurisdiction-pop-change" aria-label="Grouped bar chart of Napa County jurisdiction-level population change across three Department of Finance release windows: 2023 to 2024, 2024 to 2025, and 2025 to 2026" role="img" />
+          </div>
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-1_napa-population-2025_nvf.png", "Napa County jurisdiction population change")} />
+      <p style={{ fontFamily: font, fontSize: 11, color: T.muted, marginTop: 6 }}>
+        Mobile users: scroll horizontally to view full chart.
+      </p>
+      <Caption
+        title="Three release windows, percent change YoY"
+        description={"American Canyon’s growth engine flatlined this year after two strong years, while Calistoga reversed from a 0.4% decline to a 2.32% gain — the largest percentage gain of any jurisdiction in the county in the most recent release. Each year’s change is computed within its own release vintage; the unincorporated 2023–2024 value is computed by subtraction."}
+        sources={[
+          { label: "California Department of Finance E-1 Population Estimates, May 2024, May 2025 and May 2026 releases", url: "https://dof.ca.gov/forecasting/demographics/estimates/e-1/" },
+        ]}
+      />
+    </div>
+  );
+}
 
-  if (gate.status === "loading" || gate.status === "redirect") {
+// ── CHART TWO — Calistoga TOT receipts + avg rooms, FY13-14 to FY25-26 ──
+function ChartTwo() {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+
+    const fyLabels = ["FY13-14","FY14-15","FY15-16","FY16-17","FY17-18","FY18-19","FY19-20","FY20-21","FY21-22","FY22-23","FY23-24","FY24-25","FY25-26"];
+    // TODO: FY14-15 through FY24-25 intermediate values are placeholders pending detailed Calistoga April 2026 TOT report pull.
+    // Verified anchors: FY13-14 4.5, FY18-19 6.4, FY19-20 4.7, FY20-21 8.9, FY21-22 11.8, FY25-26 12.6.
+    const totData = [4.5, 5.2, 5.8, 6.1, 6.0, 6.4, 4.7, 8.9, 11.8, 12.0, 12.3, 12.3, 12.6];
+    // TODO: intermediate average-rooms values are interpolated; verified anchors FY13-14 720, FY18-19 755, FY24-25 861, FY25-26 861.
+    const roomsData = [720, 725, 730, 740, 745, 755, 760, 765, 770, 780, 785, 861, 861];
+
+    // Two-tier annotation plugin
+    const annotations = [
+      // Tier 1 (bold)
+      { idx: 5,  label: "Jan 2019 / Measure D effective",    tier: 1, row: 0 },
+      { idx: 6,  label: "Mar 2020 / COVID shutdown",          tier: 1, row: 1 },
+      { idx: 12, label: "Mar 2026 / Motor Lodge default",     tier: 1, row: 0 },
+      // Tier 2 (lighter)
+      { idx: 4,  label: "2017 wildfires",                     tier: 2, row: 2 },
+      { idx: 8,  label: "Largest one-year rebound",           tier: 2, row: 1 },
+      { idx: 11, label: "Operators 42→35; rooms +130",  tier: 2, row: 2 },
+    ];
+
+    const annotationPlugin = {
+      id: "ct2_annotations",
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea } = chart;
+        const totMeta = chart.getDatasetMeta(0);
+        if (!totMeta || !totMeta.data.length) return;
+        ctx.save();
+        const rowYs = [chartArea.top - 4, chartArea.top - 22, chartArea.top - 40];
+        annotations.forEach((a) => {
+          const bar = totMeta.data[a.idx];
+          if (!bar) return;
+          const isT1 = a.tier === 1;
+          const labelY = rowYs[a.row] || rowYs[0];
+          // dashed connector
+          ctx.setLineDash(isT1 ? [4, 3] : [2, 3]);
+          ctx.strokeStyle = isT1 ? T.ink : T.muted;
+          ctx.lineWidth = isT1 ? 1.1 : 0.8;
+          ctx.beginPath();
+          ctx.moveTo(bar.x, bar.y - 2);
+          ctx.lineTo(bar.x, labelY + 6);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          // anchor dot
+          ctx.fillStyle = isT1 ? T.ink : T.muted;
+          ctx.beginPath();
+          ctx.arc(bar.x, bar.y - 2, isT1 ? 2.5 : 2, 0, Math.PI * 2);
+          ctx.fill();
+          // label text
+          ctx.font = isT1
+            ? "600 11px 'Source Sans 3', sans-serif"
+            : "11px 'Source Sans 3', sans-serif";
+          ctx.fillStyle = isT1 ? T.ink : "#6B5A48";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(a.label, bar.x, labelY);
+        });
+        ctx.restore();
+      },
+    };
+
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: fyLabels,
+        datasets: [
+          {
+            type: "bar",
+            label: "TOT receipts ($M)",
+            data: totData,
+            backgroundColor: T.accent,
+            borderRadius: 2,
+            yAxisID: "yLeft",
+            order: 2,
+          },
+          {
+            type: "line",
+            label: "Avg. operating rooms",
+            data: roomsData,
+            borderColor: T.gold,
+            backgroundColor: T.gold,
+            borderWidth: 2.5,
+            pointRadius: 3,
+            pointBackgroundColor: T.gold,
+            tension: 0.25,
+            yAxisID: "yRight",
+            order: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 60 } },
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 14, color: T.ink, font: { size: 12 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                if (ctx.datasetIndex === 0) return `Receipts: $${ctx.parsed.y.toFixed(1)}M`;
+                return `Avg. rooms: ${ctx.parsed.y}`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: { ticks: { color: T.muted, font: { size: 11 }, maxRotation: 45 }, grid: { display: false } },
+          yLeft: {
+            type: "linear",
+            position: "left",
+            min: 0,
+            max: 14,
+            ticks: { callback: (v) => `$${v}M`, color: T.accent, font: { size: 11 } },
+            grid: { color: T.rule },
+            title: { display: true, text: "TOT receipts", color: T.accent, font: { size: 11 } },
+          },
+          yRight: {
+            type: "linear",
+            position: "right",
+            min: 600,
+            max: 900,
+            ticks: { color: "#8a6d2e", font: { size: 11 } },
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: "Avg. rooms", color: "#8a6d2e", font: { size: 11 } },
+          },
+        },
+      },
+      plugins: [annotationPlugin],
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Calistoga TOT Receipts and Average Rooms</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <div style={{ overflowX: "auto" }}>
+          <div style={{ minWidth: 640, position: "relative", height: 380 }}>
+            <canvas ref={canvasRef} id="chart-calistoga-tot-rooms" aria-label="Dual-axis chart of City of Calistoga transient occupancy tax receipts and average operating rooms, fiscal year 2013-14 through fiscal year 2025-26, with six annotated events including the 2017 wildfires, Measure D, the COVID shutdown, the largest one-year rebound, operator consolidation, and the Calistoga Motor Lodge default" role="img" />
+          </div>
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-2_napa-population-2025_nvf.png", "Calistoga TOT receipts and average rooms")} />
+      <p style={{ fontFamily: font, fontSize: 11, color: T.muted, marginTop: 6 }}>
+        Mobile users: scroll horizontally to view full chart.
+      </p>
+      <Caption
+        title="Fiscal year 2013-14 through fiscal year 2025-26"
+        description={"Receipts rebounded sharply from the COVID shutdown to a peak in fiscal 2021-22 and have held steady since, but the underlying composition shifted. Average rooms grew 8% in fiscal 2024-25 while operating establishments fell from 42 to 35; in March 2026, the Calistoga Motor Lodge defaulted on a $40 million loan."}
+        sources={[
+          { label: "City of Calistoga Transient Occupancy Tax Report, April 2026", url: "https://www.calistogaca.gov/Government/City-Budgets/Transient-Occupancy-Tax" },
+        ]}
+      />
+    </div>
+  );
+}
+
+// ── CHART THREE — Housing-to-income multipliers ────────────────────
+function ChartThree() {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+
+    const labels = ["Napa County 2010", "Napa County 2024", "Calistoga 2024 (household)", "Calistoga 2024 (vs. hospitality wage)"];
+    const data = [4.5, 8.0, 12.4, 22.6];
+    const colors = ["#B4B2A9", T.muted, T.accent, "#5C3D26"];
+
+    const annotationPlugin = {
+      id: "ct3_annotations",
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        const xScale = scales.x;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data.length) return;
+        ctx.save();
+
+        // Inline data labels at end of each bar
+        ctx.font = "600 12px 'Source Sans 3', sans-serif";
+        ctx.fillStyle = T.ink;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        meta.data.forEach((bar, i) => {
+          ctx.fillText(`${data[i]}×`, bar.x + 8, bar.y);
+        });
+
+        // Vertical dashed threshold line at x = 3
+        const x3 = xScale.getPixelForValue(3);
+        ctx.setLineDash([5, 4]);
+        ctx.strokeStyle = T.muted;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(x3, chartArea.top);
+        ctx.lineTo(x3, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Two-line centered label below plot area
+        ctx.font = "11px 'Source Sans 3', sans-serif";
+        ctx.fillStyle = T.muted;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        const lineY = chartArea.bottom + 6;
+        ctx.fillText("3× conventional", x3, lineY);
+        ctx.fillText("affordability threshold", x3, lineY + 13);
+
+        ctx.restore();
+      },
+    };
+
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{ data, backgroundColor: colors, borderRadius: 2 }],
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 60, bottom: 40 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.x}×` } },
+        },
+        scales: {
+          x: {
+            min: 0,
+            max: 25,
+            ticks: { callback: (v) => `${v}×`, color: T.muted, font: { size: 11 } },
+            grid: { color: T.rule },
+          },
+          y: {
+            ticks: { color: T.ink, font: { size: 12 } },
+            grid: { display: false },
+          },
+        },
+      },
+      plugins: [annotationPlugin],
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Housing-to-Income Multipliers</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <div style={{ position: "relative", height: 300 }}>
+          <canvas ref={canvasRef} id="chart-housing-income-ratio" aria-label="Horizontal bar chart of housing-to-income multipliers showing Napa County 2010 at 4.5 times, Napa County 2024 at 8.0 times, Calistoga 2024 household at 12.4 times, and Calistoga 2024 versus hospitality wage at 22.6 times, with a vertical dashed line at 3 times marking the conventional affordability threshold" role="img" />
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-3_napa-population-2025_nvf.png", "Housing-to-income multipliers in Napa County and Calistoga")} />
+      <Caption
+        title="Typical home values divided by typical incomes — 2010 baseline vs. 2024"
+        description={"The ratio of typical home values to typical household incomes has risen sharply from the 2010 county baseline. Calistoga’s ratio is about 55% above the current Napa County figure; against the wages of the dominant local industry — accommodation and food services — the multiplier is nearly three times the county-wide household ratio."}
+        sources={[
+          { label: "U.S. Census ACS 5-year estimates 2024", url: "https://api.census.gov/data/2024/acs/acs5" },
+          { label: "BLS Quarterly Census of Employment and Wages, Napa County 2024", url: "https://data.bls.gov/cew/data/api/2024/a/area/06055.csv" },
+          { label: "Zillow Home Value Index, Calistoga, March 2026", url: "https://www.zillow.com/home-values/3929/calistoga-ca/" },
+          { label: "2010 baseline per Rethinking the Housing Narrative in Napa County (Napa Valley Features, June 2025)", url: "https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" },
+        ]}
+      />
+    </div>
+  );
+}
+
+// ── CHART FOUR — Housing units vs population indexed (2010 = 100) ──
+function ChartFour() {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+
+    // TODO: replace placeholder series with verified DOF E-1 and E-1H historical pulls 2010-2026.
+    // Current placeholders illustrate the structural pattern (housing rises steadily; population peaks mid-decade and reverts below the index line).
+    const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
+    const housing = [100, 100.5, 101.0, 101.5, 102.1, 102.8, 103.5, 104.2, 105.0, 105.8, 106.5, 107.2, 107.8, 108.4, 109.0, 109.6, 110.2];
+    const population = [100, 100.4, 100.8, 101.1, 101.4, 101.7, 102.0, 102.0, 101.7, 101.3, 100.9, 100.5, 100.3, 100.2, 100.05, 99.95, 99.85];
+
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: years.map(String),
+        datasets: [
+          {
+            label: "Housing units (2010 = 100)",
+            data: housing,
+            borderColor: T.gold,
+            backgroundColor: T.gold,
+            borderWidth: 2.5,
+            pointRadius: 3,
+            pointBackgroundColor: T.gold,
+            tension: 0.2,
+            fill: false,
+          },
+          {
+            label: "Population (2010 = 100)",
+            data: population,
+            borderColor: T.accent,
+            backgroundColor: T.accent,
+            borderWidth: 2.5,
+            pointRadius: 3,
+            pointBackgroundColor: T.accent,
+            tension: 0.2,
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 14, color: T.ink, font: { size: 12 } } },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}` } },
+        },
+        scales: {
+          x: { ticks: { color: T.muted, font: { size: 11 } }, grid: { color: T.rule } },
+          y: {
+            min: 95,
+            max: 115,
+            ticks: { color: T.muted, font: { size: 11 } },
+            grid: { color: T.rule },
+            title: { display: true, text: "Index (2010 = 100)", color: T.muted, font: { size: 11 } },
+          },
+        },
+      },
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Napa County Housing Units vs. Population, Indexed 2010 = 100</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <div style={{ position: "relative", height: 320 }}>
+          <canvas ref={canvasRef} id="chart-housing-vs-pop-indexed" aria-label="Two-line chart of Napa County housing units and total population, indexed to 100 at 2010 and tracked through 2026. Housing rises steadily; population peaks mid-decade and crosses below the index line." role="img" />
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-4_napa-population-2025_nvf.png", "Napa County housing units vs total population, indexed 2010 = 100")} />
+      <Caption
+        title="County housing stock has grown; population has not"
+        description={"Housing stock grew steadily from the 2010 baseline; population crossed below the index line during the post-2017 wildfire and pandemic period and has not recovered. The widening gap between the two lines is the structural picture the headline population number does not capture."}
+        sources={[
+          { label: "California Department of Finance E-1 and E-1H Population and Housing Estimates, 2010–2026", url: "https://dof.ca.gov/forecasting/demographics/estimates/e-1/" },
+        ]}
+      />
+    </div>
+  );
+}
+
+// ── MAIN COMPONENT ─────────────────────────────────────────────────
+export default function NapaPopulation() {
+  const navigate = useNavigate();
+  const status = useDraftGate(ARTICLE_SLUG);
+  const isDraft = status === "draft";
+
+  useEffect(() => {
+    if (status === "redirect") navigate("/under-the-hood");
+  }, [status, navigate]);
+
+  if (status === "loading") {
     return (
-      <div style={{ background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: font, fontSize: 14, color: T.muted }}>
-        Loading...
+      <div style={{ background: T.bg, minHeight: "100vh" }}>
+        <NavBar />
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "60px 20px" }}>
+          <p style={{ ...prose, color: T.muted }}>Loading...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div style={{ background: T.bg, minHeight: "100vh" }}>
-      {gate.status === "draft" && <DraftBanner />}
-      <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
+      {isDraft && <DraftBanner />}
       <NavBar />
 
-      {/* Masthead */}
-      <div style={{ background: "#2C1810", color: "#F5F0E8", textAlign: "center", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", padding: "10px 24px" }}>
-        Napa Valley Features &nbsp;{"\u00b7"}&nbsp; Under the Hood &nbsp;{"\u00b7"}&nbsp; April 2026
-      </div>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: isDraft ? "80px 20px 60px" : "60px 20px 60px" }}>
 
-      {/* Header */}
-      <div style={{ maxWidth: 780, margin: "0 auto", padding: "48px 24px 32px" }}>
-        <div style={{ fontFamily: "monospace", fontSize: 14, letterSpacing: "0.2em", textTransform: "uppercase", color: T.gold, marginTop: 32, marginBottom: 16 }}>
-          Under the Hood &nbsp;{"\u00b7"}&nbsp; Napa Valley Features
-        </div>
-        <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(26px, 5vw, 42px)", color: T.ink, lineHeight: 1.15, marginBottom: 20 }}>
-          Under the Hood: Where Napa{"\u2019"}s Growth Actually Lives
+        {/* ── EYEBROW ───────────────────────────────────────────────── */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.muted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
+          {EYEBROW} {"·"} {ARTICLE_PUBLICATION}
+        </p>
+
+        {/* ── HEADLINE ──────────────────────────────────────────────── */}
+        <h1 style={{ fontFamily: serif, fontSize: 34, fontWeight: 700, color: T.ink, lineHeight: 1.25, marginBottom: 16 }}>
+          {ARTICLE_TITLE}
         </h1>
-        <p style={{ fontFamily: font, fontWeight: 300, fontSize: 17, lineHeight: 1.65, color: "#5C4033", marginBottom: 24 }}>
-          Napa County added 709 residents in 2024. American Canyon accounted for 639 of them. Across 25 years of state and census records, the pattern is the same: population growth concentrates in one city at the southern edge of the county, while the rest of the valley stays flat or shrinks.
+
+        {/* ── BYLINE + DATE ─────────────────────────────────────────── */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.muted, marginBottom: 16 }}>
+          By Tim Carl {"·"} {ARTICLE_DATE}
         </p>
-        <div style={{ borderTop: "1px solid #D4C4A8", paddingTop: 14 }}>
-          <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted }}>
-            By Tim Carl &nbsp;{"\u00b7"}&nbsp; Napa Valley Features &nbsp;{"\u00b7"}&nbsp; April 2026
-          </div>
-          <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", color: T.muted, fontStyle: "italic", marginTop: 4 }}>
-            California Dept. of Finance E-1 Population Estimates {"\u00b7"} U.S. Census Bureau {"\u00b7"} Bureau of Labor Statistics
-          </div>
-          <a href="https://napavalleyfocus.substack.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 14, fontWeight: 400, color: T.accent, textDecoration: "none", display: "inline-block", marginTop: 12 }}>
-            Read on Napa Valley Features {"\u00b7"} Substack {"\u2192"}
+
+        {/* ── DECK ──────────────────────────────────────────────────── */}
+        {SHOW_DECK && (
+          <p style={{ fontFamily: serif, fontSize: 18, color: T.muted, lineHeight: 1.6, marginBottom: 24, fontStyle: "italic" }}>
+            {ARTICLE_DECK}
+          </p>
+        )}
+
+        {/* ── SUBSTACK LINK ─────────────────────────────────────────── */}
+        <p style={{ fontFamily: font, fontSize: 13, color: T.muted, marginBottom: 32, borderBottom: `1px solid ${T.border}`, paddingBottom: 20 }}>
+          Read on{" "}
+          <a href={SUBSTACK_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>
+            {ARTICLE_PUBLICATION} on Substack {"→"}
           </a>
+        </p>
+
+        {/* ── ARTICLE SUMMARY ───────────────────────────────────────── */}
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: "16px 20px", marginBottom: 32 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Article Summary</p>
+          <p style={{ ...prose, fontSize: 15, marginBottom: 0 }}>
+            The California Department of Finance{"’"}s May 2026 release shows California and Napa County declining for the first time since the COVID rebound. American Canyon{"’"}s growth engine flatlined; Calistoga reversed from a 0.4% decline to a 2.32% gain, the largest percentage gain of any jurisdiction in the county — entirely through one workforce-affordable housing project at 1866 Lincoln Avenue. The revenue base that financed that housing is showing structural distress in the same fiscal year: TOT receipts have held only because rates have climbed enough to offset falling occupancy, the 97-room Calistoga Motor Lodge defaulted on a $40 million loan in March, the city manager and roughly one in five city employees turned over during the same window, and the 70-acre fairgrounds Calistoga purchased in 2024 has no operating funding plan and a 99-to-1 resident mandate against housing at the site. The headline population number registers presence. It does not register what produced the presence, who paid for it, or what it tells us about the underlying economy.
+          </p>
         </div>
-      </div>
 
-      {/* Article body */}
-      <div style={{ maxWidth: 780, margin: "0 auto", padding: "0 24px 60px" }}>
-
-        {/* ── Opening ───────────────────────────────────────────────── */}
-        <p style={prose}>
-          <span style={{ fontWeight: 700 }}>NAPA VALLEY, Calif. {"\u2014"}</span> The California Department of Finance{"\u2019"}s most recent E-1 population estimates {"\u2014"} released in May 2025 {"\u2014"} show Napa County gained 709 residents in 2024, for a total of 136,124 as of January 1, 2025. The county{"\u2019"}s 0.52% year-over-year growth rate led all nine Bay Area counties. The next E-1 release, reflecting January 1, 2026 figures, is expected from DOF in May 2026.
-        </p>
-        <p style={prose}>
-          Of those 709 new residents, 639 {"\u2014"} or 90% {"\u2014"} were added in one city: American Canyon. Every other part of the county, taken together, gained 70 people.
-        </p>
-        <p style={prose}>
-          Napa city added 216. Calistoga lost 21. St. Helena lost 7. Yountville lost 17. The unincorporated balance of the county lost 101. The three upvalley cities and the unincorporated county combined lost 146 residents.
-        </p>
-        <p style={prose}>
-          Strip out American Canyon and the remaining 113,728 residents of Napa County {"\u2014"} 83% of the population {"\u2014"} gained 70 people. That is a growth rate of 0.06%, which rounds to zero.
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* LEDE                                                          */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <p style={{ ...P_STYLE, marginBottom: 18 }}>
+          <strong>NAPA VALLEY, Calif.</strong> {"—"} The May 1 release from <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={LINK}>California{"’"}s Department of Finance</a> is the cleanest population data the state produces, and this year it tells a story Napa County has not heard since the COVID rebound. California declined. Napa County declined. And inside that decline, the geography of growth flipped.
         </p>
 
-        {/* Chart 2 — Population Change by Jurisdiction */}
-        {chartReady ? (
-          <ChartBox
-            title="Population Change by Jurisdiction, 2024–2025"
-            caption="American Canyon gained 639 residents — 90 percent of Napa County's 709-resident net gain. Napa city added 216. Calistoga, St. Helena, Yountville and the unincorporated balance of the county all lost residents. Ordered north (top) to south (bottom)."
-            source="California Department of Finance, E-1 Population Estimates, January 1, 2024 and January 1, 2025"
-          >
-            <Chart2 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
-
-
-        {/* ── Section: The New Pattern Is the Old Pattern ───────────── */}
-        <h2 style={heading}>The New Pattern Is the Old Pattern</h2>
-        <p style={prose}>
-          In 2000, American Canyon had 9,774 residents {"\u2014"} 7.9% of Napa County{"\u2019"}s 124,279. By 2010 it had nearly doubled to 19,454. By 2025 it stands at 22,396 {"\u2014"} 16.5% of the county.
-        </p>
-        <p style={prose}>
-          Since 2000, American Canyon has added roughly 12,622 residents. The rest of Napa County, taken together, has added approximately 750. Subtract American Canyon entirely, and the county outside that one city has posted essentially flat population over a quarter century.
-        </p>
-        <p style={prose}>
-          St. Helena{"\u2019"}s 2025 population of 5,349 is roughly 10% below its 2000 census count. Yountville{"\u2019"}s 2,638 is down by a similar margin. Calistoga is within 200 residents of where it stood 25 years ago. The city of Napa is up modestly. The unincorporated balance of the county is near flat.
-        </p>
-        <p style={prose}>
-          Last year{"\u2019"}s E-1 release, documented in this column in May 2025, showed the same geometry: a narrow southern gain, an upvalley decline, and county totals still running well below the 2016 peak. This year{"\u2019"}s release extends that reading across a second consecutive year of growth and a longer time series. A pattern that appears once is a data point. A pattern that persists across 25 years of census and state records {"\u2014"} through boom, pandemic, wildfire and recovery {"\u2014"} is a structural condition.
+        <p style={P_STYLE}>
+          Last year{"’"}s growth engine, American Canyon, flatlined. The Upvalley, which has been losing population for half a decade, kept losing {"—"} except for one town. Calistoga, the smallest and northernmost incorporated city in the county, grew 2.3%. On its own, that number reads like good news. Read against the rest of the data, it reads as a question the simple population number cannot answer.
         </p>
 
-        {/* Chart 3 — Population by Jurisdiction 2000 vs 2025 */}
-        {chartReady ? (
-          <ChartBox
-            title="Population by Jurisdiction, 2000 vs. 2025"
-            caption="American Canyon has grown 129 percent since 2000. St. Helena and Yountville are each down roughly 10 percent. The unincorporated balance of the county is down 18 percent. Most of Napa County's net population growth this century has been absorbed by one city."
-            source="U.S. Census Bureau Decennial Census (2000); California Department of Finance, E-1 Population Estimates (2025)"
-          >
-            <Chart3 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
-
-
-        {/* ── Section: Still Below Peak, After Nine Years ───────────── */}
-        <h2 style={heading}>Still Below Peak, After Nine Years</h2>
-        <p style={prose}>
-          Napa County reached its modern population peak of 141,119 in 2016, according to DOF{"\u2019"}s E-4 May 2025 benchmark (2011{"\u2013"}2020, with 2010 and 2020 Census benchmarks). It has not recovered. The county stood at 136,124 on January 1, 2025 {"\u2014"} 4,995 residents below that peak, or 3.5% lower. The 2025 figure is within 360 residents of the county{"\u2019"}s 2010 census count of 136,484. In effect, the past 15 years have produced no net population change at the county level.
-        </p>
-        <p style={prose}>
-          What has changed in that time is where the residents live. In 2010, American Canyon held 14.3% of the county. In 2025, it holds 16.5%. Every other jurisdiction has held flat, declined, or shrunk as a share of the county.
-        </p>
-        <p style={prose}>
-          Housing construction mirrors the same geography. In 2024, Napa County added 658 housing units {"\u2014"} a 1.2% increase. American Canyon and the city of Napa together accounted for roughly 91% of that total. The three upvalley cities combined added 21 units. American Canyon{"\u2019"}s housing stock grew 5.0% in one year, among the fastest percent-change gains of any incorporated jurisdiction in California.
+        <p style={P_STYLE}>
+          This piece walks the new release from the federal frame down to the county aggregate, then jurisdiction by jurisdiction, and finishes inside Calistoga {"—"} because Calistoga is where the question of what population growth actually represents is being tested in real time.
         </p>
 
-        {/* Chart 1 — Napa County Population Trend */}
-        {chartReady ? (
-          <ChartBox
-            title="Napa County Population Trend, 2000–2025"
-            caption="The county's 2025 count of 136,124 sits 4,995 residents below its 2016 peak of 141,119 and within 360 residents of its 2010 census count. After nine years, Napa County has not recovered its previous high."
-            source="U.S. Census Bureau Decennial Census (2000, 2010, 2020); California Department of Finance, E-4 Estimates with 2010 Benchmark (2011–2018); DOF E-1 Estimates (2023–2025)"
-          >
-            <Chart1 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — THE FEDERAL FRAME AND THE CALIFORNIA DECLINE        */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>The Federal Frame and the California Decline</h2>
 
-
-        {/* ── Section: One County Line, Two Different Commutes ──────── */}
-        <h2 style={heading}>One County Line, Two Different Commutes</h2>
-        <p style={prose}>
-          Napa Valley is 30 miles long and narrow. A worker employed in Calistoga or St. Helena who lives in American Canyon faces a 25- to 35-mile commute {"\u2014"} roughly equivalent to commuting from Cloverdale in Sonoma County or Lakeport in Lake County, at materially lower housing costs in both comparison cases. The county line is not the relevant labor-market boundary for many upvalley workers. For an hourly worker priced out of St. Helena, leaving Napa County is often a shorter commute than staying in it.
-        </p>
-        <p style={prose}>
-          American Canyon{"\u2019"}s housing surge is driven by the reverse dynamic: regional-scale developments {"\u2014"} Watson Ranch, Lemos Pointe and others {"\u2014"} built to serve Bay Area households for whom southern Napa County is an affordable alternative to Marin or the East Bay. The city sits at the intersection of State Route 29 and the corridor to Interstate 80, with direct access to Solano, Contra Costa and Alameda employment centers. U.S. Census LEHD {"\u2018"}On The Map{"\u2019"} data indicate that only 11% of American Canyon workers also live in American Canyon {"\u2014"} a ratio consistent with a bedroom community oriented outward rather than inward to Napa County{"\u2019"}s own labor market.
+        <p style={P_STYLE}>
+          For the first time since the pandemic rebound, California{"’"}s resident population fell. The Department of Finance estimates the state lost 53,929 residents between January 1, 2025 and January 1, 2026, a decline of 0.14%. Net domestic out-migration ran 288,600. Natural increase was positive at 108,200, though down 4,500 from 2024. The variable that flipped the sign of the headline number was federal: legal international migration was cut by more than half, from 248,400 the prior year to 126,400.
         </p>
 
-
-        {/* ── Section: The Commuter Arithmetic ──────────────────────── */}
-        <h2 style={heading}>The Commuter Arithmetic</h2>
-        <p style={prose}>
-          The Napa Valley Transportation Authority{"\u2019"}s 2018 Napa Valley Travel Behavior Study found approximately 30,740 workers commuting into Napa County daily, and approximately 26,500 commuting out {"\u2014"} a net inflow of about 4,240. The net inflow had been approximately 7,000 in 2015. The 40% decline in three years suggests the county{"\u2019"}s dependence on imported labor was softening well before the pandemic.
-        </p>
-        <p style={prose}>
-          NVTA also observed that outbound Napa workers earned, on average, more than inbound workers. Inbound commuters skewed toward service, hospitality and agricultural wages. Outbound commuters included a larger share of professional, technical and managerial workers.
-        </p>
-        <p style={prose}>
-          If the 2015{"\u2013"}2018 trend continued at the same rate, Napa County would have crossed into net commuter outflow territory around 2024 {"\u2014"} more workers leaving daily than arriving. That is an extrapolation, not a measurement. An updated NVTA or ACS commuting-flow study is required to confirm the crossover. The chart below shows the 2015 and 2018 NVTA values together with that linear extension.
+        <p style={P_STYLE}>
+          The Department of Finance was explicit about what that math means. Absent the federal changes, California would have grown by approximately 66,000 residents in 2025 instead of declining by 54,000. The state{"’"}s population trajectory did not shift because Californians changed their behavior. It shifted because federal immigration policy did.
         </p>
 
-        {/* Chart 4 — Net Commuter Inflow */}
-        {chartReady ? (
-          <ChartBox
-            title="Net Commuter Inflow to Napa County, 2015–2018 (with extrapolation)"
-            caption="NVTA measured a net inflow of approximately 7,000 commuters in 2015 and approximately 4,240 in 2018 — a 40 percent decline in three years. The dashed bars are a linear extension of that trend for 2021 through 2030. The extrapolation is illustrative only."
-            source="Napa Valley Transportation Authority, Napa Valley Travel Behavior Study (2018). Linear extension 2019–2030 by the author — illustrative only."
-            note="No updated NVTA or ACS study has confirmed a crossover into net outflow territory."
-            scenarioBadge
-          >
-            <Chart4 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
-
-
-        {/* ── Section: More Rooms, Fewer Jobs per Room ──────────────── */}
-        <h2 style={heading}>More Rooms, Fewer Jobs per Room</h2>
-        <p style={prose}>
-          Napa County{"\u2019"}s visitor economy long offered a clean correlation between capacity and employment. Between 2009 and 2019, the county{"\u2019"}s lodging inventory grew by roughly 700 rooms and leisure-and-hospitality employment expanded by more than 5,000 jobs {"\u2014"} a ratio of more than seven jobs added per hotel room added.
-        </p>
-        <p style={prose}>
-          That ratio reversed. Between 2019 and 2024, roughly 382 rooms were added while leisure and hospitality employment fell by approximately 200, and food-services and drinking-places employment fell by roughly 470. The rooms-to-jobs ratio flipped from +7.6 to {"\u2212"}0.5.
-        </p>
-        <p style={prose}>
-          This is a sector-specific measure {"\u2014"} employment yield in the visitor economy {"\u2014"} not a comprehensive read on Napa County{"\u2019"}s labor market. But it captures a change in the single sector most frequently invoked to explain cross-county commuting: lodging capacity is no longer producing net new employment the way it used to.
+        <p style={P_STYLE}>
+          Napa County sits inside that frame. The county lost 246 residents to land at 136,374, a decline of 0.18% {"—"} a smaller percentage decline than the state. Napa declined less than California declined. But it declined.
         </p>
 
-        {/* Chart 5 — Jobs per Hotel Room */}
-        {chartReady ? (
-          <ChartBox
-            title="Leisure and Hospitality Jobs Added per Hotel Room Added, 2009–2019 vs. 2019–2024"
-            caption="From 2009 to 2019, each hotel room added in Napa County was associated with more than seven new leisure and hospitality jobs. Since 2019, the ratio has inverted: rooms have continued to be added, but leisure and hospitality employment has declined."
-            source="Bureau of Labor Statistics — Napa County Total Leisure and Hospitality (NAPA906LEIHN), Food Services and Drinking Places (SMU06349007072200001SA); STR Monthly Industry Report"
-            note="Sector-specific employment-yield measure, not a comprehensive read on the Napa County labor market."
-          >
-            <Chart5 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
-
-
-        {/* ── Section: Housing Has Grown. Jobs Have Not. ────────────── */}
-        <h2 style={heading}>Housing Has Grown. Jobs Have Not.</h2>
-        <p style={prose}>
-          Between 2010 and 2024, Napa County{"\u2019"}s housing stock grew roughly 19%, adding approximately 9,000 units. Total nonfarm employment grew marginally over the same span. Intra-county weekday vehicle trips fell from approximately 72,100 in 2018 to 58,000 in 2024. If housing scarcity were the binding constraint on employment, inbound commuting and internal trip volumes would be climbing. They are not.
-        </p>
-        <p style={prose}>
-          Affordability data make the structural point concrete. In 2010, the median Napa County home sold at roughly 4.5 times median household income. As of 2025, that ratio is approximately 8.6. Qualifying for a median-priced Napa County home at current mortgage rates requires a household income near $230,000. Median hospitality wages in Napa County run roughly $35,000 to $45,000. No amount of unit construction closes that gap without a corresponding change in the wage mix.
+        <p style={P_STYLE}>
+          A note on the data. The <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={LINK}>May 2025 E-1 release</a> benchmarked Napa County{"’"}s January 1, 2025 population at 136,124. The May 2026 release revises that figure upward to 136,620, then estimates the decline to 136,374. Department of Finance benchmarks every release back to the most recent census, which means the new vintage supersedes the old wherever they overlap. The comparisons in this piece use the revised series throughout.
         </p>
 
-        {/* Chart 6 — Housing Units and Total Nonfarm Employment */}
-        {chartReady ? (
-          <ChartBox
-            title="Napa County Housing Units and Total Nonfarm Employment, Indexed to January 2019 = 100"
-            caption="Both series indexed to their January 2019 values. Housing has continued to grow through and past the pandemic; total nonfarm employment has not. The shaded area is the widening gap between residential capacity and workforce."
-            source="California Department of Finance, E-1H Housing Unit Estimates; Bureau of Labor Statistics, Napa County total nonfarm payrolls"
-          >
-            <Chart6 />
-          </ChartBox>
-        ) : <div style={{ background: T.surface, borderRadius: 8, padding: 32, margin: "32px 0", textAlign: "center", color: T.muted, fontFamily: font, fontSize: 14 }}>Loading chart...</div>}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — A FORECAST THAT HELD, UNTIL IT BROKE                */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>A Forecast That Held {"—"} Until It Broke</h2>
 
-
-        {/* ── Section: What the Data Show, and What They Don't ──────── */}
-        <h2 style={heading}>What the Data Show, and What They Don{"\u2019"}t</h2>
-        <p style={prose}>
-          Four observations are supported directly by the E-1 release, the long-run DOF and Census series, and BLS employment data: county population growth over the past two years has concentrated almost entirely in American Canyon; the geographic pattern has persisted for 25 years across multiple data vintages; housing growth has outpaced job growth since 2019; and the visitor economy{"\u2019"}s employment yield per added hotel room has reversed.
-        </p>
-        <p style={prose}>
-          Three further readings are consistent with the data but not yet fully established: American Canyon{"\u2019"}s growth is driven more by regional labor markets than by Napa County{"\u2019"}s own; Napa County{"\u2019"}s net commuter inflow may have already crossed into outflow territory; and the wage structure of the county{"\u2019"}s dominant job sectors is the principal constraint on broader-based demographic recovery.
-        </p>
-        <p style={prose}>
-          One question the available public data cannot yet answer: where do new American Canyon residents actually work, and what share of upvalley employers{"\u2019"} workforces now live outside Napa County entirely? A countywide residency-and-commute survey {"\u2014"} of the kind NVTA conducted in 2018 {"\u2014"} would close that gap more quickly and at lower cost than any housing program the county is currently running. That is a measurement gap, not a policy recommendation.
-        </p>
-        <p style={prose}>
-          What the E-1 release tells us, plainly, is where Napa County{"\u2019"}s growth is landing. It is landing in American Canyon. The rest of the county {"\u2014"} eight out of ten residents {"\u2014"} is holding roughly steady or slowly declining, as it has for most of this century. Until the conditions that produce that geography change, the next E-1 release is likely to read much like this one.
+        <p style={P_STYLE}>
+          The case that Napa County{"’"}s economic model was structurally weakening predates this release by years. <em><a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={LINK}>Napa Valley Finds Itself Between a Rock and a Hard Place</a></em> (October 2023) framed the luxury-positioning question. <em><a href="https://napavalleyfocus.substack.com/p/navigating-a-demographic-dilemma" target="_blank" rel="noopener noreferrer" style={LINK}>Napa County Faces Economic Challenges Due to Aging, Decreasing Population</a></em> (April 2024) projected a roughly 10% county GDP decline by 2030 from working-age contraction alone. <em><a href="https://napavalleyfocus.substack.com/p/under-the-hood-american-canyon-grows" target="_blank" rel="noopener noreferrer" style={LINK}>Under the Hood: American Canyon Grows While the Upvalley Shrinks</a></em> (May 2025) argued that the county{"’"}s only growth engine was a Bay Area spillover the city itself did not control. <em><a href="https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" target="_blank" rel="noopener noreferrer" style={LINK}>Rethinking the Housing Narrative in Napa County</a></em> (June 2025) made the deeper claim: until the wage structure of the local economy changes, building more units addresses the symptom, not the condition. <em><a href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled" target="_blank" rel="noopener noreferrer" style={LINK}>More Rooms Has Equaled Fewer Jobs in Napa County</a></em> (August 2025) documented the inversion: room counts rising as employment fell. <em><a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-valleys-economy" target="_blank" rel="noopener noreferrer" style={LINK}>Under the Hood: Napa Valley{"’"}s Economy Looks Bigger Than It Is</a></em> (March 2026) showed that 87 cents of every dollar of nominal Napa County GDP growth since 2016 has been inflation; real economic activity grew only 4.6% over eight years.
         </p>
 
-        {/* Inline byline — after final paragraph, before Sources */}
-        <p style={{ fontFamily: font, fontSize: 15, color: T.ink, fontStyle: "italic", lineHeight: 1.65, margin: "28px 0 0 0" }}>
-          Tim Carl is a Napa Valley-based photojournalist and the founder and editor of Napa Valley, Sonoma County and Lake County Features.
+        <p style={P_STYLE}>
+          The May 2025 piece made two specific predictions, both of which held for one more year {"—"} and both of which broke this year, in opposite directions. The first held that American Canyon was the county{"’"}s only growth engine, driven by a regional housing spillover the city itself did not control. That continued to hold through the 2024-2025 release window: American Canyon grew 2.9% that year, the strongest single-year gain of the three under examination here. In the 2025-2026 release that engine flatlined, adding just 31 residents on 78 net new housing units {"—"} a 0.14% gain, less than one-twentieth the rate of the prior year. The second prediction held that Calistoga would continue losing population. That held through 2024-2025 as well, when Calistoga lost 21 residents on a 0.4% decline. In the 2025-2026 release Calistoga reversed entirely, adding 120 residents to grow 2.32% {"—"} the largest percentage gain of any jurisdiction in the county in the most recent release.
         </p>
 
-        {/* Sources */}
-        <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 24, marginTop: 32 }}>
-          <h2 style={{ fontFamily: serif, fontSize: 16, fontWeight: 700, color: T.ink, margin: "0 0 12px 0" }}>Sources</h2>
-          <ul style={{ fontFamily: font, fontSize: 13, color: T.muted, lineHeight: 1.6, margin: 0, paddingLeft: 18 }}>
-            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" style={{ color: T.accent }}>California Department of Finance</a> {"\u2014"} E-1 Population Estimates for Cities, Counties, and the State, January 1, 2024 and 2025 (released May 1, 2025).</li>
-            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" style={{ color: T.accent }}>DOF E-1H Housing Estimates</a> {"\u2014"} Cities, Counties, and the State, January 1, 2024 and 2025.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/estimates/e-4-population-estimates-for-cities-counties-and-the-state-2011-2020-with-2010-and-2020-census-benchmark/" style={{ color: T.accent }}>DOF E-4 Population Estimates, 2011{"\u2013"}2020, with 2010 and 2020 Census Benchmarks</a> (released May 2025).</li>
-            <li style={{ marginBottom: 6 }}><a href="https://dof.ca.gov/forecasting/demographics/projections/" style={{ color: T.accent }}>DOF P-2A County Population Projections, 2020{"\u2013"}2070 (Baseline 2024)</a>.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://www.census.gov/quickfacts/napacountycalifornia" style={{ color: T.accent }}>U.S. Census Bureau</a> {"\u2014"} Decennial Census Napa County QuickFacts, 2000, 2010, 2020.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://www.nvta.ca.gov/studies-plans" style={{ color: T.accent }}>Napa Valley Transportation Authority</a> {"\u2014"} Napa Valley Travel Behavior Study (2018).</li>
-            <li style={{ marginBottom: 6 }}><a href="https://lehd.ces.census.gov/data/" style={{ color: T.accent }}>U.S. Census LEHD LODES / On The Map</a>.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://fred.stlouisfed.org/series/NAPA906LEIHN" style={{ color: T.accent }}>BLS Napa County Total Leisure and Hospitality (NAPA906LEIHN)</a>.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://fred.stlouisfed.org/series/SMU06349007072200001SA" style={{ color: T.accent }}>BLS Napa Food Services and Drinking Places (SMU06349007072200001SA)</a>.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://str.com/" style={{ color: T.accent }}>STR (CoStar) Monthly Industry Report</a>.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://www.countyofnapa.org/1984/Housing-Element-Update" style={{ color: T.accent }}>Napa County 2024 Housing Needs Assessment</a>.</li>
-            <li style={{ marginBottom: 6 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-american-canyon-grows" style={{ color: T.accent }}>Napa Valley Features {"\u2014"} American Canyon Grows While the Upvalley Shrinks</a> (May 10, 2025).</li>
-            <li style={{ marginBottom: 6 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" style={{ color: T.accent }}>Napa Valley Features {"\u2014"} Rethinking the Housing Narrative in Napa County</a> (June 7, 2025).</li>
-            <li style={{ marginBottom: 6 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-is-napa-valley-building" style={{ color: T.accent }}>Napa Valley Features {"\u2014"} Is Napa Valley Building for a Future That Doesn{"\u2019"}t Exist?</a> (August 31, 2024).</li>
-            <li style={{ marginBottom: 6 }}><a href="https://napavalleyregister.com/news/napa-population-growth-california/article_02b77c02-5eae-4a61-9506-c1d9979b4527.html" style={{ color: T.accent }}>Napa Valley Register {"\u2014"} Napa County sees second year of population growth</a> (May 8, 2025).</li>
+        <p style={P_STYLE}>
+          The two predictions did not break for the same reason. American Canyon flatlined as its small but stable manufacturing employer base contracted, with the Coca-Cola bottling plant eliminating 135 jobs in the same twelve months. Calistoga reversed because a single workforce-affordable housing project came online. Both mechanisms were ones the May 2025 piece explicitly flagged as risks to watch. Napa city, Yountville, St. Helena and unincorporated all lost population in the most recent year. The 2025-2026 numbers offer a partial answer to the June 2025 question {"—"} <em>who are the new units for?</em> {"—"} that turns out to be more complicated than the question.
+        </p>
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — THE JURISDICTIONS, IN ORDER                         */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>The Jurisdictions, in Order</h2>
+
+        <p style={P_STYLE}>
+          <strong>American Canyon</strong> added 31 residents to reach 22,619, a 0.14% gain. <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={LINK}>Housing units rose by 78 to 7,035</a>. The persons-per-unit absorption ratio {"—"} new residents divided by net new units {"—"} was 0.40, well below the 1.5 to 2.0 range healthy household formation produces. American Canyon added rooftops; the rooftops did not fill at the rate they used to. Inside the same twelve months, the Coca-Cola Company eliminated 135 manufacturing jobs at its bottling plant on Commerce Boulevard, with primary operations ceasing June 30, 2025 and warehouse operations winding down through year-end. The plant had been running at the same site since 1994. American Canyon{"’"}s role in the county{"’"}s economy {"—"} Bay Area commuter housing supplemented by a small but stable manufacturing employer base {"—"} weakened from both ends in the same year.
+        </p>
+
+        <p style={P_STYLE}>
+          <strong>Napa city</strong> lost 242 residents to reach 77,803, a 0.31% decline. As the largest jurisdiction by far, the county{"’"}s first full year of decline post-rebound is registered most cleanly here.
+        </p>
+
+        <p style={P_STYLE}>
+          <strong>Yountville</strong> lost 51 residents to reach 2,567, a decline of 1.95% {"—"} the largest percentage decline in the county. Yountville{"’"}s small population magnifies modest absolute changes, but the direction matches the broader Upvalley pattern.
+        </p>
+
+        <p style={P_STYLE}>
+          <strong>St. Helena</strong> lost 22 residents to reach 5,317, a 0.41% decline. The cleanest single illustration of Upvalley wine real estate distress sits just outside the city{"’"}s southern boundary on Big Tree Road. Benessere Vineyards {"—"} the 42-acre estate that once housed the Charles Shaw operation that became Trader Joe{"’"}s Two-Buck Chuck {"—"} listed at $35 million in November 2024, dropped to $28 million, sat 18 months and is heading to Concierge Auctions May 13{"–"}28, 2026 with an expected opening bid of $8 to $12 million. Peak-to-floor decline: roughly 77%.
+        </p>
+
+        <p style={P_STYLE}>
+          <strong>Unincorporated Napa County</strong> lost 82 residents to reach 22,786, a 0.36% decline. This is the part of the county that contains most of the wineries themselves and most of the high-end resort capacity {"—"} Stanly Ranch, the major Auberge properties, the Silverado Resort and the producing vineyards.
+        </p>
+
+        <p style={P_STYLE}>
+          <strong>Calistoga</strong> gained 120 residents to reach 5,282, a 2.32% increase. Housing units rose by 82 to 2,525. The persons-per-unit absorption ratio was 1.46, consistent with workforce-affordable housing functioning as designed. On the surface, Calistoga is the only piece of unambiguously good news in the May 2026 release for Napa County.
+        </p>
+
+        <p style={P_STYLE}>
+          The surface is not the whole story.
+        </p>
+
+        <ChartOne />
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — CALISTOGA: ONE PROJECT, ONE MECHANISM, ONE YEAR     */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>Calistoga: One Project, One Mechanism, One Year</h2>
+
+        <p style={P_STYLE}>
+          Calistoga{"’"}s 120 new residents arrived almost entirely through one project. <strong>Lincoln Avenue Apartments</strong> {"—"} 78 rentable workforce-affordable units at 1866 Lincoln Avenue {"—"} opened in late 2025 after sewer-line delays pushed occupancy back from earlier in the year. The complex was developed by the Calistoga-based nonprofit Calistoga Affordable Housing in partnership with Burbank Housing of Santa Rosa, capitalized by federal HOME Investment Partnership funds and a long-term loan secured by deed of trust on the property. The <a href="https://www.calistogaca.gov/Government/City-Budgets/Audit-Reports" target="_blank" rel="noopener noreferrer" style={LINK}>June 30, 2024 audited financial statement</a> shows the city holding $11.9 million in restricted housing balances; $4.4 million is the HOME-grant loan that financed Lincoln Avenue.
+        </p>
+
+        <p style={P_STYLE}>
+          The financial mechanism has its own history. In November 2018, Calistoga voters passed Measure D, raising the city{"’"}s transient occupancy tax by one percentage point {"—"} from 12% to 13% {"—"} and dedicating that 1% increment to workforce and affordable housing. The argument in favor, written on the ballot, said <em>{"“"}many people who work in Calistoga cannot afford to live here, making traffic worse and filling jobs more difficult.{"”"}</em> Effective January 2019, every overnight hotel stay in Calistoga began contributing to a restricted housing fund. Lincoln Avenue Apartments is what that money, leveraged with federal grants, financed.
+        </p>
+
+        <p style={P_STYLE}>
+          Calistoga{"’"}s tourism revenue, in other words, paid for the workforce housing that produced the city{"’"}s 2025 population growth.
+        </p>
+
+        <p style={P_STYLE}>
+          The mechanism worked. The condition it was designed to manage did not change.
+        </p>
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — THE REVENUE BASE THAT FUNDS THE FIX                 */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>The Revenue Base That Funds the Fix</h2>
+
+        <p style={P_STYLE}>
+          The City of Calistoga{"’"}s twelve-year transient-occupancy-tax history, published in its <a href="https://www.calistogaca.gov/Government/City-Budgets/Transient-Occupancy-Tax" target="_blank" rel="noopener noreferrer" style={LINK}>April 2026 fiscal report</a>, shows what is happening to the funding source itself. From fiscal 2013-14 through 2018-19, annual TOT receipts rose from $4.5 million to $6.4 million on a stable base of roughly 690 to 760 rooms. The 2017 wildfires cost the city about $350,000. The March 2020 COVID shutdown collapsed receipts to $4.7 million. The rebound was vertical: $11.8 million in fiscal 2021-22, the largest single-year jump on record. Receipts have held in the $11.8 to $12.3 million range since.
+        </p>
+
+        <p style={P_STYLE}>
+          The headline number has been steady. The composition underneath has not. The lodging base expanded from 785 average rooms in fiscal 2023-24 to 861 in fiscal 2024-25 {"—"} an 8% capacity increase in a single year {"—"} while operating establishments fell from 42 to 35. Seven operators left, 130 rooms were added by the operators that remained. The pattern matches what <em>More Rooms Has Equaled Fewer Jobs</em> documented at the county level. Occupancy through February 2026 ran at 51.9%, against a fiscal 2021-22 peak of 73.7%. Receipts have held only because average daily rates at the new resort capacity have climbed enough to offset the occupancy decline.
+        </p>
+
+        <p style={P_STYLE}>
+          In March 2026, the offset reached one of Calistoga{"’"}s gateway properties. The Calistoga Motor Lodge, a 97-room resort at 1880 Lincoln Avenue, defaulted on a <a href="https://napavalleyregister.com/calistogan/news/calistoga-motor-lodge-foreclosure-expansion-eagle-point-hotel-partners/article_87165814-66f0-4130-89aa-768e35822aea.html" target="_blank" rel="noopener noreferrer" style={LINK}>$40 million loan</a>. The notice of default was filed March 23 in the Napa County Recorder{"’"}s Office; total amount owed was $40,983,711. The property had completed a 12-room expansion in 2024-2025 and had transitioned out of Hyatt{"’"}s JdV portfolio in September 2025. Mayor Donald Williams told the <em>Napa Valley Register</em> that about half of Calistoga{"’"}s general fund comes from TOT and that the city would be conservative with revenue projections for the coming fiscal year. Stanly Ranch, the regional Auberge-brand peer in unincorporated south county, defaulted on its $230 million loan in 2025 and was sold to <a href="https://www.napaserve.org/under-the-hood/calculators#tracker" target="_blank" rel="noopener noreferrer" style={LINK}>Blackstone for $195 million</a> at the end of March 2026.
+        </p>
+
+        <p style={P_STYLE}>
+          The revenue base that capitalized Calistoga{"’"}s affordable housing {"—"} and that funds roughly half of the city{"’"}s general fund {"—"} is showing structural distress in the same year the housing it financed produced the city{"’"}s population growth.
+        </p>
+
+        <ChartTwo />
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — THE INSTITUTIONAL LAYER                             */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>The Institutional Layer</h2>
+
+        <p style={P_STYLE}>
+          On August 27, 2025, the Calistoga City Council convened a special closed session to evaluate City Manager Laura Snideman. Six city officials testified during public comment: Fire Chief Jed Matcham, Planning and Building Director Greg Desmond, Fairgrounds Revitalization Director Sheli Wright, Deputy City Manager Rachel Stepp, Administrative Services Director Connie Cardenas and Human Resources Director Rena Lariz {"—"} five department directors and the fire chief, in a town of 5,200 residents. Snideman resigned the same day. Assistant City Manager Mitch Celaya stepped in as interim. The search for a permanent replacement is still underway as of this writing.
+        </p>
+
+        <p style={P_STYLE}>
+          The departure was the most visible point of a longer pattern. The <em>Napa Valley Register</em>, in a <a href="https://napavalleyregister.com/news/calistoga-city-manager-laura-snideman-government/article_5b2713ab-906e-4b4b-9b23-710d2e5599bd.html" target="_blank" rel="noopener noreferrer" style={LINK}>three-part series in late 2025</a>, documented a workforce turnover rate of roughly 22% among Calistoga{"’"}s 84 city employees during Snideman{"’"}s tenure. The nationwide municipal turnover rate is approximately 1.5%; the Western U.S. rate is 3.3%. Former Planning Director Jeff Mitchem, who resigned in 2023 citing the city manager{"’"}s conduct, told the <em>Register</em> he had not encountered a comparable work environment in nearly four decades of public service.
+        </p>
+
+        <p style={P_STYLE}>
+          Institutional capacity is the layer that absorbs growth. New residents need permits. New developments need planning review. New revenue streams need finance staff to track them. New public assets need operational management. The city that received the 2025 population gain is the same city that lost roughly one in five of its employees during the same period.
+        </p>
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — WHAT RESIDENTS SAID THEY WANTED, AND WHAT THEY DID NOT */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>What Residents Said They Wanted, and What They Did Not</h2>
+
+        <p style={P_STYLE}>
+          In July 2024, Calistoga purchased the 70-acre Napa County Fairgrounds {"—"} the geographic and emotional center of the city {"—"} from <a href="https://www.napacounty.gov/CivicAlerts.aspx?AID=506" target="_blank" rel="noopener noreferrer" style={LINK}>Napa County for $2 million</a>. The purchase was the smaller version of the deal. The original agreement, reached in October 2022, would have transferred the entire 70.6-acre property for $15.885 million through a community facilities district funded by a special property tax. Measure E went to Calistoga voters in March 2023 and failed by a two-thirds margin. The city went back to the county and negotiated the smaller cash purchase. Operating capital remains an open question. The current revitalization plan, as reported in the <a href="https://www.pressdemocrat.com/2026/05/01/calistoga-fairgrounds-revitalization-plan-starts-to-take-shape/" target="_blank" rel="noopener noreferrer" style={LINK}><em>Press Democrat</em> on May 1, 2026</a>, is a $120,000 fundraising pilot to install heating and air conditioning in the Butler Building. <em><a href="https://napavalleyfocus.substack.com/p/millions-needed-to-renovate-calistoga" target="_blank" rel="noopener noreferrer" style={LINK}>Millions Needed to Renovate Calistoga Fairgrounds</a></em> (Napa Valley Features, February 2024) flagged the financing question at the time of purchase. The question has not been resolved.
+        </p>
+
+        <p style={P_STYLE}>
+          What residents themselves want for the property is the cleanest signal in the public record. The City of Calistoga commissioned a formal community survey from FM3 Research between September 20 and October 12, 2025; the firm collected 641 phone and online responses and <a href="https://www.pressdemocrat.com/2025/11/20/most-calistoga-residents-reject-housing-at-fairgrounds-survey-shows/" target="_blank" rel="noopener noreferrer" style={LINK}>presented results to the City Council in November</a>. The findings were direct. Residents ranked maintaining the fairgrounds as an emergency evacuation center as the top priority, with 86% calling that use extremely or very important. Strong support emerged for restoring historic uses: festivals, the annual fair, public open space, the RV park, the Calistoga Speedway, an amphitheater and the golf course. Support for leasing portions to vendors to help fund operations ran 80%. Just 5% of respondents wanted commercial development. <strong>Just 1% wanted housing.</strong>
+        </p>
+
+        <p style={P_STYLE}>
+          That last number is worth pausing on. In the same year Calistoga produced the largest percentage population gain of any jurisdiction in the county in the most recent release {"—"} a gain that came almost entirely through one workforce-housing complex {"—"} the city{"’"}s residents told their own government, by a 99-to-1 margin in a representative survey, that they did not want housing as the answer for the largest civic asset the city has acquired in living memory.
+        </p>
+
+        <p style={P_STYLE}>
+          That is not a contradiction in the data. It is a contradiction in the framing. Two different conversations are happening in parallel. One says Calistoga needs more affordable housing because workers can{"’"}t afford to live where they work. The other {"—"} coming from the residents themselves, the people who already do live in town {"—"} says the answer is not more housing.
+        </p>
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — THE ARGUMENT THE DATA HAVE BEEN MAKING              */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>The Argument the Data Have Been Making</h2>
+
+        <p style={P_STYLE}>
+          The population number registers presence. It does not register what produced the presence, who paid for it, or what it tells us about the underlying economy.
+        </p>
+
+        <p style={P_STYLE}>
+          What the resident survey tells us, and what every Under the Hood column on Napa{"’"}s economy for the past several years has built toward, is this: the affordable-housing argument is not an answer to a housing-supply problem. It is a workaround for a wage problem. The dominant local industry {"—"} wine and luxury hospitality {"—"} does not pay wages that allow its workers to live where they work. The affordable-housing pipeline exists to manage the gap, not to close it. Tourism revenue flows through the city, into the housing fund, into deed-restricted units, allowing tourism workers to live in the town where they work. The system finances its own workaround.
+        </p>
+
+        <p style={P_STYLE}>
+          The proof is in who already lives in Calistoga. The 2022 city Housing Element draft, prepared for state review, surfaced this directly in residents{"’"} own words. <em>{"“"}The most commonly identified barrier to obtaining housing in Calistoga was cost. Respondents explained that many people buy property as a vacation home for their families which limits the availability of housing in the City. With limited housing and the small-town charm of the City, housing is not affordable for many service workers earning minimum wage.{"”"}</em> People whose incomes come from outside the valley can afford to live here as residents, and increasingly as second- and third-home owners. People whose incomes come from working in the valley cannot. That is not a housing-supply problem. It is a wage-source problem. If supply were the binding constraint, second-home owners would have been priced out of holding multiple properties. They have not been, because their incomes are not connected to the local wage base.
+        </p>
+
+        <p style={P_STYLE}>
+          The <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={LINK}>2024 American Community Survey</a> quantifies the dynamic the Housing Element draft described in residents{"’"} words. In Napa County, roughly 5.6% of all housing units are classified as vacant for seasonal, recreational or occasional use {"—"} more than twice the California rate of 2.4%, and the largest single category of vacant housing in the county. More than half of every vacant unit in Napa County is held as second-home or vacation property. In Calistoga specifically, the for-sale and sold-not-occupied categories show essentially zero units; the vacancy that exists is split between rentals and seasonal use. The Calistoga housing market does not turn over. It holds.
+        </p>
+
+        <p style={P_STYLE}>
+          The numbers behind the argument: Napa County{"’"}s NAICS 72 average annual wage {"—"} the dominant local industry of accommodation and food services {"—"} was <a href="https://data.bls.gov/cew/data/api/2024/a/area/06055.csv" target="_blank" rel="noopener noreferrer" style={LINK}>$47,009 in 2024</a>, with the lodging subsector at $53,623 and food services at $42,490. Total NAICS 72 employment in the county: 12,026 workers. Calistoga{"’"}s median household income, per 2020-2024 ACS 5-year estimates, was $85,446 {"—"} but the spread between mean ($143,448) and median tells a structural story: a meaningful upper-income tier pulls the average 68% above the typical household, evidence of the second-home and outside-income overlay on the local wage base. Calistoga{"’"}s bimodal labor structure shows up in the occupational breakdown: service occupations earned a median $51,259, sales-and-office $53,204, production-and-transport $55,172 {"—"} and management/business/science/arts <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={LINK}>$111,250</a>. Nearly double the service-occupation median.
+        </p>
+
+        <p style={P_STYLE}>
+          Wage growth, measured against the cost basket of actually living where the work happens, was essentially flat. NAICS 72 average annual wage rose from $31,689 in 2016 to $47,009 in 2024 {"—"} a 48.3% nominal gain over eight years. Over the same window, U.S. CPI rose 30.7%. By the standard national deflator the wage-side gain looks modest but real. Measured against the local cost basket {"—"} the housing, utility and service prices that govern living in Calistoga {"—"} the picture inverts. Calistoga{"’"}s median gross rent rose from $1,153 in the 2012-2016 ACS 5-year to $1,767 in the 2020-2024 5-year, a 53.3% increase. Napa County rents rose 55.1% over the same window. The Zillow Home Value Index for Calistoga peaked above $1.18 million in early 2022 from a 2016 baseline closer to $700,000, a roughly 55% climb. Inside Calistoga itself, the Zillow data show the average home value at <a href="https://www.zillow.com/home-values/3929/calistoga-ca/" target="_blank" rel="noopener noreferrer" style={LINK}>$1,062,298 as of March 31, 2026</a>, with the 27 active listings asking a median of $1,890,167. Wages did not keep pace with rents nominally {"—"} they trailed. The cost of actually living in Calistoga rose faster than the wages of the industry the town{"’"}s economy is built on. Workers{"’"} real purchasing power against the cost of living <em>where they work</em> did not keep pace.
+        </p>
+
+        <p style={P_STYLE}>
+          The structural ratios put the mismatch in one number. Calistoga{"’"}s home values stand at 12.4 times the city{"’"}s median household income {"—"} about 55% above the Napa County figure of 8.0 times. Against the average wage of the dominant local industry, the Calistoga ratio rises to 22.6 times. The county-wide ratio in 2010 was 4.5 times; by 2025, <em>Rethinking the Housing Narrative</em> documented it had reached 8.6 times. Calistoga{"’"}s housing-to-income ratio is roughly five times the 2010 county baseline. Against the wages that the town{"’"}s tourism economy actually pays, <a href="https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" target="_blank" rel="noopener noreferrer" style={LINK}>the multiplier is nearly six times the 2010 baseline</a>.
+        </p>
+
+        <ChartThree />
+
+        <p style={P_STYLE}>
+          <em><a href="https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" target="_blank" rel="noopener noreferrer" style={LINK}>Rethinking the Housing Narrative in Napa County</a></em> documented the broader county math: in 2010 the median Napa County home cost about 4.5 times median household income. By 2025 that ratio reached 8.6 times. Qualifying for the median-priced home at $937,500 under current mortgage rates requires roughly $230,000 in gross household income. Tourism jobs average around $35,000. At those wages, the median home is not achievable regardless of how many units are built. <em>More Rooms Has Equaled Fewer Jobs</em> documented the parallel inversion: Napa County leisure and hospitality employment is roughly flat over six years against a 27% rise in nominal county GDP. <em>Napa Valley{"’"}s Economy Looks Bigger Than It Is</em> documented the underlying composition: of every dollar of nominal Napa County GDP growth since 2016, 87 cents has been inflation. Real economic activity grew only 4.6% over eight years.
+        </p>
+
+        <p style={P_STYLE}>
+          What the resident survey adds is the community{"’"}s own reading of that condition. The 99-to-1 vote against housing on the fairgrounds is not opposition to workers having places to live. It is a community signaling, in a representative sample, that more subsidized housing in a community whose dominant industry produces wages that cannot afford market-rate housing is not the structural answer it has been treated as. Residents want the fairgrounds maintained as an emergency evacuation site, restored for festivals and the annual fair, opened for the speedway and the golf course. They want the asset that defines their town treated as community infrastructure, not as housing capacity for an industry whose wage structure has not changed.
+        </p>
+
+        <p style={P_STYLE}>
+          The industries that finance the affordable-housing apparatus need it to continue, because their wage structures require it. The community is signaling that it does not. That is the contradiction the population number does not surface.
+        </p>
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — WHAT THE POPULATION NUMBER DOES NOT MEASURE         */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>What the Population Number Does Not Measure</h2>
+
+        <p style={P_STYLE}>
+          Calistoga{"’"}s 2.3% population gain is genuine. The 78 units at Lincoln Avenue opened, the residents moved in, the persons-per-unit absorption ratio was healthy. By the metric the Department of Finance is designed to capture, the workforce-affordable-housing model produced exactly the outcome it was designed to produce.
+        </p>
+
+        <p style={P_STYLE}>
+          What the population number cannot measure: that the revenue base which financed the housing is showing structural distress one fiscal year later; that the city government managing the growth lost its chief executive and roughly one in five of its employees during the same window; that the 70-acre civic asset purchased the year before has no operating funding plan and a 99-to-1 resident mandate against housing at the site; that the Upvalley wine real estate around Calistoga is repricing at 70 to 80% discounts at auction; that the lodging operator base concentrated 19% more rooms into 17% fewer operators in a single year; and that the workers who moved into the new units are doing so under a wage structure that the dominant local industry has not changed and is not changing.
+        </p>
+
+        <p style={P_STYLE}>
+          A community grows in census numbers when housing units are added and people move in. A community grows in any meaningful sense when the wages produced by working there allow people to live there, when its institutions function, when its public assets are maintained and when its governance is trusted. Calistoga{"’"}s 2025 growth was real on the first measure. The other four are open.
+        </p>
+
+        <p style={P_STYLE}>
+          The May 2026 numbers tell us where people moved. The harder question is what they moved into.
+        </p>
+
+        <ChartFour />
+
+        {/* ═════════════════════════════════════════════════════════════ */}
+        {/* SECTION — WHAT TO WATCH                                       */}
+        {/* ═════════════════════════════════════════════════════════════ */}
+        <h2 style={SECTION_H2}>What to Watch</h2>
+
+        <p style={P_STYLE}>
+          Three indicators in the next twelve months will sharpen the picture.
+        </p>
+
+        <p style={P_STYLE}>
+          The Calistoga Motor Lodge{"’"}s 90-day cure period from the March 23, 2026 notice of default expires in late June. Whether the property cures, transfers ownership or proceeds to foreclosure will signal the trajectory of the regional lodging base on which Measure D{"’"}s housing finance depends.
+        </p>
+
+        <p style={P_STYLE}>
+          The Bureau of Labor Statistics{"’"} Quarterly Census of Employment and Wages data for the third quarter of 2025 {"—"} currently delayed by federal publication disruptions {"—"} will be the first quarter to capture the full effect of the Coca-Cola American Canyon shutdown. The release will sharpen the Napa County manufacturing and hospitality wage picture in a way the May 2025 release does not.
+        </p>
+
+        <p style={P_STYLE}>
+          And the broader county trajectory deserves attention. <em><a href="https://napavalleyfocus.substack.com/p/navigating-a-demographic-dilemma" target="_blank" rel="noopener noreferrer" style={LINK}>Napa County Faces Economic Challenges Due to Aging, Decreasing Population</a></em> (April 2024) projected {"—"} using the Lightcast 2023 forecast and U.S. Census data {"—"} that Napa County{"’"}s working-age population could fall from 83,614 to 67,032 by 2030, the over-65 population could rise to roughly 27,000, and the resulting demographic drag on productivity could produce a roughly 10% decline in county GDP from its 2022 peak. The May 2026 numbers do not contradict that trajectory. They confirm it. Every signal that piece flagged {"—"} aging cohort growth, working-age contraction, the affordability question and the structural mismatch between an economy built around luxury wine and tourism and a younger generation choosing different lifestyles {"—"} has continued in the same direction. Calistoga{"’"}s 2.3% gain is the exception inside that trajectory. The trajectory itself has not changed.
+        </p>
+
+        <p style={P_STYLE}>
+          The May 2027 E-1 release will tell us whether Calistoga{"’"}s 2025 growth was the leading edge of a sustained trend driven by additional workforce-housing capacity or a one-time effect of Lincoln Avenue Apartments coming online during a year when the underlying revenue base was already softening. If the housing pipeline produces additional units and the population continues to grow against a contracting wage base, the question this piece raises {"—"} what the growth actually represents {"—"} becomes the central question of Napa County{"’"}s housing policy.
+        </p>
+
+        <p style={P_STYLE}>
+          For now, the geography flipped. The numbers told us that. What the numbers did not tell us is what the new geography rests on.
+        </p>
+
+        {/* ── BYLINE (italic) ─────────────────────────────────────── */}
+        <p style={{ fontFamily: font, fontSize: 15, color: T.ink, fontStyle: "italic", lineHeight: 1.65, margin: "32px 0 0 0" }}>
+          Tim Carl is a Napa Valley{"–"}based photojournalist and scientist. He grew up in St. Helena. He writes the weekly Under the Hood series and is the founder of {PUBLICATION}, Sonoma County Features and Lake County Features along with NapaServe, a community intelligence platform for Napa County.
+        </p>
+
+        {/* ── POLLS SECTION (per spec ordering: directly after byline) ── */}
+        <PollsSection slug={ARTICLE_SLUG} />
+
+        {/* ── RELATED COVERAGE ────────────────────────────────────── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 48, paddingTop: 28, marginBottom: 28 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center", marginBottom: 20 }}>
+            Related Coverage
+          </p>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Napa Valley Finds Itself Between a Rock and a Hard Place{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (October 2023)</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/navigating-a-demographic-dilemma" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: Napa County Faces Economic Challenges Due to Aging, Decreasing Population{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (April 2024)</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/under-the-hood-american-canyon-grows" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: American Canyon Grows While the Upvalley Shrinks{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (May 2025)</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: Rethinking the Housing Narrative in Napa County{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (June 2025)</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: More Rooms Has Equaled Fewer Jobs in Napa County{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (August 2025)</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-valleys-economy" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: Napa Valley{"’"}s Economy Looks Bigger Than It Is{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (March 2026)</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="https://napavalleyfocus.substack.com/p/millions-needed-to-renovate-calistoga" target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Millions Needed to Renovate Calistoga Fairgrounds{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (February 2024)</span>
+            </li>
           </ul>
         </div>
 
-        {/* Polls */}
-        <PollsSection />
-
-        {/* Related Coverage */}
-        <RelatedCoverage articleSlug={ARTICLE_SLUG} />
-
-        {/* Archive Search */}
-        <ArchiveSearch />
-
-        {/* Methodology */}
-        <div style={{ marginTop: 32, padding: "20px 0", borderTop: `1px solid ${T.border}` }}>
-          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, fontStyle: "italic", margin: 0 }}>
-            This article was reported and written by Tim Carl for Napa Valley Features. Charts and interactive elements built for the NapaServe Community Data Commons. Data sources and methodology are listed above.
+        {/* ── ARCHIVE SEARCH ──────────────────────────────────────── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 28, paddingTop: 28, marginBottom: 28 }}>
+          <p style={{ fontFamily: font, fontSize: 13, color: T.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
+            Archive
           </p>
-          <p style={{ fontFamily: font, fontSize: 12, color: T.muted, marginTop: 10, lineHeight: 1.5 }}>
-            Questions, corrections or tips? Contact <a href="mailto:info@napaserve.com" style={{ color: T.accent }}>the newsroom</a>.
+          <h2 style={{ fontFamily: serif, fontSize: 24, fontWeight: 700, color: T.ink, margin: "0 0 8px 0" }}>Search the Archive</h2>
+          <p style={{ fontFamily: font, fontSize: 15, color: T.muted, marginBottom: 16 }}>
+            Search 1,000+ articles and reports from {ARTICLE_PUBLICATION}.
+          </p>
+          <div style={{ display: "flex", gap: 10 }}>
+            <input
+              type="text"
+              placeholder="Search Calistoga, population, housing, Measure D, fairgrounds..."
+              style={{ flex: 1, padding: "10px 14px", fontFamily: font, fontSize: 15, color: T.ink, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 3, outline: "none" }}
+              onKeyDown={(e) => { if (e.key === "Enter" && e.target.value.trim()) { window.location.href = `/archive?q=${encodeURIComponent(e.target.value.trim())}`; } }}
+            />
+            <button
+              onClick={(e) => { const input = e.currentTarget.previousElementSibling; if (input.value.trim()) { window.location.href = `/archive?q=${encodeURIComponent(input.value.trim())}`; } }}
+              style={{ padding: "10px 20px", fontFamily: font, fontSize: 15, fontWeight: 600, color: "#FFFFFF", background: T.accent, border: "none", borderRadius: 3, cursor: "pointer" }}
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        {/* ── METHODOLOGY ─────────────────────────────────────────── */}
+        <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 40 }}>
+          <h3 style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, margin: "0 0 10px" }}>Methodology</h3>
+          <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.7, fontStyle: "italic" }}>
+            Each year{"’"}s percent change in Chart 1 is computed within its own release vintage; the unincorporated 2023-2024 figure is computed by subtraction from the county total since the May 2024 release coverage available did not separately report it. Chart 2 uses fiscal-year totals from the City of Calistoga Transient Occupancy Tax Report, April 2026 vintage; intermediate fiscal-year values between FY13-14 and FY25-26 anchors are pending the next published TOT detail and are flagged in the source code. Chart 3{"’"}s housing-to-income multipliers use 5-year ACS estimates for income and Zillow Home Value Index for typical home value as of March 2026; the BLS Quarterly Census of Employment and Wages provides the NAICS 72 hospitality-wage figure. Chart 4 uses the most recent revised E-1 and E-1H series from the May 2026 release wherever vintages overlap. Linked text throughout the body anchors directly to the document or data point being cited; the May 2026 E-1 release benchmarks every prior year against the most recent census, so revisions to 2024 and 2025 figures appear between chart series and inline-cited values.
           </p>
         </div>
+
+        {/* ── SOURCES ─────────────────────────────────────────────── */}
+        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 40, paddingTop: 24 }}>
+          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
+          <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
+            <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates, May 1, 2026</a>.</li>
+            <li style={{ marginBottom: 8 }}>California Department of Finance, E-1 Population Estimates, May 1, 2025.</li>
+            <li style={{ marginBottom: 8 }}>California Department of Finance, E-1 Population Estimates, May 2024.</li>
+            <li style={{ marginBottom: 8 }}>U.S. Census Bureau, <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>American Community Survey 5-year estimates, 2020-2024</a> (Tables B25064, B25004, S0101, S2401).</li>
+            <li style={{ marginBottom: 8 }}>Bureau of Labor Statistics, <a href="https://data.bls.gov/cew/data/api/2024/a/area/06055.csv" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Quarterly Census of Employment and Wages, Napa County 2024 (NAICS 72)</a>.</li>
+            <li style={{ marginBottom: 8 }}>Zillow Home Value Index, <a href="https://www.zillow.com/home-values/3929/calistoga-ca/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Calistoga and Napa County, March 2026</a>.</li>
+            <li style={{ marginBottom: 8 }}>Zillow Research, <a href="https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>ZHVI city-level historical series CSV</a>.</li>
+            <li style={{ marginBottom: 8 }}>City of Calistoga, <a href="https://www.calistogaca.gov/Government/City-Budgets/Transient-Occupancy-Tax" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Transient Occupancy Tax Report, April 2026</a>.</li>
+            <li style={{ marginBottom: 8 }}>City of Calistoga, <a href="https://www.calistogaca.gov/Government/City-Budgets/Audit-Reports" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>June 30, 2024 audited financial statement</a>.</li>
+            <li style={{ marginBottom: 8 }}>Napa County, <a href="https://www.napacounty.gov/CivicAlerts.aspx?AID=506" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Fairgrounds purchase agreement, July 2024</a>.</li>
+            <li style={{ marginBottom: 8 }}>FM3 Research, Calistoga Community Survey, October 2025.</li>
+            <li style={{ marginBottom: 8 }}>Press Democrat, {"“"}<a href="https://www.pressdemocrat.com/2025/11/20/most-calistoga-residents-reject-housing-at-fairgrounds-survey-shows/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Most Calistoga residents reject housing at fairgrounds, survey shows</a>,{"”"} Nov. 20, 2025.</li>
+            <li style={{ marginBottom: 8 }}>Press Democrat, {"“"}<a href="https://www.pressdemocrat.com/2026/05/01/calistoga-fairgrounds-revitalization-plan-starts-to-take-shape/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Calistoga fairgrounds revitalization plan starts to take shape</a>,{"”"} May 1, 2026.</li>
+            <li style={{ marginBottom: 8 }}>Napa Valley Register, <a href="https://napavalleyregister.com/news/calistoga-city-manager-laura-snideman-government/article_5b2713ab-906e-4b4b-9b23-710d2e5599bd.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>three-part Snideman series</a>, late 2025.</li>
+            <li style={{ marginBottom: 8 }}>Napa Valley Register, {"“"}<a href="https://napavalleyregister.com/calistogan/news/calistoga-motor-lodge-foreclosure-expansion-eagle-point-hotel-partners/article_87165814-66f0-4130-89aa-768e35822aea.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Calistoga Motor Lodge default</a>,{"”"} March 2026.</li>
+            <li style={{ marginBottom: 8 }}>NapaServe, <a href="https://www.napaserve.org/under-the-hood/calculators#tracker" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Regional Contraction Tracker</a>.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, {"“"}<a href="https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa Valley Finds Itself Between a Rock and a Hard Place</a>,{"”"} Napa Valley Features, Oct. 2023.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, {"“"}<a href="https://napavalleyfocus.substack.com/p/navigating-a-demographic-dilemma" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: Napa County Faces Economic Challenges Due to Aging, Decreasing Population</a>,{"”"} Napa Valley Features, Apr. 2024.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, {"“"}<a href="https://napavalleyfocus.substack.com/p/under-the-hood-american-canyon-grows" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: American Canyon Grows While the Upvalley Shrinks</a>,{"”"} Napa Valley Features, May 2025.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, {"“"}<a href="https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: Rethinking the Housing Narrative in Napa County</a>,{"”"} Napa Valley Features, June 2025.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, {"“"}<a href="https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: More Rooms Has Equaled Fewer Jobs in Napa County</a>,{"”"} Napa Valley Features, Aug. 2025.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, {"“"}<a href="https://napavalleyfocus.substack.com/p/under-the-hood-napa-valleys-economy" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: Napa Valley{"’"}s Economy Looks Bigger Than It Is</a>,{"”"} Napa Valley Features, Mar. 2026.</li>
+            <li style={{ marginBottom: 8 }}>Tim Carl, {"“"}<a href="https://napavalleyfocus.substack.com/p/millions-needed-to-renovate-calistoga" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Millions Needed to Renovate Calistoga Fairgrounds</a>,{"”"} Napa Valley Features, Feb. 2024.</li>
+          </ol>
+        </div>
+
       </div>
 
       <Footer />

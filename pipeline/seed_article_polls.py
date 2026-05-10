@@ -112,24 +112,42 @@ POLLS = [
         "question": "What concerns you most for Napa's economy?",
         "options": ["Higher fuel and freight costs", "Fewer international visitors", "Wine industry already fragile", "All of the above", "Not concerned"],
     },
-    # ── Napa Population 2025 ──────────────────────────────────────
+    # ── Napa Population 2025 — Under the Hood Part 6 — V5 thesis ──
     {
         "article_slug": "napa-population-2025",
         "sort_order": 1,
-        "question": "What best explains Napa's population pattern?",
-        "options": ["Low wages limit who can stay", "Housing costs are too high", "Jobs are in other counties", "Valley geography limits growth", "Unsure / too many factors"],
+        "question": "Calistoga gained 120 residents in 2025 — the largest percentage gain in the county. What does that number most reflect?",
+        "options": [
+            "A working housing model",
+            "A one-project anomaly",
+            "Hospitality wages catching up",
+            "Statistical noise in a small city",
+            "I’m not sure",
+        ],
     },
     {
         "article_slug": "napa-population-2025",
         "sort_order": 2,
-        "question": "Is growth in American Canyon good for Napa?",
-        "options": ["Yes, growth is growth", "Only if it serves local workers", "No, it serves the Bay Area", "Depends on what jobs follow", "Unsure"],
+        "question": "Residents rejected housing on the fairgrounds 99-to-1. What should the property become?",
+        "options": [
+            "Recreation and open space",
+            "Civic and event space",
+            "Mix of public and private uses",
+            "Restored fairgrounds, as before",
+            "I’m not sure",
+        ],
     },
     {
         "article_slug": "napa-population-2025",
         "sort_order": 3,
-        "question": "What should Napa prioritize to reverse trends?",
-        "options": ["Attract higher-wage industries", "Build more workforce housing", "Invest in schools and families", "Survey where residents work", "Unsure / all of the above"],
+        "question": "Across the county over the next year, what do you expect the headline population number to do?",
+        "options": [
+            "Grow on more housing projects",
+            "Decline as wages stay flat",
+            "Hold roughly flat",
+            "Depend on federal immigration",
+            "I’m not sure",
+        ],
     },
     # ── Napa Structural Reset 2026 ───────────────────────────────
     {
