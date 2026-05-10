@@ -681,14 +681,14 @@ function ChartFour() {
 // ── MAIN COMPONENT ─────────────────────────────────────────────────
 export default function NapaPopulation() {
   const navigate = useNavigate();
-  const status = useDraftGate(ARTICLE_SLUG);
-  const isDraft = status === "draft";
+  const gate = useDraftGate(ARTICLE_SLUG);
+  const isDraft = gate.status === "draft";
 
   useEffect(() => {
-    if (status === "redirect") navigate("/under-the-hood");
-  }, [status, navigate]);
+    if (gate.status === "redirect") navigate("/under-the-hood");
+  }, [gate.status, navigate]);
 
-  if (status === "loading") {
+  if (gate.status === "loading") {
     return (
       <div style={{ background: T.bg, minHeight: "100vh" }}>
         <NavBar />
