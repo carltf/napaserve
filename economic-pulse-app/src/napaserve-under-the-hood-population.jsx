@@ -307,7 +307,7 @@ function ChartOne() {
         title="Three release windows, percent change YoY"
         description={"American Canyon’s growth engine flatlined this year after two strong years, while Calistoga reversed from a 0.4% decline to a 2.32% gain — the largest percentage gain of any jurisdiction in the county in the most recent release. Each year’s change is computed within its own release vintage; the unincorporated 2023–2024 value is computed by subtraction."}
         sources={[
-          { label: "California Department of Finance E-1 Population Estimates, May 2024, May 2025 and May 2026 releases", url: "https://dof.ca.gov/forecasting/demographics/estimates/e-1/" },
+          { label: "California Department of Finance E-1 Population Estimates, May 2024, May 2025 and May 2026 releases", url: "https://dof.ca.gov/forecasting/demographics/estimates-e1/" },
         ]}
       />
     </div>
@@ -681,7 +681,7 @@ function ChartFour() {
         title="County housing stock has grown; population has not"
         description={"Housing stock grew steadily from the 2010 baseline; population crossed below the index line during the post-2017 wildfire and pandemic period and has not recovered. The widening gap between the two lines is the structural picture the headline population number does not capture."}
         sources={[
-          { label: "California Department of Finance E-1 and E-1H Population and Housing Estimates, 2010–2026", url: "https://dof.ca.gov/forecasting/demographics/estimates/e-1/" },
+          { label: "California Department of Finance E-1 and E-1H Population and Housing Estimates, 2010–2026", url: "https://dof.ca.gov/forecasting/demographics/estimates-e1/" },
         ]}
       />
     </div>
@@ -758,7 +758,7 @@ export default function NapaPopulation() {
         {/* LEDE                                                          */}
         {/* ═════════════════════════════════════════════════════════════ */}
         <p style={{ ...P_STYLE, marginBottom: 18 }}>
-          <strong>NAPA VALLEY, Calif.</strong> {"—"} The May 1 release from <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={LINK}>California{"’"}s Department of Finance</a> is the cleanest population data the state produces, and this year it tells a story Napa County has not heard since the COVID rebound. California declined. Napa County declined. And inside that decline, the geography of growth flipped.
+          <strong>NAPA VALLEY, Calif.</strong> {"—"} The May 1 release from <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={LINK}>California{"’"}s Department of Finance</a> is the cleanest population data the state produces, and this year it tells a story Napa County has not heard since the COVID rebound. California declined. Napa County declined. And inside that decline, the geography of growth flipped.
         </p>
 
         <p style={P_STYLE}>
@@ -787,7 +787,7 @@ export default function NapaPopulation() {
         </p>
 
         <p style={P_STYLE}>
-          A note on the data. The <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={LINK}>May 2025 E-1 release</a> benchmarked Napa County{"’"}s January 1, 2025 population at 136,124. The May 2026 release revises that figure upward to 136,620, then estimates the decline to 136,374. Department of Finance benchmarks every release back to the most recent census, which means the new vintage supersedes the old wherever they overlap. The comparisons in this piece use the revised series throughout.
+          A note on the data. The <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={LINK}>May 2025 E-1 release</a> benchmarked Napa County{"’"}s January 1, 2025 population at 136,124. The May 2026 release revises that figure upward to 136,620, then estimates the decline to 136,374. Department of Finance benchmarks every release back to the most recent census, which means the new vintage supersedes the old wherever they overlap. The comparisons in this piece use the revised series throughout.
         </p>
 
         {/* ═════════════════════════════════════════════════════════════ */}
@@ -813,7 +813,7 @@ export default function NapaPopulation() {
         <h2 style={SECTION_H2}>The Jurisdictions, in Order</h2>
 
         <p style={P_STYLE}>
-          <strong>American Canyon</strong> added 31 residents to reach 22,619, a 0.14% gain. <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={LINK}>Housing units rose by 78 to 7,035</a>. The persons-per-unit absorption ratio {"—"} new residents divided by net new units {"—"} was 0.40, well below the 1.5 to 2.0 range healthy household formation produces. American Canyon added rooftops; the rooftops did not fill at the rate they used to. Inside the same twelve months, the Coca-Cola Company eliminated 135 manufacturing jobs at its bottling plant on Commerce Boulevard, with primary operations ceasing June 30, 2025 and warehouse operations winding down through year-end. The plant had been running at the same site since 1994. American Canyon{"’"}s role in the county{"’"}s economy {"—"} Bay Area commuter housing supplemented by a small but stable manufacturing employer base {"—"} weakened from both ends in the same year.
+          <strong>American Canyon</strong> added 31 residents to reach 22,619, a 0.14% gain. <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={LINK}>Housing units rose by 78 to 7,035</a>. The persons-per-unit absorption ratio {"—"} new residents divided by net new units {"—"} was 0.40, well below the 1.5 to 2.0 range healthy household formation produces. American Canyon added rooftops; the rooftops did not fill at the rate they used to. Inside the same twelve months, the Coca-Cola Company eliminated 135 manufacturing jobs at its bottling plant on Commerce Boulevard, with primary operations ceasing June 30, 2025 and warehouse operations winding down through year-end. The plant had been running at the same site since 1994. American Canyon{"’"}s role in the county{"’"}s economy {"—"} Bay Area commuter housing supplemented by a small but stable manufacturing employer base {"—"} weakened from both ends in the same year.
         </p>
 
         <p style={P_STYLE}>
@@ -1105,7 +1105,7 @@ export default function NapaPopulation() {
         <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 40, paddingTop: 24 }}>
           <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
-            <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-1/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates, May 1, 2026</a>.</li>
+            <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates, May 1, 2026</a>.</li>
             <li style={{ marginBottom: 8 }}>California Department of Finance, E-1 Population Estimates, May 1, 2025.</li>
             <li style={{ marginBottom: 8 }}>California Department of Finance, E-1 Population Estimates, May 2024.</li>
             <li style={{ marginBottom: 8 }}>U.S. Census Bureau, <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>American Community Survey 5-year estimates, 2020-2024</a> (Tables B25064, B25004, S0101, S2401).</li>
