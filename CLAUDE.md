@@ -576,3 +576,57 @@ To-build list (deferred to next session, virtual-events scope only):
 
 ### Single-Prompt Protocol Re-Confirmed
 Every UTH build is one self-contained Claude Code prompt covering verification gates → file scaffold → body prose → charts → captions → polls → related coverage → sources → methodology → admin card → route → DB insert → poll seeding → build → commit → deploy → verify. Long is fine. Splitting into multiple chat-side pieces introduces friction. This was re-confirmed mid-session after a 4-piece chat-side split was correctly flagged.
+
+---
+
+## Session Update — 2026-05-10
+
+### Three protocol-drift corrections caught and locked
+
+During Section 0 verification for the `napa-population-2025` build, three places where the UTH Protocol document contradicted the live Marketing Machine ship surfaced. All three corrected in `NapaServe_UnderTheHood_Protocol_2026-05-10.docx`:
+
+- **Related Coverage:** plain link list (quoted titles + em-dash + publication + parenthetical date). NOT card grid. Cards convention deprecated weeks before May 10. Live Marketing Machine, Lodging Pricing, and prior shipped UTH articles all use plain links.
+- **Render order after final body paragraph:** byline → PollsSection → Related Coverage → Archive → Methodology → Sources → Footer. PollsSection moved directly after byline so the call-to-vote sits adjacent to the moment the reader finishes the prose. Methodology precedes Sources.
+- **Body link format:** native JSX `<a>` tags in article body. The `h()/t()/c()` helpers are scoped to admin EXPORT_DATA Word export only.
+
+**Locked principle: live > protocol > assistant memory.** When source code and protocol disagree on rendering format, default to source code, then update the protocol. Protocol that the assistant doesn't actually read is protocol that doesn't constrain behavior.
+
+### Schema corrections (verified May 10 via Supabase REST)
+
+**`napaserve_articles` real columns:** `id, slug, title, publication, published, published_at, created_at, admin_cards_added, related_coverage_added, polls_seeded, topic_seed, headline, deck`. There is NO `subtitle`, `excerpt`, or `estimated_read_time` column. The `deck` column holds what some prompt drafts called "subtitle." PATCH attempts against fabricated columns produce PGRST204 and revert cleanly.
+
+**`napaserve_article_polls` real columns:** `id (auto), article_slug, question, options (text array), sort_order (1/2/3 within an article), created_at`. There is no `poll_id` column. The "polls 18-20 reserved" framing for `napa-population-2025` in earlier session docs was a registry label, not a DB column value. Verified `MAX(id) = 38` as of May 10; new polls auto-assign starting at 39.
+
+### TCC stale entitlement on Terminal — new operational pitfall
+
+Distinct failure mode from the May 4 iCloud cwd cascade. Symptom: every CLI tool fails EPERM on every file in the project tree, `ls` on the parent directory still works, Settings shows Terminal toggled on under Full Disk Access, restarting Terminal does NOT resolve. Cause: macOS TCC holds a stale code-signing identity for Terminal after an OS or app update.
+
+Diagnostic (run first when EPERM appears across multiple tools):
+
+Lines containing `Platform binary prompting is 'Deny'` confirm TCC has revoked access.
+
+Fix: System Settings → Privacy & Security → Full Disk Access → remove Terminal → re-add from `/System/Applications/Utilities/Terminal.app` → Cmd+Q quit → relaunch. Full recipe in `NapaServe_Cheatsheet_2026-05-10.docx` Operational Pitfalls section.
+
+### Two new operating principles (Working Contract additions)
+
+**Read-before-draft:** when asked to produce any Claude Code prompt or to make any decision documented in protocol files, Claude reads the relevant protocol section before drafting and states which sections were read. Pattern violated repeatedly May 10 (draft → catch violation → re-read → re-draft). The fix is to start with read, not with draft.
+
+**Diagnostic ordering:** when a symptom appears across multiple tools (EPERM on every file, command failures with confusing messages), run the lowest-level diagnostic FIRST before theorizing about file state, iCloud sync, extended attributes, or process trust. Kernel logs / direct DB queries / live page DOM resolve faster than walking the inference chain backwards.
+
+### Bash subshell env var pattern
+
+For Bash invocations in Claude Code that spawn child processes (e.g. Python scripts that call REST APIs), prepend `set -a && source .env && set +a` so env vars auto-export to subshells. Plain `source .env` works for the current shell but not for invocations that spawn child processes.
+
+### Four-chart support in UTH Protocol
+
+The chart numbering protocol now supports 4 or more charts per article. Pattern extends: `chart-1_<slug>_nvf.png`, `chart-2_<slug>_nvf.png`, `chart-3_<slug>_nvf.png`, `chart-N_<slug>_nvf.png`. The `napa-population-2025` build is the first article to ship with 4 charts (jurisdiction population change, Calistoga TOT and rooms, housing-to-income multipliers, housing units vs population indexed).
+
+### Status at session end 2026-05-10
+
+- `napa-population-2025` build in progress, Section 2 complete. New JSX file at `economic-pulse-app/src/napaserve-under-the-hood-population.jsx` (1,129 lines, 90,861 bytes). Backup of stale 934-line version retained at `~/Desktop/napaserve_population_jsx_backup_20260510_142059.jsx`. V5 prose on disk at `~/Desktop/napaserve/V5_calistoga_population_2026.md`.
+- Build paused before Section 3 (DB PATCH on row id=6). Resumes next session in fresh context with corrected May 10 protocol loaded from Project Knowledge.
+- DB row `napaserve_articles.id=6` unchanged from earlier-thesis state (no writes).
+- Pipeline poll seeder file `pipeline/seed_article_polls.py` has stale `napa-population-2025` block at lines 116-133 — must be replaced with V5 polls before next dry-run/live seed.
+- Three known TODOs in Section 2 JSX for placeholder data: ChartTwo intermediate FY values (FY14-15 through FY24-25 minus verified anchors), ChartFour housing and population placeholder series pending DOF E-1/E-1H historical pulls.
+- Five EOS docs cumulative-rebuilt for 2026-05-10 and uploaded to Claude.ai Project Knowledge; May 5 versions moved to `Active/Older Drafts/`.
+
