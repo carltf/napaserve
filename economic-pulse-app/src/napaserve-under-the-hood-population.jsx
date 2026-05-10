@@ -333,14 +333,14 @@ function ChartTwo() {
 
     // Two-tier annotation plugin
     const annotations = [
-      // Tier 1 (bold)
+      // Tier 1 (bold, dark connector)
       { idx: 5,  label: "Jan 2019 / Measure D effective",    tier: 1, row: 0 },
-      { idx: 6,  label: "Mar 2020 / COVID shutdown",          tier: 1, row: 1 },
-      { idx: 12, label: "Mar 2026 / Motor Lodge default",     tier: 1, row: 0 },
-      // Tier 2 (lighter)
-      { idx: 4,  label: "2017 wildfires",                     tier: 2, row: 2 },
-      { idx: 8,  label: "Largest one-year rebound",           tier: 2, row: 1 },
-      { idx: 11, label: "Operators 42→35; rooms +130",  tier: 2, row: 2 },
+      { idx: 6,  label: "Mar 2020 / COVID shutdown",         tier: 1, row: 2 },
+      { idx: 12, label: "Mar 2026 / Motor Lodge default",    tier: 1, row: 0, align: "right" },
+      // Tier 2 (lighter, thinner connector)
+      { idx: 4,  label: "2017 wildfires",                    tier: 2, row: 3 },
+      { idx: 8,  label: "Largest one-year rebound",          tier: 2, row: 1 },
+      { idx: 11, label: "Operators 42→35; rooms +130",       tier: 2, row: 3 },
     ];
 
     const annotationPlugin = {
@@ -350,7 +350,7 @@ function ChartTwo() {
         const totMeta = chart.getDatasetMeta(0);
         if (!totMeta || !totMeta.data.length) return;
         ctx.save();
-        const rowYs = [chartArea.top - 4, chartArea.top - 22, chartArea.top - 40];
+        const rowYs = [chartArea.top - 4, chartArea.top - 22, chartArea.top - 40, chartArea.top - 58];
         annotations.forEach((a) => {
           const bar = totMeta.data[a.idx];
           if (!bar) return;
@@ -359,7 +359,7 @@ function ChartTwo() {
           // dashed connector
           ctx.setLineDash(isT1 ? [4, 3] : [2, 3]);
           ctx.strokeStyle = isT1 ? T.ink : T.muted;
-          ctx.lineWidth = isT1 ? 1.1 : 0.8;
+          ctx.lineWidth = isT1 ? 1.2 : 0.8;
           ctx.beginPath();
           ctx.moveTo(bar.x, bar.y - 2);
           ctx.lineTo(bar.x, labelY + 6);
@@ -368,14 +368,14 @@ function ChartTwo() {
           // anchor dot
           ctx.fillStyle = isT1 ? T.ink : T.muted;
           ctx.beginPath();
-          ctx.arc(bar.x, bar.y - 2, isT1 ? 2.5 : 2, 0, Math.PI * 2);
+          ctx.arc(bar.x, bar.y - 2, isT1 ? 2.8 : 2, 0, Math.PI * 2);
           ctx.fill();
-          // label text
+          // label text — tier 1 = 700/12px/ink, tier 2 = 400/11px/muted
           ctx.font = isT1
-            ? "600 11px 'Source Sans 3', sans-serif"
-            : "11px 'Source Sans 3', sans-serif";
-          ctx.fillStyle = isT1 ? T.ink : "#6B5A48";
-          ctx.textAlign = "center";
+            ? "700 12px 'Source Sans 3', sans-serif"
+            : "400 11px 'Source Sans 3', sans-serif";
+          ctx.fillStyle = isT1 ? T.ink : T.muted;
+          ctx.textAlign = a.align || "center";
           ctx.textBaseline = "bottom";
           ctx.fillText(a.label, bar.x, labelY);
         });
@@ -415,7 +415,7 @@ function ChartTwo() {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { top: 60 } },
+        layout: { padding: { top: 80 } },
         plugins: {
           legend: { position: "bottom", labels: { boxWidth: 14, color: T.ink, font: { size: 12 } } },
           tooltip: {
@@ -522,14 +522,14 @@ function ChartThree() {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Two-line centered label below plot area
-        ctx.font = "11px 'Source Sans 3', sans-serif";
+        // Two-line centered label ABOVE plot area (was below — collided with x-axis 0× tick)
+        ctx.font = "600 11px 'Source Sans 3', sans-serif";
         ctx.fillStyle = T.muted;
         ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        const lineY = chartArea.bottom + 6;
-        ctx.fillText("3× conventional", x3, lineY);
-        ctx.fillText("affordability threshold", x3, lineY + 13);
+        ctx.textBaseline = "bottom";
+        const labelTopY = chartArea.top - 4;
+        ctx.fillText("affordability threshold", x3, labelTopY);
+        ctx.fillText("3× conventional", x3, labelTopY - 13);
 
         ctx.restore();
       },
@@ -545,7 +545,7 @@ function ChartThree() {
         indexAxis: "y",
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 60, bottom: 40 } },
+        layout: { padding: { top: 32, right: 60, bottom: 40 } },
         plugins: {
           legend: { display: false },
           tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.x}×` } },
@@ -572,11 +572,16 @@ function ChartThree() {
     <div style={{ marginBottom: 48 }}>
       <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Housing-to-Income Multipliers</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-        <div style={{ position: "relative", height: 300 }}>
-          <canvas ref={canvasRef} id="chart-housing-income-ratio" aria-label="Horizontal bar chart of housing-to-income multipliers showing Napa County 2010 at 4.5 times, Napa County 2024 at 8.0 times, Calistoga 2024 household at 12.4 times, and Calistoga 2024 versus hospitality wage at 22.6 times, with a vertical dashed line at 3 times marking the conventional affordability threshold" role="img" />
+        <div style={{ overflowX: "auto" }}>
+          <div style={{ minWidth: 640, position: "relative", height: 300 }}>
+            <canvas ref={canvasRef} id="chart-housing-income-ratio" aria-label="Horizontal bar chart of housing-to-income multipliers showing Napa County 2010 at 4.5 times, Napa County 2024 at 8.0 times, Calistoga 2024 household at 12.4 times, and Calistoga 2024 versus hospitality wage at 22.6 times, with a vertical dashed line at 3 times marking the conventional affordability threshold" role="img" />
+          </div>
         </div>
       </div>
       <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-3_napa-population-2025_nvf.png", "Housing-to-income multipliers in Napa County and Calistoga")} />
+      <p style={{ fontFamily: font, fontSize: 11, color: T.muted, marginTop: 6 }}>
+        Mobile users: scroll horizontally to view full chart.
+      </p>
       <Caption
         title="Typical home values divided by typical incomes — 2010 baseline vs. 2024"
         description={"The ratio of typical home values to typical household incomes has risen sharply from the 2010 county baseline. Calistoga’s ratio is about 55% above the current Napa County figure; against the wages of the dominant local industry — accommodation and food services — the multiplier is nearly three times the county-wide household ratio."}
@@ -662,11 +667,16 @@ function ChartFour() {
     <div style={{ marginBottom: 48 }}>
       <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>Napa County Housing Units vs. Population, Indexed 2010 = 100</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-        <div style={{ position: "relative", height: 320 }}>
-          <canvas ref={canvasRef} id="chart-housing-vs-pop-indexed" aria-label="Two-line chart of Napa County housing units and total population, indexed to 100 at 2010 and tracked through 2026. Housing rises steadily; population peaks mid-decade and crosses below the index line." role="img" />
+        <div style={{ overflowX: "auto" }}>
+          <div style={{ minWidth: 640, position: "relative", height: 320 }}>
+            <canvas ref={canvasRef} id="chart-housing-vs-pop-indexed" aria-label="Two-line chart of Napa County housing units and total population, indexed to 100 at 2010 and tracked through 2026. Housing rises steadily; population peaks mid-decade and crosses below the index line." role="img" />
+          </div>
         </div>
       </div>
       <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-4_napa-population-2025_nvf.png", "Napa County housing units vs total population, indexed 2010 = 100")} />
+      <p style={{ fontFamily: font, fontSize: 11, color: T.muted, marginTop: 6 }}>
+        Mobile users: scroll horizontally to view full chart.
+      </p>
       <Caption
         title="County housing stock has grown; population has not"
         description={"Housing stock grew steadily from the 2010 baseline; population crossed below the index line during the post-2017 wildfire and pandemic period and has not recovered. The widening gap between the two lines is the structural picture the headline population number does not capture."}
