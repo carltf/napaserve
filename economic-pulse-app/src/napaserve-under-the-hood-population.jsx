@@ -83,7 +83,7 @@ async function downloadComponentPng(containerRef, filename, title) {
   if (!containerRef.current) return;
   const { default: html2canvas } = await import("html2canvas");
   const canvas = await html2canvas(containerRef.current, {
-    scale: 3,
+    scale: 4,
     useCORS: true,
     backgroundColor: T.bg,
   });
