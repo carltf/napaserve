@@ -1106,8 +1106,8 @@ export default function NapaPopulation() {
           <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
             <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates, May 1, 2026</a>.</li>
-            <li style={{ marginBottom: 8 }}>California Department of Finance, E-1 Population Estimates, May 1, 2025.</li>
-            <li style={{ marginBottom: 8 }}>California Department of Finance, E-1 Population Estimates, May 2024.</li>
+            <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates, May 1, 2025</a>.</li>
+            <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates, May 2024</a>.</li>
             <li style={{ marginBottom: 8 }}>U.S. Census Bureau, <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>American Community Survey 5-year estimates, 2020-2024</a> (Tables B25064, B25004, S0101, S2401).</li>
             <li style={{ marginBottom: 8 }}>Bureau of Labor Statistics, <a href="https://data.bls.gov/cew/data/api/2024/a/area/06055.csv" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Quarterly Census of Employment and Wages, Napa County 2024 (NAICS 72)</a>.</li>
             <li style={{ marginBottom: 8 }}>Zillow Home Value Index, <a href="https://www.zillow.com/home-values/3929/calistoga-ca/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Calistoga and Napa County, March 2026</a>.</li>
