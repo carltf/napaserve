@@ -1209,17 +1209,6 @@ function ArticleCard({ article, token, published = true, onPublished }) {
     padding: "8px 16px",
   };
 
-  const enrichedArticles = dbArticles
-    ? ARTICLES.map(a => {
-        const dbRow = dbArticles.find(r => r.slug === a.slug);
-        return {
-          ...a,
-          publishedAt: dbRow?.published_at || a.publishedAt || null,
-          published: dbRow ? dbRow.published : true,
-        };
-      })
-    : ARTICLES;
-
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 20 }}>
       <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: T.muted, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
@@ -1653,7 +1642,7 @@ export default function NapaServeAdmin() {
         <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, marginBottom: 20 }}>Publish Under the Hood articles to @valleyworkscollab.bsky.social. Select an article, optionally upload a chart image, then post directly to BlueSky. Each article can only be posted once.</p>
 
         {/* Recent articles — full cards */}
-        {enrichedArticles
+        {ARTICLES
           .filter(a => isRecent(a.publishedAt))
           .sort((a, b) => {
             // Drafts (null publishedAt) always first
@@ -1663,22 +1652,23 @@ export default function NapaServeAdmin() {
             return new Date(b.publishedAt) - new Date(a.publishedAt);
           })
           .map(article => {
+            const dbRow = dbArticles && dbArticles.find(a => a.slug === article.slug);
             return (
               <ArticleCard
                 key={article.slug}
                 article={article}
                 token={token}
-                published={article.published}
+                published={dbRow ? dbRow.published : true}
                 onPublished={fetchArticles}
               />
             );
           })}
 
         {/* Archived articles — compact link rows */}
-        {enrichedArticles.filter(a => !isRecent(a.publishedAt)).length > 0 && (
+        {ARTICLES.filter(a => !isRecent(a.publishedAt)).length > 0 && (
           <div style={{ marginTop: 24 }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: T.muted, marginBottom: 10 }}>ARCHIVED — OLDER THAN 2 WEEKS</p>
-            {enrichedArticles.filter(a => !isRecent(a.publishedAt)).map(a => (
+            {ARTICLES.filter(a => !isRecent(a.publishedAt)).map(a => (
               <ArchivedArticleRow key={a.slug} article={a} />
             ))}
           </div>
