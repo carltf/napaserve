@@ -1,4 +1,4 @@
-// UNDER THE HOOD — Calistoga Grew. The Question Is What That Means.
+// UNDER THE HOOD — Napa County Shrunk as Calistoga Grew and the Base Faltered
 // -----------------------------------------------------------------
 // Slug: napa-population-2025
 // Publication: Napa Valley Features
@@ -19,8 +19,8 @@ const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 
 // ── ARTICLE METADATA ───────────────────────────────────────────────
 const ARTICLE_SLUG = "napa-population-2025";
-const ARTICLE_TITLE = "Under the Hood: Calistoga Grew. The Question Is What That Means.";
-const ARTICLE_DECK = "What the May 2026 Department of Finance release shows about where Napa County is growing, who it is growing for, and what the funding base looks like underneath.";
+const ARTICLE_TITLE = "Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered";
+const ARTICLE_DECK = "California's May 2026 Department of Finance population estimates show both the state and Napa County declining for the first time since the COVID rebound, with American Canyon's growth engine flatlining and most Upvalley jurisdictions still losing residents. Calistoga bucked the pattern with a 2.32% gain, the largest in the county, driven almost entirely by the opening of Lincoln Avenue Apartments, a 78-unit workforce-affordable project at 1866 Lincoln Ave. The column traces the gain to the tourism-tax funding that financed the project and sets it against stress signals in the same fiscal year, including falling occupancy masked by higher room rates, the Calistoga Motor Lodge's $40 million loan default, leadership turnover at City Hall and an unfunded operating plan for the fairgrounds where residents oppose housing 99-to-1. The headline population number counts who arrived, not what produced the arrivals or what the underlying economy can sustain.";
 const ARTICLE_PUBLICATION = "Napa Valley Features";
 const ARTICLE_DATE = "May 10, 2026";
 const POLL_IDS = [39, 40, 41]; // eslint-disable-line no-unused-vars
@@ -83,7 +83,7 @@ async function downloadComponentPng(containerRef, filename, title) {
   if (!containerRef.current) return;
   const { default: html2canvas } = await import("html2canvas");
   const canvas = await html2canvas(containerRef.current, {
-    scale: 2,
+    scale: 3,
     useCORS: true,
     backgroundColor: T.bg,
   });

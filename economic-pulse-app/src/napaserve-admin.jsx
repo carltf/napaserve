@@ -26,7 +26,7 @@ const mono = "monospace";
 const ARTICLES = [
   {
     slug: "napa-population-2025",
-    headline: "Under the Hood: Calistoga Grew. The Question Is What That Means.",
+    headline: "Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered",
     publication: "Napa Valley Features",
     date: "May 10, 2026",
   },
@@ -114,9 +114,9 @@ const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
   "napa-population-2025": {
-    headline: "Under the Hood: Calistoga Grew. The Question Is What That Means.",
+    headline: "Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered",
     publication: "Napa Valley Features",
-    deck: "What the May 2026 Department of Finance release shows about where Napa County is growing, who it is growing for, and what the funding base looks like underneath.",
+    deck: "California's May 2026 Department of Finance population estimates show both the state and Napa County declining for the first time since the COVID rebound, with American Canyon's growth engine flatlining and most Upvalley jurisdictions still losing residents. Calistoga bucked the pattern with a 2.32% gain, the largest in the county, driven almost entirely by the opening of Lincoln Avenue Apartments, a 78-unit workforce-affordable project at 1866 Lincoln Ave. The column traces the gain to the tourism-tax funding that financed the project and sets it against stress signals in the same fiscal year, including falling occupancy masked by higher room rates, the Calistoga Motor Lodge's $40 million loan default, leadership turnover at City Hall and an unfunded operating plan for the fairgrounds where residents oppose housing 99-to-1. The headline population number counts who arrived, not what produced the arrivals or what the underlying economy can sustain.",
     summary: "The California Department of Finance’s May 2026 release shows California and Napa County declining for the first time since the COVID rebound. American Canyon’s growth engine flatlined; Calistoga reversed from a 0.4% decline to a 2.32% gain, the largest percentage gain of any jurisdiction in the county — entirely through one workforce-affordable housing project at 1866 Lincoln Avenue. The revenue base that financed that housing is showing structural distress in the same fiscal year: TOT receipts have held only because rates have climbed enough to offset falling occupancy, the 97-room Calistoga Motor Lodge defaulted on a $40 million loan in March, the city manager and roughly one in five city employees turned over during the same window, and the 70-acre fairgrounds Calistoga purchased in 2024 has no operating funding plan and a 99-to-1 resident mandate against housing at the site. The headline population number registers presence. It does not register what produced the presence, who paid for it, or what it tells us about the underlying economy.",
     slug: "napa-population-2025",
     dateline: "CALISTOGA, Calif. — May 10, 2026",

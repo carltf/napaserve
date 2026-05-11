@@ -148,7 +148,7 @@ export default function WordExporter({ article }) {
                 spacing: BODY_SPACING,
                 children: [
                   new TextRun({
-                    text: `Chart ${cap.number}: ${cap.title} \u2014 ${cap.description}. Source: ${cap.source}.`,
+                    text: `Chart ${cap.number}: ${cap.title} \u2014 ${cap.description.replace(/\.$/, "")}. Source: ${cap.source.replace(/\.$/, "")}.`,
                     size: SIZE,
                     font: FONT,
                   }),
