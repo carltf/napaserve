@@ -472,7 +472,12 @@ function ChartOnePointFive() {
     <div style={{ marginBottom: 48 }}>
       <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>North Bay Counties Ranked by Population Change</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
-        <div style={{ display: "flex", gap: 18, marginBottom: 12, fontFamily: font, fontSize: 12, color: T.ink, flexWrap: "wrap", alignItems: "center" }}>
+        <div style={{ overflowX: "auto" }}>
+          <div style={{ minWidth: 640, position: "relative", height: 440 }}>
+            <canvas ref={canvasRef} id="chart-northbay-peer-counties" aria-label="Horizontal bar chart ranking eleven Bay Area counties by year-over-year population change from January 2025 to January 2026, with Napa County highlighted in gold. Santa Clara, San Francisco and San Mateo gained residents; the remaining eight counties contracted, led by Marin and Mendocino." role="img" />
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 18, marginTop: 12, fontFamily: font, fontSize: 12, color: T.ink, flexWrap: "wrap", alignItems: "center" }}>
           <span style={{ display: "inline-flex", alignItems: "center" }}>
             <span style={{ display: "inline-block", width: 12, height: 12, background: T.accent, marginRight: 6 }} />
             Gained residents
@@ -485,11 +490,6 @@ function ChartOnePointFive() {
             <span style={{ display: "inline-block", width: 12, height: 12, background: T.gold, marginRight: 6 }} />
             Napa County
           </span>
-        </div>
-        <div style={{ overflowX: "auto" }}>
-          <div style={{ minWidth: 640, position: "relative", height: 440 }}>
-            <canvas ref={canvasRef} id="chart-northbay-peer-counties" aria-label="Horizontal bar chart ranking eleven Bay Area counties by year-over-year population change from January 2025 to January 2026, with Napa County highlighted in gold. Santa Clara, San Francisco and San Mateo gained residents; the remaining eight counties contracted, led by Marin and Mendocino." role="img" />
-          </div>
         </div>
       </div>
       <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-1-5_napa-population-2025_nvf.png", "North Bay counties ranked by population change")} />
