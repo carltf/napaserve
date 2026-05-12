@@ -83,7 +83,7 @@ async function downloadComponentPng(containerRef, filename, title) {
   if (!containerRef.current) return;
   const { default: html2canvas } = await import("html2canvas");
   const canvas = await html2canvas(containerRef.current, {
-    scale: 3,
+    scale: 2,
     useCORS: true,
     backgroundColor: T.bg,
   });
@@ -93,7 +93,7 @@ async function downloadComponentPng(containerRef, filename, title) {
   const ctx = off.getContext("2d");
   ctx.fillStyle = T.bg;
   ctx.fillRect(0, 0, off.width, off.height);
-  ctx.drawImage(canvas, 0, 64);
+  ctx.drawImage(canvas, 0, 60);
   ctx.save();
   ctx.globalAlpha = 1.0;
   ctx.font = "bold 32px 'Libre Baskerville', Georgia, serif";
