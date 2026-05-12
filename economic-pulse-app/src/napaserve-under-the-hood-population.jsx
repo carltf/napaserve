@@ -368,8 +368,8 @@ function ChartOnePointFive() {
         const textW = ctx.measureText(label).width;
         const boxW = textW + pad * 2;
         const boxH = 22;
-        const boxX = x + 6;
-        const boxY = chartArea.top + 4;
+        const boxX = x - boxW / 2;
+        const boxY = chartArea.top - 26;
         ctx.fillStyle = T.surface;
         ctx.strokeStyle = T.rule;
         ctx.lineWidth = 1;
@@ -425,7 +425,7 @@ function ChartOnePointFive() {
         indexAxis: "y",
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 40, left: 8, top: 4 } },
+        layout: { padding: { right: 40, left: 8, top: 32 } },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -439,7 +439,7 @@ function ChartOnePointFive() {
             min: -1.1,
             max: 0.5,
             ticks: {
-              callback: (v) => `${v > 0 ? "+" : ""}${v}%`,
+              callback: (v) => `${v > 0 ? "+" : ""}${Number(v).toFixed(1)}%`,
               color: T.muted,
               font: { size: 11 },
             },
