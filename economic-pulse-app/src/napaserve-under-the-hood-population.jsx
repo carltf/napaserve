@@ -1141,7 +1141,7 @@ export default function NapaPopulation() {
         </p>
 
         <p style={P_STYLE}>
-          The <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={LINK}>2024 American Community Survey</a> quantifies the dynamic the Housing Element draft described in residents{"’"} words. In Napa County, roughly 5.6% of all housing units are classified as vacant for seasonal, recreational or occasional use {"—"} more than twice the California rate of 2.4%, and the largest single category of vacant housing in the county. More than half of every vacant unit in Napa County is held as second-home or vacation property. In Calistoga specifically, the for-sale and sold-not-occupied categories show essentially zero units; the vacancy that exists is split between rentals and seasonal use. The Calistoga housing market does not turn over. It holds.
+          The <a href="https://www.census.gov/quickfacts/fact/table/napacountycalifornia/PST045224" target="_blank" rel="noopener noreferrer" style={LINK}>2024 American Community Survey</a> quantifies the dynamic the Housing Element draft described in residents{"’"} words. In Napa County, roughly 5.6% of all housing units are classified as vacant for seasonal, recreational or occasional use {"—"} more than twice the California rate of 2.4%, and the largest single category of vacant housing in the county. More than half of every vacant unit in Napa County is held as second-home or vacation property. In Calistoga specifically, the for-sale and sold-not-occupied categories show essentially zero units; the vacancy that exists is split between rentals and seasonal use. The Calistoga housing market does not turn over. It holds.
         </p>
 
         <p style={P_STYLE}>
