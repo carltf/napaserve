@@ -314,6 +314,199 @@ function ChartOne() {
   );
 }
 
+// ── CHART ONE-POINT-FIVE — North Bay peer-county context ──────────
+const NORTH_BAY_DATA = [
+  { county: "Santa Clara",   pct:  0.2, group: "gain" },
+  { county: "San Francisco", pct:  0.1, group: "gain" },
+  { county: "San Mateo",     pct:  0.0, group: "gain" },
+  { county: "Alameda",       pct: -0.1, group: "loss" },
+  { county: "Napa",          pct: -0.2, group: "napa" },
+  { county: "Sonoma",        pct: -0.2, group: "loss" },
+  { county: "Contra Costa",  pct: -0.3, group: "loss" },
+  { county: "Solano",        pct: -0.3, group: "loss" },
+  { county: "Lake",          pct: -0.3, group: "loss" },
+  { county: "Mendocino",     pct: -0.8, group: "loss" },
+  { county: "Marin",         pct: -0.9, group: "loss" },
+];
+const CA_REFERENCE_PCT = -0.14;
+const LOSS_FILL = "rgba(139,115,85,0.7)";
+
+function ChartOnePointFive() {
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+
+    const labels = NORTH_BAY_DATA.map((d) => d.county);
+    const values = NORTH_BAY_DATA.map((d) => d.pct);
+    const colors = NORTH_BAY_DATA.map((d) => {
+      if (d.group === "gain") return T.accent;
+      if (d.group === "napa") return T.gold;
+      return LOSS_FILL;
+    });
+
+    const referencePlugin = {
+      id: "ct1_5_ca_reference",
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        const x = scales.x.getPixelForValue(CA_REFERENCE_PCT);
+        ctx.save();
+        ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = T.ink;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        const label = "California: −0.14%";
+        ctx.font = "700 11px 'Source Sans 3', sans-serif";
+        const pad = 6;
+        const textW = ctx.measureText(label).width;
+        const boxW = textW + pad * 2;
+        const boxH = 22;
+        const boxX = x + 6;
+        const boxY = chartArea.top + 4;
+        ctx.fillStyle = T.surface;
+        ctx.strokeStyle = T.rule;
+        ctx.lineWidth = 1;
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+        ctx.strokeRect(boxX, boxY, boxW, boxH);
+        ctx.fillStyle = T.ink;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, boxX + pad, boxY + boxH / 2);
+        ctx.restore();
+      },
+    };
+
+    const valueLabelPlugin = {
+      id: "ct1_5_value_labels",
+      afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data.length) return;
+        ctx.save();
+        ctx.font = "600 11px 'Source Sans 3', sans-serif";
+        ctx.fillStyle = T.ink;
+        ctx.textBaseline = "middle";
+        meta.data.forEach((bar, i) => {
+          const v = values[i];
+          const txt = `${v > 0 ? "+" : ""}${v.toFixed(1)}%`;
+          if (v >= 0) {
+            ctx.textAlign = "left";
+            ctx.fillText(txt, bar.x + 6, bar.y);
+          } else {
+            ctx.textAlign = "right";
+            ctx.fillText(txt, bar.x - 6, bar.y);
+          }
+        });
+        ctx.restore();
+      },
+    };
+
+    chartRef.current = new Chart(canvasRef.current.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Percent change",
+            data: values,
+            backgroundColor: colors,
+            borderRadius: 2,
+          },
+        ],
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 40, left: 8, top: 4 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.parsed.x > 0 ? "+" : ""}${ctx.parsed.x.toFixed(1)}%`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            min: -1.1,
+            max: 0.5,
+            ticks: {
+              callback: (v) => `${v > 0 ? "+" : ""}${v}%`,
+              color: T.muted,
+              font: { size: 11 },
+            },
+            grid: { color: T.rule },
+            title: {
+              display: true,
+              text: "Percent change in population, Jan. 2025 to Jan. 2026",
+              color: T.muted,
+              font: { size: 11 },
+            },
+          },
+          y: {
+            ticks: {
+              color: (c) => (c.tick && c.tick.label === "Napa" ? T.gold : T.muted),
+              font: (c) =>
+                c.tick && c.tick.label === "Napa"
+                  ? { size: 12, weight: "bold", family: "'Source Sans 3', sans-serif" }
+                  : { size: 11, family: "'Source Sans 3', sans-serif" },
+            },
+            grid: { display: false },
+          },
+        },
+      },
+      plugins: [referencePlugin, valueLabelPlugin],
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, []);
+
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>North Bay Counties Ranked by Population Change</h2>
+      <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
+        <div style={{ display: "flex", gap: 18, marginBottom: 12, fontFamily: font, fontSize: 12, color: T.ink, flexWrap: "wrap", alignItems: "center" }}>
+          <span style={{ display: "inline-flex", alignItems: "center" }}>
+            <span style={{ display: "inline-block", width: 12, height: 12, background: T.accent, marginRight: 6 }} />
+            Gained residents
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center" }}>
+            <span style={{ display: "inline-block", width: 12, height: 12, background: LOSS_FILL, marginRight: 6 }} />
+            Lost residents
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center" }}>
+            <span style={{ display: "inline-block", width: 12, height: 12, background: T.gold, marginRight: 6 }} />
+            Napa County
+          </span>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <div style={{ minWidth: 640, position: "relative", height: 440 }}>
+            <canvas ref={canvasRef} id="chart-northbay-peer-counties" aria-label="Horizontal bar chart ranking eleven Bay Area counties by year-over-year population change from January 2025 to January 2026, with Napa County highlighted in gold. Santa Clara, San Francisco and San Mateo gained residents; the remaining eight counties contracted, led by Marin and Mendocino." role="img" />
+          </div>
+        </div>
+      </div>
+      <DownloadButton onClick={() => downloadComponentPng(containerRef, "chart-1-5_napa-population-2025_nvf.png", "North Bay counties ranked by population change")} />
+      <p style={{ fontFamily: font, fontSize: 11, color: T.muted, marginTop: 6 }}>
+        Mobile users: scroll horizontally to view full chart.
+      </p>
+      <Caption
+        title="Napa contracted less than most of its North Bay neighbors"
+        description={"Napa fell 0.2% — less than most of its North Bay neighbors and matched Sonoma, while the South Bay added residents. Of the eleven Bay Area counties shown, only Santa Clara, San Francisco and San Mateo gained population between January 2025 and January 2026; the rest contracted, with Marin and Mendocino losing the most."}
+        sources={[
+          { label: "California Department of Finance E-1 Population and Housing Estimates, May 1, 2026", url: "https://dof.ca.gov/forecasting/demographics/estimates/" },
+        ]}
+      />
+    </div>
+  );
+}
+
 // ── CHART TWO — Calistoga TOT receipts + avg rooms, FY13-14 to FY25-26 ──
 function ChartTwo() {
   const containerRef = useRef(null);
@@ -841,6 +1034,12 @@ export default function NapaPopulation() {
         </p>
 
         <ChartOne />
+
+        <p style={P_STYLE}>
+          Napa County{"’"}s 0.2% loss did not stand out in its own region. Across the North Bay between January 2025 and January 2026, Marin lost 0.9%, Mendocino 0.8%, and Lake, Solano and Contra Costa each fell 0.3%. Sonoma matched Napa at 0.2%. Only the southern half of the Bay Area added residents over the same period {"—"} Santa Clara, San Francisco and San Mateo posted small gains, all under half of one percent. The North Bay shrank; the South Bay held. Napa fell with its neighbors. Calistoga did not.
+        </p>
+
+        <ChartOnePointFive />
 
         {/* ═════════════════════════════════════════════════════════════ */}
         {/* SECTION — CALISTOGA: ONE PROJECT, ONE MECHANISM, ONE YEAR     */}
