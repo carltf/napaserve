@@ -976,7 +976,7 @@ export default function NapaPopulation() {
         </p>
 
         <p style={P_STYLE}>
-          Napa County sits inside that frame. The county lost 246 residents to land at 136,374, a decline of 0.18% {"—"} a smaller percentage decline than the state. Napa declined less than California declined. But it declined.
+          Napa County sits inside that frame. The county lost 246 residents to land at 136,374, a decline of 0.18%. California fell 0.14%. Both declined for the first time since the COVID rebound, and Napa{"'"}s decline was modestly steeper than the state{"'"}s.
         </p>
 
         <p style={P_STYLE}>
@@ -1068,7 +1068,7 @@ export default function NapaPopulation() {
         <h2 style={SECTION_H2}>The Revenue Base That Funds the Fix</h2>
 
         <p style={P_STYLE}>
-          The City of Calistoga{"’"}s twelve-year transient-occupancy-tax history, published in its <a href="https://www.calistogaca.gov/Government/City-Budgets/Transient-Occupancy-Tax" target="_blank" rel="noopener noreferrer" style={LINK}>April 2026 fiscal report</a>, shows what is happening to the funding source itself. From fiscal 2013-14 through 2018-19, annual TOT receipts rose from $4.5 million to $6.4 million on a stable base of roughly 690 to 760 rooms. The 2017 wildfires cost the city about $350,000. The March 2020 COVID shutdown collapsed receipts to $4.7 million. The rebound was vertical: $11.8 million in fiscal 2021-22, the largest single-year jump on record. Receipts have held in the $11.8 to $12.3 million range since.
+          The City of Calistoga{"’"}s twelve-year transient-occupancy-tax history, published in its <a href="https://www.calistogaca.gov/Government/City-Budgets/Transient-Occupancy-Tax" target="_blank" rel="noopener noreferrer" style={LINK}>April 2026 fiscal report</a>, shows what is happening to the funding source itself. From fiscal 2013-14 through 2018-19, annual TOT receipts rose from $4.5 million to $6.4 million on a stable base of roughly 690 to 760 rooms. The 2017 wildfires cost the city about $350,000. The March 2020 COVID shutdown collapsed receipts to $4.7 million. The rebound was vertical: $11.8 million in fiscal 2021-22, the largest single-year jump on record. Receipts have held in the $11.8 to $12.5 million range since.
         </p>
 
         <p style={P_STYLE}>
@@ -1145,7 +1145,7 @@ export default function NapaPopulation() {
         </p>
 
         <p style={P_STYLE}>
-          The numbers behind the argument: Napa County{"’"}s NAICS 72 average annual wage {"—"} the dominant local industry of accommodation and food services {"—"} was <a href="https://data.bls.gov/cew/data/api/2024/a/area/06055.csv" target="_blank" rel="noopener noreferrer" style={LINK}>$47,009 in 2024</a>, with the lodging subsector at $53,623 and food services at $42,490. Total NAICS 72 employment in the county: 12,026 workers. Calistoga{"’"}s median household income, per 2020-2024 ACS 5-year estimates, was $85,446 {"—"} but the spread between mean ($143,448) and median tells a structural story: a meaningful upper-income tier pulls the average 68% above the typical household, evidence of the second-home and outside-income overlay on the local wage base. Calistoga{"’"}s bimodal labor structure shows up in the occupational breakdown: service occupations earned a median $51,259, sales-and-office $53,204, production-and-transport $55,172 {"—"} and management/business/science/arts <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={LINK}>$111,250</a>. Nearly double the service-occupation median.
+          The numbers behind the argument: Napa County{"’"}s NAICS 72 average annual wage {"—"} the dominant local industry of accommodation and food services {"—"} was <a href="https://labormarketinfo.edd.ca.gov/geography/napa-county.html" target="_blank" rel="noopener noreferrer" style={LINK}>$47,009 in 2024</a>, with the lodging subsector at $53,623 and food services at $42,490. Total NAICS 72 employment in the county: 12,026 workers. Calistoga{"’"}s median household income, per 2020-2024 ACS 5-year estimates, was $85,446 {"—"} but the spread between mean ($143,448) and median tells a structural story: a meaningful upper-income tier pulls the average 68% above the typical household, evidence of the second-home and outside-income overlay on the local wage base. Calistoga{"’"}s bimodal labor structure shows up in the occupational breakdown: service occupations earned a median $51,259, sales-and-office $53,204, production-and-transport $55,172 {"—"} and management/business/science/arts <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={LINK}>$111,250</a>. More than double the service-occupation median.
         </p>
 
         <p style={P_STYLE}>
@@ -1153,7 +1153,7 @@ export default function NapaPopulation() {
         </p>
 
         <p style={P_STYLE}>
-          The structural ratios put the mismatch in one number. Calistoga{"’"}s home values stand at 12.4 times the city{"’"}s median household income {"—"} about 55% above the Napa County figure of 8.0 times. Against the average wage of the dominant local industry, the Calistoga ratio rises to 22.6 times. The county-wide ratio in 2010 was 4.5 times; by 2025, <em>Rethinking the Housing Narrative</em> documented it had reached 8.6 times. Calistoga{"’"}s housing-to-income ratio is roughly five times the 2010 county baseline. Against the wages that the town{"’"}s tourism economy actually pays, <a href="https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" target="_blank" rel="noopener noreferrer" style={LINK}>the multiplier is nearly six times the 2010 baseline</a>.
+          The structural ratios put the mismatch in one number. Calistoga{"’"}s home values stand at 12.4 times the city{"’"}s median household income {"—"} about 55% above the Napa County figure of 8.0 times. Against the average wage of the dominant local industry, the Calistoga ratio rises to 22.6 times. The county-wide ratio in 2010 was 4.5 times; by 2025, <em>Rethinking the Housing Narrative</em> documented it had reached 8.6 times. Calistoga{"’"}s housing-to-income ratio of 12.4 is roughly three times the 2010 county baseline of 4.5. Against the wages that the town{"’"}s tourism economy actually pays {"—"} $47,009 on average {"—"} the multiplier rises to 22.6, <a href="https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" target="_blank" rel="noopener noreferrer" style={LINK}>roughly five times the 2010 baseline</a>.
         </p>
 
         <ChartThree />
