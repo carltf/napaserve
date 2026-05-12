@@ -473,7 +473,7 @@ function ChartOnePointFive() {
       <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>North Bay Counties Ranked by Population Change</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <div style={{ overflowX: "auto" }}>
-          <div style={{ minWidth: 640, position: "relative", height: 440 }}>
+          <div style={{ minWidth: 640, position: "relative", height: 380 }}>
             <canvas ref={canvasRef} id="chart-northbay-peer-counties" aria-label="Horizontal bar chart ranking eleven Bay Area counties by year-over-year population change from January 2025 to January 2026, with Napa County highlighted in gold. Santa Clara, San Francisco and San Mateo gained residents; the remaining eight counties contracted, led by Marin and Mendocino." role="img" />
           </div>
         </div>
