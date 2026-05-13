@@ -707,7 +707,7 @@ function ChartThree() {
     if (chartRef.current) chartRef.current.destroy();
 
     const labels = ["Napa County 2010", "Napa County 2024", "Calistoga 2024 (household)", "Calistoga 2024 (vs. hospitality wage)"];
-    const data = [4.5, 8.0, 12.4, 22.6];
+    const data = [4.5, 8.0, 12.6, 23.0];
     const colors = ["#B4B2A9", T.muted, T.accent, "#5C3D26"];
 
     const annotationPlugin = {
@@ -791,7 +791,7 @@ function ChartThree() {
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <div style={{ overflowX: "auto" }}>
           <div style={{ minWidth: 640, position: "relative", height: 300 }}>
-            <canvas ref={canvasRef} id="chart-housing-income-ratio" aria-label="Horizontal bar chart of housing-to-income multipliers showing Napa County 2010 at 4.5 times, Napa County 2024 at 8.0 times, Calistoga 2024 household at 12.4 times, and Calistoga 2024 versus hospitality wage at 22.6 times, with a vertical dashed line at 3 times marking the conventional affordability threshold" role="img" />
+            <canvas ref={canvasRef} id="chart-housing-income-ratio" aria-label="Horizontal bar chart of housing-to-income multipliers showing Napa County 2010 at 4.5 times, Napa County 2024 at 8.0 times, Calistoga 2024 household at 12.6 times, and Calistoga 2024 versus hospitality wage at 23.0 times, with a vertical dashed line at 3 times marking the conventional affordability threshold" role="img" />
           </div>
         </div>
       </div>
@@ -801,11 +801,11 @@ function ChartThree() {
       </p>
       <Caption
         title="Typical home values divided by typical incomes — 2010 baseline vs. 2024"
-        description={"The ratio of typical home values to typical household incomes has risen sharply from the 2010 county baseline. Calistoga’s ratio is about 55% above the current Napa County figure; against the wages of the dominant local industry — accommodation and food services — the multiplier is nearly three times the county-wide household ratio."}
+        description={"The ratio of typical home values to typical household incomes has risen sharply from the 2010 county baseline. Calistoga’s ratio is about 58% above the current Napa County figure; against the wages of the dominant local industry — accommodation and food services — the multiplier is nearly three times the county-wide household ratio."}
         sources={[
-          { label: "U.S. Census ACS 5-year estimates 2024", url: "https://api.census.gov/data/2024/acs/acs5" },
-          { label: "BLS Quarterly Census of Employment and Wages, Napa County 2024", url: "https://data.bls.gov/cew/data/api/2024/a/area/06055.csv" },
-          { label: "Zillow Home Value Index, Calistoga, March 2026", url: "https://www.zillow.com/home-values/3929/calistoga-ca/" },
+          { label: "U.S. Census ACS 5-year estimates 2024", url: "https://www.census.gov/quickfacts/fact/table/napacountycalifornia/PST045224" },
+          { label: "BLS Quarterly Census of Employment and Wages, Napa County 2024", url: "https://labormarketinfo.edd.ca.gov/geography/napa-county.html" },
+          { label: "Zillow Home Value Index, Calistoga, May 2026", url: "https://www.zillow.com/home-values/3929/calistoga-ca/" },
           { label: "2010 baseline per Rethinking the Housing Narrative in Napa County (Napa Valley Features, June 2025)", url: "https://napavalleyfocus.substack.com/p/under-the-hood-rethinking-the-housing" },
         ]}
       />
@@ -1188,7 +1188,7 @@ export default function NapaPopulation() {
                 A tourism worker pulling the local average wage would need 23 years of gross earnings {"—"} every dollar, before taxes, before food, before transportation, before anything {"—"} to buy a typical home in Calistoga. At a 30% savings rate (which is fantasy for someone earning $47,009), the full home value takes 77 years.
               </p>
               <p style={{ margin: 0 }}>
-                And 23 isn{"’"}t the worst of it. The 34 active listings asking a median of $2.05 million sit at 44 times the local industry wage. What{"’"}s actually for sale right now requires nearly half a century of gross tourism earnings.
+                The 34 active listings asking a median of $2.05 million sit at 44 times the local industry wage. What{"’"}s actually for sale right now requires nearly half a century of gross tourism earnings.
               </p>
             </>
           }
@@ -1347,7 +1347,7 @@ export default function NapaPopulation() {
             <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates, May 2024</a>.</li>
             <li style={{ marginBottom: 8 }}>U.S. Census Bureau, <a href="https://api.census.gov/data/2024/acs/acs5" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>American Community Survey 5-year estimates, 2020-2024</a> (Tables B25064, B25004, S0101, S2401).</li>
             <li style={{ marginBottom: 8 }}>Bureau of Labor Statistics, <a href="https://data.bls.gov/cew/data/api/2024/a/area/06055.csv" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Quarterly Census of Employment and Wages, Napa County 2024 (NAICS 72)</a>.</li>
-            <li style={{ marginBottom: 8 }}>Zillow Home Value Index, <a href="https://www.zillow.com/home-values/3929/calistoga-ca/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Calistoga and Napa County, March 2026</a>.</li>
+            <li style={{ marginBottom: 8 }}>Zillow Home Value Index, <a href="https://www.zillow.com/home-values/3929/calistoga-ca/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Calistoga and Napa County, May 2026</a>.</li>
             <li style={{ marginBottom: 8 }}>Zillow Research, <a href="https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>ZHVI city-level historical series CSV</a>.</li>
             <li style={{ marginBottom: 8 }}>City of Calistoga, <a href="https://www.calistogaca.gov/Government/City-Budgets/Transient-Occupancy-Tax" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Transient Occupancy Tax Report, April 2026</a>.</li>
             <li style={{ marginBottom: 8 }}>City of Calistoga, <a href="https://www.calistogaca.gov/Government/City-Budgets/Audit-Reports" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>June 30, 2024 audited financial statement</a>.</li>
