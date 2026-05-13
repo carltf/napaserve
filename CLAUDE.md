@@ -630,3 +630,83 @@ The chart numbering protocol now supports 4 or more charts per article. Pattern 
 - Three known TODOs in Section 2 JSX for placeholder data: ChartTwo intermediate FY values (FY14-15 through FY24-25 minus verified anchors), ChartFour housing and population placeholder series pending DOF E-1/E-1H historical pulls.
 - Five EOS docs cumulative-rebuilt for 2026-05-10 and uploaded to Claude.ai Project Knowledge; May 5 versions moved to `Active/Older Drafts/`.
 
+---
+
+## Session Update — 2026-05-12 V3
+
+### napa-population-2025 — editorial review + URL audit + sidebar
+
+- Article PUBLISHED on NapaServe (Published May 11, 2026); Substack scheduled May 14 6:00 AM
+- 8 commits on origin/main: `ccac434`, `0fe4873`, `3613d44`, `c7c5a4d`, `84e22fe`, `f9d4dff`, `e960710`, `f1474e2`
+- Bundle: `index-CHmZ1wV0.js`
+- DB: `napaserve_articles.id=6`, `published=true`, `published_at=2026-05-11`
+
+### Work shipped
+
+- Chart PNG export geometry revert (scale 3 → 2, drawImage y 64 → 60) restoring canonical title calibration
+- 5 factual corrections: CA decline direction, TOT range $11.8-12.5M, "More than double", housing-to-income visible math, BLS body anchor → EDD
+- 3 URL body-anchor swaps (Census ACS x2, Zillow x1) — raw API/CSV endpoints → human-readable landing pages
+- Zillow May 12 data update: $1,079,044 typical home value / 34 listings @ $2,048,833 median
+- PullQuote sidebar component (23x and 44x findings) — inline JSX + Word export
+- Chart 3 data refresh: 4.5×, 8.0×, 12.6×, 23.0×
+- Four-store Zillow vintage consistency closed (body / caption / Sources / methodology all "May 2026")
+
+### EOS V3 docs cumulative-rebuilt
+
+- `NapaServe_Cheatsheet_2026-05-12_v3.docx` (+84 lines, +16,416 text bytes vs V2)
+- `NapaServe_UnderTheHood_Protocol_2026-05-12_v3.docx` (+220 lines, +14,634 text bytes vs V2)
+- `NapaServe_Master_Brief_2026-05-12_v3.docx` (+131 lines, +8,585 text bytes vs V2)
+- `NapaServe_Session_Summary_2026-05-12_v3.docx` (+196 lines, +19,927 text bytes vs V2)
+- `NapaServe_PulseTracker_Plan_2026-05-10_v2.docx` unchanged (per EOS ritual "only if changed")
+
+### V3 lessons formalized (canonical homes in Cheatsheet and UTH Protocol)
+
+- **A:** PNG export geometry LOCKED (scale: 2, off.height+80, drawImage 0,60, 32px title, 26px watermark)
+- **B:** Cross-article reference parity discipline (diff vs canonical sibling before theorizing)
+- **C:** Memory-search-first on chart/PNG/render questions (extension of Diagnostic Ordering)
+- **D:** Reactive-fix accumulation (after 2nd reactive fix without resolution, question diagnosis)
+- **E:** Build spec parity for new charts (specify sibling component by name)
+- **F:** Axis padding symmetry default (explicit min/max, not Chart.js auto-fit)
+- **G:** Embedded-citation discipline (pre-edit grep for `<a` or `](http` inside `old_str`)
+- **H:** Body-anchor vs Sources-block URL discipline (body/caption/methodology = landing page)
+- **I:** Multi-Store Discipline (renamed from Two-Store; stores 8-11 added: methodology note, inline components, chart data arrays, hardcoded labels)
+- **J:** Late-stage editorial review surface density (observational; recommends editorial-math gate)
+- **K:** Verification probes must match the claim (specific instantiation of Section 0 Ground Truth)
+- **L:** Status fields require ground-truth verification before transcription in EOS roll-forwards
+- **M:** EOS docx files must be genuine Microsoft Word 2007+ format, not plain text with .docx extension
+- **N:** Cumulative roll-forward verification uses text-content byte count, not file size (ZIP wrapper overhead is not content)
+
+### UTH Protocol V3 additions
+
+- **Section A:** Chart PNG Export Geometry LOCKED Specification
+- **Section B:** New-Chart Structural Parity
+- **Section C:** Axis Padding Symmetry Default
+- **Section D:** Embedded-Citation Discipline
+- **Section E:** Body-Anchor vs Sources-Block URL Discipline (extends External URL Verification Gate)
+- **Section F:** Multi-Store Discipline (renamed and generalized from Two-Store)
+- **Section G:** Inline Component Patterns — PullQuote
+
+### Open editorial flags carried to next session
+
+- "8% capacity increase" vs 9.7% math (785→861 rooms)
+- "19% more rooms concentrated" unsupported by math
+- "Tourism jobs $35,000" wage conflict with NAICS 72 $47,009
+- "70-acre" vs "70.6-acre" fairgrounds
+- Motor Lodge expansion timing and Hyatt JdV September 2025 claim
+- Charts 1, 2, 4 caption source URL audit
+- ChartOnePointFive axis padding polish (-1.1% to +0.5%)
+
+### Tomorrow's priority order
+
+1. Substack May 14 6:00 AM publish confirmation
+2. Open editorial flags resolution
+3. Word export template fixes (caption double-period, Filename injection, Sources markdown-link collapse) — deferred since May 4
+4. Pulse Tracker Phases 1+2
+5. `useDraftGate` destructure platform debt across 5 other UTH files + template
+6. Charts 1, 2, 4 caption source URL audit
+7. ChartOnePointFive axis padding polish
+
+---
+
+*End of May 12, 2026 V3 patch — Valley Works Collaborative*
+
