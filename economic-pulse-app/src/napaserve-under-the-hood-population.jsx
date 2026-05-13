@@ -140,6 +140,30 @@ function DownloadButton({ onClick }) {
   );
 }
 
+// ── PULL QUOTE ─────────────────────────────────────────────────────
+const PullQuote = ({ leadText, bodyChildren }) => (
+  <div style={{
+    margin: "28px 0",
+    padding: "20px 24px",
+    background: T.surface,
+    borderLeft: `4px solid ${T.accent}`,
+    fontFamily: font,
+    fontSize: 17,
+    lineHeight: 1.55,
+    color: T.ink,
+  }}>
+    <div style={{
+      fontWeight: 700,
+      fontSize: 19,
+      marginBottom: 12,
+      color: T.ink,
+    }}>
+      {leadText}
+    </div>
+    {bodyChildren}
+  </div>
+);
+
 // ── CAPTION ────────────────────────────────────────────────────────
 function Caption({ title, description, sources = [] }) {
   return (
@@ -1155,6 +1179,20 @@ export default function NapaPopulation() {
         <p style={P_STYLE}>
           The structural ratios put the mismatch in one number. Calistoga{"’"}s home values of $1,079,044 stand at 12.6 times the city{"’"}s median household income of $85,446 {"—"} about 58% above the Napa County figure of 8.0 times. The county-wide ratio in 2010 was 4.5 times; by 2025, <em>Rethinking the Housing Narrative</em> documented it had reached 8.6 times. Calistoga{"’"}s housing-to-income ratio of 12.6 is nearly three times the 2010 county baseline of 4.5. Against the average wage of the dominant local industry {"—"} $47,009 {"—"} the Calistoga ratio rises to 23.0 times, <a href="https://www.zillow.com/home-values/3929/calistoga-ca/" target="_blank" rel="noopener noreferrer" style={LINK}>roughly five times the 2010 baseline</a>.
         </p>
+
+        <PullQuote
+          leadText="23 times the wages of the industry that staffs the town."
+          bodyChildren={
+            <>
+              <p style={{ margin: "0 0 12px 0" }}>
+                A tourism worker pulling the local average wage would need 23 years of gross earnings {"—"} every dollar, before taxes, before food, before transportation, before anything {"—"} to buy a typical home in Calistoga. At a 30% savings rate (which is fantasy for someone earning $47,009), the full home value takes 77 years.
+              </p>
+              <p style={{ margin: 0 }}>
+                And 23 isn{"’"}t the worst of it. The 34 active listings asking a median of $2.05 million sit at 44 times the local industry wage. What{"’"}s actually for sale right now requires nearly half a century of gross tourism earnings.
+              </p>
+            </>
+          }
+        />
 
         <ChartThree />
 
