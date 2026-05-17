@@ -1012,12 +1012,34 @@ function ChartSix() {
     for (let yr = 2012; yr <= 2026; yr++) publicYears.push(yr);
     const publicSeries = publicYears.map(yr => ({ x: yr, y: publicMap.has(yr) ? publicMap.get(yr) : null }));
 
-    // Dashed connector dataset (only the gap)
-    const dashedConnector = [
-      { x: 2021, y: 19538 },
-      { x: 2022, y: null }, // not drawn, only connects 2021 → 2024 via spanGaps
-      { x: 2024, y: 18572 },
-    ];
+    // ── PRIVATE BAND POLYGON ──────────────────────────────────────
+    // Filled area between the public line (lower edge, with 2022/2023 interpolated
+    // per supplement) and the combined trajectory (upper edge). Drawn BEFORE
+    // datasets so the lines render on top of the band fill.
+    const privateBandPlugin = {
+      id: "ch6_top_private_band",
+      beforeDatasetsDraw(chart) {
+        const { ctx, scales: { x, y } } = chart;
+        const upper = [[2020,22522],[2021,22067],[2022,21740],[2023,21412],[2024,21221],[2025,21162]];
+        const lower = [[2020,20022],[2021,19538],[2022,19216],[2023,18894],[2024,18572],[2025,18585]];
+        ctx.save();
+        ctx.fillStyle = "rgba(139,94,60,0.30)";
+        ctx.beginPath();
+        upper.forEach(([xv, yv], i) => {
+          const px = x.getPixelForValue(xv);
+          const py = y.getPixelForValue(yv);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        for (let i = lower.length - 1; i >= 0; i--) {
+          const [xv, yv] = lower[i];
+          ctx.lineTo(x.getPixelForValue(xv), y.getPixelForValue(yv));
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      },
+    };
 
     // ── TOP PANEL ─────────────────────────────────────────────────
     chartRefTop.current = new Chart(canvasRefTop.current, {
@@ -1126,6 +1148,7 @@ function ChartSix() {
           },
         },
       },
+      plugins: [privateBandPlugin],
     });
 
     // ── BOTTOM PANEL ──────────────────────────────────────────────
@@ -1407,7 +1430,7 @@ export default function UnderTheHoodNapaSchools2026() {
 
         <p style={P_STYLE}>A note on scope. All public-school figures in this piece come from CDE{"’"}s Census Day release. Private and parochial schools are reported separately through California{"’"}s Private School Affidavit program {"—"} a self-reported, voluntary filing whose completeness varies year to year. For the overlap window (2019-20 through 2024-25), Napa County{"’"}s private K-12 enrollment held essentially flat at roughly 2,500-2,600 students, a 3% gain on a small base. Public enrollment over the same window fell by 1,437. The combined public-plus-private decline is roughly 6% over five years. Private enrollment did not absorb the public decline {"—"} the demographic curve underneath both is the cleaner explanation. Homeschooling and learning pods are not captured in either data series and remain an unmeasured residual.</p>
 
-        <p style={P_STYLE}>Three additional questions remain open at this writing. The NCOE +55 includes some component of student movement from home districts to specialized settings; the share of that figure that represents organic program growth versus reclassification of students previously counted elsewhere is not resolvable from CDE data. The <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={LINK}>May 1, 2026 California Department of Finance E-1 population estimates</a> for Napa County{"’"}s jurisdictions provide the population context against which the enrollment picture should be read; those figures are pulled separately. And the <a href="https://dof.ca.gov/forecasting/demographics/estimates-e4/" target="_blank" rel="noopener noreferrer" style={LINK}>DOF E-4 historical series</a> anchors Napa County{"’"}s 2015 peak at approximately 141,530 residents {"—"} a benchmark the current series can be measured against.</p>
+        <p style={P_STYLE}>Three additional questions remain open at this writing. The NCOE +55 includes some component of student movement from home districts to specialized settings; the share of that figure that represents organic program growth versus reclassification of students previously counted elsewhere is not resolvable from CDE data. The <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={LINK}>May 1, 2026 California Department of Finance E-1 population estimates</a> for Napa County{"’"}s jurisdictions provide the population context against which the enrollment picture should be read; those figures are pulled separately. And the <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-4-population-estimates-for-cities-counties-and-the-state-2011-2020-with-2010-and-2020-census-benchmark/" target="_blank" rel="noopener noreferrer" style={LINK}>DOF E-4 historical series</a> anchors Napa County{"’"}s 2015 peak at approximately 141,530 residents {"—"} a benchmark the current series can be measured against.</p>
 
         <p style={P_STYLE}>A fourth question worth flagging is the relationship between the EL contraction and broader state-level immigration dynamics. The May 2026 California Department of Finance E-1 release attributed California{"’"}s population decline this year specifically to federal immigration policy changes {"—"} legal international migration cut by more than half compared to the prior year, an effect the DOF release named explicitly. Whether and how that state-level dynamic shows up in Napa County school data is a question the Census Day file alone cannot resolve, and the CDE reclassification dataset that would help distinguish students leaving the system from students reclassifying within it has not been published for years more recent than 2020-21. The composition of the 574-student EL decline is the natural follow-on inquiry for the 2026-27 release and beyond, once more recent reclassification data becomes available.</p>
 
@@ -1496,7 +1519,7 @@ export default function UnderTheHoodNapaSchools2026() {
             <li style={{ marginBottom: 8 }}>California Department of Education, <a href="https://www.cde.ca.gov/ta/tg/ep/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>English Language Proficiency Assessments for California (ELPAC)</a> {"—"} reference for EL terminology.</li>
             <li style={{ marginBottom: 8 }}>California Department of Education, <a href="https://www.cde.ca.gov/ds/si/ps/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Private School Affidavit data</a>, 2019-20 through 2024-25.</li>
             <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates-e1/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-1 Population Estimates</a>, May 2026 release.</li>
-            <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates-e4/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-4 Historical Population Estimates</a>.</li>
+            <li style={{ marginBottom: 8 }}>California Department of Finance, <a href="https://dof.ca.gov/forecasting/demographics/estimates/e-4-population-estimates-for-cities-counties-and-the-state-2011-2020-with-2010-and-2020-census-benchmark/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>E-4 Historical Population Estimates</a>.</li>
             <li style={{ marginBottom: 8 }}><a href="https://www.kidsdata.org/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Kidsdata.org</a>, {"“"}Public School Enrollment by Race/Ethnicity, 1994-2021{"”"} and {"“"}Public School Enrollment 2012-2021{"”"} (compiled from CDE DataQuest).</li>
           </ol>
         </div>
