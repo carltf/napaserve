@@ -650,12 +650,13 @@ function ChartThreeB() {
         const napaEnd = napaIdx[napaIdx.length - 1].y;
         const marinEnd = marinIdx[marinIdx.length - 1].y;
         const sonomaEnd = sonomaIdx[sonomaIdx.length - 1].y;
+        // y-offsets stagger Marin/Sonoma to avoid horizontal collision at endpoints (~71.8 vs ~72.9)
         ctx.fillStyle = C.accentRed;
         ctx.fillText("Napa -37%", endX + 6, y.getPixelForValue(napaEnd));
         ctx.fillStyle = C.marinBlue;
-        ctx.fillText("Marin -28%", endX + 6, y.getPixelForValue(marinEnd));
+        ctx.fillText("Marin -28%", endX + 6, y.getPixelForValue(marinEnd - 3));
         ctx.fillStyle = C.navyBlue;
-        ctx.fillText("Sonoma -27%", endX + 6, y.getPixelForValue(sonomaEnd));
+        ctx.fillText("Sonoma -27%", endX + 6, y.getPixelForValue(sonomaEnd + 2));
         ctx.restore();
       },
     };
@@ -686,9 +687,9 @@ function ChartThreeB() {
               napaPeakDot:   { type: "point", xValue: 2006, yValue: 100, radius: 5, backgroundColor: C.accentRed, borderColor: C.accentRed },
               marinPeakDot:  { type: "point", xValue: 2001, yValue: 100, radius: 5, backgroundColor: C.marinBlue, borderColor: C.marinBlue },
               sonomaPeakDot: { type: "point", xValue: 2004, yValue: 100, radius: 5, backgroundColor: C.navyBlue,  borderColor: C.navyBlue },
-              marinPeakLab:  { type: "label", xValue: 2001, yValue: 109, content: "peak 2001", color: C.marinBlue, font: { size: 11, family: "'Source Sans 3', sans-serif" }, backgroundColor: "transparent" },
-              sonomaPeakLab: { type: "label", xValue: 2004, yValue: 105.5, content: "peak 2004", color: C.navyBlue, font: { size: 11, family: "'Source Sans 3', sans-serif" }, backgroundColor: "transparent" },
-              napaPeakLab:   { type: "label", xValue: 2007, yValue: 105.5, content: "peak 2006", color: C.accentRed, font: { size: 11, family: "'Source Sans 3', sans-serif" }, backgroundColor: "transparent" },
+              marinPeakLab:  { type: "label", xValue: 2001,   yValue: 113, content: "peak 2001", color: C.marinBlue, font: { size: 11, family: "'Source Sans 3', sans-serif" }, backgroundColor: "transparent" },
+              sonomaPeakLab: { type: "label", xValue: 2003.5, yValue: 107, content: "peak 2004", color: C.navyBlue,  font: { size: 11, family: "'Source Sans 3', sans-serif" }, backgroundColor: "transparent" },
+              napaPeakLab:   { type: "label", xValue: 2007,   yValue: 102, content: "peak 2006", color: C.accentRed, font: { size: 11, family: "'Source Sans 3', sans-serif" }, backgroundColor: "transparent" },
             },
           },
         },
@@ -757,7 +758,10 @@ function ChartFour() {
             const bar = meta.data[i];
             if (!bar) return;
             const xPx = x.getPixelForValue(v);
-            const yPx = bar.y;
+            // Pope Valley EL label (bottom panel: dsIdx=0 EL series, i=3 Pope Valley row):
+            // stagger upward by 6px to clear the Non-EL label that sits at the same x (=-9).
+            const popeStagger = (idName === "ch4_bot_labels" && dsIdx === 0 && i === 3) ? -6 : 0;
+            const yPx = bar.y + popeStagger;
             const sign = v >= 0 ? "+" : "";
             const text = `${sign}${v}`;
             if (v >= 0) { ctx.textAlign = "left";  ctx.fillText(text, xPx + 4, yPx); }
@@ -879,14 +883,18 @@ function ChartFive() {
     if (chartRef.current) chartRef.current.destroy();
 
     const labels = ["Lake", "Sonoma", "Napa", "Solano", "Mendocino", "Marin"];
-    const reported = [0.62, 0.34, 0.09, -0.96, -1.61, -2.43];
-    const adjusted = [0.62, -0.19, -0.21, -0.96, -1.61, -2.43];
+    const reported    = [0.62, 0.34, 0.09, -0.96, -1.61, -2.43];
+    const adjustedRaw = [0.62, -0.19, -0.21, -0.96, -1.61, -2.43];
+    // Null out adjusted bars when they equal reported (Lake/Solano/Mendocino/Marin):
+    // two identical bars per county are visually noisy + misleading. Show pairing only
+    // for Napa and Sonoma where adjustment changes the value.
+    const adjusted = adjustedRaw.map((v, i) => (v === reported[i] ? null : v));
     const suffixes = ["", " (ex-Liberty)", " (ex-NCOE)", "", "", ""];
 
     const lightBlue = "rgba(120,148,168,0.55)";
     const lightRed  = "rgba(168,73,61,0.40)";
     const colorReported = reported.map(v => v >= 0 ? lightBlue : lightRed);
-    const colorAdjusted = adjusted.map(v => v >= 0 ? C.navyBlue : C.accentRed);
+    const colorAdjusted = adjusted.map(v => v === null ? "transparent" : (v >= 0 ? C.navyBlue : C.accentRed));
 
     const labelPlugin = {
       id: "ch5_bar_labels",
@@ -900,6 +908,7 @@ function ChartFive() {
           const isAdj = dsIdx === 1;
           const meta = chart.getDatasetMeta(dsIdx);
           ds.data.forEach((v, i) => {
+            if (v === null || v === undefined) return;
             const bar = meta.data[i];
             if (!bar) return;
             const xPx = x.getPixelForValue(v);
@@ -1123,12 +1132,14 @@ function ChartSix() {
                 backgroundColor: "transparent", xAdjust: -80,
               },
               callout: {
-                type: "label", xValue: 2012.5, yValue: 19400,
-                content: ["-2,414 students", "-11.5% from public peak"],
+                type: "label", xValue: 2013, yValue: 19400,
+                content: ["−2,414 students", "−11.5% from public peak"],
                 color: C.accentRed,
                 font: { size: 11, weight: "bold", family: "'Source Sans 3', sans-serif" },
-                backgroundColor: "rgba(245,240,232,0.9)",
-                borderColor: C.accentRed, borderWidth: 1, borderRadius: 4, padding: 6,
+                textAlign: "center",
+                backgroundColor: "rgba(245,240,232,0.92)",
+                borderColor: C.accentRed, borderWidth: 1, borderRadius: 4,
+                padding: { top: 6, right: 12, bottom: 6, left: 12 },
               },
             },
           },
@@ -1415,9 +1426,9 @@ export default function UnderTheHoodNapaSchools2026() {
         {/* ═════════════════════════════════════════════════════════════ */}
         <h2 style={SECTION_H2}>Where the Losses Are Sharpest: The Upvalley Pattern</h2>
 
-        <p style={P_STYLE}>Calistoga{"’"}s 42-student decline coincides with a moment when the city itself is gaining residents. The <a href="https://napaserve.org/under-the-hood/napa-population-2025" target="_blank" rel="noopener noreferrer" style={LINK}>May 2026 Napa County population release</a> documented Calistoga{"’"}s 120-resident gain {"—"} the largest percentage gain among Napa County jurisdictions {"—"} and traced it almost entirely to a single project: Lincoln Avenue Apartments, a 78-unit workforce-affordable complex at 1866 Lincoln Avenue that opened in late 2025. The school data offers a specific reading of what that mechanism produced. Calistoga Joint Unified lost 42 students during the same window in which the city it serves added 120 residents. The district{"’"}s English Learner enrollment fell from 269 students to 154 {"—"} a loss of 115 EL students, or 42.8%, the steepest EL contraction of any district in the county and the most pronounced two-year EL drop in the region. The 78 units filled. The district that serves them lost ground in the demographic group that has historically anchored its enrollment.</p>
+        <p style={P_STYLE}>Calistoga{"’"}s 42-student decline coincides with a moment when the city itself is gaining residents. The <em><a href="https://napaserve.org/under-the-hood/napa-population-2025" target="_blank" rel="noopener noreferrer" style={LINK}>Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered</a></em> documented Calistoga{"’"}s 120-resident gain {"—"} the largest percentage gain among Napa County jurisdictions {"—"} and traced it almost entirely to a single project: Lincoln Avenue Apartments, a 78-unit workforce-affordable complex at 1866 Lincoln Avenue that opened in late 2025. The school data offers a specific reading of what that mechanism produced. Calistoga Joint Unified lost 42 students during the same window in which the city it serves added 120 residents. The district{"’"}s English Learner enrollment fell from 269 students to 154 {"—"} a loss of 115 EL students, or 42.8%, the steepest EL contraction of any district in the county and the most pronounced two-year EL drop in the region. The 78 units filled. The district that serves them lost ground in the demographic group that has historically anchored its enrollment.</p>
 
-        <p style={P_STYLE}>The <a href="https://napaserve.org/under-the-hood/napa-population-2025" target="_blank" rel="noopener noreferrer" style={LINK}>Napa County population release</a> made the structural case that Calistoga{"’"}s affordable-housing apparatus is a workaround for a wage problem rather than a solution to a housing-supply problem {"—"} that the dominant local industry{"’"}s wages cannot support family formation at the cost of living in the town. The school data is consistent with that case, though it does not prove it. Workforce-affordable tenants on average skew toward service-sector adults whose household composition and household sizes vary widely from the family-with-school-age-children profile the school data registers. The EL contraction in particular is the school-level signal of the same condition the population piece identified: the historical immigrant-family base that anchored Calistoga{"’"}s EL enrollment is being replaced, in net, by a different tenant base. The mechanism documented in the population piece is consistent with {"—"} though the school data does not by itself establish {"—"} a generational shift in who is moving into Calistoga{"’"}s workforce-affordable units.</p>
+        <p style={P_STYLE}>The <em><a href="https://napaserve.org/under-the-hood/napa-population-2025" target="_blank" rel="noopener noreferrer" style={LINK}>Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered</a></em> made the structural case that Calistoga{"’"}s affordable-housing apparatus is a workaround for a wage problem rather than a solution to a housing-supply problem {"—"} that the dominant local industry{"’"}s wages cannot support family formation at the cost of living in the town. The school data is consistent with that case, though it does not prove it. Workforce-affordable tenants on average skew toward service-sector adults whose household composition and household sizes vary widely from the family-with-school-age-children profile the school data registers. The EL contraction in particular is the school-level signal of the same condition the population piece identified: the historical immigrant-family base that anchored Calistoga{"’"}s EL enrollment is being replaced, in net, by a different tenant base. The mechanism documented in the population piece is consistent with {"—"} though the school data does not by itself establish {"—"} a generational shift in who is moving into Calistoga{"’"}s workforce-affordable units.</p>
 
         <p style={P_STYLE}>Howell Mountain Elementary and Pope Valley Union Elementary operate at scales where the enrollment figure is closer to a roster than a trend; the loss of 16 students at one and 18 at the other reflects individual family moves more than any structural shift. Across all three contracting upvalley districts the combined two-year loss is 76 students, roughly two-thirds of which is offset by St. Helena{"’"}s +49 gain and the remainder absorbed at the level of the county number by NVUSD{"’"}s near-flat result. The county arithmetic resolves to a result close to zero, but the geographic distribution is real: the upvalley districts are contracting, downvalley is holding, and the rural east is at the floor of what the data can register.</p>
 
