@@ -373,6 +373,43 @@ POLLS = [
             "None will cut publicly",
         ],
     },
+    # ── Napa Schools 2026 — Under the Hood — Census Day K-12 enrollment ──
+    {
+        "article_slug": "napa-schools-2026",
+        "sort_order": 1,
+        "question": "What best explains the EL contraction?",
+        "options": [
+            "Fewer immigrant families arriving",
+            "Reclassification within the system",
+            "Families leaving the region",
+            "Combination of all three",
+            "Other (see comments)",
+        ],
+    },
+    {
+        "article_slug": "napa-schools-2026",
+        "sort_order": 2,
+        "question": "Which line is most brittle for 2026-27?",
+        "options": [
+            "NVUSD recomposition holds",
+            "St. Helena gain continues",
+            "Upvalley contraction deepens",
+            "All three move materially",
+            "Other (see comments)",
+        ],
+    },
+    {
+        "article_slug": "napa-schools-2026",
+        "sort_order": 3,
+        "question": "How worried are you about the cohort math?",
+        "options": [
+            "Very worried — big district impact",
+            "Somewhat — depends on retention",
+            "Neutral — too early to tell",
+            "Not worried — natural adjustment",
+            "Other (see comments)",
+        ],
+    },
 ]
 
 
