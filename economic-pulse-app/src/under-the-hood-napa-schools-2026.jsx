@@ -399,6 +399,7 @@ function ChartOne() {
 
   return (
     <div style={{ marginBottom: 48 }}>
+      <h2 style={{ fontFamily: '"Libre Baskerville", Georgia, serif', fontSize: '22px', fontWeight: 700, color: '#2C1810', marginTop: 0, marginBottom: 16 }}>North Bay Counties: K-12 Enrollment Change, 2023-24 to 2025-26</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "640px" }}>
@@ -475,6 +476,7 @@ function ChartTwo() {
 
   return (
     <div style={{ marginBottom: 48 }}>
+      <h2 style={{ fontFamily: '"Libre Baskerville", Georgia, serif', fontSize: '22px', fontWeight: 700, color: '#2C1810', marginTop: 0, marginBottom: 16 }}>Napa County District K-12 Enrollment Change, 2023-24 to 2025-26</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "640px" }}>
@@ -588,6 +590,7 @@ function ChartThree() {
 
   return (
     <div style={{ marginBottom: 48 }}>
+      <h2 style={{ fontFamily: '"Libre Baskerville", Georgia, serif', fontSize: '22px', fontWeight: 700, color: '#2C1810', marginTop: 0, marginBottom: 16 }}>Napa County Births Have Fallen 37% Since 2006</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "640px" }}>
@@ -715,6 +718,7 @@ function ChartThreeB() {
 
   return (
     <div style={{ marginBottom: 48 }}>
+      <h2 style={{ fontFamily: '"Libre Baskerville", Georgia, serif', fontSize: '22px', fontWeight: 700, color: '#2C1810', marginTop: 0, marginBottom: 16 }}>Sonoma and Marin Birth Declines Track Each Other; Napa Falls Faster</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "640px" }}>
@@ -850,6 +854,7 @@ function ChartFour() {
 
   return (
     <div style={{ marginBottom: 48 }}>
+      <h2 style={{ fontFamily: '"Libre Baskerville", Georgia, serif', fontSize: '22px', fontWeight: 700, color: '#2C1810', marginTop: 0, marginBottom: 16 }}>Napa County Districts: EL, Non-EL and Total Enrollment Change</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "0 0 8px 0" }}>
           NVUSD shown separately because its scale dominates the smaller districts.
@@ -962,6 +967,7 @@ function ChartFive() {
 
   return (
     <div style={{ marginBottom: 48 }}>
+      <h2 style={{ fontFamily: '"Libre Baskerville", Georgia, serif', fontSize: '22px', fontWeight: 700, color: '#2C1810', marginTop: 0, marginBottom: 16 }}>North Bay K-12 Enrollment: Reported vs. Adjusted, 2023-24 to 2025-26</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "640px" }}>
@@ -1251,6 +1257,7 @@ function ChartSix() {
 
   return (
     <div style={{ marginBottom: 48 }}>
+      <h2 style={{ fontFamily: '"Libre Baskerville", Georgia, serif', fontSize: '22px', fontWeight: 700, color: '#2C1810', marginTop: 0, marginBottom: 16 }}>Napa County K-12: A Decade-Long Decline and a Generational Recomposition</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "0 0 6px 0" }}>
           Total enrollment has fallen 11.5% from peak. Underneath, the racial composition has reversed.
