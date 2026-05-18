@@ -320,35 +320,83 @@ export default function SnapshotTab({
 
   const downloadPng = async () => {
     if (!cardsRef.current) return;
+    let offscreen = null;
     try {
       const html2canvas = (await import("html2canvas")).default;
-      const node = cardsRef.current;
-      const canvas = await html2canvas(node, { scale: 2, backgroundColor: "#F5F0E8" });
-      const out = document.createElement("canvas");
-      out.width = canvas.width;
-      out.height = canvas.height + 160;
-      const ctx = out.getContext("2d");
+
+      // Track A fix (May 18, 2026): clone the snapshot container into an
+      // off-screen wrapper at fixed desktop width, so the captured PNG is
+      // identical regardless of viewport. Lesson A PNG geometry (scale 2,
+      // +160 title bar, 32px title, 26px watermark) is preserved exactly.
+      const CAPTURE_WIDTH = 1200;
+      const sourceNode = cardsRef.current;
+      const clone = sourceNode.cloneNode(true);
+
+      offscreen = document.createElement("div");
+      offscreen.style.cssText = [
+        "position: fixed",
+        "top: 0",
+        "left: -10000px",
+        `width: ${CAPTURE_WIDTH}px`,
+        "background: #F5F0E8",
+        "z-index: -1",
+        "pointer-events: none",
+      ].join("; ");
+      offscreen.appendChild(clone);
+      document.body.appendChild(offscreen);
+
+      // Force layout, then wait one paint frame so html2canvas captures the
+      // settled state, not a mid-reflow intermediate.
+      // eslint-disable-next-line no-unused-expressions
+      clone.offsetHeight;
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const canvas = await html2canvas(clone, {
+        scale: 2,
+        backgroundColor: "#F5F0E8",
+        useCORS: true,
+        width: CAPTURE_WIDTH,
+        windowWidth: CAPTURE_WIDTH,
+      });
+
+      // Canonical Weekly Snapshot geometry — preserved exactly from pre-1200px
+      // version. DO NOT MODIFY without re-calibration + canonical diff.
+      const off = document.createElement("canvas");
+      off.width = canvas.width;
+      off.height = canvas.height + 160;
+      const ctx = off.getContext("2d");
       ctx.fillStyle = "#F5F0E8";
-      ctx.fillRect(0, 0, out.width, out.height);
+      ctx.fillRect(0, 0, off.width, off.height);
+
       ctx.fillStyle = "#2C1810";
       ctx.font = "bold 32px 'Libre Baskerville', serif";
       ctx.textBaseline = "top";
       const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
       ctx.fillText(`Napa County · Weekly Snapshot · ${today}`, 28, 16);
+
       ctx.drawImage(canvas, 0, 80);
+
       ctx.fillStyle = "#8B7355";
       ctx.globalAlpha = 0.5;
       ctx.font = "26px 'Source Code Pro', monospace";
       ctx.textAlign = "right";
-      ctx.fillText("napaserve.org", out.width - 28, out.height - 56);
+      ctx.fillText("napaserve.org", off.width - 28, off.height - 56);
       ctx.globalAlpha = 1;
-      const link = document.createElement("a");
+      ctx.textAlign = "left";
+
       const dateStr = new Date().toISOString().slice(0, 10);
-      link.download = `napa-snapshot-${dateStr}.png`;
-      link.href = out.toDataURL("image/png");
-      link.click();
-    } catch (e) {
-      console.error("PNG download failed:", e);
+      const a = document.createElement("a");
+      a.href = off.toDataURL("image/png");
+      a.download = `napa-snapshot-${dateStr}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (err) {
+      console.error("Snapshot download failed:", err);
+    } finally {
+      if (offscreen && offscreen.parentNode) {
+        offscreen.parentNode.removeChild(offscreen);
+      }
     }
   };
 
