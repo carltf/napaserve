@@ -324,14 +324,9 @@ export default function SnapshotTab({
     try {
       const html2canvas = (await import("html2canvas")).default;
 
-      // PNG export — 1200px portrait, 2-column card grid.
-      // Captures from a styled clone, not the live DOM, so output is identical
-      // on mobile and desktop. Lesson A title-bar geometry (32px title at
-      // (28,16), drawImage at +80, watermark at (width-28, height-56))
-      // preserved exactly. Card grid is reflowed at clone time via a scoped
-      // <style> tag that only applies inside #snapshot-export-clone; the live
-      // dashboard rendering is unchanged.
       const CAPTURE_WIDTH = 1200;
+      const FRAME = 32;
+      const TITLE_BLOCK = 48;
       const sourceNode = cardsRef.current;
       const clone = sourceNode.cloneNode(true);
 
@@ -353,6 +348,8 @@ export default function SnapshotTab({
       styleEl.textContent = [
         "#snapshot-export-clone .kpi-grid-snapshot {",
         "  grid-template-columns: 1fr 1fr !important;",
+        "  grid-auto-rows: min-content !important;",
+        "  align-items: start !important;",
         "  gap: 24px !important;",
         "}",
         "#snapshot-export-clone .kpi-grid-snapshot > div {",
@@ -366,13 +363,41 @@ export default function SnapshotTab({
 
       const walker = document.createTreeWalker(clone, NodeFilter.SHOW_ELEMENT);
       let n;
+      let bumps = { primary: 0, eyebrow: 0, footer: 0, mid: 0, dot: 0 };
       while ((n = walker.nextNode())) {
         const cs = getComputedStyle(n);
-        if (cs.fontSize === "36px" && /Libre Baskerville/i.test(cs.fontFamily)) {
+        const fs = cs.fontSize;
+        const ff = cs.fontFamily;
+        const tt = cs.textTransform;
+
+        if (fs === "36px" && /Libre Baskerville/i.test(ff)) {
           n.style.setProperty("font-size", "52px", "important");
           n.style.setProperty("line-height", "1.0", "important");
+          bumps.primary++;
+        } else if (fs === "11px" && tt === "uppercase") {
+          n.style.setProperty("font-size", "16px", "important");
+          bumps.eyebrow++;
+        } else if (fs === "11px" && tt !== "uppercase") {
+          n.style.setProperty("font-size", "14px", "important");
+          bumps.footer++;
+        } else if (fs === "13px") {
+          n.style.setProperty("font-size", "18px", "important");
+          bumps.mid++;
+        }
+
+        if (
+          cs.position === "absolute" &&
+          (cs.width === "18px" || n.style.width === "18px") &&
+          (cs.height === "18px" || n.style.height === "18px")
+        ) {
+          n.style.setProperty("width", "24px", "important");
+          n.style.setProperty("height", "24px", "important");
+          n.style.setProperty("top", "14px", "important");
+          n.style.setProperty("right", "14px", "important");
+          bumps.dot++;
         }
       }
+      console.log("[downloadPng] bumps:", JSON.stringify(bumps));
 
       // eslint-disable-next-line no-unused-expressions
       clone.offsetHeight;
@@ -386,34 +411,38 @@ export default function SnapshotTab({
         windowWidth: CAPTURE_WIDTH,
       });
 
-      // Canonical Weekly Snapshot title-bar geometry — preserved exactly from
-      // pre-1200px version. DO NOT MODIFY without re-calibration + canonical diff.
+      const FRAME_PX = FRAME * 2;
+      const TITLE_PX = TITLE_BLOCK * 2;
       const off = document.createElement("canvas");
-      off.width = canvas.width;
-      off.height = canvas.height + 80;
+      off.width = canvas.width + (FRAME_PX * 2);
+      off.height = canvas.height + FRAME_PX + TITLE_PX + FRAME_PX;
       const ctx = off.getContext("2d");
       ctx.fillStyle = "#F5F0E8";
       ctx.fillRect(0, 0, off.width, off.height);
 
       ctx.fillStyle = "#2C1810";
-      ctx.font = "bold 32px 'Libre Baskerville', serif";
+      ctx.font = "bold 64px 'Libre Baskerville', serif";
       ctx.textBaseline = "top";
       const today = new Date().toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
       });
-      ctx.fillText(`Napa County · Weekly Snapshot · ${today}`, 28, 16);
+      ctx.fillText(`Napa County · Weekly Snapshot · ${today}`, FRAME_PX, FRAME_PX);
 
-      ctx.drawImage(canvas, 0, 80);
+      ctx.drawImage(canvas, FRAME_PX, FRAME_PX + TITLE_PX);
 
-      ctx.font = "26px 'Source Code Pro', monospace";
+      // Watermark — vertically centered inside the bottom frame, right-aligned
+      ctx.font = "52px 'Source Code Pro', monospace"; // 26px * scale 2
       ctx.fillStyle = "#8B7355";
       ctx.globalAlpha = 0.5;
+      ctx.textBaseline = "middle";
+      const watermarkText = "napaserve.org";
+      const wmWidth = ctx.measureText(watermarkText).width;
       ctx.fillText(
-        "napaserve.org",
-        off.width - 28 - ctx.measureText("napaserve.org").width,
-        off.height - 56
+        watermarkText,
+        off.width - FRAME_PX - wmWidth,
+        off.height - (FRAME_PX / 2)
       );
       ctx.globalAlpha = 1;
 
