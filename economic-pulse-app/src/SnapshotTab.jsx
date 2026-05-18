@@ -324,15 +324,19 @@ export default function SnapshotTab({
     try {
       const html2canvas = (await import("html2canvas")).default;
 
-      // Track A fix (May 18, 2026): clone the snapshot container into an
-      // off-screen wrapper at fixed desktop width, so the captured PNG is
-      // identical regardless of viewport. Lesson A PNG geometry (scale 2,
-      // +160 title bar, 32px title, 26px watermark) is preserved exactly.
+      // PNG export — 1200px portrait, 2-column card grid.
+      // Captures from a styled clone, not the live DOM, so output is identical
+      // on mobile and desktop. Lesson A title-bar geometry (32px title at
+      // (28,16), drawImage at +80, watermark at (width-28, height-56))
+      // preserved exactly. Card grid is reflowed at clone time via a scoped
+      // <style> tag that only applies inside #snapshot-export-clone; the live
+      // dashboard rendering is unchanged.
       const CAPTURE_WIDTH = 1200;
       const sourceNode = cardsRef.current;
       const clone = sourceNode.cloneNode(true);
 
       offscreen = document.createElement("div");
+      offscreen.id = "snapshot-export-clone";
       offscreen.style.cssText = [
         "position: fixed",
         "top: 0",
@@ -341,12 +345,35 @@ export default function SnapshotTab({
         "background: #F5F0E8",
         "z-index: -1",
         "pointer-events: none",
+        "box-sizing: border-box",
+        "padding: 0 24px",
       ].join("; ");
+
+      const styleEl = document.createElement("style");
+      styleEl.textContent = [
+        "#snapshot-export-clone .kpi-grid-snapshot {",
+        "  grid-template-columns: 1fr 1fr !important;",
+        "  gap: 24px !important;",
+        "}",
+        "#snapshot-export-clone .kpi-grid-snapshot > div {",
+        "  padding: 24px !important;",
+        "  min-height: 0 !important;",
+        "}",
+      ].join("\n");
+      offscreen.appendChild(styleEl);
       offscreen.appendChild(clone);
       document.body.appendChild(offscreen);
 
-      // Force layout, then wait one paint frame so html2canvas captures the
-      // settled state, not a mid-reflow intermediate.
+      const walker = document.createTreeWalker(clone, NodeFilter.SHOW_ELEMENT);
+      let n;
+      while ((n = walker.nextNode())) {
+        const cs = getComputedStyle(n);
+        if (cs.fontSize === "36px" && /Libre Baskerville/i.test(cs.fontFamily)) {
+          n.style.setProperty("font-size", "52px", "important");
+          n.style.setProperty("line-height", "1.0", "important");
+        }
+      }
+
       // eslint-disable-next-line no-unused-expressions
       clone.offsetHeight;
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -359,11 +386,11 @@ export default function SnapshotTab({
         windowWidth: CAPTURE_WIDTH,
       });
 
-      // Canonical Weekly Snapshot geometry — preserved exactly from pre-1200px
-      // version. DO NOT MODIFY without re-calibration + canonical diff.
+      // Canonical Weekly Snapshot title-bar geometry — preserved exactly from
+      // pre-1200px version. DO NOT MODIFY without re-calibration + canonical diff.
       const off = document.createElement("canvas");
       off.width = canvas.width;
-      off.height = canvas.height + 160;
+      off.height = canvas.height + 80;
       const ctx = off.getContext("2d");
       ctx.fillStyle = "#F5F0E8";
       ctx.fillRect(0, 0, off.width, off.height);
@@ -371,23 +398,30 @@ export default function SnapshotTab({
       ctx.fillStyle = "#2C1810";
       ctx.font = "bold 32px 'Libre Baskerville', serif";
       ctx.textBaseline = "top";
-      const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      const today = new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
       ctx.fillText(`Napa County · Weekly Snapshot · ${today}`, 28, 16);
 
       ctx.drawImage(canvas, 0, 80);
 
+      ctx.font = "26px 'Source Code Pro', monospace";
       ctx.fillStyle = "#8B7355";
       ctx.globalAlpha = 0.5;
-      ctx.font = "26px 'Source Code Pro', monospace";
-      ctx.textAlign = "right";
-      ctx.fillText("napaserve.org", off.width - 28, off.height - 56);
+      ctx.fillText(
+        "napaserve.org",
+        off.width - 28 - ctx.measureText("napaserve.org").width,
+        off.height - 56
+      );
       ctx.globalAlpha = 1;
-      ctx.textAlign = "left";
 
-      const dateStr = new Date().toISOString().slice(0, 10);
+      const dataUrl = off.toDataURL("image/png");
       const a = document.createElement("a");
-      a.href = off.toDataURL("image/png");
-      a.download = `napa-snapshot-${dateStr}.png`;
+      a.href = dataUrl;
+      const isoDate = new Date().toISOString().slice(0, 10);
+      a.download = `napa-snapshot-${isoDate}.png`;
       document.body.appendChild(a);
       a.click();
       a.remove();
