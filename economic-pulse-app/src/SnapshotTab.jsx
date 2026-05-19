@@ -379,7 +379,7 @@ export default function SnapshotTab({
           n.style.setProperty("font-size", "16px", "important");
           bumps.eyebrow++;
         } else if (fs === "11px" && tt !== "uppercase") {
-          n.style.setProperty("font-size", "16px", "important");
+          n.style.setProperty("font-size", "18px", "important");
           bumps.footer++;
         } else if (fs === "13px") {
           n.style.setProperty("font-size", "18px", "important");
@@ -402,6 +402,23 @@ export default function SnapshotTab({
           n.style.setProperty("flex", "none", "important");
           n.style.setProperty("flex-grow", "0", "important");
           bumps.flex++;
+        }
+
+        // Internal margin tightening — close empty space inside cards
+        // (after flex:1 removal anchors content at top). Values measured
+        // from production diagnostic: Wine card content was 189px tall
+        // with 25px empty at bottom; these reductions close ~14px of that.
+        const mb = cs.marginBottom;
+        const mt = cs.marginTop;
+        if (mb === "12px") {
+          n.style.setProperty("margin-bottom", "8px", "important");
+        } else if (mb === "10px") {
+          n.style.setProperty("margin-bottom", "6px", "important");
+        }
+        if (mt === "8px") {
+          n.style.setProperty("margin-top", "6px", "important");
+        } else if (mt === "6px") {
+          n.style.setProperty("margin-top", "4px", "important");
         }
       }
       console.log("[downloadPng] bumps:", JSON.stringify(bumps));
