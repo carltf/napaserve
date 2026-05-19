@@ -337,12 +337,11 @@ export default function SnapshotTab({
         "position: fixed",
         "top: 0",
         "left: -10000px",
-        `width: ${CAPTURE_WIDTH}px`,
+        "width: 1152px",
         "background: #F5F0E8",
         "z-index: -1",
         "pointer-events: none",
         "box-sizing: border-box",
-        `padding: 0 ${WRAPPER_PADDING}px`,
       ].join("; ");
 
       const styleEl = document.createElement("style");
@@ -431,8 +430,8 @@ export default function SnapshotTab({
         scale: 2,
         backgroundColor: "#F5F0E8",
         useCORS: true,
-        width: CAPTURE_WIDTH,
-        windowWidth: CAPTURE_WIDTH,
+        width: 1152,
+        windowWidth: 1152,
       });
 
       const FRAME_PX = FRAME * 2;
@@ -453,7 +452,7 @@ export default function SnapshotTab({
         month: "long",
         day: "numeric",
       });
-      ctx.fillText(`Napa County · Weekly Snapshot · ${today}`, FRAME_PX + CARD_INSET, FRAME_PX);
+      ctx.fillText(`Napa County · Weekly Snapshot · ${today}`, FRAME_PX, FRAME_PX);
 
       ctx.drawImage(canvas, FRAME_PX, FRAME_PX + TITLE_PX);
 
@@ -465,7 +464,7 @@ export default function SnapshotTab({
       const wmWidth = ctx.measureText(watermarkText).width;
       ctx.fillText(
         watermarkText,
-        off.width - FRAME_PX - CARD_INSET - wmWidth,
+        off.width - FRAME_PX - wmWidth,
         off.height - (FRAME_PX / 2)
       );
       ctx.globalAlpha = 1;
