@@ -1,5 +1,18 @@
+/**
+ * Tracker event data on this surface is consumed via the shared
+ * useTrackerEvents hook (src/hooks/useTrackerEvents.js).
+ *
+ * DO NOT fetch tracker data directly. DO NOT hardcode tracker
+ * arrays. The hook is the single source of truth for tracker
+ * data across the app. See the hook's header comment for the
+ * full architectural rationale.
+ *
+ * Window: 30 days, limit 50. Adjust via the hook's `since`
+ * option, not via parallel filtering of the returned array.
+ */
 import { useState, useEffect, useRef } from "react";
 import { STOPLIGHT_COLORS, transitionsStoplight } from "./stoplights";
+import { useTrackerEvents, daysAgoISO } from "./hooks/useTrackerEvents";
 
 const T = {
   bg: "#F5F0E8",
@@ -236,12 +249,7 @@ function TransitionsSection({ events, loading, error }) {
         WHAT CHANGED THIS WEEK · NAPA COUNTY
       </div>
       {recent.map((ev, idx) => {
-        const display = ev.event_date_display
-          ? ev.event_date_display
-          // Parse as local date to prevent UTC→PT off-by-one display bug.
-          // Date-only ISO strings ("YYYY-MM-DD") are spec'd as UTC in JS;
-          // appending T00:00:00 forces local-time parsing. See Lesson AA.
-          : new Date(ev.event_date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        const display = ev.event_date_display || ev.date;
         return (
           <div
             key={ev.id || idx}
@@ -489,31 +497,15 @@ export default function SnapshotTab({
     }
   };
 
-  const [trackerEvents, setTrackerEvents] = useState(null);
-  const [trackerLoading, setTrackerLoading] = useState(true);
-  const [trackerError, setTrackerError] = useState(null);
+  const { events: trackerEvents, loading: trackerLoading, error: trackerError } = useTrackerEvents({
+    since: daysAgoISO(30),
+    limit: 50,
+  });
 
   const [poll, setPoll] = useState(null);
   const [pollLoading, setPollLoading] = useState(true);
 
   const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
-
-  useEffect(() => {
-    const since = new Date();
-    since.setDate(since.getDate() - 30);
-    const sinceStr = since.toISOString().slice(0, 10);
-    fetch(`${WORKER}/api/tracker-events?since=${sinceStr}&limit=50`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d && d.ok && Array.isArray(d.results)) {
-          setTrackerEvents(d.results);
-        } else {
-          setTrackerError("Unexpected response");
-        }
-      })
-      .catch((e) => setTrackerError(String(e)))
-      .finally(() => setTrackerLoading(false));
-  }, []);
 
   useEffect(() => {
     fetch(`${WORKER}/api/latest-substack-poll`)
@@ -542,7 +534,6 @@ export default function SnapshotTab({
   const homeYoYPct = latestE?.home_value_yoy ?? null;
   const daysPending = latestE?.days_pending ?? null;
 
-  // Hoisted-prop scaffolding present but unused; tracker fetch hoist deferred to 4a-4.
   const transitionsCount = trackerEvents ? trackerEvents.length : null;
   const transitionsLight = transitionsStoplight(transitionsCount);
   const categoryCounts = trackerEvents

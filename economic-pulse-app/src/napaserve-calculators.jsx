@@ -1,10 +1,21 @@
+/**
+ * Tracker event data on this surface is consumed via the shared
+ * useTrackerEvents hook (src/hooks/useTrackerEvents.js).
+ *
+ * DO NOT fetch tracker data directly. DO NOT hardcode tracker
+ * arrays. The hook is the single source of truth for tracker
+ * data across the app. See the hook's header comment for the
+ * full architectural rationale.
+ *
+ * Window: 6 months, no limit. Adjust via the hook's `since`
+ * option, not via parallel filtering of the returned array.
+ */
 import { useState, useRef, useEffect } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { Chart, ScatterController, LinearScale, PointElement, Tooltip, Legend } from "chart.js";
+import { useTrackerEvents, monthsAgoISO } from "./hooks/useTrackerEvents";
 Chart.register(ScatterController, LinearScale, PointElement, Tooltip, Legend);
-
-const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 
 const T = {
   bg: "#F5F0E8",
@@ -622,214 +633,8 @@ function AssetRepricingCalc() {
 }
 
 // ─── REGIONAL CONTRACTION TRACKER ────────────────────────────────────────
-// UPDATE THIS DATA MANUALLY as new events are confirmed and sourced.
-// Each entry: { date, category, headline, detail, source, sourceUrl }
-// Categories: "Hospitality", "Production", "Transaction", "Distribution"
-
-const TRACKER_EVENTS = [
-  // ── 2026 ──
-  {
-    date: "Apr 28, 2026",
-    category: "Transaction",
-    headline: "4 Winds Estate lists for $17.95M in Stags Leap District",
-    detail: "Press Democrat reports the 110-acre 4 Winds Estate at 5870 Silverado Trail near Yountville has gone on the market for $17.95 million. Founded in 1998 by Jane Chapin and Roy Chapin IV, the property includes 3.3 acres of cabernet sauvignon, roughly 13,000 square feet of residential and wine space, and wines made by consulting winemaker Thomas Rivers Brown. The family cited generational considerations.",
-    source: "Press Democrat",
-    sourceUrl: "https://www.pressdemocrat.com/2026/04/28/110-acre-napa-valley-vineyard-estate-offered-for-nearly-18-million/",
-  },
-  {
-    date: "Apr 28, 2026",
-    category: "Hospitality",
-    headline: "Forge Pizza Napa closes after 10 years on south side",
-    detail: "Napa Valley Register reports Forge Pizza Napa, which opened in 2016 at the South Napa Century Center on Gasser Drive, closed Tuesday, April 28. Owner Michael Karp announced the closure on social media. A For Lease sign has been installed at the 155 Gasser Drive site, where NapaSport also closed in June.",
-    source: "Napa Valley Register",
-    sourceUrl: "https://napavalleyregister.com/business/forge-pizza-napa-gasser-foundation-lease/article_1ddd84cc-e544-49f2-8c54-53650abf00d4.html",
-  },
-  {
-    date: "Apr 17, 2026",
-    category: "Hospitality",
-    headline: "Calistoga Motor Lodge defaults on $40M loan while announcing expansion",
-    detail: "Napa Valley Register reports Calistoga Motor Lodge and Spa at 1880 Lincoln Ave., owned by Calistoga Hotel Group LP, an entity of Eagle Point Hotel Partners, defaulted on a $40 million loan. A notice of default was filed March 23 in the Napa County Recorder's Office, with $40,983,711 owed and a 90-day cure period. The Register noted that some hotel owners use default strategically to push lenders toward more favorable terms. Two weeks after the default filing, on April 9, the Lodge announced a multimillion-dollar expansion to 102 rooms and new management. Mayor Don Williams told the Register about half of Calistoga's budget comes from transient occupancy tax.",
-    source: "Napa Valley Register",
-    sourceUrl: "https://napavalleyregister.com/calistogan/news/calistoga-motor-lodge-foreclosure-expansion-eagle-point-hotel-partners/article_87165814-66f0-4130-89aa-768e35822aea.html",
-  },
-  {
-    date: "Apr 20, 2026",
-    category: "Hospitality",
-    headline: "Robert Mondavi Winery reopens in Oakville after three-year transformation",
-    detail: "The Drinks Business reports that Robert Mondavi Winery reopened its Oakville estate April 20 following a multi-year renovation costing more than US$200 million, owner Constellation Brands' first major revamp of the property since its founding. The reimagined estate introduces a new hospitality wing, expanded indoor-outdoor tasting experiences, enhanced culinary spaces and state-of-the-art winemaking facilities, timed to the winery's 60th anniversary.",
-    source: "The Drinks Business",
-    sourceUrl: "https://www.thedrinksbusiness.com/2026/04/robert-mondavi-unveils-napa-estate-following-xxx-facelift/",
-  },
-  {
-    date: "Apr 14, 2026",
-    category: "Production",
-    headline: "Constellation flags tasting-room softness at Napa wineries in Q4 call",
-    detail: "The Press Democrat reports that on Constellation Brands' fiscal Q4 2026 earnings call, CFO Garth Hankinson said the company has seen tasting-room softness at its Napa-based wineries, which include Robert Mondavi and The Prisoner. Management also said U.S. high-end wine has moved from expected low-single-digit growth to low-single-digit declines, and that Constellation has agreed to distributor inventory rebalancing through the year. The Robert Mondavi Winery in Oakville is scheduled to reopen April 20 after a nearly three-year renovation.",
-    source: "Press Democrat",
-    sourceUrl: "https://www.pressdemocrat.com/2026/04/14/constellation-brands-napa-mondavi-q4-wine-spirits-beer/",
-  },
-  {
-    date: "Apr 13, 2026",
-    category: "Transaction",
-    headline: "Chanel's St. Supéry acquires Rudd Estate and Crossroads brand for $39.2M",
-    detail: "St. Supéry (owned by Chanel Group since 2015) acquired Rudd Oakville Estate, the Crossroads brand, inventory, and 65 acres (47 planted) from Samantha Rudd. Napa Valley Register later confirmed the price at $39.2M based on transfer tax on a deed recorded April 13 — neither party disclosed the figure directly. The deal gives Chanel a second Napa property alongside its Rutherford and Dollarhide holdings — bringing its Napa footprint to 1,650 acres across four parcels. Winemaker Natalie Bath and managing director Oscar Henquet stay on; Rudd and Crossroads will continue as their own brands.",
-    source: "Wine Spectator / Napa Valley Register",
-    sourceUrl: "https://napavalleyregister.com/news/st-supry-estate-vineyards--winery-napa-valley-chanel-rudd-estate/article_66a92e04-62b2-4972-9fc1-7d8044b919b8.html",
-  },
-  {
-    date: "Apr 13, 2026",
-    category: "Production",
-    headline: "Ninth Circuit revives winery constitutional claims against Napa County",
-    detail: "The Press Democrat reports that on April 13 the Ninth Circuit Court of Appeals reversed the district court's dismissal of claims brought by Hoopes Vineyard, Smith-Madrone Winery, and Summit Lake Vineyards against Napa County over winery regulation. The retaliation and First Amendment claims return to federal district court along with Smith-Madrone and Summit Lake's ordinance challenge; the Hoopes damages claim remains open. Distinct from the separate $4M fine judgment against Hoopes moving forward April 9.",
-    source: "Press Democrat",
-    sourceUrl: "https://www.pressdemocrat.com/2026/04/14/federal-appeals-court-reverses-dismissal-of-some-claims-against-napa-county-in-hoopes-vineyard-case/",
-  },
-  {
-    date: "Apr 12, 2026",
-    category: "Transaction",
-    headline: "Benessere Vineyards headed to auction after failed sales",
-    detail: "The Press Democrat reports the 42-acre St. Helena estate at 1010 Big Tree Road — former home of the Charles Shaw brand — is headed to a May auction after a prolonged effort to sell conventionally. The property first listed November 2024 at $35M, relisted February 2025 at a 20% discount to $28M, and was pulled from the market February 2026 before the auction decision. Concierge Auctions bidding runs May 13–28, with expected clearing in the $8–12M range — a steep repricing from the original ask. Sale covers land, brand, and operations as a single estate.",
-    source: "Press Democrat / Napa Valley Features",
-    sourceUrl: "https://www.pressdemocrat.com/2026/04/18/benessere-vineyards-winery-vineyard-napa-auction/",
-  },
-  {
-    date: "Apr 12, 2026",
-    category: "Hospitality",
-    headline: "Charlie Palmer Steak closes at Archer Hotel Napa",
-    detail: "High-profile full-service steakhouse at 1230 First St. closed after nearly a decade. Hotel redeveloping space as lobby lounge. Charlie Palmer Collective pursuing new wine country location.",
-    source: "SF Chronicle / North Bay Business Journal",
-    sourceUrl: "https://www.sfchronicle.com/",
-  },
-  {
-    date: "Apr 9, 2026",
-    category: "Production",
-    headline: "Court clears $4M judgment against Hoopes Vineyard to move forward",
-    detail: "The Press Democrat reports Napa County Superior Court Judge Mark Boessenecker denied Hoopes Vineyard's motion to vacate a roughly $4M judgment in fines and legal fees on March 27, with the order set to take effect April 9. The ruling frees the winery from a permanent injunction barring public tastings and tours while its appeal proceeds, but keeps the monetary judgment intact. Owner Lindsay Hoopes has said the penalty would bankrupt the business.",
-    source: "Press Democrat",
-    sourceUrl: "https://www.pressdemocrat.com/2026/03/31/napa-county-winerys-effort-to-stop-nearly-4-million-in-court-fees-denied-by-judge/",
-  },
-  {
-    date: "Apr 9, 2026",
-    category: "Transaction",
-    headline: "Lawsuit filed against Stanly Ranch developers",
-    detail: "$100M lawsuit by The Nichols Partnership and Stanly Ranch Resort Napa LLC against GA Development Napa Valley LP and Mandrake Capital Partners filed March 6, 2026, in New York State Supreme Court.",
-    source: "The Reset Spreads — Napa Valley Features",
-    sourceUrl: "https://napaserve.org/under-the-hood/napa-structural-reset-2026",
-  },
-  {
-    date: "Apr 1, 2026",
-    category: "Transaction",
-    headline: "Pernod Ricard closes Mumm Napa sale to Trinchero, sells Kenwood to Korbel",
-    detail: "Pernod Ricard announced April 1 that it completed the previously disclosed disposal of Mumm Sparkling California, Mumm Napa, and DVX to Trinchero Family Wine and Spirits, and simultaneously finalized the sale of Sonoma-based Kenwood winery operations and trademarks to F. Korbel & Bros. The Mumm transaction includes Napa production and brand assets; Kenwood covers approximately 20 acres of vineyards, production facilities, and the visitor center.",
-    source: "Pernod Ricard / BusinessWire",
-    sourceUrl: "https://www.businesswire.com/news/home/20260401933408/en/Pernod-Ricard-Completes-the-Sale-of-Mumm-Napa-Sparkling-Wine-Activities-in-the-United-States-and-Announces-the-Sale-of-Kenwood-Furthering-the-Streamlining-of-Its-Wine-Operations-in-California",
-  },
-  {
-    date: "Mar 27, 2026",
-    category: "Transaction",
-    headline: "Stanly Ranch sold at foreclosure for $195M",
-    detail: "Blackstone Real Estate acquired hotel portion at courthouse auction. Original loan ~$220M; total debt stack $243.6M. 11–20% haircut depending on measurement. Auberge Resorts continues management.",
-    source: "Napa Valley Register / Bloomberg",
-    sourceUrl: "https://napaserve.org/under-the-hood/napa-structural-reset-2026",
-  },
-  {
-    date: "Feb 16, 2026",
-    category: "Production",
-    headline: "Treasury confirms A$987.6M US impairment with Sterling and Beringer write-downs",
-    detail: "Just-Drinks reports that Treasury Wine Estates' H1 FY26 results logged a non-cash impairment charge of A$987.6M (US$699.5M) pre-tax, with A$676.1M linked to goodwill, A$257.3M predominantly related to Sterling and Beringer and A$54.2M tied to inventory. Half-year net loss reached A$649.4M. Treasury Americas revenue fell 28.4% to A$283M. CEO Sam Fischer described a TWE Ascent transformation program to sharpen the portfolio, simplify the organisation and optimise costs.",
-    source: "Just-Drinks",
-    sourceUrl: "https://www.just-drinks.com/news/treasury-wine-estates-losses-widen-as-us-impairment-confirmed/",
-  },
-  {
-    date: "Feb 12, 2026",
-    category: "Production",
-    headline: "Gallo files WARN for 93 jobs across 5 North Coast sites",
-    detail: "The Ranch Winery at 105 Zinfandel Lane, St. Helena closes Apr 15 (56 jobs). Additional layoffs at Louis M. Martini, Orin Swift, J Vineyards, Frei Ranch. Gallo cited 'long-term business strategy alignment.'",
-    source: "CBS SF / Press Democrat",
-    sourceUrl: "https://napaserve.org/under-the-hood/napa-structural-reset-2026",
-  },
-  {
-    date: "Feb 2026",
-    category: "Transaction",
-    headline: "Trinchero lists two premium vineyard properties",
-    detail: "Haystack Vineyard on Atlas Peak listed at $5.5M; Clouds Nest Vineyard on Mount Veeder at $4.5M. Described as 'proactive step' for long-term sustainability — separate from Mumm Napa acquisition.",
-    source: "SF Chronicle",
-    sourceUrl: "https://www.sfchronicle.com/",
-  },
-  {
-    date: "Jan 2026",
-    category: "Hospitality",
-    headline: "Boisset closes JCB Tasting Salon in Yountville",
-    detail: "Last Boisset location in Yountville's JCB Village — Atelier by JCB and Senses by JCB had already closed. Closed when lease expired. Experiences consolidating to Buena Vista Winery estate in Sonoma.",
-    source: "SF Chronicle",
-    sourceUrl: "https://www.sfchronicle.com/",
-  },
-  // ── 2025 ──
-  {
-    date: "Dec 1, 2025",
-    category: "Production",
-    headline: "Treasury Wine Estates flags US$450M US impairment",
-    detail: "Just-Drinks reports that Treasury Wine Estates expects a non-cash impairment of at least A$687.4M (US$450M) against its Americas goodwill, citing further moderation in US wine category trends. Shares fell to A$5.45 in early Sydney trading, the lowest level since August 2015. Treasury noted that DAOU, Frank Family Vineyards and Matua were growing ahead of market but applied more conservative long-term assumptions.",
-    source: "Just-Drinks",
-    sourceUrl: "https://www.just-drinks.com/news/treasury-wine-estates-forecasts-impairment-on-us-assets/",
-  },
-  {
-    date: "Dec 2025",
-    category: "Transaction",
-    headline: "Cain Vineyards brand acquired by Third Leaf Partners; land sold separately",
-    detail: "SF investment firm bought brand and inventory. 500-acre Spring Mountain estate selling to undisclosed buyer. Long-term grape supply contract in negotiation. Two-thirds of vineyard replanted post-2020 Glass Fire.",
-    source: "SF Chronicle / The Real Deal",
-    sourceUrl: "https://www.sfchronicle.com/",
-  },
-  {
-    date: "Dec 2025",
-    category: "Transaction",
-    headline: "Trinchero acquires Mumm Napa from Pernod Ricard",
-    detail: "Deal includes Rutherford winery, brand, inventory and long-term lease on Deveaux Ranch in Carneros. Mumm produced ~334,000 cases prior year.",
-    source: "Wine Spectator / Shanken News Daily",
-    sourceUrl: "https://www.winespectator.com/",
-  },
-  {
-    date: "Late 2025",
-    category: "Hospitality",
-    headline: "Boisset closes Chateau Buena Vista in downtown Napa",
-    detail: "Consolidated to Buena Vista Winery estate in Sonoma. Part of broader Boisset tasting room rationalization across Napa and Yountville.",
-    source: "SF Chronicle",
-    sourceUrl: "https://www.sfchronicle.com/",
-  },
-  {
-    date: "Oct 13, 2025",
-    category: "Production",
-    headline: "Treasury Wine Estates withdraws FY26 guidance citing Penfolds, US troubles",
-    detail: "Just-Drinks reports that Treasury Wine Estates — owner of Beringer, Sterling, Stag's Leap and Frank Family Vineyards — scrapped its fiscal 2026 EBITS guidance, citing an uncertain outlook in Penfolds and Treasury Americas. Shares fell more than 15% to A$5.93, their lowest level in more than a decade. The company cited the impact of RNDC's California exit on Treasury Americas first-quarter shipments.",
-    source: "Just-Drinks",
-    sourceUrl: "https://www.just-drinks.com/news/treasury-wine-estates-pulls-guidance/",
-  },
-  {
-    date: "Oct 2025",
-    category: "Transaction",
-    headline: "Stanly Ranch default notice recorded",
-    detail: "SRGA LP defaults on loan that grew to $243.6M total debt. Property had opened April 2022 — 135 rooms, Michelin key, 700+ acres in Carneros.",
-    source: "Napa Valley Register",
-    sourceUrl: "https://napaserve.org/under-the-hood/napa-structural-reset-2026",
-  },
-  {
-    date: "Sep 2025",
-    category: "Distribution",
-    headline: "Republic National exits California — 2,500+ brands disrupted",
-    detail: "RNDC cited rising operational costs, industry headwinds and supplier losses. Exit effective September 2, 2025.",
-    source: "SF Chronicle",
-    sourceUrl: "https://www.sfchronicle.com/",
-  },
-  {
-    date: "Sep 2025",
-    category: "Production",
-    headline: "Gallo closes Courtside Cellars in San Luis Obispo County",
-    detail: "47 additional jobs eliminated. Second major Gallo capacity reduction in California in six months.",
-    source: "SF Chronicle",
-    sourceUrl: "https://www.sfchronicle.com/",
-  },
-];
+// Data source: napa_transition_tracker Supabase table via useTrackerEvents hook.
+// DO NOT hardcode tracker arrays here. See src/hooks/useTrackerEvents.js.
 
 const CATEGORY_COLORS = {
   Hospitality: { bg: "#FDF3E7", border: "#C4A050", dot: "#C4A050" },
@@ -839,6 +644,9 @@ const CATEGORY_COLORS = {
 };
 
 function ContractionTracker() {
+  const { events: trackerEvents, loading: trackerLoading, error: trackerError } = useTrackerEvents({
+    since: monthsAgoISO(6),
+  });
   const [filter, setFilter] = useState("All");
   const categories = ["All", "Hospitality", "Production", "Transaction", "Distribution"];
   const chartRef = useRef(null);
@@ -901,8 +709,8 @@ function ContractionTracker() {
   };
 
   const filtered = filter === "All"
-    ? TRACKER_EVENTS
-    : TRACKER_EVENTS.filter(e => e.category === filter);
+    ? trackerEvents
+    : trackerEvents.filter(e => e.category === filter);
 
   // Chart.js effect — rebuilds when `filtered` changes
   useEffect(() => {
@@ -994,6 +802,21 @@ function ContractionTracker() {
       }
     };
   }, [filtered]);
+
+  if (trackerLoading) {
+    return (
+      <div style={{ fontFamily: "'Source Sans 3', sans-serif", color: T.muted, fontSize: 14, padding: "20px 0" }}>
+        Loading tracker events…
+      </div>
+    );
+  }
+  if (trackerError) {
+    return (
+      <div style={{ fontFamily: "'Source Sans 3', sans-serif", color: T.muted, fontSize: 14, padding: "20px 0" }}>
+        Failed to load tracker events. {trackerError.message}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -1098,7 +921,7 @@ function ContractionTracker() {
                   </div>
                   <div style={{ fontFamily: fonts.sans, fontSize: 11, color: T.muted }}>
                     Source:{" "}
-                    <a href={event.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "none" }}>
+                    <a href={event.source_url} target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "none" }}>
                       {event.source}
                     </a>
                   </div>
