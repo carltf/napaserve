@@ -238,7 +238,10 @@ function TransitionsSection({ events, loading, error }) {
       {recent.map((ev, idx) => {
         const display = ev.event_date_display
           ? ev.event_date_display
-          : new Date(ev.event_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+          // Parse as local date to prevent UTC→PT off-by-one display bug.
+          // Date-only ISO strings ("YYYY-MM-DD") are spec'd as UTC in JS;
+          // appending T00:00:00 forces local-time parsing. See Lesson AA.
+          : new Date(ev.event_date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
         return (
           <div
             key={ev.id || idx}

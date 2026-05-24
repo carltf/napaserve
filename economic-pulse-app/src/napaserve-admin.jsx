@@ -1571,7 +1571,10 @@ function EventModeration({ token }) {
 
       {events.map(ev => {
         const missing = completeness(ev);
-        const date = ev.event_date ? new Date(ev.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'No date';
+        // Parse as local date to prevent UTC→PT off-by-one display bug.
+        // Date-only ISO strings ("YYYY-MM-DD") are spec'd as UTC in JS;
+        // appending T00:00:00 forces local-time parsing. See Lesson AA.
+        const date = ev.event_date ? new Date(ev.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'No date';
         const submitted = ev.submitted_at ? ev.submitted_at.slice(0, 10) : '';
         return (
           <div key={ev.id} style={S.card}>
