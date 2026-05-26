@@ -410,6 +410,43 @@ POLLS = [
             "Other (see comments)",
         ],
     },
+    # ── Napa Farming / GWSS 2026 ────────────────────────────────────
+    {
+        "article_slug": "napa-farming-2026-gwss",
+        "sort_order": 1,
+        "question": "How concerned are you that the Costco GWSS detection could lead to local Pierce's disease spread?",
+        "options": [
+            "Very concerned",
+            "Somewhat concerned",
+            "Watching but not alarmed",
+            "Not concerned",
+            "Not sure",
+        ],
+    },
+    {
+        "article_slug": "napa-farming-2026-gwss",
+        "sort_order": 2,
+        "question": "When does California's vineyard contraction flip from over-supply to under-supply?",
+        "options": [
+            "Within 3 years",
+            "3 to 5 years",
+            "5 to 10 years",
+            "More than 10 years",
+            "Never — demand keeps falling",
+        ],
+    },
+    {
+        "article_slug": "napa-farming-2026-gwss",
+        "sort_order": 3,
+        "question": "Which 2026 farming pressure worries you most for Napa?",
+        "options": [
+            "Pest vectors (GWSS, lanternfly)",
+            "Disease (red blotch, botrytis)",
+            "Economic forced removals",
+            "Climate-driven yield loss",
+            "Labor and contractor shortages",
+        ],
+    },
 ]
 
 
