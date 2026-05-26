@@ -528,7 +528,7 @@ export default function UnderTheHoodNapaFarmingGwss() {
           {"“"}GWSS is a devastating pest for our local vineyards,{"”"} Napa County Agricultural Commissioner Tracy Cleveland said in the announcement. {"“"}It is critical for us to track down any potentially affected plants purchased at Costco or brought into Napa County.{"”"}
         </p>
         <p style={prose}>
-          The county is asking anyone who purchased grapevines, citrus or other fruit trees at Napa Costco or neighboring Costco locations in April or May to isolate the plants in their original containers, leave them unplanted, and call 707-253-4357 or email agcommissioner@countyofnapa.org. Background on Pierce{"’"}s disease and GWSS is available through the{" "}
+          The county is asking anyone who purchased grapevines, citrus or other fruit trees at Napa Costco or neighboring Costco locations in April or May to isolate the plants in their original containers, leave them unplanted and call 707-253-4357 or email agcommissioner@countyofnapa.org. Background on Pierce{"’"}s disease and GWSS is available through the{" "}
           <a href="https://www.cdfa.ca.gov/pdcp/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>California Department of Food and Agriculture</a>.
         </p>
         <p style={prose}>
@@ -618,7 +618,7 @@ export default function UnderTheHoodNapaFarmingGwss() {
         </p>
 
         <p style={prose}>
-          In other places, full rows have been cleared, the canopy stripped down, and the block readied for what comes next — replant, fallow or sale.
+          In other places, full rows have been cleared, the canopy stripped down and the block readied for what comes next — replant, fallow or sale.
         </p>
         <p style={prose}>
           {"“"}Lots of vineyards out, and a very light crop this year,{"”"} Buckland said. He added that the pace of removal has outrun the contracting capacity to keep up with it: {"“"}Not enough contractors to pull everything.{"”"}
@@ -639,7 +639,7 @@ export default function UnderTheHoodNapaFarmingGwss() {
         <p style={prose}>
           The Napa Valley Grapegrowers{"’"}{" "}
           <a href="https://www.napagrowers.org/bestpractices/best-practices-for-abandoned-and-neglected-vineyards" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Best Practices for Abandoned and Neglected Vineyards</a>{" "}
-          guide, updated in June 2025, lays out the practical stakes. Unmaintained blocks become reservoirs for trunk diseases such as Eutypa, Botryosphaeria and Esca, host populations of leafhoppers, mealybugs and sharpshooters that vector Pierce{"’"}s disease and leafroll virus, and provide habitat for rodents and invasive weeds. The guide also notes that a block slated for removal can temporarily resemble an abandoned site, and asks owners to communicate with neighbors and the Ag Commissioner if removal is delayed.
+          guide, updated in June 2025, lays out the practical stakes. Unmaintained blocks become reservoirs for trunk diseases such as Eutypa, Botryosphaeria and Esca, host populations of leafhoppers, mealybugs and sharpshooters that vector Pierce{"’"}s disease and leafroll virus and provide habitat for rodents and invasive weeds. The guide also notes that a block slated for removal can temporarily resemble an abandoned site, and asks owners to communicate with neighbors and the Ag Commissioner if removal is delayed.
         </p>
 
         {/* ── THE REMOVAL NUMBERS ──────────────────────────── */}
