@@ -216,7 +216,7 @@ const EXPORT_DATA = {
       { question: "Which 2026 farming pressure worries you most for Napa?", options: ["Pest vectors (GWSS, lanternfly)", "Disease (red blotch, botrytis)", "Economic forced removals", "Climate-driven yield loss", "Labor and contractor shortages"] },
     ],
     sources: [
-      "Napa County Agricultural Commissioner press release, May 26, 2026. [VERIFY URL pending county post]",
+      "[Napa County Agricultural Commissioner — Glassy-winged Sharpshooter alert page](https://www.napacounty.gov/1278/Glassy-winged-Sharpshooter)",
       "[California Department of Food and Agriculture — Pierce’s Disease Control Program](https://www.cdfa.ca.gov/pdcp/)",
       "[UC Statewide Integrated Pest Management — Glassy-Winged Sharpshooter Pest Notes](http://ipm.ucanr.edu/PMG/PESTNOTES/pn7492.html)",
       "[California Food and Agricultural Code Section 5551](http://leginfo.legislature.ca.gov/faces/codesTOCSelected.xhtml?tocCode=FAC)",
@@ -229,6 +229,12 @@ const EXPORT_DATA = {
       "[Sonoma County spotted lanternfly egg-mass interception, March 2024 — UCCE Master Gardeners of San Diego](https://www.mastergardenersd.org/the-spotted-lanternfly-is-headed-our-way/)",
       "[UC IPM — Fire Blight on Pear](https://ipm.ucanr.edu/agriculture/pear/fire-blight/)",
       "Garrett Buckland, Premiere Viticultural Services. Interviews conducted May 2026.",
+      "[Under the Hood: Climate Change's Growing Impact on Napa Valley — Napa Valley Features, August 2024](https://napavalleyfocus.substack.com/p/under-the-hood-climate-changes-growing)",
+      "[Vineyard Pests: A Game of Whack-a-Mole — NorthBay Biz, December 2021](https://www.northbaybiz.com/2021/12/02/vineyard-pests-a-game-of-whack-a-mole/)",
+      "[Grapevine Pests and Diseases are On The Uptick — NorthBay Biz, March 2023](https://www.northbaybiz.com/2023/03/15/grapevine-pests-and-diseases-are-on-the-uptick/)",
+      "[Glassy-winged sharpshooter detected on grapevine plants sold at Napa Costco — Press Democrat, May 26, 2026](https://www.pressdemocrat.com/2026/05/26/glassy-winged-sharpshooter-detected-on-grapevine-plants-sold-at-napa-costco/)",
+      "[Best Practices for Abandoned and Neglected Vineyards — Napa Valley Grapegrowers](https://www.napagrowers.org/bestpractices/best-practices-for-abandoned-and-neglected-vineyards)",
+      "[Under the Hood: The Dismal Math of Napa's Unharvested Acres — Napa Valley Features, November 2025](https://napavalleyfocus.substack.com/p/under-the-hood-the-dismal-math-of)",
     ],
   },
   "napa-schools-2026": {
