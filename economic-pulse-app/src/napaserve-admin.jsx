@@ -235,6 +235,7 @@ const EXPORT_DATA = {
       "[Glassy-winged sharpshooter detected on grapevine plants sold at Napa Costco — Press Democrat, May 26, 2026](https://www.pressdemocrat.com/2026/05/26/glassy-winged-sharpshooter-detected-on-grapevine-plants-sold-at-napa-costco/)",
       "[Best Practices for Abandoned and Neglected Vineyards — Napa Valley Grapegrowers](https://www.napagrowers.org/bestpractices/best-practices-for-abandoned-and-neglected-vineyards)",
       "[Under the Hood: The Dismal Math of Napa's Unharvested Acres — Napa Valley Features, November 2025](https://napavalleyfocus.substack.com/p/under-the-hood-the-dismal-math-of)",
+      "[Green Wednesday: Fire Blight in Napa Orchards and Funding for Wildfire Prevention — Napa Valley Features, May 27, 2026](https://napavalleyfocus.substack.com/p/green-wednesday-fire-blight-in-napa)",
     ],
   },
   "napa-schools-2026": {

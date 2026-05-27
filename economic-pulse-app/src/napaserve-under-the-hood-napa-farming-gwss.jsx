@@ -565,11 +565,11 @@ export default function UnderTheHoodNapaFarmingGwss() {
         {/* Photo 1 */}
         <img
           src="/photos/uth-napa-farming-gwss/photo-1.jpg"
-          alt="An upvalley vineyard in late May with Mt. St. Helena behind, showing irregular leaf-out across an old block"
+          alt="An upvalley vineyard in late May showing irregular leaf-out across an old block"
           style={{ width: "100%", borderRadius: 4, marginTop: 28, marginBottom: 8 }}
         />
         <p style={{ fontStyle: "italic", fontSize: 14, color: T.muted, marginTop: 0, marginBottom: 24 }}>
-          A vineyard at the corner of Highway 128 and Tubbs Lane in Calistoga in late May, Mt. St. Helena behind — Tim Carl Photo
+          A vineyard at the corner of Highway 128 and Tubbs Lane in Calistoga in late May — Tim Carl Photo
         </p>
 
         <p style={prose}>
@@ -689,7 +689,7 @@ export default function UnderTheHoodNapaFarmingGwss() {
           Grapes are not the only crop under pressure this spring.
         </p>
         <p style={prose}>
-          Buckland has felt the pressure across multiple diseases this year. {"“"}Red blotch for sure still the number one problem for us. It{"’"}s a bad botrytis year due to the spring rains. Shaping up to be a bad mildew year as well,{"”"} he said. {"“"}I lost 3 mature pear trees this year to fire blight.{"”"} Three other growers at a recent Napa Farmers Guild gathering at Long Meadow Ranch independently described 2026 as {"“"}a really bad year{"”"} for fire blight.
+          Buckland has felt the pressure across multiple diseases this year. {"“"}Red blotch for sure still the number one problem for us. It{"’"}s a bad botrytis year due to the spring rains. Shaping up to be a bad mildew year as well,{"”"} he said. {"“"}I lost 3 mature pear trees this year to fire blight.{"”"} Three other growers at a recent Napa Farmers Guild gathering at Long Meadow Ranch independently described 2026 as {"“"}a really bad year{"”"} for fire blight. A Master Gardener column in this week{"’"}s <em><a href="https://napavalleyfocus.substack.com/p/green-wednesday-fire-blight-in-napa" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Green Wednesday: Fire Blight in Napa Orchards and Funding for Wildfire Prevention</a></em> (May 27, 2026) documents an unusually severe fire blight outbreak across the valley this spring — Aileen Carroll of the UC Master Gardeners of Napa County reports {"“"}dozens{"”"} of homeowners arriving at her local nursery with infected apple and pear trees.
         </p>
         <p style={prose}>
           Fire blight is not a grapevine disease. The bacterium responsible, <em>Erwinia amylovora</em>, infects pome fruit — apples, pears, quinces — not <em>Vitis vinifera</em>. What growers like Buckland are watching is not a direct threat to the vines. It is the pattern. Add Buckland{"’"}s pear trees to the GWSS detection at the Costco, the lanternfly egg masses intercepted in Sonoma, the spread of grapevine red blotch and the milder-winter mechanism behind all of them, and a single picture starts to come into focus: opportunistic pathogens are finding more openings across the agricultural matrix, not just in the vineyards.
@@ -919,6 +919,7 @@ export default function UnderTheHoodNapaFarmingGwss() {
             <li style={{ marginBottom: 10 }}><a href="https://www.pressdemocrat.com/2026/05/26/glassy-winged-sharpshooter-detected-on-grapevine-plants-sold-at-napa-costco/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Glassy-winged sharpshooter detected on grapevine plants sold at Napa Costco — Press Democrat, May 26, 2026</a>.</li>
             <li style={{ marginBottom: 10 }}><a href="https://www.napagrowers.org/bestpractices/best-practices-for-abandoned-and-neglected-vineyards" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Best Practices for Abandoned and Neglected Vineyards — Napa Valley Grapegrowers</a>.</li>
             <li style={{ marginBottom: 10 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-dismal-math-of" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Under the Hood: The Dismal Math of Napa{"'"}s Unharvested Acres — Napa Valley Features, November 2025</a>.</li>
+            <li style={{ marginBottom: 10 }}><a href="https://napavalleyfocus.substack.com/p/green-wednesday-fire-blight-in-napa" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Green Wednesday: Fire Blight in Napa Orchards and Funding for Wildfire Prevention — Napa Valley Features, May 27, 2026</a>.</li>
           </ol>
         </div>
 

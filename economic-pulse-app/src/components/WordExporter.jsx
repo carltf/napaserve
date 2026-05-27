@@ -142,19 +142,19 @@ export default function WordExporter({ article }) {
       if (article.captions && article.captions.length > 0) {
         children.push(p("Captions:"));
         children.push(
-          ...article.captions.map(
-            (cap) =>
-              new Paragraph({
-                spacing: BODY_SPACING,
-                children: [
-                  new TextRun({
-                    text: `Chart ${cap.number}: ${cap.title} \u2014 ${cap.description.replace(/\.$/, "")}. Source: ${cap.source.replace(/\.$/, "")}.`,
-                    size: SIZE,
-                    font: FONT,
-                  }),
-                ],
-              })
-          )
+          ...article.captions.map((cap) => {
+            let sourceText = "";
+            if (cap.source) {
+              sourceText = cap.source.replace(/\.$/, "");
+            } else if (Array.isArray(cap.sources) && cap.sources.length > 0) {
+              sourceText = cap.sources.map(s => s.label || s.url || "").filter(Boolean).join("; ");
+            }
+            const captionText = `Chart ${cap.number}: ${cap.title} \u2014 ${cap.description.replace(/\.$/, "")}. Source: ${sourceText}.`;
+            return new Paragraph({
+              spacing: BODY_SPACING,
+              children: [new TextRun({ text: captionText, size: SIZE, font: FONT })],
+            });
+          })
         );
         children.push(blank());
       }
@@ -216,6 +216,9 @@ export default function WordExporter({ article }) {
       a.download = `${article.slug}-draft.docx`;
       a.click();
       URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Word export failed:", err);
+      alert("Word export failed: " + (err?.message || "Unknown error") + ". Check console for details.");
     } finally {
       setExporting(false);
     }
