@@ -27,6 +27,25 @@ function blank() {
 // mixing plain TextRun and ExternalHyperlink-wrapped runs.
 // Safe for strings without any links — returns a single TextRun.
 const LINK_RX = /\[([^\]]+)\]\(([^)]+)\)/g;
+const ITALIC_RX = /\*([^*]+)\*/g;
+
+function splitItalics(text, bold) {
+  const parts = [];
+  let lastEnd = 0;
+  let match;
+  ITALIC_RX.lastIndex = 0;
+  while ((match = ITALIC_RX.exec(text)) !== null) {
+    if (match.index > lastEnd) {
+      parts.push(new TextRun({ text: text.slice(lastEnd, match.index), size: SIZE, font: FONT, bold }));
+    }
+    parts.push(new TextRun({ text: match[1], size: SIZE, font: FONT, bold, italics: true }));
+    lastEnd = match.index + match[0].length;
+  }
+  if (lastEnd < text.length) {
+    parts.push(new TextRun({ text: text.slice(lastEnd), size: SIZE, font: FONT, bold }));
+  }
+  return parts.length > 0 ? parts : [new TextRun({ text, size: SIZE, font: FONT, bold })];
+}
 
 function parseInline(text, opts = {}) {
   const { bold = false } = opts;
@@ -36,7 +55,7 @@ function parseInline(text, opts = {}) {
   LINK_RX.lastIndex = 0;
   while ((match = LINK_RX.exec(text)) !== null) {
     if (match.index > lastEnd) {
-      parts.push(new TextRun({ text: text.slice(lastEnd, match.index), size: SIZE, font: FONT, bold }));
+      parts.push(...splitItalics(text.slice(lastEnd, match.index), bold));
     }
     parts.push(
       new ExternalHyperlink({
@@ -55,7 +74,7 @@ function parseInline(text, opts = {}) {
     lastEnd = match.index + match[0].length;
   }
   if (lastEnd < text.length) {
-    parts.push(new TextRun({ text: text.slice(lastEnd), size: SIZE, font: FONT, bold }));
+    parts.push(...splitItalics(text.slice(lastEnd), bold));
   }
   return parts.length > 0 ? parts : [new TextRun({ text, size: SIZE, font: FONT, bold })];
 }
