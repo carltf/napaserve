@@ -22,61 +22,69 @@ function blank() {
   return new Paragraph({ spacing: BODY_SPACING, children: [tr("")] });
 }
 
-// ── Inline markdown link parser ──
-// Converts "text [linkLabel](https://url) more text" into an array of runs
-// mixing plain TextRun and ExternalHyperlink-wrapped runs.
-// Safe for strings without any links — returns a single TextRun.
-const LINK_RX = /\[([^\]]+)\]\(([^)]+)\)/g;
-const ITALIC_RX = /\*([^*]+)\*/g;
-
-function splitItalics(text, bold) {
-  const parts = [];
-  let lastEnd = 0;
-  let match;
-  ITALIC_RX.lastIndex = 0;
-  while ((match = ITALIC_RX.exec(text)) !== null) {
-    if (match.index > lastEnd) {
-      parts.push(new TextRun({ text: text.slice(lastEnd, match.index), size: SIZE, font: FONT, bold }));
-    }
-    parts.push(new TextRun({ text: match[1], size: SIZE, font: FONT, bold, italics: true }));
-    lastEnd = match.index + match[0].length;
-  }
-  if (lastEnd < text.length) {
-    parts.push(new TextRun({ text: text.slice(lastEnd), size: SIZE, font: FONT, bold }));
-  }
-  return parts.length > 0 ? parts : [new TextRun({ text, size: SIZE, font: FONT, bold })];
-}
-
+// ── Unified inline markdown parser (single-pass) ──
+// Handles *italic*, [link](url), and *[italic link](url)* in one scan.
+// Recurses into italic spans and link text so nested patterns resolve correctly.
 function parseInline(text, opts = {}) {
-  const { bold = false } = opts;
+  const { bold = false, italic = false, hyperlink = false } = opts;
   const parts = [];
-  let lastEnd = 0;
-  let match;
-  LINK_RX.lastIndex = 0;
-  while ((match = LINK_RX.exec(text)) !== null) {
-    if (match.index > lastEnd) {
-      parts.push(...splitItalics(text.slice(lastEnd, match.index), bold));
+  let i = 0;
+  let plainStart = 0;
+
+  function makeRun(t, extraItalic) {
+    const props = { text: t, size: SIZE, font: FONT, bold, italics: italic || extraItalic };
+    if (hyperlink) props.style = "Hyperlink";
+    return new TextRun(props);
+  }
+
+  function flushPlain(end) {
+    if (end > plainStart) {
+      parts.push(makeRun(text.slice(plainStart, end), false));
     }
-    parts.push(
-      new ExternalHyperlink({
-        link: match[2],
-        children: [
-          new TextRun({
-            text: match[1],
-            size: SIZE,
-            font: FONT,
-            style: "Hyperlink",
-            bold,
-          }),
-        ],
-      })
-    );
-    lastEnd = match.index + match[0].length;
   }
-  if (lastEnd < text.length) {
-    parts.push(...splitItalics(text.slice(lastEnd), bold));
+
+  while (i < text.length) {
+    if (text[i] === "*") {
+      const close = text.indexOf("*", i + 1);
+      if (close > i + 1) {
+        flushPlain(i);
+        parts.push(...parseInline(text.slice(i + 1, close), { bold, italic: true, hyperlink }));
+        i = close + 1;
+        plainStart = i;
+        continue;
+      }
+      i++;
+      continue;
+    }
+
+    if (!hyperlink && text[i] === "[") {
+      const closeBracket = text.indexOf("]", i + 1);
+      if (closeBracket > i && closeBracket + 1 < text.length && text[closeBracket + 1] === "(") {
+        const closeParen = text.indexOf(")", closeBracket + 2);
+        if (closeParen > closeBracket + 1) {
+          flushPlain(i);
+          const linkText = text.slice(i + 1, closeBracket);
+          const url = text.slice(closeBracket + 2, closeParen);
+          parts.push(
+            new ExternalHyperlink({
+              link: url,
+              children: parseInline(linkText, { bold, italic, hyperlink: true }),
+            })
+          );
+          i = closeParen + 1;
+          plainStart = i;
+          continue;
+        }
+      }
+      i++;
+      continue;
+    }
+
+    i++;
   }
-  return parts.length > 0 ? parts : [new TextRun({ text, size: SIZE, font: FONT, bold })];
+
+  flushPlain(text.length);
+  return parts.length > 0 ? parts : [makeRun(text, false)];
 }
 
 function p(text) {
