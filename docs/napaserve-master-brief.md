@@ -145,7 +145,7 @@ When verification returns unexpected output: stop, don't reinterpret. Re-verify.
 - GoDaddy domains
 
 ### Worker Routes
-- `/api/events-search` — DB-backed search over `community_events` with astronomical fallback to `astronomical_events`
+- `/api/events-search` — DB-backed search over `community_events` with astronomical fallback to `astronomical_events`. Night-sky branch filters `event_date >= today` (upcoming-only; `start` param honored, else today) as of commit 60919c7, deployed to misty-bush-fc93.
 - `/api/tracker-events` — public read of approved tracker events (external consumer: Napa Lowdown)
 - `/api/latest-substack-poll` — latest NVF Substack poll for Snapshot Reader Sentiment
 - Event Moderation admin tool (admin-side approve/reject surface)
@@ -224,7 +224,7 @@ set -a && source .env && set +a && <command>
 - Single source of truth for all tracker UI surfaces per Lesson CC (2026-05-24)
 
 ### astronomical_events
-- Currently EMPTY (0 rows, confirmed 2026-05-30) — `05_seed_astronomy.py` never populated it (PD-2026-05-30-01)
+- Now seeded (38 rows, 2026-05-31) — hardcoded 2026 calendar, not yet scheduled, so it runs dry around year-end (see PD-2026-05-31-01). Was 0 rows until `05_seed_astronomy.py` was first run this session (PD-2026-05-30-01, RESOLVED).
 - Consumed by `/api/events-search` astronomical fallback and the Calistoga Currents night-sky search
 
 ### External Read-Tenants (flag before schema/RLS changes)

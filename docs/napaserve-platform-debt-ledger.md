@@ -230,9 +230,9 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 ## 2026-05-30 Roll-Forward Entries
 
 #### PD-2026-05-30-01 — `astronomical_events` empty (seed not populating)
-- Status: OPEN · surfaced 5-29, confirmed 5-30 (0 rows)
-- Affected: `astronomical_events`; `05_seed_astronomy.py`; `/api/events-search` fallback; CC night-sky search
-- Next: diagnose seed (source? failing? never run?), then seed + verify
+- **Status:** RESOLVED 2026-05-31 · surfaced 2026-05-29
+- **Resolution:** root cause = `05_seed_astronomy.py` (4cb219d) written but never run/scheduled. Added unique index on (title, event_date), seeded 38 events, added worker `event_date>=today` night-sky filter (60919c7, deployed to misty-bush-fc93). Verified live: night-sky leads with Strawberry Moon 06-10, source=astronomical_events.
+- **Note:** seed is a hardcoded 2026 calendar and not scheduled → see PD-2026-05-31-01.
 
 #### PD-2026-05-30-02 — orphan tables `event_instances`/`event_series` still live
 - Status: OPEN (decided DROP after zero-consumer grep) · confirmed live 5-30 (both 200)
@@ -253,3 +253,25 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - Status: OPEN · from 5-25; grep worker/pipeline history to settle shipped/not, then close or schedule
 
 (Note: PD-2026-05-24-27 — ADR-001 Stage-2 doc-drift detection — remains OPEN and is why the ~25-commit drift went unnoticed.)
+
+---
+
+## 2026-05-31 Astronomy-Fix Follow-Ups
+
+#### PD-2026-05-31-01 — Astronomy auto-seed / 2027 cliff
+- **Status:** OPEN
+- `05_seed_astronomy.py` is a hardcoded 2026 calendar (`get_2026_moon_phases()` + static list), not in any workflow — the table runs dry of upcoming events around year-end. `fetch_moon_phases()` (AstronomyAPI, uses ASTRONOMY_APP_ID/SECRET) is dead code = the half-built dynamic source.
+- **Fix:** complete the AstronomyAPI integration for moon phases, generalize the annual calendar, schedule a yearly top-up. Supersedes the earlier "remove dead code" note — finish it, don't delete it.
+
+#### PD-2026-05-31-02 — Night-sky filter hides active multi-day events
+- **Status:** OPEN
+- `event_date >= today` drops events whose start has passed but `end_date` is future — e.g. Milky Way Core Season (04-01 → 09-30) hidden during peak season.
+- **Fix:** filter on `end_date` when present (`event_date OR end_date >= today`). Worker tweak + manual Cloudflare redeploy.
+
+#### PD-2026-05-31-03 — events-search night-sky capped at 10
+- **Status:** OPEN
+- ~20 upcoming seeded; endpoint returns 10 (stops at Corn Moon 09-07). Confirm intended top-N vs full calendar; bump limit if the latter.
+
+#### PD-2026-05-31-04 — `/api/events-search` consumer unknown
+- **Status:** OPEN
+- No frontend caller found in `src/`. Confirm consumer (Squarespace embed / mobile app / CC events page) before future schema/param changes.
