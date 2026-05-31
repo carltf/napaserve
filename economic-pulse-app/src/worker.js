@@ -1165,8 +1165,13 @@ async function handleEventsSearch(request, env) {
     }
     if (category && category !== "any") {
       if (category === "night-sky") {
-        // Night sky routes to astronomical_events — handled separately
-        const astroQuery = `${env.SUPABASE_URL}/rest/v1/astronomical_events?select=title,description,event_date,viewing_notes&order=event_date.asc&limit=${limit}`;
+        // Night sky routes to astronomical_events — handled separately.
+        // Upcoming-only: filter to events on or after today. The community_events
+        // branch below restricts to upcoming via the caller-supplied `start` param;
+        // honor it here too, and default to today when none is passed (the night-sky
+        // calendar is server-seeded for the whole year, so it must self-floor).
+        const astroFrom = start || new Date().toISOString().slice(0, 10);
+        const astroQuery = `${env.SUPABASE_URL}/rest/v1/astronomical_events?select=title,description,event_date,viewing_notes&event_date=gte.${astroFrom}&order=event_date.asc&limit=${limit}`;
         const astroRes = await fetch(astroQuery, {
           headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` },
         });
