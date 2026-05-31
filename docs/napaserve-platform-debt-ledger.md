@@ -231,7 +231,7 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 
 #### PD-2026-05-30-01 — `astronomical_events` empty (seed not populating)
 - **Status:** RESOLVED 2026-05-31 · surfaced 2026-05-29
-- **Resolution:** root cause = `05_seed_astronomy.py` (4cb219d) written but never run/scheduled. Added unique index on (title, event_date), seeded 38 events, added worker `event_date>=today` night-sky filter (60919c7, deployed to misty-bush-fc93). Verified live: night-sky leads with Strawberry Moon 06-10, source=astronomical_events.
+- **Resolution:** root cause = `05_seed_astronomy.py` (4cb219d) written but never run/scheduled. A pre-existing unique constraint already covered (title, event_date) (a redundant index was briefly added then dropped); seeded 38 events, added worker `event_date>=today` night-sky filter (60919c7, deployed to misty-bush-fc93). Verified live: night-sky leads with Strawberry Moon 06-10, source=astronomical_events.
 - **Note:** seed is a hardcoded 2026 calendar and not scheduled → see PD-2026-05-31-01.
 
 #### PD-2026-05-30-02 — orphan tables `event_instances`/`event_series` still live
