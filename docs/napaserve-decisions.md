@@ -93,3 +93,14 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 - SortWise ADR-024 (2026-05-13) — analogous cutover in another project
 - V5 .docx files in iCloud Active/Older Drafts/
 - napaserve-eos-checklist.md — canonical manifest
+
+---
+
+## ADR-002 — Calistoga Currents as a Read-Tenant on NapaServe's Supabase
+**Date:** 2026-05-30 · **Status:** Accepted
+
+**Context.** Calistoga Currents (calistogacurrents.com) separated into its own project 2026-05-30, expected to become its own company. Public/brand layer is fully independent; data layer is not — CC Dashboard + Events read three NapaServe Supabase tables (`economic_pulse_snapshots`, `community_events`, `astronomical_events`) via a hardcoded URL + publishable anon key in `src/pages/Dashboard.jsx` and `Events.jsx`, served through the CC Worker `calistoga-currents-feed.tfcarl.workers.dev`.
+
+**Decision.** NapaServe hosts CC as a read-only tenant on its production Supabase. Data-layer unwind deferred to a CC sale/separation — replicating the ingest backend for one small-town paper is disproportionate now. Separation principle met by keeping the seam documented and clean, not by migrating today.
+
+**Consequences.** CC is a documented consumer of three NapaServe tables. Before any schema/RLS change to those tables, check CC impact (alongside the `/api/tracker-events` Napa Lowdown consumer). Seam verified 2026-05-30: RLS on; CC anon key cannot read subscriber/PII tables. At separation: replicate pipelines into a Calistoga-only Supabase, or license the data.

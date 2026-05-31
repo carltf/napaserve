@@ -224,3 +224,32 @@ Add new entry with new ID. Reference original in "Related entries." Don't reopen
 
 ### When SHIPPED-NEEDS-VERIFY can't be verified?
 Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verification gap revealed deeper issue.
+
+---
+
+## 2026-05-30 Roll-Forward Entries
+
+#### PD-2026-05-30-01 — `astronomical_events` empty (seed not populating)
+- Status: OPEN · surfaced 5-29, confirmed 5-30 (0 rows)
+- Affected: `astronomical_events`; `05_seed_astronomy.py`; `/api/events-search` fallback; CC night-sky search
+- Next: diagnose seed (source? failing? never run?), then seed + verify
+
+#### PD-2026-05-30-02 — orphan tables `event_instances`/`event_series` still live
+- Status: OPEN (decided DROP after zero-consumer grep) · confirmed live 5-30 (both 200)
+- Next: grep both repos for readers; if zero → DROP both + strip writes from `04_seed_events.py`
+
+#### PD-2026-05-30-03 — `04_seed_events.py` one-shot guard missing
+- Status: OPEN · confirmed 5-30 (no guard found)
+- Next: add `--force-reseed-acknowledged` flag + banner-and-exit default
+
+#### PD-2026-05-30-04 — `napa-farming-2026-gwss` 5 open verify flags
+- Status: OPEN · draft d67e8fb; reported published 5-27 (confirm DB + poll IDs; resolve flags)
+
+#### PD-2026-05-30-05 — GitHub PAT rotation — RESOLVED 2026-05-30
+- Status: CLOSED (residual: MASTER_KEYS rotation-log line + expiry 2027-05-30)
+- New fine-grained `multi-repo git push (laptop)` in Keychain, push verified, both classics (expiring 6-01) deleted, `.env` updated.
+
+#### PD-2026-05-30-06 — submit-form pipeline fix — status unverified
+- Status: OPEN · from 5-25; grep worker/pipeline history to settle shipped/not, then close or schedule
+
+(Note: PD-2026-05-24-27 — ADR-001 Stage-2 doc-drift detection — remains OPEN and is why the ~25-commit drift went unnoticed.)

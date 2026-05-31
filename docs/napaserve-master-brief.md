@@ -144,6 +144,13 @@ When verification returns unexpected output: stop, don't reinterpret. Re-verify.
 - Google Workspace: `info@napaserve.com`
 - GoDaddy domains
 
+### Worker Routes
+- `/api/events-search` — DB-backed search over `community_events` with astronomical fallback to `astronomical_events`
+- `/api/tracker-events` — public read of approved tracker events (external consumer: Napa Lowdown)
+- `/api/latest-substack-poll` — latest NVF Substack poll for Snapshot Reader Sentiment
+- Event Moderation admin tool (admin-side approve/reject surface)
+- Dynamic `TOPIC_SEEDS` (topic seeds resolved dynamically rather than hardcoded)
+
 ### Domain Portfolio
 - `napaserve.org` — Primary, Vercel auto-deploy on push to main
 - `napaserve.com` / `napaserve.ai` → napaserve.org redirect (301, GoDaddy)
@@ -178,6 +185,11 @@ Pointer files; no values duplicated in this brief.
 set -a && source .env && set +a && <command>
 ```
 
+**GitHub push auth (rotated 2026-05-30):**
+- Remotes are HTTPS; push authenticates via the macOS Keychain using fine-grained PAT `multi-repo git push (laptop)` (All repositories; Contents R/W + Workflows R/W + Metadata RO; expires 2027-05-30).
+- NOT via `.env GITHUB_TOKEN` — nothing reads the token from `.env`. The `.env` entry is kept current but is not the push credential.
+- Prior classic tokens (expiring 2026-06-01) deleted during the rotation.
+
 **Hard rules:**
 - Never use Chrome MCP to inspect auth-gated config surfaces
 - Never ask user to paste secret values into chat
@@ -210,6 +222,14 @@ set -a && source .env && set +a && <command>
 - Service role bypasses RLS for pipeline writes
 - Worker route `/api/tracker-events` reads with `status='approved'` filter server-side; status column stripped from output
 - Single source of truth for all tracker UI surfaces per Lesson CC (2026-05-24)
+
+### astronomical_events
+- Currently EMPTY (0 rows, confirmed 2026-05-30) — `05_seed_astronomy.py` never populated it (PD-2026-05-30-01)
+- Consumed by `/api/events-search` astronomical fallback and the Calistoga Currents night-sky search
+
+### External Read-Tenants (flag before schema/RLS changes)
+- **Calistoga Currents** is an external read-only tenant on `economic_pulse_snapshots`, `community_events`, and `astronomical_events` via a hardcoded anon key in the CC repo, served through `calistoga-currents-feed.tfcarl.workers.dev` (ADR-002, 2026-05-30). Check CC impact before any schema/RLS change to those three tables.
+- **Napa Lowdown** consumes `/api/tracker-events` (public approved-tracker read). Check before changing that route's shape.
 
 ---
 
@@ -316,6 +336,7 @@ Six-signal at-a-glance synthesis of Napa County's economy. URL: `napaserve.org/d
 | napa-marketing-machine-2026 | 36–38 | PUBLISHED 2026-05-04 |
 | napa-population-2025 | 39/40/41 | PUBLISHED 2026-05-11 |
 | napa-schools-2026 | 42/43/44 | PUBLISHED 2026-05-17 |
+| napa-farming-2026-gwss | TBD | REPORTED PUBLISHED 2026-05-27 (NapaServe + Substack); 5 verify flags; DB confirmation pending (draft d67e8fb, PD-2026-05-30-04) |
 
 **Next available poll ID:** 45.
 
