@@ -155,9 +155,9 @@ const CAPTIONS = [
   {
     number: 2,
     title: "No One Has All Three",
-    description: "Each generation by drinking-age population, wealth and wine participation; only the boomers combine size and money, and no younger cohort occupies that position.",
+    description: "Each generation by drinking-age population, wealth and wine participation; only the boomers combine size and money, and no younger cohort occupies that position. Gen Z and millennials are shown separately within the ~$17.1 trillion UBS reports for the two combined; Gen Z’s ~$6 trillion is Cerulli’s financial-wealth figure (2022 Survey of Consumer Finances), used here as a net-worth proxy for a cohort that holds little real estate.",
     sources: [
-      { label: "U.S. Census Bureau; Federal Reserve", url: null },
+      { label: "U.S. Census Bureau; Federal Reserve; UBS Global Wealth Report 2025; Cerulli Associates", url: null },
     ],
   },
   {
@@ -415,7 +415,8 @@ function ChartTwo() {
     const gens = [
       { label: "Boomers", x: 67, y: 85, r: 30, color: C.boomer, part: "High" },
       { label: "Gen X", x: 66, y: 43, r: 20, color: C.genX, part: "Moderate" },
-      { label: "Millennials & Gen Z", x: 74, y: 17, r: 13, color: C.young, part: "Low (rising)" },
+      { label: "Millennials", x: 74, y: 11, r: 12, color: C.young, part: "Low" },
+      { label: "Gen Z", x: 35, y: 6, r: 9, color: C.accent, part: "Low (rising)" },
       { label: "Silent (80+)", x: 10, y: 20, r: 8, color: C.silent, part: "Context only" },
     ];
 
@@ -425,16 +426,20 @@ function ChartTwo() {
         const { ctx, scales: { x, y } } = chart;
         ctx.save();
         ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        // Anchor from the text bottom so both lines sit fully ABOVE the bubble's
+        // top edge (center y − radius − padding); nothing draws over the circle.
+        ctx.textBaseline = "bottom";
+        const LABEL_PAD = 6;
         gens.forEach((g) => {
           const px = x.getPixelForValue(g.x);
           const py = y.getPixelForValue(g.y);
-          ctx.font = "bold 12px 'Source Sans 3', sans-serif";
-          ctx.fillStyle = C.ink;
-          ctx.fillText(g.label, px, py - g.r - 12);
+          const topEdge = py - g.r - LABEL_PAD;
           ctx.font = "10px 'Source Sans 3', sans-serif";
           ctx.fillStyle = T.muted;
-          ctx.fillText(`wine: ${g.part}`, px, py - g.r - 0);
+          ctx.fillText(`wine: ${g.part}`, px, topEdge);
+          ctx.font = "bold 12px 'Source Sans 3', sans-serif";
+          ctx.fillStyle = C.ink;
+          ctx.fillText(g.label, px, topEdge - 13);
         });
         ctx.restore();
       },
@@ -1142,7 +1147,7 @@ export default function UnderTheHoodGenZWine() {
           <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
             <li style={{ marginBottom: 10 }}>U.S. Census Bureau and Pew Research Center (generation sizes; boomer peak and decline; oldest boomers turn 80 in 2026).</li>
-            <li style={{ marginBottom: 10 }}>Federal Reserve Distributional Financial Accounts and UBS Global Wealth Report 2025 (generational wealth shares).</li>
+            <li style={{ marginBottom: 10 }}>Federal Reserve Distributional Financial Accounts and UBS Global Wealth Report 2025 (generational wealth shares); Cerulli Associates / 2022 Survey of Consumer Finances (Gen Z {"~"}$6T financial wealth).</li>
             <li style={{ marginBottom: 10 }}>Cerulli Associates, 2025 ($124 trillion wealth transfer; near-term Gen X {"~"}$14T and millennial {"~"}$8T over the decade; $45.6T to millennials over 25 years; spousal transfers).</li>
             <li style={{ marginBottom: 10 }}>CareScout 2025 and Fidelity (long-term care and retirement healthcare costs).</li>
             <li style={{ marginBottom: 10 }}>The Conference Board and The Business Council, Q2 2026 (CEO confidence).</li>

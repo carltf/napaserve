@@ -168,8 +168,8 @@ const EXPORT_DATA = {
       {
         number: 2,
         title: "No One Has All Three",
-        description: "Each generation by drinking-age population, wealth and wine participation; only the boomers combine size and money, and no younger cohort occupies that position.",
-        sources: [{ label: "U.S. Census Bureau; Federal Reserve", url: "" }],
+        description: "Each generation by drinking-age population, wealth and wine participation; only the boomers combine size and money, and no younger cohort occupies that position. Gen Z and millennials are shown separately within the ~$17.1 trillion UBS reports for the two combined; Gen Z’s ~$6 trillion is Cerulli’s financial-wealth figure (2022 Survey of Consumer Finances), used here as a net-worth proxy for a cohort that holds little real estate.",
+        sources: [{ label: "U.S. Census Bureau; Federal Reserve; UBS Global Wealth Report 2025; Cerulli Associates", url: "" }],
       },
       {
         number: 3,
@@ -193,7 +193,7 @@ const EXPORT_DATA = {
     substackPolls: [],
     sources: [
       "U.S. Census Bureau and Pew Research Center (generation sizes; boomer peak and decline; oldest boomers turn 80 in 2026).",
-      "Federal Reserve Distributional Financial Accounts and UBS Global Wealth Report 2025 (generational wealth shares).",
+      "Federal Reserve Distributional Financial Accounts and UBS Global Wealth Report 2025 (generational wealth shares); Cerulli Associates / 2022 Survey of Consumer Finances (Gen Z ~$6T financial wealth).",
       "Cerulli Associates, 2025 ($124 trillion wealth transfer; near-term Gen X ~$14T and millennial ~$8T over the decade; $45.6T to millennials over 25 years; spousal transfers).",
       "CareScout 2025 and Fidelity (long-term care and retirement healthcare costs).",
       "The Conference Board and The Business Council, Q2 2026 (CEO confidence).",
