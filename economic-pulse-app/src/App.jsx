@@ -25,6 +25,7 @@ import UnderTheHoodNapaLodgingPricing from "./under-the-hood-napa-lodging-pricin
 import NapaMarketingMachine from "./under-the-hood-napa-marketing-machine.jsx";
 import UnderTheHoodNapaSchools2026 from "./under-the-hood-napa-schools-2026.jsx";
 import UnderTheHoodNapaFarmingGwss from "./napaserve-under-the-hood-napa-farming-gwss.jsx";
+import UnderTheHoodGenZWine from "./under-the-hood-could-gen-z-save-the-wine-industry.jsx";
 import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
@@ -64,6 +65,7 @@ export default function App() {
         <Route path="/under-the-hood/napa-marketing-machine-2026" element={<NapaMarketingMachine />} />
         <Route path="/under-the-hood/napa-schools-2026" element={<UnderTheHoodNapaSchools2026 />} />
         <Route path="/under-the-hood/napa-farming-2026-gwss" element={<UnderTheHoodNapaFarmingGwss />} />
+        <Route path="/under-the-hood/could-gen-z-save-the-wine-industry" element={<UnderTheHoodGenZWine />} />
         <Route path="/under-the-hood/template" element={<UnderTheHoodTemplate />} />
         <Route path="/under-the-hood/calculators" element={<CalculatorsPage />} />
         <Route path="/events/digest" element={<DigestCuration />} />

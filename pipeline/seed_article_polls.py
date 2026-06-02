@@ -410,6 +410,43 @@ POLLS = [
             "Other (see comments)",
         ],
     },
+    # ── Could Gen Z Save the Wine Industry? (registry slot IDs 45-47) ─
+    {
+        "article_slug": "could-gen-z-save-the-wine-industry",
+        "sort_order": 1,
+        "question": "Can any younger generation replace the boomers as wine's core buyers?",
+        "options": [
+            "Yes — Gen Z will",
+            "Yes — millennials will",
+            "Only if the wealth transfer lands",
+            "No — the math doesn't work",
+            "Unsure",
+        ],
+    },
+    {
+        "article_slug": "could-gen-z-save-the-wine-industry",
+        "sort_order": 2,
+        "question": "Where will Napa Valley wine demand be in 2040 versus today?",
+        "options": [
+            "Higher",
+            "About the same",
+            "10–25% lower",
+            "More than 25% lower",
+            "Unsure",
+        ],
+    },
+    {
+        "article_slug": "could-gen-z-save-the-wine-industry",
+        "sort_order": 3,
+        "question": "What should the valley plan around?",
+        "options": [
+            "A return to the last decade",
+            "A smaller, stable market",
+            "A still-shrinking market",
+            "Diversifying beyond wine",
+            "Other (comment below)",
+        ],
+    },
     # ── Napa Farming / GWSS 2026 ────────────────────────────────────
     {
         "article_slug": "napa-farming-2026-gwss",

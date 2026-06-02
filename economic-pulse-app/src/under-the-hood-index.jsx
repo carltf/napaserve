@@ -96,7 +96,7 @@ function buildSections(publishedArticles) {
       .filter(a => a.publication === publication)
       .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
       .map(a => ({
-        title: a.title,
+        title: stripPrefix(a.headline),
         date: tileDate(a.published_at),
         tag: publication,
         href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,
@@ -185,9 +185,13 @@ export default function UnderTheHoodIndex() {
   const [archiveView, setArchiveView] = useState("year");
   const [topicArticles, setTopicArticles] = useState({});
 
-  // Fetch published articles from Worker
+  // Fetch published articles directly from Supabase REST so we get `headline`
+  // (the Worker /api/articles select omits it). Anon key, published rows only.
   useEffect(() => {
-    fetch(`${RAG_URL.replace("/api/rag-search", "")}/api/articles?published=true`)
+    fetch(
+      `${SUPABASE_URL}/rest/v1/napaserve_articles?select=slug,headline,title,publication,published_at&published=eq.true&order=published_at.desc`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    )
       .then(r => r.ok ? r.json() : [])
       .then(data => { setPublishedArticles(Array.isArray(data) ? data : []); setSectionsLoading(false); })
       .catch(() => setSectionsLoading(false));
@@ -492,7 +496,7 @@ export default function UnderTheHoodIndex() {
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {(publishedArticles.length > 0
               ? publishedArticles.map(a => ({
-                  title: a.title,
+                  title: stripPrefix(a.headline),
                   pub: a.publication,
                   date: a.published_at ? new Date(a.published_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "",
                   href: SLUG_ROUTES[a.slug] || `/under-the-hood/${a.slug}`,

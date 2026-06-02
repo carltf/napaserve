@@ -25,6 +25,12 @@ const mono = "monospace";
 
 const ARTICLES = [
   {
+    slug: "could-gen-z-save-the-wine-industry",
+    headline: "Under the Hood: Could Gen Z Save the Wine Industry?",
+    publication: "Napa Valley Features",
+    date: "June 4, 2026",
+  },
+  {
     slug: "napa-farming-2026-gwss",
     headline: "Under the Hood: A Tough Year on Napa’s Farms, and a Pest That Could Make It Worse",
     publication: "Napa Valley Features",
@@ -67,53 +73,46 @@ const ARTICLES = [
     date: "April 22, 2026",
   },
   {
-    publication: "Napa Valley Features",
-    headline: "The Reset Spreads",
-    deck: "Closures are moving beyond wineries into Napa\u2019s visitor economy. Transactions are becoming more defensive. The regional footprint is contracting \u2014 quietly, and across systems.",
     slug: "napa-structural-reset-2026",
-    publishedAt: "2026-04-04",
+    headline: "The Reset Spreads",
+    publication: "Napa Valley Features",
+    date: "April 4, 2026",
   },
   {
-    publication: "Napa Valley Features",
-    headline: "How a Global Supply Shock Reaches Napa Valley",
-    deck: "War with Iran has cut Hormuz tanker traffic 94%. This traces the supply chain from the strait to the Napa farm gate \u2014 and shows why the local economy has less cushion than the numbers suggest.",
     slug: "napa-supply-chain-2026",
-    publishedAt: "2026-03-27",
+    headline: "How a Global Supply Shock Reaches Napa Valley",
+    publication: "Napa Valley Features",
+    date: "March 27, 2026",
   },
   {
-    publication: "Napa Valley Features",
-    headline: "Napa Cabernet Prices Break the Growth Curve",
-    deck: "The weighted average price of Napa County cabernet sauvignon has declined for two consecutive years \u2014 the first such decline in the modern data series.",
     slug: "napa-cab-2025",
-    publishedAt: "2026-03-19",
+    headline: "Napa Cabernet Prices Break the Growth Curve",
+    publication: "Napa Valley Features",
+    date: "March 19, 2026",
   },
   {
-    publication: "Sonoma County Features",
-    headline: "Sonoma Grape Prices Fall for a Second Year",
-    deck: "Sonoma County\u2019s weighted average grape price declined for the second consecutive year in 2025, with cabernet sauvignon leading the drop.",
     slug: "sonoma-cab-2025",
-    publishedAt: "2026-03-21",
+    headline: "Sonoma Grape Prices Fall for a Second Year",
+    publication: "Sonoma County Features",
+    date: "March 21, 2026",
   },
   {
-    publication: "Lake County Features",
-    headline: "Lake County Grape Prices Have Fallen 38% in Two Years",
-    deck: "Lake County\u2019s weighted average grape price has dropped 38% since 2023, with chardonnay prices collapsing 70% in two years.",
     slug: "lake-county-cab-2025",
-    publishedAt: "2026-03-21",
+    headline: "Lake County Grape Prices Have Fallen 38% in Two Years",
+    publication: "Lake County Features",
+    date: "March 21, 2026",
   },
   {
-    publication: "Napa Valley Features",
-    headline: "Napa\u2019s Economy Looks Bigger Than It Is",
-    deck: "Nominal GDP rose 35.8% since 2016. Real GDP grew 4.6%. Of the apparent $3.84 billion in growth, 87% was inflation \u2014 and the jobs engine has stalled.",
     slug: "napa-gdp-2024",
-    publishedAt: "2026-03-24",
+    headline: "Napa\u2019s Economy Looks Bigger Than It Is",
+    publication: "Napa Valley Features",
+    date: "March 24, 2026",
   },
   {
-    publication: "Napa Valley Features",
-    headline: "When the Price Gives Way",
-    deck: "Three Napa wine-industry assets have moved through the market in ways that expose a widening gap between what sellers expected and what buyers were willing to pay. Together, they mark the first legible pattern of asset-level repricing across Napa\u2019s wine and hospitality economy.",
     slug: "napa-price-discovery-2026",
-    publishedAt: "2026-04-12",
+    headline: "When the Price Gives Way",
+    publication: "Napa Valley Features",
+    date: "April 12, 2026",
   },
 ];
 
@@ -125,6 +124,88 @@ const h = (text) => ({ type: "header", text });
 const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
+  "could-gen-z-save-the-wine-industry": {
+    headline: "Under the Hood: Could Gen Z Save the Wine Industry?",
+    publication: "Napa Valley Features",
+    deck: "Yesterday’s column called for a hard reset. This is why one is needed — and why the numbers point to further contraction, not recovery.",
+    summary: "A day after Dan Berger described the hard reset Napa wine now needs, this column takes up why the usual fixes stopped working. The answer is demand: a market built on the baby boomers, a generation now leaving the stage, with no cohort behind it that has the numbers, the money and the proclivity to replace them — and a wealth transfer arriving too late and too eroded to bridge the gap. An interactive model lets readers test the assumptions; across the plausible range, the market is more likely to contract further than to recover.",
+    slug: "could-gen-z-save-the-wine-industry",
+    dateline: "NAPA VALLEY, Calif. — June 4, 2026",
+    body: [
+      t("NAPA VALLEY, Calif. — In “Wine Chronicles: A Hard Reset for Napa Wine,” Dan Berger described a market in which the usual fixes have lost their effect — buyers scarce, inventories full, sales slow — and called the moment a hard reset for wineries and drinkers alike. This article is about why those fixes stopped working. The short answer is that the problem was never marketing, pricing or tourism. It is demand, and demand is set by demographics no campaign can move."),
+      h("How the Boom Was Built"),
+      t("The modern Napa Valley is the product of a one-time alignment, and it is worth being precise about what aligned. On the supply side, the 1968 Agricultural Preserve — the first ordinance of its kind in the nation — locked the valley floor into farming and protected the land on which fine wine could be grown. Validation followed: at the 1976 Judgment of Paris, California wines beat the French in a blind tasting and announced the region to the world. Then Robert Parker and the 100-point score turned that reputation into a market. By the 1990s it was the cult-cabernet boom — Heidi Barrett’s 1992 Dalla Valle “Maya” and the debut Screaming Eagle earned 100 and 99 points from Parker and turned single vineyards into trophies, with prices to match, as this publication recounted in its profile of Barrett, whom Parker dubbed the “Queen of Cult Cabernet.” The scores hardened into a brand machine: as Jeff Siegel reported in *“[2023: Vintage of a lifetime?](https://napavalleyfocus.substack.com/p/is-the-napa-valley-too-big-to-fail)”* (Jan. 2024), seven of the North Coast cabernet vintages between 2012 and 2021 rated 95 points or better, and the region came to be treated as “too important to fail.” Buyers learned to chase numbers and scarce bottles, and the Napa Valley learned to sell them."),
+      t("But protected land and high scores are only half the story. They arrived just as the demand side reached its peak. Wine demand from any generation rests on three things stacked together — enough adults of legal drinking age, enough disposable money and a taste for the product — and the baby boomers had all three at once. They were enormous: 72.5 million people in 1964, 37% of the entire country, rising to an absolute peak of 79 million in 1999. They moved through their prime earning years with a pronounced preference for premium wine. The boom was the intersection — protected supply, a powerful brand machine and the largest, wealthiest, most wine-inclined generation in American history, all in the same window."),
+      t("That intersection is the whole story, and it is why the present is so hard. The demand engine is shutting down: the boomer population has already fallen to about 67 million, Pew projects 59 million by 2030 and roughly 16 million by midcentury, and the oldest boomers turn 80 in 2026 — the age at which wine consumption drops sharply. A cohort that was 37% of the country is now about 20% and falling. The only question that matters is who takes its place."),
+      c(1),
+      h("Big, Broke or Both"),
+      t("Take the candidates in order. Generation X earns the most — the highest household income of any cohort, now in its peak earning years — but at about 66 million it was never large enough to replace the boomers, and it is aging toward retirement itself. Millennials solve the size problem: at roughly 74 million they are the largest generation in the country. But wealth is another matter — millennials and Gen Z together hold barely a tenth of all national wealth, about $17 trillion against the boomers’ $85 trillion, and millennials carry an outsized share of the country’s debt: student loans, the 2008 crash and housing prices that have outrun wages for two decades. Big numbers, thin wallets."),
+      t("[Illustration: a short ladder beside a tall one — the reach is not the same. — Napa Valley Features Graphic]"),
+      h("The Gen Z Math"),
+      t("Then comes the generation actually being asked to ride to the rescue, and here the claim collides hardest with the numbers. On paper Gen Z is nearly boomer-sized, about 71 million. But two facts gut the comparison. The first is age: Gen Z runs from 14 to 29 in 2026, which means close to half has not reached legal drinking age at all, and the wine-eligible slice is far smaller than the headline figure. The second is money. Of the roughly one-tenth of national wealth held by everyone 45 and under, Gen Z holds the smallest slice — youngest, least established, much of it still in school or just starting out. It is entering a labor market being reshaped by AI and a hiring slowdown, much of it already carrying debt. Even granting that Gen Z’s interest in wine is rising — and the data suggest it is — interest is the cheap part. A generation half of whom cannot legally buy a bottle, holding a few percent of the nation’s wealth, cannot consume its way into the place vacated by the richest generation in American history. And the cohort behind it is smaller still."),
+      c(2),
+      h("The Inheritance That Isn’t"),
+      t("The fallback hope is the handoff: the boomers will pass their fortune to their children, who will spend it. The figure is real — Cerulli Associates projects roughly $124 trillion changing hands by 2048. But most of it arrives late. Cerulli projects Gen X — not the younger cohorts — will receive the largest share over the next decade, about $14 trillion, against roughly $8 trillion for millennials, whose larger $45.6 trillion inheritance mostly lands later, when those heirs are themselves in their 50s and 60s, past the years households spend most freely. Much of it never arrives at all. A typical 65-year-old is projected to spend about $165,000 on healthcare in retirement before long-term care is counted, and about 70% of those who reach 65 will need that care, now running $9,500 to $10,800 a month. Nearly half of wealthy boomers say they plan to spend their money in their own lifetimes. And some of what passes down is a liability, not a windfall: boomers hold an estimated $18 trillion to $19 trillion in real estate, much of it large homes costly to maintain and falling to heirs who already cannot afford today’s prices — a median new home now costs about 5.3 times household income, against 3.6 times when boomers were buying. The inheritance meant to fund the next era of luxury spending is, for most families, smaller, later and messier than the headline suggests."),
+      c(3),
+      h("Then the Economy Got a Vote"),
+      t("All of that is the structural case, and it would hold in a calm year. This is not a calm year. A war in the Middle East and the closure of the Strait of Hormuz produced what Goldman Sachs called the largest supply shock in the history of the crude market, pushing Brent crude toward $110 a barrel before recent ceasefire reports eased it back toward the $90s — still far above a year ago. In late May the Conference Board’s measure of CEO confidence fell to 47 from 59 in a single quarter, and for the first time in the survey’s history more chief executives said they planned to cut their workforce than to grow it. Real personal income excluding transfers fell about 1% over the year through April, its sharpest such decline since 2022. Premium wine is a discretionary purchase, the first line trimmed when fuel costs jump and jobs feel less secure — and it leans most on the younger, lower-wealth buyers least cushioned from a downturn."),
+      h("Why the Fixes Stopped Working"),
+      t("This is why the stopgaps Berger describes have lost their grip. More visitors, more marketing, more tasting rooms, lower price points, even the regulatory changes the trade groups are now requesting — every one of them works on supply or on execution. None of them adds drinking-age population or wealth to generations that lack both. As laid out in *“[Under the Hood: What Premiere’s $3 Million Plateau Signals](https://napavalleyfocus.substack.com/p/under-the-hood-what-premieres-3-million)”* (Feb. 26, 2026), structural resets move in three phases — deceleration and denial, reset and recalibration, then broader repricing — and *“[Under the Hood: Where Is Napa in the Five Stages of Grief?](https://napavalleyfocus.substack.com/p/under-the-hood-where-is-napa-in-the)”* (April 23, 2026) mapped the same arc onto denial, anger, bargaining, depression and acceptance. By those measures the valley is well past denial. Premiere Napa Valley, the trade’s bellwether auction, raised about $3 million in 2026, down from roughly $6 million in 2015. Constellation Brands’ wine and spirits sales fell 14% on an organic basis for the year and, after a run of divestitures, dropped from the third-largest U.S. wine company to the 28th. Treasury Wine Estates wrote off essentially all the goodwill on its U.S. business — about A$687 million, roughly $450 million. Ted Hall, a former chairman of the Robert Mondavi Corp., estimated that 100 to 170 of 424 small Napa Valley Vintners members are unlikely to be viable under current conditions. Those are repricing and acceptance decisions. The hope that a younger generation will close the gap belongs to an earlier stage."),
+      h("What Comes Next"),
+      t("How the Napa Valley arrived here is, in the end, arithmetic: a demand engine built on a generation that is leaving, no cohort behind it that combines the numbers, the money and the taste for wine, and a wealth transfer too late and too eroded to bridge the difference. That much is fixed. What is not fixed is what happens from here, and that turns on assumptions reasonable people can argue about — how fast younger drinkers take up wine, when and how much inherited wealth actually arrives, and whether the economy steadies or slides."),
+      t("The interactive model on NapaServe lets readers set those assumptions and watch the result. The instructive part is the range it produces. Push every lever toward optimism — higher participation, an earlier and larger inheritance, a calm economy — and demand still does not climb back to the boomer peak. Set the levers where the current data point, with an oil shock, falling real incomes and the steepest drop in business confidence in years, and the line bends the other way. The realistic envelope runs from roughly flat to lower. Better is the one outcome the math will not produce."),
+      t("[Interactive: “Can the Next Generation Replace the Boomers?” — an interactive model on napaserve.org. Illustrative, not a forecast.]"),
+      t("So could Gen Z save the wine industry? No — not because young people will not drink wine; they will. But they will certainly change it — what they drink, how they buy it and what they are willing to pay — and the Napa Valley, built more than any other region on the premium, trophy-bottle model, is likely to feel that change more sharply than anywhere else. The question is not whether the valley returns to the last decade, but how it plans for a market that, by the numbers, is more likely to contract than recover. Tomorrow, the growers describe that prospect in their own words."),
+      t("[Closing illustration: a felled stump beside a young sapling — the old growth gone, the new growth small but real. — Napa Valley Features Graphic]"),
+    ],
+    captions: [
+      {
+        number: 1,
+        title: "The Engine, Rising and Falling",
+        description: "The U.S. baby-boomer population from its 1964 peak of 72.5 million (37% of the country) and 1999 high of 79 million to about 67 million today and a projected 59 million by 2030, with the Ag Preserve (1968), Judgment of Paris (1976) and Parker era marked along the rise.",
+        sources: [{ label: "U.S. Census Bureau; Pew Research Center", url: "" }],
+      },
+      {
+        number: 2,
+        title: "No One Has All Three",
+        description: "Each generation by drinking-age population, wealth and wine participation; only the boomers combine size and money, and no younger cohort occupies that position.",
+        sources: [{ label: "U.S. Census Bureau; Federal Reserve", url: "" }],
+      },
+      {
+        number: 3,
+        title: "The Inheritance That Isn’t",
+        description: "The $124 trillion wealth transfer reduced step by step by spousal transfers, charity, long-term-care erosion, late arrival and concentration to the sliver that reaches younger wine-buyers soon. Spousal transfers and charity are sourced (Cerulli); the erosion, late-arrival and concentration steps are illustrative.",
+        sources: [{ label: "Cerulli Associates; CareScout; Fidelity", url: "" }],
+      },
+    ],
+    relatedCoverage: [
+      { title: "Wine Chronicles: A Hard Reset for Napa Wine", publication: "Napa Valley Features", date: "link pending (~June 3)", url: "" },
+      { title: "Under the Hood: Where Is Napa in the Five Stages of Grief?", publication: "Napa Valley Features", date: "April 23, 2026", url: "https://napavalleyfocus.substack.com/p/under-the-hood-where-is-napa-in-the" },
+      { title: "Under the Hood: What Premiere’s $3 Million Plateau Signals", publication: "Napa Valley Features", date: "Feb. 26, 2026", url: "https://napavalleyfocus.substack.com/p/under-the-hood-what-premieres-3-million" },
+      { title: "Under the Hood: Napa County’s Wine Market Is Clearing, Not Recovering", publication: "Napa Valley Features", date: "Jan. 15, 2026", url: "https://napavalleyfocus.substack.com/p/under-the-hood-napa-countys-wine" },
+      { title: "Under the Hood: Why Napa’s Demographics Point to Contraction, Not Growth", publication: "Napa Valley Features", date: "Sept. 6, 2025", url: "https://napavalleyfocus.substack.com/p/under-the-hood-why-napas-demographics" },
+      { title: "Collapse or Correction? Demographics and Labor at Play", publication: "Napa Valley Features", date: "Oct. 24, 2024", url: "https://napavalleyfocus.substack.com/p/collapse-or-correction-demographics" },
+      { title: "Under the Hood: Heidi Barrett’s Bold and Creative Life", publication: "Napa Valley Features", date: "Dec. 20, 2024", url: "https://napavalleyfocus.substack.com/p/top-stories-of-2024-7-heidi-barretts" },
+      { title: "2023: Vintage of a lifetime?", publication: "Jeff Siegel, Napa Valley Features", date: "Jan. 2024", url: "https://napavalleyfocus.substack.com/p/is-the-napa-valley-too-big-to-fail" },
+      { title: "Wine Chronicles: A Question of Terroir", publication: "Dan Berger, Napa Valley Features", date: "Feb. 11, 2026", url: "https://napavalleyfocus.substack.com/p/wine-chronicles-a-question-of-terroir" },
+      { title: "Napa Valley finds itself between a rock and a hard place", publication: "Tim Carl, Napa Valley Features", date: "Oct. 2023", url: "https://napavalleyfocus.substack.com/p/napa-valley-finds-itself-between" },
+    ],
+    substackPolls: [],
+    sources: [
+      "U.S. Census Bureau and Pew Research Center (generation sizes; boomer peak and decline; oldest boomers turn 80 in 2026).",
+      "Federal Reserve Distributional Financial Accounts and UBS Global Wealth Report 2025 (generational wealth shares).",
+      "Cerulli Associates, 2025 ($124 trillion wealth transfer; near-term Gen X ~$14T and millennial ~$8T over the decade; $45.6T to millennials over 25 years; spousal transfers).",
+      "CareScout 2025 and Fidelity (long-term care and retirement healthcare costs).",
+      "The Conference Board and The Business Council, Q2 2026 (CEO confidence).",
+      "U.S. Bureau of Economic Analysis (real personal income, April 2026).",
+      "International Energy Agency, Goldman Sachs and Brookings (2026 oil shock).",
+      "Robert Parker and The Wine Advocate; Napa County Agricultural Preserve records; the 1976 Judgment of Paris (Napa Valley history).",
+      "Napa Valley Vintners and Wine-Searcher (Premiere Napa Valley totals); Constellation Brands Q4 FY2026 results and Wine Business Monthly; Treasury Wine Estates 2025 disclosures (Americas writedown); Ted Hall, “Napa’s Luxury Squeeze” (small-winery viability).",
+    ],
+    links: [
+      { label: "Read interactive version", url: "https://napaserve.org/under-the-hood/could-gen-z-save-the-wine-industry" },
+    ],
+  },
   "napa-farming-2026-gwss": {
     headline: "Under the Hood: A Tough Year on Napa’s Farms, and a Pest That Could Make It Worse",
     publication: "Napa Valley Features",
@@ -1405,7 +1486,7 @@ function ArchivedArticleRow({ article }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', background: '#EDE8DE', borderRadius: 6, marginBottom: 6 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', color: '#8B7355' }}>{article.publication?.toUpperCase()}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', color: '#8B7355', whiteSpace: 'nowrap', flexShrink: 0 }}>{article.publication?.toUpperCase()}</span>
         <a href={`https://napaserve.org/under-the-hood/${article.slug}`} target="_blank" rel="noopener noreferrer"
           style={{ fontFamily: "'Libre Baskerville',serif", fontSize: 14, fontWeight: 600, color: '#2C1810', textDecoration: 'none' }}>
           {article.headline}
@@ -1871,6 +1952,7 @@ export default function NapaServeAdmin() {
         const dbRow = dbArticles.find(r => r.slug === a.slug);
         return {
           ...a,
+          deck: dbRow?.deck ?? a.deck ?? "",
           publishedAt: dbRow?.published_at || a.publishedAt || null,
           published: dbRow ? dbRow.published : true,
         };
