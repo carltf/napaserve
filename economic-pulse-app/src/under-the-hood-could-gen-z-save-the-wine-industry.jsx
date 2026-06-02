@@ -149,7 +149,8 @@ const CAPTIONS = [
     title: "The Engine, Rising and Falling",
     description: "The U.S. baby-boomer population from its 1964 peak of 72.5 million (37% of the country) and 1999 high of 79 million to about 67 million today and a projected 59 million by 2030, with the Ag Preserve (1968), Judgment of Paris (1976) and Parker era marked along the rise.",
     sources: [
-      { label: "U.S. Census Bureau; Pew Research Center", url: null },
+      { label: "U.S. Census Bureau", url: null },
+      { label: "Pew Research Center", url: "https://www.pewresearch.org/short-reads/2020/04/28/millennials-overtake-baby-boomers-as-americas-largest-generation/" },
     ],
   },
   {
@@ -157,7 +158,10 @@ const CAPTIONS = [
     title: "No One Has All Three",
     description: "Each generation by drinking-age population, wealth and wine participation; only the boomers combine size and money, and no younger cohort occupies that position. Gen Z and millennials are shown separately within the ~$17.1 trillion UBS reports for the two combined; Gen Z’s ~$6 trillion is Cerulli’s financial-wealth figure (2022 Survey of Consumer Finances), used here as a net-worth proxy for a cohort that holds little real estate.",
     sources: [
-      { label: "U.S. Census Bureau; Federal Reserve; UBS Global Wealth Report 2025; Cerulli Associates", url: null },
+      { label: "U.S. Census Bureau", url: null },
+      { label: "Federal Reserve", url: "https://www.federalreserve.gov/releases/z1/dataviz/dfa/" },
+      { label: "UBS Global Wealth Report 2025", url: "https://www.ubs.com/us/en/wealth-management/insights/global-wealth-report.html" },
+      { label: "Cerulli Associates", url: "https://www.cerulli.com/press-releases/millennial-and-gen-z-wealth-reaches-new-heights" },
     ],
   },
   {
@@ -165,7 +169,9 @@ const CAPTIONS = [
     title: "The Inheritance That Isn’t",
     description: "The $124 trillion wealth transfer reduced step by step by spousal transfers, charity, long-term-care erosion, late arrival and concentration to the sliver that reaches younger wine-buyers soon. Spousal transfers and charity are sourced (Cerulli); the erosion, late-arrival and concentration steps are illustrative.",
     sources: [
-      { label: "Cerulli Associates; CareScout; Fidelity", url: null },
+      { label: "Cerulli Associates", url: "https://www.cerulli.com/press-releases/millennial-and-gen-z-wealth-reaches-new-heights" },
+      { label: "CareScout", url: "https://www.carescout.com/cost-of-care" },
+      { label: "Fidelity", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments--releases-2025-retiree-health-care-cost-estimate--a-timely-reminder-for-all-gen/s/3c62e988-12e2-4dc8-afb4-f44b06c6d52e" },
     ],
   },
 ];
@@ -1146,15 +1152,15 @@ export default function UnderTheHoodGenZWine() {
         <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 40, paddingTop: 24 }}>
           <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
-            <li style={{ marginBottom: 10 }}>U.S. Census Bureau and Pew Research Center (generation sizes; boomer peak and decline; oldest boomers turn 80 in 2026).</li>
-            <li style={{ marginBottom: 10 }}>Federal Reserve Distributional Financial Accounts and UBS Global Wealth Report 2025 (generational wealth shares); Cerulli Associates / 2022 Survey of Consumer Finances (Gen Z {"~"}$6T financial wealth).</li>
-            <li style={{ marginBottom: 10 }}>Cerulli Associates, 2025 ($124 trillion wealth transfer; near-term Gen X {"~"}$14T and millennial {"~"}$8T over the decade; $45.6T to millennials over 25 years; spousal transfers).</li>
-            <li style={{ marginBottom: 10 }}>CareScout 2025 and Fidelity (long-term care and retirement healthcare costs).</li>
-            <li style={{ marginBottom: 10 }}>The Conference Board and The Business Council, Q2 2026 (CEO confidence).</li>
-            <li style={{ marginBottom: 10 }}>U.S. Bureau of Economic Analysis (real personal income, April 2026).</li>
-            <li style={{ marginBottom: 10 }}>International Energy Agency, Goldman Sachs and Brookings (2026 oil shock).</li>
-            <li style={{ marginBottom: 10 }}>Robert Parker and The Wine Advocate; Napa County Agricultural Preserve records; the 1976 Judgment of Paris (Napa Valley history).</li>
-            <li style={{ marginBottom: 10 }}>Napa Valley Vintners and Wine-Searcher (Premiere Napa Valley totals); Constellation Brands Q4 FY2026 results and Wine Business Monthly (Constellation); Treasury Wine Estates 2025 disclosures (Americas writedown); Ted Hall, {"“"}Napa{"’"}s Luxury Squeeze{"”"} (small-winery viability).</li>
+            <li style={{ marginBottom: 10 }}>U.S. Census Bureau and <a href="https://www.pewresearch.org/short-reads/2020/04/28/millennials-overtake-baby-boomers-as-americas-largest-generation/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Pew Research Center</a> (generation sizes; boomer peak and decline; oldest boomers turn 80 in 2026).</li>
+            <li style={{ marginBottom: 10 }}><a href="https://www.federalreserve.gov/releases/z1/dataviz/dfa/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Federal Reserve Distributional Financial Accounts</a> and <a href="https://www.ubs.com/us/en/wealth-management/insights/global-wealth-report.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>UBS Global Wealth Report 2025</a> (generational wealth shares); <a href="https://www.cerulli.com/press-releases/millennial-and-gen-z-wealth-reaches-new-heights" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Cerulli Associates</a> / 2022 Survey of Consumer Finances (Gen Z {"~"}$6T financial wealth).</li>
+            <li style={{ marginBottom: 10 }}><a href="https://www.cerulli.com/press-releases/millennial-and-gen-z-wealth-reaches-new-heights" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Cerulli Associates</a>, 2025 ($124 trillion wealth transfer; near-term Gen X {"~"}$14T and millennial {"~"}$8T over the decade; $45.6T to millennials over 25 years; spousal transfers).</li>
+            <li style={{ marginBottom: 10 }}><a href="https://www.carescout.com/cost-of-care" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>CareScout</a> 2025 and <a href="https://newsroom.fidelity.com/pressreleases/fidelity-investments--releases-2025-retiree-health-care-cost-estimate--a-timely-reminder-for-all-gen/s/3c62e988-12e2-4dc8-afb4-f44b06c6d52e" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Fidelity</a> (long-term care and retirement healthcare costs).</li>
+            <li style={{ marginBottom: 10 }}><a href="https://www.prnewswire.com/news-releases/ceo-confidence-tumbled-in-q2-2026-302784178.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>The Conference Board</a> and The Business Council, Q2 2026 (CEO confidence).</li>
+            <li style={{ marginBottom: 10 }}><a href="https://www.bea.gov/news/2026/personal-income-and-outlays-april-2026" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>U.S. Bureau of Economic Analysis</a> (real personal income, April 2026).</li>
+            <li style={{ marginBottom: 10 }}>International Energy Agency, Goldman Sachs and Brookings (<a href="/under-the-hood/napa-supply-chain-2026" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>2026 oil shock</a>).</li>
+            <li style={{ marginBottom: 10 }}><a href="https://www.robertparker.com/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Robert Parker and The Wine Advocate</a>; <a href="https://napahistory.org/napa-valley-agricultural-preserve-2/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa County Agricultural Preserve records</a>; <a href="https://www.wineenthusiast.com/culture/wine/the-judgment-of-paris-turns-40/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>the 1976 Judgment of Paris</a> (Napa Valley history).</li>
+            <li style={{ marginBottom: 10 }}><a href="https://napavalleyfocus.substack.com/p/under-the-hood-what-premieres-3-million" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa Valley Vintners and Wine-Searcher (Premiere Napa Valley totals)</a>; <a href="/under-the-hood/napa-constellation-2026" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Constellation Brands Q4 FY2026 results and Wine Business Monthly</a> (Constellation); <a href="/under-the-hood/napa-constellation-2026" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Treasury Wine Estates 2025 disclosures</a> (Americas writedown); Ted Hall, <a href="https://ted241.substack.com/p/napas-luxury-squeeze" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>{"“"}Napa{"’"}s Luxury Squeeze{"”"}</a> (small-winery viability).</li>
           </ol>
         </div>
 

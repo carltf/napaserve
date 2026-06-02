@@ -163,19 +163,31 @@ const EXPORT_DATA = {
         number: 1,
         title: "The Engine, Rising and Falling",
         description: "The U.S. baby-boomer population from its 1964 peak of 72.5 million (37% of the country) and 1999 high of 79 million to about 67 million today and a projected 59 million by 2030, with the Ag Preserve (1968), Judgment of Paris (1976) and Parker era marked along the rise.",
-        sources: [{ label: "U.S. Census Bureau; Pew Research Center", url: "" }],
+        sources: [
+          { label: "U.S. Census Bureau", url: "" },
+          { label: "Pew Research Center", url: "https://www.pewresearch.org/short-reads/2020/04/28/millennials-overtake-baby-boomers-as-americas-largest-generation/" },
+        ],
       },
       {
         number: 2,
         title: "No One Has All Three",
         description: "Each generation by drinking-age population, wealth and wine participation; only the boomers combine size and money, and no younger cohort occupies that position. Gen Z and millennials are shown separately within the ~$17.1 trillion UBS reports for the two combined; Gen Z’s ~$6 trillion is Cerulli’s financial-wealth figure (2022 Survey of Consumer Finances), used here as a net-worth proxy for a cohort that holds little real estate.",
-        sources: [{ label: "U.S. Census Bureau; Federal Reserve; UBS Global Wealth Report 2025; Cerulli Associates", url: "" }],
+        sources: [
+          { label: "U.S. Census Bureau", url: "" },
+          { label: "Federal Reserve", url: "https://www.federalreserve.gov/releases/z1/dataviz/dfa/" },
+          { label: "UBS Global Wealth Report 2025", url: "https://www.ubs.com/us/en/wealth-management/insights/global-wealth-report.html" },
+          { label: "Cerulli Associates", url: "https://www.cerulli.com/press-releases/millennial-and-gen-z-wealth-reaches-new-heights" },
+        ],
       },
       {
         number: 3,
         title: "The Inheritance That Isn’t",
         description: "The $124 trillion wealth transfer reduced step by step by spousal transfers, charity, long-term-care erosion, late arrival and concentration to the sliver that reaches younger wine-buyers soon. Spousal transfers and charity are sourced (Cerulli); the erosion, late-arrival and concentration steps are illustrative.",
-        sources: [{ label: "Cerulli Associates; CareScout; Fidelity", url: "" }],
+        sources: [
+          { label: "Cerulli Associates", url: "https://www.cerulli.com/press-releases/millennial-and-gen-z-wealth-reaches-new-heights" },
+          { label: "CareScout", url: "https://www.carescout.com/cost-of-care" },
+          { label: "Fidelity", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments--releases-2025-retiree-health-care-cost-estimate--a-timely-reminder-for-all-gen/s/3c62e988-12e2-4dc8-afb4-f44b06c6d52e" },
+        ],
       },
     ],
     relatedCoverage: [
