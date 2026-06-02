@@ -104,3 +104,18 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Decision.** NapaServe hosts CC as a read-only tenant on its production Supabase. Data-layer unwind deferred to a CC sale/separation — replicating the ingest backend for one small-town paper is disproportionate now. Separation principle met by keeping the seam documented and clean, not by migrating today.
 
 **Consequences.** CC is a documented consumer of three NapaServe tables. Before any schema/RLS change to those tables, check CC impact (alongside the `/api/tracker-events` Napa Lowdown consumer). Seam verified 2026-05-30: RLS on; CC anon key cannot read subscriber/PII tables. At separation: replicate pipelines into a Calistoga-only Supabase, or license the data.
+
+---
+
+## ADR-003 — Hub Reads Supabase REST Directly for Article `headline`
+**Date:** 2026-06-02 · **Status:** Accepted
+
+**Context.** The hub (`under-the-hood-index.jsx`) rendered article card titles from the Worker `/api/articles` route, which has no `headline` field. The farming row had `title=null`, so its card rendered blank, and titles were inconsistent across cards.
+
+**Decision.** The hub fetches Supabase REST directly (anon key, `published=eq.true`) for article `headline`, bypassing the Worker `/api/articles` route.
+
+**Rationale.** Fixed blank/inconsistent hub card titles (commit 4ca41e0) without requiring a Worker redeploy.
+
+**Trade-off.** Forked data path — the hub no longer consumes the Worker route for this data.
+
+**Unwind.** Add `headline` to the Worker `/api/articles` select, then point the hub back. Tracked as PD-2026-06-02-01 in the Platform Debt Ledger.

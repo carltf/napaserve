@@ -195,7 +195,7 @@ export SUPABASE_KEY=$SUPABASE_KEY && \
 
 **Optional:** deck, summary, pullQuote, captions, relatedCoverage, sources, substackPolls, links
 
-**captions shape:** `[{number, title, description, source}]` — NOT `[{chartFilename, text}]`
+**captions shape:** `[{number, title, description, sources: [{ label, url }]}]` — `sources` is an array of objects (live shape, verified 2026-06-02), NOT a singular `source` string and NOT `[{chartFilename, text}]`
 
 **relatedCoverage shape:** `[{title, publication, date, url}]` — publication field required
 
@@ -219,6 +219,8 @@ See `napaserve-cheatsheet.md` Chart Conventions section for full detail:
 - Cumulative callout placement
 - Mobile-scroll wrapper pattern
 - PullQuote inline component
+
+**Canonical chart examples (2026-06-02):** clean, working reference implementations live in `under-the-hood-could-gen-z-save-the-wine-industry.jsx` — line-with-era-annotations, multi-cohort bubble with labels anchored above each circle, step-down waterfall, and interactive scenario tester. **Durable goal:** extract these into `under-the-hood-template.jsx` or a dedicated chart-examples reference — do NOT copy from a live published article (the canonical scaffold is the template, never a shipped article).
 
 ---
 
@@ -265,6 +267,16 @@ V4 additions:
 - (p) Multi-line charts have no horizontal or vertical collisions at chart edges
 
 V5 principle: Section 16 items are HUMAN-EYES gates, not measurement gates (Lesson V). A JavaScript probe is diagnostic only; acceptance requires the assistant or Tim to look at the rendered output.
+
+---
+
+## Anti-Drift Gates
+
+Three recurring failure modes and their countermeasures (added 2026-06-02):
+
+1. **Memory drift mid-session** — quote the specific protocol/cheatsheet line at the point of use; never paraphrase a rule from memory.
+2. **Acting without certainty** — label every claim verified-from-source vs believed-from-memory; the report-first + HOLD pattern is the checkpoint before any irreversible step.
+3. **Not reviewing completed work** — "done" requires re-opening the relevant checklist, scanning the debt ledger and lessons, and looking at the LIVE rendered output (Lesson V), not just the code.
 
 ---
 

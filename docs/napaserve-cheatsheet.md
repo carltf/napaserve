@@ -33,6 +33,9 @@ When the live shipped page and the protocol document disagree on rendering, sequ
 ### Read-Before-Draft (May 10, 2026)
 When Claude is asked to produce any Claude Code prompt or to make any decision documented in protocol files, Claude reads the relevant protocol section before drafting. If three protocol lines or section headers can't be named for the prompt being drafted, the prompt is being drafted from memory and should be discarded.
 
+### Anti-Drift (June 2, 2026)
+See UTH Protocol "Anti-Drift Gates" for the canonical statement. In short: quote the rule at the point of use (don't paraphrase from memory); label claims verified-from-source vs believed-from-memory; "done" = re-checking protocol + ledger + the live rendered output (Lesson V), not just the code.
+
 ---
 
 ## Locked Lessons (A through CC)
@@ -384,6 +387,9 @@ Visible tool list is partial by design. Many tools (Chrome MCP, Google Drive, Sl
 ---
 
 ## Editorial Link Format Discipline
+
+### Source linking — internal-first (2026-06-02)
+Link our own UTH coverage where a piece exists; use the external original only where it doesn't. Named-author primaries (e.g. an essayist like Ted Hall) may link to the original. Captions store `sources: [{ label, url }]`; the bottom Sources list uses inline `<a>`. Our own archive is the first place to look for source URLs before the open web.
 
 **Body-anchor URLs (Lesson H):** human-readable landing pages only. No `/api/`, `.csv`, `.json`. Same rule for chart caption sources.
 

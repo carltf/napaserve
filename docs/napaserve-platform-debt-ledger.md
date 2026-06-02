@@ -275,3 +275,33 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 #### PD-2026-05-31-04 — `/api/events-search` consumer unknown
 - **Status:** OPEN
 - No frontend caller found in `src/`. Confirm consumer (Squarespace embed / mobile app / CC events page) before future schema/param changes.
+
+---
+
+## 2026-06-02 Roll-Forward Entries
+
+#### PD-2026-06-02-01 — Hub bypasses Worker `/api/articles` (route lacks `headline`)
+- **Status:** OPEN
+- **Surfaced:** 2026-06-02
+- **Affected surfaces:** `economic-pulse-app/src/under-the-hood-index.jsx`; Cloudflare Worker `/api/articles` route
+- **Symptom:** Hub fetched Worker `/api/articles`, which has no `headline` field; farming card rendered blank. Hub now fetches Supabase REST directly (anon key, `published=eq.true`) for `headline` — a forked data path (commit 4ca41e0).
+- **Root cause:** Worker `/api/articles` select omits `headline`.
+- **Scope:** Single-route Worker change + manual Cloudflare deploy, then point hub back off the direct Supabase fetch.
+- **Notes:** The Napa Lowdown scout consumes `/api/tracker-events`, not `/api/articles` — no external-consumer cutover risk on this route. See ADR-003.
+- **Audit obligations:** Confirm `headline` present in Worker response; hub renders identical titles after pointing back; farming card non-blank.
+
+#### PD-2026-06-02-02 — Gen-z admin EXPORT_DATA bottom-`sources` lack `[label](url)` markdown
+- **Status:** OPEN
+- **Surfaced:** 2026-06-02
+- **Affected surfaces:** `napaserve-admin.jsx` gen-z (`could-gen-z-save-the-wine-industry`) EXPORT_DATA `sources` array
+- **Symptom:** Gen-z bottom-`sources` are plain strings with no `[label](url)` markdown, unlike the schools entry (canonical shape per UTH Protocol).
+- **Scope:** Editorial/markdown patch; do together with the Word-export template fix.
+- **Related entries:** PD-2026-05-24-04 (Word-export Sources markdown-link collapse)
+- **Notes:** Add markdown across all articles together when the template bug is fixed — avoid a one-off divergence.
+
+#### PD-2026-06-02-03 — Extract gen-z chart patterns into canonical template / chart-examples reference
+- **Status:** OPEN (forward)
+- **Surfaced:** 2026-06-02
+- **Affected surfaces:** `under-the-hood-template.jsx` (or a new chart-examples reference); source patterns in `under-the-hood-could-gen-z-save-the-wine-industry.jsx`
+- **Symptom:** Four clean chart patterns (line-with-era-annotations, multi-cohort bubble with labels above each circle, step-down waterfall, interactive scenario tester) live only in a shipped article; protocol forbids copying from a live published article.
+- **Scope:** Extraction into the canonical scaffold or a dedicated reference file.
