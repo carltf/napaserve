@@ -641,6 +641,7 @@ const CATEGORY_COLORS = {
   Production:  { bg: "#F0EBF5", border: "#7B5EA7", dot: "#7B5EA7" },
   Transaction: { bg: "#EBF0F5", border: "#4A7FA5", dot: "#4A7FA5" },
   Distribution:{ bg: "#F0F5EB", border: "#5A8A5A", dot: "#5A8A5A" },
+  Civic:       { bg: "#E9F1F3", border: "#3F7E8C", dot: "#3F7E8C" },
 };
 
 function ContractionTracker() {
@@ -648,13 +649,13 @@ function ContractionTracker() {
     since: monthsAgoISO(6),
   });
   const [filter, setFilter] = useState("All");
-  const categories = ["All", "Hospitality", "Production", "Transaction", "Distribution"];
+  const categories = ["All", "Hospitality", "Production", "Transaction", "Distribution", "Civic"];
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
-  // Y-axis category map (4 = top, 1 = bottom) — matches card color system
-  const Y_MAP = { Hospitality: 4, Production: 3, Transaction: 2, Distribution: 1 };
-  const Y_LABELS = { 4: "Hospitality", 3: "Production", 2: "Transaction", 1: "Distribution" };
+  // Y-axis category map (5 = top, 1 = bottom) — matches card color system
+  const Y_MAP = { Hospitality: 4, Production: 3, Transaction: 2, Distribution: 1, Civic: 5 };
+  const Y_LABELS = { 5: "Civic", 4: "Hospitality", 3: "Production", 2: "Transaction", 1: "Distribution" };
 
   // "Mon D, YYYY" -> months-since-Jan-2023 (linear x-axis)
   const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];

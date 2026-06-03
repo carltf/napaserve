@@ -229,6 +229,7 @@ function TransitionsSection({ events, loading, error }) {
       case "Production": return "#7B5797";
       case "Transaction": return "#4A6FA5";
       case "Distribution": return "#5C8A50";
+      case "Civic": return "#3F7E8C";
       default: return T.muted;
     }
   };
