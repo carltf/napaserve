@@ -1064,7 +1064,7 @@ export default function CalculatorsPage() {
             A running record of closures, transactions and capacity moves across Napa Valley — updated manually as events are confirmed and sourced. Based on the timeline methodology from <a href="/under-the-hood/napa-structural-reset-2026" style={{ color: T.accent, textDecoration: "none" }}>"The Reset Spreads"</a> (April 2026).
           </p>
           <p style={{ fontFamily: fonts.sans, fontSize: 13, color: T.muted, lineHeight: 1.6, margin: "0 0 28px" }}>
-            Each entry is sourced and categorized. Categories: Hospitality Closures · Production / Capacity · Deal Structure / Transactions · Distribution / Macro.
+            Each entry is sourced and categorized. Categories: Hospitality Closures · Production / Capacity · Deal Structure / Transactions · Distribution / Macro · Civic / Institutions.
           </p>
           <ContractionTracker />
         </div>
