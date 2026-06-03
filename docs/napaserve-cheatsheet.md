@@ -108,6 +108,10 @@ See UTH Protocol "Anti-Drift Gates" for the canonical statement. In short: quote
 
 **DD. Platform Debt Roll Call as EOS ritual.** Before generating EOS docs, re-read Platform Debt Ledger and answer four questions.
 
+### Lessons (2026-06-03)
+
+**EE. Adding a tracker category requires raising the chart y-axis max.** A new category row needs all of: `Y_MAP`/`Y_LABELS`, `CATEGORY_COLORS`, SnapshotTab `categoryColor()`, the filter-chips array, the legend caption — AND the Contraction Tracker chart's y-scale `max` (napaserve-calculators.jsx ~786). Civic was added at y=5 (jittered 4.85–5.15) while the y-scale stayed `min: 0.5 / max: 4.5`, so the whole row clipped off the top of the plot area — data, filter, and legend all read correct while the dot stayed invisible. Caught only by the rendered-state check (Lessons V/X), not by build or code review. Corollary to Lesson F: grow `max` with every new row, symmetric min/max padding.
+
 ---
 
 ## Snapshot PNG Geometry (V5 Canonical, NEW Surface)
@@ -243,6 +247,19 @@ All tracker UI surfaces consume the `useTrackerEvents` hook at `economic-pulse-a
 ### Consumer Registry (as of 2026-05-24)
 - `SnapshotTab.jsx` — dashboard "What changed this week" — 30-day window
 - `napaserve-calculators.jsx` — Contraction Tracker — 6-month window
+
+### Category Taxonomy (5 as of 2026-06-03)
+`napa_transition_tracker.category` is CHECK-constrained to exactly: Hospitality, Production, Transaction, Distribution, **Civic** (added 2026-06-03). Adding a value requires an ALTER (drop + re-add `napa_transition_tracker_category_check`).
+
+| Category | SnapshotTab dot | Calculators border/dot · bg | Legend long-form |
+|---|---|---|---|
+| Hospitality | T.gold | T.gold tint | Hospitality Closures |
+| Production | #7B5797 | #7B5EA7 · #F0EBF5 | Production / Capacity |
+| Transaction | #4A6FA5 | #4A7FA5 · #EBF0F5 | Deal Structure / Transactions |
+| Distribution | #5C8A50 | #5A8A5A · #F0F5EB | Distribution / Macro |
+| Civic | #3F7E8C | #3F7E8C · #E9F1F3 | Civic / Institutions |
+
+SnapshotTab `categoryColor()` and calculators `CATEGORY_COLORS` carry slightly different shades for the same category — pre-existing, not unified. Touch-points to add a category: DB CHECK constraint · CATEGORY_COLORS · SnapshotTab categoryColor() · filter-chips array · Y_MAP/Y_LABELS · chart y-axis `max` (Lesson EE) · legend caption. The published `under-the-hood-napa-structural-reset.jsx` chart array is NOT a live consumer — never edit it for a category change.
 
 ### External Consumer
 The `/api/tracker-events` Worker route has an external consumer: Napa Lowdown editorial scout (fetches `?since=~60d`, dedupes on `source_url` + `(headline, event_date)`). Flag to Tim before any route moves, CORS changes, or schema changes.

@@ -119,3 +119,16 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Trade-off.** Forked data path — the hub no longer consumes the Worker route for this data.
 
 **Unwind.** Add `headline` to the Worker `/api/articles` select, then point the hub back. Tracked as PD-2026-06-02-01 in the Platform Debt Ledger.
+
+---
+
+## ADR-004 — Civic / Institutions Tracker Category
+**Date:** 2026-06-03 · **Status:** Accepted
+
+**Context.** The Contraction Tracker's four categories (Hospitality, Production, Transaction, Distribution) describe the wine/visitor-economy value chain. The Highway 29 Media closure (a regional newspaper group) had no fitting bucket and was provisionally filed under Hospitality.
+
+**Decision.** Add a fifth category, **Civic / Institutions** (`category='Civic'`, color #3F7E8C), as a deliberately broad civic/media/institutional bucket — newspapers, schools, hospitals, bank branches, nonprofits. Highway 29 Media re-tagged into it.
+
+**Rationale.** "Civic" generalizes better than "Media" — it absorbs future non-wine contraction without spawning single-use categories. Distinct from the platform's "community intelligence" descriptor (Brand Rules forbid "civic intelligence"); "Civic" here is only a tracker category value.
+
+**Consequences.** `napa_transition_tracker_category_check` permanently includes Civic. Any further category requires an ALTER plus the UI touch-points (Lesson EE). The Napa Lowdown scout ignores category, so no external-consumer cutover.

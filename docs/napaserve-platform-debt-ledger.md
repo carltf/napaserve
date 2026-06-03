@@ -305,3 +305,17 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Affected surfaces:** `under-the-hood-template.jsx` (or a new chart-examples reference); source patterns in `under-the-hood-could-gen-z-save-the-wine-industry.jsx`
 - **Symptom:** Four clean chart patterns (line-with-era-annotations, multi-cohort bubble with labels above each circle, step-down waterfall, interactive scenario tester) live only in a shipped article; protocol forbids copying from a live published article.
 - **Scope:** Extraction into the canonical scaffold or a dedicated reference file.
+
+---
+
+## 2026-06-03 Roll-Forward Entries
+
+#### PD-2026-06-03-01 — Contraction Tracker same-month/same-category dot collision
+- **Status:** OPEN
+- **Surfaced:** 2026-06-03
+- **Affected surfaces:** `napaserve-calculators.jsx` Contraction Tracker chart (month-resolution x-axis)
+- **Symptom:** Two events in the same calendar month and category render at identical (x, y) coordinates — one visible dot whose tooltip lists both (e.g. Alila May 18 + Studio Findings May 31, both Hospitality). A reader reads one dot as one event.
+- **Root cause:** x-axis maps events to months-since-Jan-2023 (day-of-month discarded); y is category. Same month + same category → exact overlap.
+- **Scope:** Single-chart enhancement. Options: day-resolution x-axis, per-collision offset/jitter, or a "+N" stacked-count badge.
+- **Related entries:** PD-2026-05-24-02/-03 (tracker windowing/backfill)
+- **Notes:** Surfaced during Civic verification. Not a regression — pre-existing behavior of the month-resolution axis.

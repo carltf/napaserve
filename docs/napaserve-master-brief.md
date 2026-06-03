@@ -145,7 +145,7 @@ When verification returns unexpected output: stop, don't reinterpret. Re-verify.
 - GoDaddy domains
 
 ### Worker Routes
-- `/api/events-search` — DB-backed search over `community_events` with astronomical fallback to `astronomical_events`. Night-sky branch filters `event_date >= today` (upcoming-only; `start` param honored, else today) as of commit 60919c7, deployed to misty-bush-fc93.
+- `/api/events-search` — DB-backed search over `community_events` with astronomical fallback to `astronomical_events`
 - `/api/tracker-events` — public read of approved tracker events (external consumer: Napa Lowdown)
 - `/api/latest-substack-poll` — latest NVF Substack poll for Snapshot Reader Sentiment
 - Event Moderation admin tool (admin-side approve/reject surface)
@@ -222,9 +222,12 @@ set -a && source .env && set +a && <command>
 - Service role bypasses RLS for pipeline writes
 - Worker route `/api/tracker-events` reads with `status='approved'` filter server-side; status column stripped from output
 - Single source of truth for all tracker UI surfaces per Lesson CC (2026-05-24)
+- Columns: id, event_date, event_date_display, category, headline, detail, source, source_url, status, confidence (+ created_at)
+- CHECK constraints: category ∈ {Hospitality, Production, Transaction, Distribution, Civic} (Civic added 2026-06-03); confidence ∈ {high, medium, low}; status ∈ {pending_review, approved, rejected}
+- Adding a category = ALTER the category CHECK + wire every UI touch-point (see Cheatsheet "Category Taxonomy" + Lesson EE)
 
 ### astronomical_events
-- Now seeded (38 rows, 2026-05-31) — hardcoded 2026 calendar, not yet scheduled, so it runs dry around year-end (see PD-2026-05-31-01). Was 0 rows until `05_seed_astronomy.py` was first run this session (PD-2026-05-30-01, RESOLVED).
+- Currently EMPTY (0 rows, confirmed 2026-05-30) — `05_seed_astronomy.py` never populated it (PD-2026-05-30-01)
 - Consumed by `/api/events-search` astronomical fallback and the Calistoga Currents night-sky search
 
 ### External Read-Tenants (flag before schema/RLS changes)
@@ -276,7 +279,7 @@ Across 3 rows: UNRATE, CAUR, CANA, JTSJOR, CPIAUCSL, PPIACO, MORTGAGE30US, CASTH
 - 150 structured economic observations (lodging + grape crush)
 - 1,450+ community events
 - 5,064 nvf_subscribers (Substack import)
-- 28 napa_transition_tracker events (as of 2026-05-24, post three-event seed)
+- 31 napa_transition_tracker events (as of 2026-06-03; Civic category introduced, 1 event)
 
 ---
 
