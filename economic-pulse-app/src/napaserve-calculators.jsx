@@ -783,7 +783,7 @@ function ContractionTracker() {
           },
           y: {
             min: 0.5,
-            max: 4.5,
+            max: 5.5,
             ticks: {
               stepSize: 1,
               callback: (val) => Y_LABELS[val] || "",
