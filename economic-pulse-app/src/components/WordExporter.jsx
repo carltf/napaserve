@@ -99,6 +99,17 @@ function headerP(text) {
   return new Paragraph({ spacing: HEADER_SPACING, children: parseInline(text) });
 }
 
+// PD-2026-05-24-04: strip any trailing "Filename: chart-N_..._nvf.png" clause that
+// leaked into caption descriptions so it never reaches the Word body prose.
+function stripFilename(s) {
+  return (s || "").replace(/\s*Filename:\s*\S+/i, "").trimEnd();
+}
+
+// Normalize trailing punctuation/whitespace so the template adds exactly one period.
+function trimTerminal(s) {
+  return (s || "").replace(/[.\s]+$/, "");
+}
+
 export default function WordExporter({ article }) {
   const [exporting, setExporting] = useState(false);
 
@@ -166,21 +177,35 @@ export default function WordExporter({ article }) {
       }
 
       // 12. Captions
+      // PD-2026-05-24-04 fixes: (1) emit exactly one terminal period before "Source:"
+      // and after the sources; (2) strip any injected "Filename:" clause from the
+      // description; (3) render each caption source as a live hyperlink with its label.
       if (article.captions && article.captions.length > 0) {
         children.push(p("Captions:"));
         children.push(
           ...article.captions.map((cap) => {
-            let sourceText = "";
-            if (cap.source) {
-              sourceText = cap.source.replace(/\.$/, "");
-            } else if (Array.isArray(cap.sources) && cap.sources.length > 0) {
-              sourceText = cap.sources.map(s => s.label || s.url || "").filter(Boolean).join("; ");
+            const cleanDesc = trimTerminal(stripFilename(cap.description));
+            const kids = [
+              new TextRun({ text: `Chart ${cap.number}: ${cap.title} \u2014 ${cleanDesc}. Source: `, size: SIZE, font: FONT }),
+            ];
+            if (Array.isArray(cap.sources) && cap.sources.length > 0) {
+              cap.sources.forEach((s, idx) => {
+                if (idx > 0) kids.push(new TextRun({ text: "; ", size: SIZE, font: FONT }));
+                const label = (s.label || s.url || "").trim();
+                if (s.url) {
+                  kids.push(new ExternalHyperlink({
+                    link: s.url,
+                    children: [new TextRun({ text: label, size: SIZE, font: FONT, style: "Hyperlink" })],
+                  }));
+                } else {
+                  kids.push(new TextRun({ text: label, size: SIZE, font: FONT }));
+                }
+              });
+            } else if (cap.source) {
+              kids.push(...parseInline(trimTerminal(cap.source)));
             }
-            const captionText = `Chart ${cap.number}: ${cap.title} \u2014 ${cap.description.replace(/\.$/, "")}. Source: ${sourceText}.`;
-            return new Paragraph({
-              spacing: BODY_SPACING,
-              children: [new TextRun({ text: captionText, size: SIZE, font: FONT })],
-            });
+            kids.push(new TextRun({ text: ".", size: SIZE, font: FONT }));
+            return new Paragraph({ spacing: BODY_SPACING, children: kids });
           })
         );
         children.push(blank());

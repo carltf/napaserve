@@ -484,6 +484,43 @@ POLLS = [
             "Labor and contractor shortages",
         ],
     },
+    # ── Smoke-Taint 2026 ────────────────────────────────────────────
+    {
+        "article_slug": "smoke-taint-2026",
+        "sort_order": 1,
+        "question": "What worries you most about the 2026 smoke season?",
+        "options": [
+            "Smoke taint in the fruit",
+            "Lab vs taste mismatch",
+            "Insurance not paying out",
+            "Research funding cuts",
+            "Another major wildfire",
+        ],
+    },
+    {
+        "article_slug": "smoke-taint-2026",
+        "sort_order": 2,
+        "question": "Which smoke defense do you trust most?",
+        "options": [
+            "Small-batch test ferments",
+            "Barrier sprays in the field",
+            "Cellar remediation later",
+            "Crop insurance coverage",
+            "Nothing reliable yet",
+        ],
+    },
+    {
+        "article_slug": "smoke-taint-2026",
+        "sort_order": 3,
+        "question": "Where should the fix come first?",
+        "options": [
+            "Better detection science",
+            "Clearer insurance rules",
+            "Steady federal funding",
+            "On-vineyard prevention",
+            "Faster lab turnaround",
+        ],
+    },
 ]
 
 
