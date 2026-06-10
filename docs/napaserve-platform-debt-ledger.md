@@ -75,11 +75,12 @@ Before generating EOS docs at session end, re-read this ledger and answer:
 ### Word export
 
 #### PD-2026-05-24-04 — Word export template bugs
-- **Status:** OPEN (deferred since 2026-05-04)
-- **Affected surfaces:** `napaserve-admin.jsx` export rendering; affects every UTH article
+- **Status:** RESOLVED 2026-06-10 (commit `37d1336`)
+- **Affected surfaces:** `components/WordExporter.jsx` export rendering (imported by `napaserve-admin.jsx`); affects every UTH article
 - **Symptom:** Three bugs — caption "..", "Filename:" inline prose, Sources markdown collapse inconsistency
 - **Scope:** Multi-bug single-file fix
 - **Audit obligations:** Word export of 3 UTH articles, all bugs resolved
+- **Resolution:** Fixed in `components/WordExporter.jsx` (the actual render code; the ledger's earlier "napaserve-admin.jsx" pointer named the importer, not the render function). (1) Caption terminal period normalized via `trimTerminal()` so exactly one period precedes "Source:" and closes the line. (2) Injected `Filename: chart-N_..._nvf.png` clauses stripped from caption descriptions via `stripFilename()` so they never reach Word prose. (3) Caption sources now render as live `ExternalHyperlink`s with their label text (was a single plain `TextRun`). Rode the smoke-taint-2026 article commit. Final browser Word-export visual check of smoke-taint-2026 + 3 existing UTH articles handed to Tim (no browser/Chrome MCP in the build session).
 
 ### useDraftGate
 
