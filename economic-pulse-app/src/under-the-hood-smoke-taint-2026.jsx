@@ -508,6 +508,18 @@ const RELATED = [
   { title: "Under the Hood: Living With Fire in Northern California’s Wine Country", pub: "Napa Valley Features", date: "Sept. 28, 2024", url: "https://napavalleyfocus.substack.com/p/under-the-hood-living-with-fire-in" },
 ];
 
+// ── IMAGE + CUTLINE ────────────────────────────────────────────────
+function Figure({ src, alt, cutline, marginTop = 28 }) {
+  return (
+    <figure style={{ margin: `${marginTop}px 0 24px` }}>
+      <img src={src} alt={alt} style={{ width: "100%", borderRadius: 4, display: "block" }} />
+      <figcaption style={{ fontFamily: font, fontStyle: "italic", fontSize: 14, color: T.muted, marginTop: 8, lineHeight: 1.5 }}>
+        {cutline}
+      </figcaption>
+    </figure>
+  );
+}
+
 // ── MAIN COMPONENT ─────────────────────────────────────────────────
 export default function UnderTheHoodSmokeTaint2026() {
   const navigate = useNavigate();
@@ -573,6 +585,14 @@ export default function UnderTheHoodSmokeTaint2026() {
             As Northern California heads into a fire season forecast to bring above-normal large-fire potential, smoke — not flame — remains the costliest threat to Napa Valley’s wine grapes. At the West Coast Smoke Exposure Task Force’s annual smoke summit on June 8, federal scientists reported progress on the field’s hardest problem: linking lab measurements of smoke compounds to what tasters actually perceive as an ashy flaw. Researchers also detailed advances in rapid detection, in-cellar remediation and the new Fire Insurance Protection-Smoke Index endorsement. Yet the federal agency funding much of the work is moving through a reorganization, and growers report friction with insurers over which lab markers count.
           </p>
         </div>
+
+        {/* ── LEAD IMAGE (shared library) ───────────────────────────── */}
+        <Figure
+          src="/photos/library/fire/2020-09-27_glass-fire_napa-welcome-sign_DSC07531.jpg"
+          alt="A CAL FIRE helicopter passes a smoke plume from the 2020 Glass Fire above the Napa Valley welcome sign as onlookers watch"
+          cutline={"Onlookers watch a CAL FIRE helicopter work the Glass Fire behind the Napa Valley welcome sign, Sept. 27, 2020 — Tim Carl Photo"}
+          marginTop={0}
+        />
 
         {/* ── LEDE (carries the dateline) ───────────────────────────── */}
         <p style={{ ...P_STYLE, marginBottom: 18 }}>
