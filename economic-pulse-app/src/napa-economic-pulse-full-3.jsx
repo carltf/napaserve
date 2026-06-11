@@ -232,12 +232,15 @@ export default function EconomicPulseDashboard(){
   }), [pollData]);
 
   const EXCLUDED_THEMES = new Set(["Reader Demographics", "Words, Puzzles & Trivia"]);
-  const topCivicPolls = useMemo(() =>
-    pollData
-      .filter(p => !EXCLUDED_THEMES.has(p.theme) && p.total_votes > 0)
-      .sort((a, b) => b.total_votes - a.total_votes)
-      .slice(0, 3)
-  , [pollData]);
+  const RECENT_POOL = 15;
+  const topCivicPolls = useMemo(() => {
+    const eligible = pollData.filter(p =>
+      p.theme != null && !EXCLUDED_THEMES.has(p.theme) && p.total_votes > 0);
+    const recent = [...eligible]
+      .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+      .slice(0, RECENT_POOL);
+    return recent.sort((a, b) => b.total_votes - a.total_votes).slice(0, 3);
+  }, [pollData]);
 
   const allNapa=useMemo(()=>wineryData.filter(d=>d.napa!=null),[wineryData]);
 
