@@ -317,6 +317,7 @@ function PollsSection({ slug }) {
 // ── MAIN COMPONENT ─────────────────────────────────────────────────
 export default function UnderTheHoodTemplate() {
   const navigate = useNavigate();
+  const handleBack = () => (window.history.length > 1 ? navigate(-1) : navigate("/under-the-hood"));
   const status = useDraftGate(ARTICLE_SLUG);
   const isDraft = status === "draft";
 
@@ -341,6 +342,11 @@ export default function UnderTheHoodTemplate() {
       <NavBar />
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: isDraft ? "80px 20px 60px" : "60px 20px 60px" }}>
+
+        {/* ── BACK ───────────────────────────────────────────────── */}
+        <button onClick={handleBack} style={{ fontFamily: font, fontSize: 14, color: T.muted, background: "none", border: "none", padding: 0, cursor: "pointer", textDecoration: "none", marginBottom: 12 }}>
+          ← Back
+        </button>
 
         {/* ── EYEBROW ────────────────────────────────────────────── */}
         <p style={{ fontFamily: font, fontSize: 15, color: T.muted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
