@@ -358,3 +358,75 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Scope:** New feature; prerequisite first — pick a cookieless provider (Cloudflare Web Analytics / Vercel Web Analytics / Plausible; brand-fit, no consent banner), instrument, THEN build the panel via proxy.
 - **Related entries:** PD-2026-06-11-02 (same proxy pattern).
 - **Notes:** Don't build a viewer for data that doesn't exist; privacy-respecting provider is an editorial requirement, not just technical.
+
+#### PD-2026-06-11-04 — Home-value MoM delta SSOT drift
+- **Status:** OPEN (parked behind PD-2026-06-11-09 per Tim, 2026-06-11)
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** `napa-economic-pulse-full-3.jsx` — Overview AVG HOME VALUE KPI delta, Snapshot Housing card, Overview weekly-summary prose
+- **Symptom:** Same value ($893,351) but Overview KPI shows ▲ +6,106 MoM while Snapshot says "Unchanged MoM" and the weekly summary says "up 0.0% from prior snapshot." Three surfaces flat; the +6,106 is the outlier.
+- **Root cause:** MoM delta computed independently in ≥2 places against different prior references; no shared computed-delta helper.
+- **Scope:** Single-file investigation + unify on one delta (Lesson CC pattern).
+- **Related entries:** Lesson CC (useTrackerEvents SSOT precedent)
+- **Audit obligations:** All three surfaces show one MoM figure; Chrome MCP check.
+- **Notes:** Parked behind data work per Tim.
+
+#### PD-2026-06-11-05 — Older-gen UTH header normalization (7 files)
+- **Status:** OPEN
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** 7 older-gen UTH files (sonoma, gdp-2024, lake, napa-structural-reset, the v2 file, supply-chain, price-discovery)
+- **Symptom:** No ← Back button (deferred from NIT 3) + divergent headers vs the 9 canonical articles; 5 lack a `useNavigate` import.
+- **Root cause:** Predate the canonical UTH template; bespoke headers.
+- **Scope:** Per-file — add `useNavigate` where missing, locate each header, insert `handleBack` + ← Back. Not the clean 3-line insert.
+- **Related entries:** NIT 3 (this session, canonical 9 done)
+- **Audit obligations:** ← Back renders + click works on all 7; clean build.
+- **Notes:** Corrects the brief's "every UTH article is a template copy" — it's 9 canonical / 7 older-gen.
+
+#### PD-2026-06-11-06 — Reader Sentiment (Snapshot) stale via `/api/latest-substack-poll`
+- **Status:** OPEN (resolves via PD-2026-06-11-09; no separate code fix expected)
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** Snapshot Reader Sentiment signal; Worker `/api/latest-substack-poll`
+- **Symptom:** Frozen on "syrah–pinot blend / Wine Chronicles / 29 votes" — newest Substack poll hasn't changed because `nvf_polls` is stale since ~April.
+- **Root cause:** Data staleness (overdue pull), not route logic. Distinct path from NIT 2's `topCivicPolls`, so the NIT 2 fix didn't touch it.
+- **Scope:** None direct — confirm route is "latest by `published_at`," resolve by catch-up pull (PD-09).
+- **Related entries:** PD-2026-06-11-09
+- **Audit obligations:** After catch-up pull, card shows a genuinely recent poll.
+- **Notes:** Verify the route isn't pinned to a fixed poll while in there.
+
+#### PD-2026-06-11-07 — `.env` not materializing at `~/Desktop/napaserve/.env`
+- **Status:** OPEN (blocks PD-2026-06-11-09)
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** `~/Desktop/napaserve/.env` (gitignored secrets)
+- **Symptom:** `source .env` → "no such file or directory" (not permission-denied).
+- **Root cause:** Likely iCloud eviction under the managed Desktop (see PD-08); not confirmed gone.
+- **Scope:** Diagnostic — `ls -la`; if dataless, open in Finder to force download; if truly gone, recreate from pointer maps (pointers only → re-gather values).
+- **Related entries:** PD-2026-06-11-08, PD-2026-06-11-09
+- **Audit obligations:** `source .env` succeeds; SUBSTACK_SID + Supabase keys present.
+- **Notes:** Must resolve before the SID refresh — the SID lives in this file.
+
+#### PD-2026-06-11-08 — Repo under iCloud-managed `~/Desktop` → recurring TCC/fd cascade
+- **Status:** OPEN (deliberate migration, deferred)
+- **Surfaced:** 2026-06-11 (3rd occurrence: May 4, May 10, Jun 11)
+- **Affected surfaces:** Project root `~/Desktop/napaserve`; documented paths; `.env` sourcing; session-start command
+- **Symptom:** Recurring mid-session EPERM on reads + Claude Code 256-fd launch failure + `.env` eviction.
+- **Root cause:** Repo under `~/Desktop`, which iCloud manages when Desktop & Documents sync is on → TCC churn + file eviction.
+- **Scope:** Relocate repo to a non-synced path (e.g. `~/dev/napaserve`); update brief paths, `.env` sourcing, CLAUDE.md staging cmds, session-start. Deliberate.
+- **Related entries:** PD-2026-06-11-07
+- **Audit obligations:** Post-move full session, no EPERM; `.env` sources cleanly.
+- **Notes:** Durable fix for a 3×-paid tax. Per-session workarounds (ulimit, FDA re-grant) stay in the cheatsheet meanwhile.
+
+#### PD-2026-06-11-09 — Substack→Supabase data currency + weekly automation (Track B)
+- **Status:** SCHEDULED (next session; SID sub-task time-critical — Jun 13)
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** SUBSTACK_SID (`.env`); `pipeline/poll_extraction.py` + posts seeder + classify/embed; `nvf_polls`/`nvf_posts`; new GitHub Actions workflow; downstream PD-2026-06-11-01 heartbeat
+- **Symptom:** Pull is manual + overdue since ~April; public surfaces show stale "latest" data; no automation.
+- **Root cause:** Manual/monthly pull lapsed; SUBSTACK_SID (session cookie) near expiry; possible June Substack API change, unverified.
+- **Scope:** Sequenced — (1) refresh SUBSTACK_SID before Jun 13 [blocked on PD-07]; (2) audit pipeline live (works post-June-change? last-run dates?); (3) catch-up pull to current; (4) GitHub Actions weekly cron + run-heartbeat (PD-01) + expiry-detect/Slack alert.
+- **Related entries:** PD-2026-06-11-01, -06, -07; master-brief "Substack pipeline audit"; PD-2026-05-30-06
+- **Audit obligations:** Fresh SID authenticates (dry-run, no 401); catch-up pull round-trips expected counts; Reader Sentiment + Pulse reflect current polls; cron runs and writes heartbeat.
+- **Notes:** Honest constraint — SID is a session cookie that expires; full hands-off is bounded by re-auth cadence (hence expiry-detect). The dry-run is also the empirical test for the "June API change."
+
+#### PD-2026-06-11-10 — NIT 1 admin archived-row mobile stack (verify pending)
+- **Status:** SHIPPED-NEEDS-VERIFY (commit d3b0712, live in index-CYLJdkB-.js)
+- **Surfaced:** 2026-06-11
+- **Symptom/fix:** Archived-row title one-word-stacked on mobile; fixed via `.archived-row` class + `@media` column-stack.
+- **Audit obligations:** Tim eyeballs the admin archived list at <600px (gated surface — no Chrome MCP); titles stack title-above-date.
