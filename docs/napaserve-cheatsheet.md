@@ -392,6 +392,9 @@ Default `ulimit -n` is 256. Run at session start or persist in `~/.zshrc`:
 ulimit -n 2147483646
 ```
 
+- Claude Code launch blocked by 256 fd-limit → `ulimit -n` in the same shell before `claude`. The suggested `2147483646` can itself throw "unknown error (Unexpected)"; `65536` works. Distinct from TCC read-EPERM — different fix.
+- Re-feed locked scope on every Code-thread resume — a resumed session re-derives on-disk edits but can drop the prior session's locked decision (nearly shipped a template-only NIT 3 as "done", 2026-06-11).
+
 ### TextEdit trap
 Never save .html or .md files from TextEdit — converts to RTF. Use VS Code, nano, or vim.
 

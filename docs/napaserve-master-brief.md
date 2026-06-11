@@ -136,7 +136,7 @@ When verification returns unexpected output: stop, don't reinterpret. Re-verify.
 - React/Vite frontend at `~/Desktop/napaserve/economic-pulse-app/`
 - Supabase: `csenpchwxxepdvjebsrt.supabase.co`
 - Cloudflare Worker: `misty-bush-fc93.tfcarl.workers.dev` (manual deploy only)
-- Vercel: auto-deploy on push to main
+- Vercel: auto-deploy on push to main — current live bundle `index-CYLJdkB-.js` (2026-06-11)
 - GitHub: `carltf/napaserve` (private)
 - Anthropic API: `claude-sonnet-4-20250514`
 - Voyage AI: `voyage-3`
@@ -344,6 +344,8 @@ Six-signal at-a-glance synthesis of Napa County's economy. URL: `napaserve.org/d
 **Next available poll ID:** 45.
 
 **Status verification rule (Lesson Z, May 18, 2026):** EOS doc generation MUST run DB status query against every article slug mentioned. Never transcribe published-state from prior session docs.
+
+**UTH generation split (corrected 2026-06-11):** Not every live UTH article is a template copy. The live set is **9 canonical (template-derived)** / **7 older-gen (non-canonical headers, 5 of which lack a `useNavigate` import)**. Older-gen files predate the canonical scaffold and need per-file header normalization rather than the clean template insert. Ref PD-2026-06-11-05.
 
 ### Marketing Machine — Canonical Render Order (verified live May 10)
 NavBar → Eyebrow → Headline → Byline+Date → Deck → Substack link → Article Summary → body sections with charts → italic bio byline → "Loading polls…" → PollsSection → Related Coverage → Archive Search → Methodology → Sources → Footer.
