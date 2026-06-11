@@ -320,3 +320,41 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Scope:** Single-chart enhancement. Options: day-resolution x-axis, per-collision offset/jitter, or a "+N" stacked-count badge.
 - **Related entries:** PD-2026-05-24-02/-03 (tracker windowing/backfill)
 - **Notes:** Surfaced during Civic verification. Not a regression — pre-existing behavior of the month-resolution axis.
+
+---
+
+## 2026-06-11 Roll-Forward Entries
+
+> **Theme:** Admin Ops Console — a new internal-admin feature built in three phases. Phase 1 is the highest-value (fixes this session's data-freshness blind spot) and is built alongside PD-2026-06-11-09 (Substack automation). Phases 2 and 3 share a common Worker-proxy pattern for secret-bearing status APIs.
+
+#### PD-2026-06-11-01 — Ops Console Phase 1: data-freshness heartbeat
+- **Status:** OPEN (build alongside PD-2026-06-11-09 Substack automation)
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** NEW `pipeline_runs` table; each pipeline seeder (write finished-at on completion); `napaserve-admin.jsx` (freshness card)
+- **Symptom:** Nothing surfaces when the Substack pull (or any pipeline) last ran; the April→June lapse was invisible until it showed as stale public content.
+- **Root cause:** Pipelines write content but no run-heartbeat; freshness is only inferable from newest content date, which conflates content age with pull age.
+- **Scope:** New feature (small). Heartbeat write per seeder + one admin card reading `MAX(finished_at)` per source with a stale-threshold badge.
+- **Related entries:** PD-2026-06-11-09 (Substack automation) — the weekly cron writes the heartbeat for free.
+- **Audit obligations:** Trigger a pull, confirm card updates; confirm stale badge fires.
+- **Notes:** Highest-value of the three; directly fixes this session's blind spot.
+
+#### PD-2026-06-11-02 — Ops Console Phase 2: service reachability lights
+- **Status:** OPEN
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** NEW authenticated admin Worker route holding Vercel + Cloudflare API tokens as Worker secrets; `napaserve-admin.jsx` panel; manual Cloudflare deploy
+- **Symptom:** No single internal view of Supabase/Vercel/Cloudflare health.
+- **Root cause:** Constraint — those status APIs need secret tokens → cannot be called from the public frontend bundle → must proxy through a Worker.
+- **Scope:** New feature (medium). v1 = green/yellow/red + latency (Supabase REST ping, Worker `/health` ping, Vercel last-deploy). NOT error-log aggregation.
+- **Related entries:** External-consumer flag — Napa Lowdown + CC read-tenant rules apply to ANY Worker route change (see ADR-003).
+- **Audit obligations:** Each light reflects a real induced outage/latency; tokens never in the frontend bundle.
+- **Notes:** Scope discipline — lights, not a second logging system.
+
+#### PD-2026-06-11-03 — Ops Console Phase 3: site activity
+- **Status:** OPEN (blocked on prerequisite)
+- **Surfaced:** 2026-06-11
+- **Affected surfaces:** Analytics provider (TBD); admin panel; Worker proxy
+- **Symptom:** No internal view of where visitors go / top pages / referrers.
+- **Root cause:** No analytics instrumented today — no data to display yet.
+- **Scope:** New feature; prerequisite first — pick a cookieless provider (Cloudflare Web Analytics / Vercel Web Analytics / Plausible; brand-fit, no consent banner), instrument, THEN build the panel via proxy.
+- **Related entries:** PD-2026-06-11-02 (same proxy pattern).
+- **Notes:** Don't build a viewer for data that doesn't exist; privacy-respecting provider is an editorial requirement, not just technical.
