@@ -1603,7 +1603,7 @@ function ArchivedArticleRow({ article }) {
     ? new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : '';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', background: '#EDE8DE', borderRadius: 6, marginBottom: 6 }}>
+    <div className="archived-row">
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', color: '#8B7355', whiteSpace: 'nowrap', flexShrink: 0 }}>{article.publication?.toUpperCase()}</span>
         <a href={`https://napaserve.org/under-the-hood/${article.slug}`} target="_blank" rel="noopener noreferrer"

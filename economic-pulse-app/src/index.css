@@ -77,6 +77,24 @@ button {
   gap: 16px;
 }
 
+/* Admin archived-article rows — stack title above date on mobile (added June 11, 2026) */
+.archived-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #EDE8DE;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+@media (max-width: 600px) {
+  .archived-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
 /* Weekly Snapshot tab — 6-card grid (added April 27, 2026) */
 .kpi-grid-snapshot {
   display: grid;
