@@ -382,7 +382,8 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Notes:** Corrects the brief's "every UTH article is a template copy" — it's 9 canonical / 7 older-gen.
 
 #### PD-2026-06-11-06 — Reader Sentiment (Snapshot) stale via `/api/latest-substack-poll`
-- **Status:** OPEN (resolves via PD-2026-06-11-09; no separate code fix expected)
+- **Status:** CLOSED
+- **Resolution 2026-06-12:** /api/latest-substack-poll returns Jun-12 poll 548174; Community Sentiment card current (Chrome MCP verified).
 - **Surfaced:** 2026-06-11
 - **Affected surfaces:** Snapshot Reader Sentiment signal; Worker `/api/latest-substack-poll`
 - **Symptom:** Frozen on "syrah–pinot blend / Wine Chronicles / 29 votes" — newest Substack poll hasn't changed because `nvf_polls` is stale since ~April.
@@ -393,7 +394,8 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Notes:** Verify the route isn't pinned to a fixed poll while in there.
 
 #### PD-2026-06-11-07 — `.env` not materializing at `~/Desktop/napaserve/.env`
-- **Status:** OPEN (blocks PD-2026-06-11-09)
+- **Status:** CLOSED
+- **Resolution 2026-06-12:** .env present 4409 B this session, no recurrence; recurrence risk folded into PD-08.
 - **Surfaced:** 2026-06-11
 - **Affected surfaces:** `~/Desktop/napaserve/.env` (gitignored secrets)
 - **Symptom:** `source .env` → "no such file or directory" (not permission-denied).
@@ -415,7 +417,8 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Notes:** Durable fix for a 3×-paid tax. Per-session workarounds (ulimit, FDA re-grant) stay in the cheatsheet meanwhile.
 
 #### PD-2026-06-11-09 — Substack→Supabase data currency + weekly automation (Track B)
-- **Status:** SCHEDULED (next session; SID sub-task time-critical — Jun 13)
+- **Status:** #1–3 SHIPPED; #4 OPEN (re-scoped, see PD-2026-06-12-02)
+- **Resolution 2026-06-12:** SID refreshed (exp 2026-09-10), pipeline audited (corpus frozen at Mar-11 export; no June API break), 170 backfilled + classified + embedded; nvf_polls 1899.
 - **Surfaced:** 2026-06-11
 - **Affected surfaces:** SUBSTACK_SID (`.env`); `pipeline/poll_extraction.py` + posts seeder + classify/embed; `nvf_polls`/`nvf_posts`; new GitHub Actions workflow; downstream PD-2026-06-11-01 heartbeat
 - **Symptom:** Pull is manual + overdue since ~April; public surfaces show stale "latest" data; no automation.
@@ -430,3 +433,30 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Surfaced:** 2026-06-11
 - **Symptom/fix:** Archived-row title one-word-stacked on mobile; fixed via `.archived-row` class + `@media` column-stack.
 - **Audit obligations:** Tim eyeballs the admin archived list at <600px (gated surface — no Chrome MCP); titles stack title-above-date.
+
+---
+
+## 2026-06-12 Roll-Forward Entries
+
+#### PD-2026-06-12-01 — PostgREST 1000-row cap on un-paginated reads
+- **Status:** OPEN (one instance fixed; audit remaining)
+- **Surfaced:** 2026-06-12
+- **Affected surfaces:** `poll_extraction.py` `supabase_existing_poll_ids()` [FIXED a390797]; `classify_polls.py` `fetch_unclassified()` [latent]; dashboard Community Sentiment count [cosmetic: "1,000" vs 1899]
+- **Symptom:** PostgREST silently caps un-paginated `select` at 1000; `--skip-existing` re-fetched everything past the first 1000 once nvf_polls exceeded 1000.
+- **Scope:** Audit all existing-ID / dedup / count reads; paginate each.
+- **Related entries:** PD-2026-06-11-09
+
+#### PD-2026-06-12-02 — Substack posts-ingestion has no live refresh
+- **Status:** OPEN (re-scopes PD-2026-06-11-09 #3/#4)
+- **Surfaced:** 2026-06-12
+- **Affected surfaces:** `poll_extraction.py` POSTS_DIR/POSTS_CSV (now env-overridable via SUBSTACK_POSTS_DIR/CSV); manual Substack data export
+- **Symptom:** Depends on a manual dated export; each catch-up needs a fresh export dropped + repointed. No hands-off path.
+- **Scope:** Decide ingestion path — keep manual export, or build Substack API enumeration (true automation = API enumeration, not dumps).
+- **Related entries:** PD-2026-06-11-09, PD-2026-06-11-01
+
+#### PD-2026-06-12-03 — Hollow-row leak (null/empty-question polls)
+- **Status:** CLOSED 2026-06-12
+- **Surfaced:** 2026-06-12
+- **Affected surfaces:** `poll_extraction.py` `parse_poll_response()`; `nvf_polls`
+- **Symptom:** id-only poll embeds (null/empty question, 0 votes) upserted as hollow rows; polluted published_at-desc ordering and fed null text to embedding.
+- **Resolution:** FIXED a7155f2 (parse skips null/empty question) + 9 existing rows cleaned (6 legacy March, 3 this run). Logged closed.

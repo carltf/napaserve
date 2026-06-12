@@ -266,16 +266,18 @@ Across 3 rows: UNRATE, CAUR, CANA, JTSJOR, CPIAUCSL, PPIACO, MORTGAGE30US, CASTH
 - Use `python3` not `python` on Mac
 - `npm run build` runs from `economic-pulse-app/` subdirectory
 - Worker.js deploys are MANUAL via Cloudflare dashboard
-- Poll extraction is manual-only, monthly cadence
-- SUBSTACK_SID expires June 13, 2026
+- Poll extraction is manual-only, monthly cadence — last audited + backfilled 2026-06-12 (170 polls; nvf_polls 1899)
+- SUBSTACK_SID expires ~2026-09-10 (~90-day session cookie; validity = functional probe via poll_extraction --dry-run, not the calendar date)
+- POSTS_DIR/POSTS_CSV env-overridable via SUBSTACK_POSTS_DIR/SUBSTACK_POSTS_CSV (March export = default); repoint per fresh export
+- Substack posts-ingestion has no live refresh — depends on a manual dated export; each catch-up needs a fresh one → PD-2026-06-12-02
 
 ---
 
 ## Key Data Assets
 
-- 1,738+ NVF reader polls (June 2023–present) across 10 thematic categories
+- 1,899 NVF reader polls (June 2023–present) across 9 thematic categories — all classified + Voyage-3 embedded (2026-06-12)
 - 997 NVF articles → 10,033 semantic chunks with Voyage-3 embeddings
-- 1,603 poll embeddings
+- 1,899 poll embeddings (full nvf_polls coverage, 2026-06-12)
 - 150 structured economic observations (lodging + grape crush)
 - 1,450+ community events
 - 5,064 nvf_subscribers (Substack import)

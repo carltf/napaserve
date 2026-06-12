@@ -112,6 +112,16 @@ See UTH Protocol "Anti-Drift Gates" for the canonical statement. In short: quote
 
 **EE. Adding a tracker category requires raising the chart y-axis max.** A new category row needs all of: `Y_MAP`/`Y_LABELS`, `CATEGORY_COLORS`, SnapshotTab `categoryColor()`, the filter-chips array, the legend caption — AND the Contraction Tracker chart's y-scale `max` (napaserve-calculators.jsx ~786). Civic was added at y=5 (jittered 4.85–5.15) while the y-scale stayed `min: 0.5 / max: 4.5`, so the whole row clipped off the top of the plot area — data, filter, and legend all read correct while the dot stayed invisible. Caught only by the rendered-state check (Lessons V/X), not by build or code review. Corollary to Lesson F: grow `max` with every new row, symmetric min/max padding.
 
+### Lessons (2026-06-12)
+
+**FF. SID check of record = the functional probe, not the calendar date.** `poll_extraction.py --dry-run --limit 1` returning 200 + real vote counts is the SUBSTACK_SID validity test; the recorded expiry was 3 days off (logged Jun 13, cookie actually expired Jun 10). Date = early-warning only. ~90-day session cookie; value ≠ validity (server-side; re-login can renew the same value with a new expiry).
+
+**GG. iCloud ".icloud-placeholder absent" ≠ downloaded.** A starting download renames stubs to real names before bytes land. Verify materialization with `find -size 0` + `du -sh` + the Finder progress circle — not the placeholder grep alone.
+
+**HH. PostgREST silently caps un-paginated selects at 1000.** Extends the URL-encoding lesson. Any existing-ID / dedup / count read must paginate (Range headers or limit/offset loop) or it truncates once the table exceeds 1000 rows. See PD-2026-06-12-01.
+
+**II. Claude Code can't see Supabase SQL Editor actions.** Out-of-band DB writes (e.g. a SQL Editor DELETE) are invisible here — flagged a Tim-initiated delete as "external" 3× this session. Reconcile in chat.
+
 ---
 
 ## Snapshot PNG Geometry (V5 Canonical, NEW Surface)
