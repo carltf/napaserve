@@ -38,20 +38,26 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
 SUPABASE_TABLE = "nvf_polls"
 
-# Path to the Substack HTML export directory (iCloud)
-POSTS_DIR = os.path.expanduser(
-    "~/Library/Mobile Documents/com~apple~CloudDocs/"
-    "Valley Works Collaborative/NapaServe/"
-    "Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts"
+# Path to the Substack HTML export directory (override via SUBSTACK_POSTS_DIR)
+POSTS_DIR = os.environ.get(
+    "SUBSTACK_POSTS_DIR",
+    os.path.expanduser(
+        "~/Library/Mobile Documents/com~apple~CloudDocs/"
+        "Valley Works Collaborative/NapaServe/"
+        "Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts"
+    ),
 )
 
 SUBSTACK_POLL_API = "https://napavalleyfocus.substack.com/api/v1/poll/{poll_id}"
 
-# posts.csv lives one level above the posts/ directory
-POSTS_CSV = os.path.expanduser(
-    "~/Library/Mobile Documents/com~apple~CloudDocs/"
-    "Valley Works Collaborative/NapaServe/"
-    "Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts.csv"
+# posts.csv lives one level above the posts/ directory (override via SUBSTACK_POSTS_CSV)
+POSTS_CSV = os.environ.get(
+    "SUBSTACK_POSTS_CSV",
+    os.path.expanduser(
+        "~/Library/Mobile Documents/com~apple~CloudDocs/"
+        "Valley Works Collaborative/NapaServe/"
+        "Substack Data March 11 2026/9DDiMintS2Ksp84RxDH69g/posts.csv"
+    ),
 )
 
 # Regex to find poll-embed divs with data-attrs containing an id
@@ -79,15 +85,29 @@ def supabase_headers():
 
 
 def supabase_existing_poll_ids() -> set[int]:
-    """Fetch all poll_ids already in nvf_polls."""
+    """Fetch all poll_ids already in nvf_polls.
+
+    PostgREST caps a single response at its configured max-rows (1000 by
+    default), so page through with Range headers until a short page returns —
+    otherwise the skip-set silently truncates once the table exceeds the cap.
+    """
     ids = set()
-    url = f"{SUPABASE_URL}/rest/v1/{SUPABASE_TABLE}?select=poll_id"
-    r = requests.get(url, headers=supabase_headers())
-    if not r.ok:
-        log.warning(f"Could not fetch existing poll_ids: {r.status_code} {r.text}")
-        return ids
-    for row in r.json():
-        ids.add(int(row["poll_id"]))
+    page = 1000
+    offset = 0
+    while True:
+        url = f"{SUPABASE_URL}/rest/v1/{SUPABASE_TABLE}?select=poll_id"
+        headers = {**supabase_headers(), "Range-Unit": "items",
+                   "Range": f"{offset}-{offset + page - 1}"}
+        r = requests.get(url, headers=headers)
+        if not r.ok:
+            log.warning(f"Could not fetch existing poll_ids: {r.status_code} {r.text}")
+            return ids
+        rows = r.json()
+        for row in rows:
+            ids.add(int(row["poll_id"]))
+        if len(rows) < page:
+            break
+        offset += page
     log.info(f"Found {len(ids)} existing polls in Supabase")
     return ids
 
