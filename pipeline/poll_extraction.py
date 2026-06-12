@@ -249,10 +249,18 @@ def fetch_poll(poll_id: int, cookie: str) -> dict | None:
         return None
 
 
-def parse_poll_response(api_data: dict, post_id: int, post_title: str = "") -> dict:
+def parse_poll_response(api_data: dict, post_id: int, post_title: str = "") -> dict | None:
     """
     Transform the Substack API response into a row for nvf_polls.
+
+    Returns None for id-only "hollow" polls (null/empty question) — typically
+    draft or unpublished poll embeds — so they take the same skip path as
+    no-data/no-id responses instead of being upserted as empty rows.
     """
+    question = (api_data.get("question") or api_data.get("title") or "").strip()
+    if not question:
+        return None
+
     options = []
     total_votes = 0
     for opt in api_data.get("options", []):
@@ -270,7 +278,7 @@ def parse_poll_response(api_data: dict, post_id: int, post_title: str = "") -> d
         "poll_id": api_data["id"],
         "post_id": post_id,
         "post_title": post_title,
-        "question": api_data.get("question", api_data.get("title", "")),
+        "question": question,
         "options_json": json.dumps(options),
         "total_votes": total_votes,
         "published_at": published_at,
