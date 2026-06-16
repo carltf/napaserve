@@ -174,9 +174,9 @@ const EXPORT_DATA = {
       t("The office’s remit also continues to broaden. The county Office of Emergency Services was folded into the Sheriff’s Office, with 2024 its first full year, and in 2025 the transportation bureau moved 230 incarcerated people from the old downtown jail to a new county corrections facility on Napa Vallejo Highway."),
       h("Outreach and the Fear Factor"),
       t("The 2025 report adds a section absent from earlier editions: outreach to immigrant residents. It describes Sheriff Ortiz and Lt. Felipe Hernandez delivering nearly 30 presentations, primarily in Spanish, reaffirming that local deputies are state peace officers who enforce state law and do not carry out federal immigration enforcement, and urging residents to call 911 regardless of immigration status. A joint statement from the sheriff and the Napa police chief early in the year made the same commitment."),
-      t("That outreach has a documented backdrop. The 2025-26 Napa County civil grand jury issued a report, “Fear of ICE in the Valley? Napa County Law Enforcement’s Response,” and on June 2 the Board of Supervisors adopted a response directing changes to how the county handles federal immigration detainer requests and ordering a public reporting dashboard. The question it raises is the one last year’s analysis could not resolve: whether fear of contact with authorities is keeping some violence, including sexual assault, from being reported at all."),
+      t("That outreach has a documented backdrop. The 2025-26 Napa County civil grand jury issued a report, “[Fear of ICE in the Valley? Napa County Law Enforcement’s Response](https://www.napa.courts.ca.gov/system/files/general/pr-20260413-gj-report-re-ice.pdf),” and on June 2 the Board of Supervisors adopted a response directing changes to how the county handles federal immigration detainer requests and ordering a public reporting dashboard. The question it raises is the one last year’s analysis could not resolve: whether fear of contact with authorities is keeping some violence, including sexual assault, from being reported at all."),
       h("What Still Isn’t Public"),
-      t("Much of what made a countywide picture hard to assemble last year remains. The tool that comes closest to a countywide view — the online crime map the sheriff and the City of Napa both use — covers the unincorporated county, American Canyon, Yountville and the City of Napa, but St. Helena does not participate and Calistoga’s data is not integrated. Sexual-assault and alcohol-related incidents appear on it only for the City of Napa. And no Napa County law enforcement agency publishes a running police log on its own website, leaving residents to track incidents one map pin at a time."),
+      t("Much of what made a countywide picture hard to assemble last year remains. The tool that comes closest to a countywide view — the [online crime map](https://communitycrimemap.com/) the sheriff and the City of Napa both use — covers the unincorporated county, American Canyon, Yountville and the City of Napa, but St. Helena does not participate and Calistoga’s data is not integrated. Sexual-assault and alcohol-related incidents appear on it only for the City of Napa. The map lets residents search reported incidents by address, date and offense type — useful for spotting recent activity nearby, though it stops short of the multiyear totals the annual report assembles. And no Napa County law enforcement agency publishes a running police log on its own website, leaving residents to track incidents one map pin at a time."),
       t("The cities also still report their own figures in different systems. In last year’s reporting, St. Helena and Calistoga provided partial counts in incompatible categories while the City of Napa did not respond, and the district attorney argued that rising reports can reflect survivors gaining better access to help rather than more crime, pointing to the county’s Monarch child and family advocacy center. Napa Valley Features has again requested 2025 figures from all three cities."),
       h("The Bottom Line"),
       t("What the two reports cannot settle on their own is whether Napa County grew more dangerous in 2025 or simply counted differently. Assaults are clearly up, in both the areas deputies patrol and the city they police under contract. Homicides held near last year’s elevated level. And the category that anchored last year’s headline — rape in the unincorporated county — is the one the office revised, in a table where it has never defined what the term covers, the same year it stopped publishing how many deputies it employs. The sharper question for the year ahead may be less whether crime is rising than whether the county’s own numbers can be read the same way from one annual report to the next."),
@@ -193,7 +193,7 @@ const EXPORT_DATA = {
       {
         number: 2,
         title: "Where Crime Rose and Fell, 2022–2025",
-        description: "Reported offenses in the unincorporated county and American Canyon, shaded green to red within each category.",
+        description: "Reported offenses in the unincorporated county and American Canyon, shaded green to red within each category. Rape is excluded because its earlier figures were restated between the 2024 and 2025 reports, leaving the years not directly comparable.",
         sources: [
           { label: "Napa County Sheriff’s Office 2024 Annual Report", url: "https://www.napacounty.gov/Archive.aspx?ADID=1096" },
           { label: "2025 Annual Report", url: "https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151" },
@@ -211,7 +211,7 @@ const EXPORT_DATA = {
       {
         number: 4,
         title: "What Rose and What Fell, 2024 to 2025",
-        description: "Year-over-year change in reported offenses by category; darker bars are American Canyon, lighter bars unincorporated.",
+        description: "Year-over-year change in reported offenses by category; darker bars are American Canyon, lighter bars unincorporated. Rape is excluded because its earlier figures were restated between the 2024 and 2025 reports, leaving the years not directly comparable. Homicide reflects very small counts.",
         sources: [
           { label: "Napa County Sheriff’s Office 2025 Annual Report", url: "https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151" },
         ],
@@ -238,7 +238,9 @@ const EXPORT_DATA = {
     sources: [
       "[Napa County Sheriff’s Office 2025 Annual Report](https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151)",
       "[Napa County Sheriff’s Office 2024 Annual Report](https://www.napacounty.gov/Archive.aspx?ADID=1096)",
-      "Napa County civil grand jury, “Fear of ICE in the Valley?”, and the Board of Supervisors’ June 2, 2026 response (public URL pending)",
+      "Napa County Civil Grand Jury, [Fear of ICE in the Valley? Napa County Law Enforcement’s Response](https://www.napa.courts.ca.gov/system/files/general/pr-20260413-gj-report-re-ice.pdf) — Superior Court of California, County of Napa news release, April 13, 2026",
+      "[Community Crime Map (LexisNexis)](https://communitycrimemap.com/), the shared incident map used by the Napa County Sheriff’s Office and Napa Police Department",
+      "[City of Napa Community Crime Map](https://www.cityofnapa.org/479/Community-Crime-Map)",
       "Prior analysis: [Rising Violence, Lingering Questions in Napa’s 2024 Crime Report](https://napavalleyfocus.substack.com/p/under-the-hood-rising-violence-lingering), Napa Valley Features (Sept. 20, 2025)",
     ],
     links: [

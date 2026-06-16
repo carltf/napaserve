@@ -561,7 +561,7 @@ function ChartTwo() {
       <h2 style={CHART_H2}>Where Crime Rose and Fell, 2022{"–"}2025</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "0 0 8px 0" }}>
-          Each category is shaded across its own four years {"—"} green for its lowest count, red for its highest. Rape is excluded.
+          Each category is shaded across its own four years {"—"} green for its lowest count, red for its highest. Rape is excluded because its earlier figures were restated between the 2024 and 2025 reports, leaving the years not directly comparable.
         </p>
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "548px" }}>
@@ -753,7 +753,7 @@ function ChartFour() {
       <h2 style={CHART_H2}>What Rose and What Fell, 2024 to 2025</h2>
       <div ref={containerRef} style={{ background: T.surface, border: `1px solid ${T.rule}`, padding: "20px 16px", borderRadius: 4 }}>
         <p style={{ fontFamily: font, fontSize: 13, fontStyle: "italic", color: T.muted, margin: "0 0 8px 0" }}>
-          Red bars rose, blue bars fell; darker bars are American Canyon, lighter bars the unincorporated county.
+          Red bars rose, blue bars fell; darker bars are American Canyon, lighter bars the unincorporated county. Rape is excluded because its earlier figures were restated between the 2024 and 2025 reports, leaving the years not directly comparable. Homicide reflects very small counts.
         </p>
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "640px" }}>
@@ -1003,14 +1003,13 @@ export default function UnderTheHoodNapa2025CrimeReport() {
           The 2025 report adds a section absent from earlier editions: outreach to immigrant residents. It describes Sheriff Ortiz and Lt. Felipe Hernandez delivering nearly 30 presentations, primarily in Spanish, reaffirming that local deputies are state peace officers who enforce state law and do not carry out federal immigration enforcement, and urging residents to call 911 regardless of immigration status. A joint statement from the sheriff and the Napa police chief early in the year made the same commitment.
         </p>
         <p style={P_STYLE}>
-          {/* TODO link grand-jury report — "Fear of ICE in the Valley?" has no human-readable URL in the handoff; leave unlinked until Tim supplies one. */}
-          That outreach has a documented backdrop. The 2025-26 Napa County civil grand jury issued a report, {"“"}Fear of ICE in the Valley? Napa County Law Enforcement’s Response,{"”"} and on June 2 the Board of Supervisors adopted a response directing changes to how the county handles federal immigration detainer requests and ordering a public reporting dashboard. The question it raises is the one last year’s analysis could not resolve: whether fear of contact with authorities is keeping some violence, including sexual assault, from being reported at all.
+          That outreach has a documented backdrop. The 2025-26 Napa County civil grand jury issued a report, {"“"}<a href="https://www.napa.courts.ca.gov/system/files/general/pr-20260413-gj-report-re-ice.pdf" target="_blank" rel="noopener noreferrer" style={LINK}>Fear of ICE in the Valley? Napa County Law Enforcement’s Response</a>,{"”"} and on June 2 the Board of Supervisors adopted a response directing changes to how the county handles federal immigration detainer requests and ordering a public reporting dashboard. The question it raises is the one last year’s analysis could not resolve: whether fear of contact with authorities is keeping some violence, including sexual assault, from being reported at all.
         </p>
 
         {/* ── WHAT STILL ISN'T PUBLIC ───────────────────────────────── */}
         <h2 style={SECTION_H2}>What Still Isn’t Public</h2>
         <p style={P_STYLE}>
-          Much of what made a countywide picture hard to assemble last year remains. The tool that comes closest to a countywide view {"—"} the online crime map the sheriff and the City of Napa both use {"—"} covers the unincorporated county, American Canyon, Yountville and the City of Napa, but St. Helena does not participate and Calistoga’s data is not integrated. Sexual-assault and alcohol-related incidents appear on it only for the City of Napa. And no Napa County law enforcement agency publishes a running police log on its own website, leaving residents to track incidents one map pin at a time.
+          Much of what made a countywide picture hard to assemble last year remains. The tool that comes closest to a countywide view {"—"} the <a href="https://communitycrimemap.com/" target="_blank" rel="noopener noreferrer" style={LINK}>online crime map</a> the sheriff and the City of Napa both use {"—"} covers the unincorporated county, American Canyon, Yountville and the City of Napa, but St. Helena does not participate and Calistoga’s data is not integrated. Sexual-assault and alcohol-related incidents appear on it only for the City of Napa. The map lets residents search reported incidents by address, date and offense type {"—"} useful for spotting recent activity nearby, though it stops short of the multiyear totals the annual report assembles. And no Napa County law enforcement agency publishes a running police log on its own website, leaving residents to track incidents one map pin at a time.
         </p>
         <p style={P_STYLE}>
           The cities also still report their own figures in different systems. In last year’s reporting, St. Helena and Calistoga provided partial counts in incompatible categories while the City of Napa did not respond, and the district attorney argued that rising reports can reflect survivors gaining better access to help rather than more crime, pointing to the county’s Monarch child and family advocacy center. Napa Valley Features has again requested 2025 figures from all three cities.
@@ -1082,7 +1081,9 @@ export default function UnderTheHoodNapa2025CrimeReport() {
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
             <li style={{ marginBottom: 10 }}><a href={REPORT_2025_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa County Sheriff’s Office 2025 Annual Report</a>.</li>
             <li style={{ marginBottom: 10 }}><a href={REPORT_2024_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa County Sheriff’s Office 2024 Annual Report</a>.</li>
-            <li style={{ marginBottom: 10 }}>Napa County civil grand jury, {"“"}Fear of ICE in the Valley?{"”"}, and the Board of Supervisors’ June 2, 2026 response <em>(public URL pending)</em>.</li>
+            <li style={{ marginBottom: 10 }}>Napa County Civil Grand Jury, <em><a href="https://www.napa.courts.ca.gov/system/files/general/pr-20260413-gj-report-re-ice.pdf" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Fear of ICE in the Valley? Napa County Law Enforcement’s Response</a></em> {"—"} Superior Court of California, County of Napa news release, April 13, 2026.</li>
+            <li style={{ marginBottom: 10 }}><a href="https://communitycrimemap.com/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Community Crime Map (LexisNexis)</a>, the shared incident map used by the Napa County Sheriff’s Office and Napa Police Department.</li>
+            <li style={{ marginBottom: 10 }}><a href="https://www.cityofnapa.org/479/Community-Crime-Map" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>City of Napa Community Crime Map</a>.</li>
             <li style={{ marginBottom: 10 }}>Prior analysis: <em><a href={PRIOR_ANALYSIS_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Rising Violence, Lingering Questions in Napa’s 2024 Crime Report</a></em>, Napa Valley Features (Sept. 20, 2025).</li>
           </ol>
         </div>
