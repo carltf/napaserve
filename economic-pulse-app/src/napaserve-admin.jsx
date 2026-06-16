@@ -25,6 +25,12 @@ const mono = "monospace";
 
 const ARTICLES = [
   {
+    slug: "uth-napa-2025-crime-report",
+    headline: "Rising Assaults, Revised Numbers in Napa County's 2025 Crime Report",
+    publication: "Napa Valley Features",
+    date: "2026-06-16",
+  },
+  {
     slug: "smoke-taint-2026",
     headline: "Under the Hood: Smoke-Taint Science Sharpens as Napa Braces for Another Fire Season",
     publication: "Napa Valley Features",
@@ -130,6 +136,115 @@ const h = (text) => ({ type: "header", text });
 const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
+  "uth-napa-2025-crime-report": {
+    headline: "Rising Assaults, Revised Numbers in Napa County's 2025 Crime Report",
+    publication: "Napa Valley Features",
+    // DECK PENDING — no deck supplied for this article.
+    summary: "The Napa County Sheriff’s Office 2025 annual report describes a broadly steady year, with Sheriff Oscar Ortiz citing a slight rise in assaults and violent crime. A comparison with the 2024 report shows assaults climbing in both the unincorporated county and American Canyon while most property crime fell — and it shows the office revised its earlier unincorporated rape figures sharply downward, the only crime category whose prior-year numbers changed between the two reports. The report also dropped the staffing-demographics page it published a year earlier, even as the office marked its 175th anniversary and posted real bright spots, including a double-digit drop in use-of-force events. The fragmentation that made a countywide picture hard to assemble last year remains.",
+    slug: "uth-napa-2025-crime-report",
+    dateline: "NAPA COUNTY, Calif. — June 16, 2026",
+    body: [
+      c(1),
+      t("NAPA COUNTY, Calif. — Violent crime in Napa County looked steadier in 2025 than it did a year earlier, according to the [Napa County Sheriff’s Office annual report](https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151), even as reported assaults rose in the areas deputies patrol. The deeper story is again one of uncertainty: the rape figure that anchored last year’s headline has been revised with no reason given, the office removed the staffing breakdown it disclosed the year before, and the jurisdictional silos that frustrated a countywide view are still in place."),
+      t("The 2025 report marks the office’s 175th anniversary, and in his opening message Sheriff Oscar Ortiz strikes a measured tone, writing that crime trends “remained relatively stable, with a slight increase in assaults and violent crime.”"),
+      h("Assaults Drive the Year"),
+      t("Reported assaults in the unincorporated county rose from 127 in 2024 to 151 in 2025, an increase of about 19%. In American Canyon, where the sheriff’s office has provided policing under contract since 1992, assaults climbed more sharply, from 94 to 131, about 39%. Robberies rose in both areas, and American Canyon arrests jumped from 516 to 704."),
+      t("Homicides, which last year’s analysis reported as having tripled countywide, held near that elevated level. The Coroner’s Bureau, which covers all of Napa County, recorded 11 homicide deaths in 2025, compared with 10 in 2024 and three in 2023. Within the sheriff’s patrol jurisdiction the count was one, down from two."),
+      t("Across the three jurisdictions the sheriff’s office polices directly — the unincorporated county, American Canyon and Yountville — the 2025 report counts 16 reported rapes: 10 in the unincorporated county, six in American Canyon and none in Yountville."),
+      c(2),
+      h("A Revised Number"),
+      t("The most pointed difference between this year’s report and last year’s is not in the 2025 totals but in the history."),
+      t("Last year’s Napa Valley Features analysis, “[Rising Violence, Lingering Questions in Napa’s 2024 Crime Report](https://napavalleyfocus.substack.com/p/under-the-hood-rising-violence-lingering),” reported that rapes in the unincorporated county had nearly doubled, citing [the 2024 report](https://www.napacounty.gov/Archive.aspx?ADID=1096)’s figures of 13 cases in 2023 and 24 in 2024."),
+      t("The 2025 report lists those same two years differently: one rape in 2023 and nine in 2024."),
+      c(3),
+      t("Of the seven crime categories in the unincorporated table — homicide, rape, robbery, assault, burglary, larceny and stolen vehicles — rape is the only one whose 2023 and 2024 figures changed between the reports. The American Canyon and Yountville rape counts are identical in both. The report gives no reason for the revision, and the office has not specified which penal code sections its “rape” category includes, a definition that last year was unclear even to the district attorney."),
+      t("Revisions like this are within an agency’s discretion, and reported counts can shift as cases are investigated or reclassified. But because the change lowers the 2024 unincorporated figure from 24 to nine, the apparent drop from last year’s reported countywide total of 34 to this year’s 16 reflects the revision as much as any real decline. On the revised basis, the three jurisdictions accounted for 19 rapes in 2024 and 16 in 2025. As of publication, the sheriff’s office had not explained the change or defined the category."),
+      h("Property Down, the Drug Mix Shifts"),
+      c(4),
+      t("Property crime mostly eased. In the unincorporated county, larceny and theft fell from 164 to 142 and stolen-vehicle reports from six to four, while burglaries ticked up from 31 to 35. American Canyon saw both larceny and auto theft decline. Indexed against 2023, the pattern is a clean divergence: assaults rising while property offenses fall."),
+      t("The drug seizures tracked by the Napa Special Investigations Bureau, the countywide narcotics task force, shifted again. Methamphetamine seizures fell from about 34.9 kilograms in 2024 to about 22.2 kilograms in 2025, still far above the roughly 4.6 kilograms seized in 2023. Fentanyl nearly tripled, from about 90 grams to 261, and recorded cocaine seizures rose from about 103 grams to roughly 3.3 kilograms. Those totals are driven by individual cases more than by any trend — the task force’s firearm seizures jumped from 19 to 69 largely because of a single investigation that netted 61 guns, including a pistol converted to fire automatically."),
+      h("Enforcement, and a Lighter Hand"),
+      t("Vehicle pursuits edged up to 56 from 53 and remained concentrated in American Canyon, which accounted for 50 of them. Criminal firearm seizures by patrol deputies totaled 59, down from 65, with 45 in American Canyon. Calls for service to the sheriff’s office eased to 23,448 from 24,073, while arrests in the unincorporated county rose to 498 from 457."),
+      c(5),
+      t("One of the report’s clearer bright spots is in use of force. The office logged 68 reportable force options across 42 encounters in 2025, which it calls a 12.8% decrease from the year before, and a mental-health clinician embedded with deputies through the county behavioral health agency co-responded to more than 65 crisis calls."),
+      h("A Thinner Report"),
+      t("This year’s report is also notable for what it leaves out. The 2024 edition included an Organization Demographics page detailing the office’s sworn headcount — 142 members — along with gender, age, tenure and education. The 2025 report omits it, removing the clearest year-over-year window into how the workforce is changing."),
+      t("That omission lands as the office shows signs of staffing strain. County salary data for 2024 shows the Sheriff’s Office accounted for the nine highest overtime earners countywide, and a sheriff’s sergeant was the highest-paid county employee, drawing roughly $198,000 in overtime on top of base pay. Heavy overtime is often a marker of vacancies. The office’s two named operating divisions grew modestly in the budget, from a combined $48.3 million to $50.8 million, though the full department appropriation and authorized staffing appear only in the county budget book."),
+      t("When the Board of Supervisors took up the report on June 2, the county’s chief executive asked Sheriff Ortiz about recruiting to fill vacancies, and the sheriff described the office’s hiring criteria — a public sign that staffing is a live concern even as the report discloses less about it than it once did."),
+      t("The office’s remit also continues to broaden. The county Office of Emergency Services was folded into the Sheriff’s Office, with 2024 its first full year, and in 2025 the transportation bureau moved 230 incarcerated people from the old downtown jail to a new county corrections facility on Napa Vallejo Highway."),
+      h("Outreach and the Fear Factor"),
+      t("The 2025 report adds a section absent from earlier editions: outreach to immigrant residents. It describes Sheriff Ortiz and Lt. Felipe Hernandez delivering nearly 30 presentations, primarily in Spanish, reaffirming that local deputies are state peace officers who enforce state law and do not carry out federal immigration enforcement, and urging residents to call 911 regardless of immigration status. A joint statement from the sheriff and the Napa police chief early in the year made the same commitment."),
+      t("That outreach has a documented backdrop. The 2025-26 Napa County civil grand jury issued a report, “Fear of ICE in the Valley? Napa County Law Enforcement’s Response,” and on June 2 the Board of Supervisors adopted a response directing changes to how the county handles federal immigration detainer requests and ordering a public reporting dashboard. The question it raises is the one last year’s analysis could not resolve: whether fear of contact with authorities is keeping some violence, including sexual assault, from being reported at all."),
+      h("What Still Isn’t Public"),
+      t("Much of what made a countywide picture hard to assemble last year remains. The tool that comes closest to a countywide view — the online crime map the sheriff and the City of Napa both use — covers the unincorporated county, American Canyon, Yountville and the City of Napa, but St. Helena does not participate and Calistoga’s data is not integrated. Sexual-assault and alcohol-related incidents appear on it only for the City of Napa. And no Napa County law enforcement agency publishes a running police log on its own website, leaving residents to track incidents one map pin at a time."),
+      t("The cities also still report their own figures in different systems. In last year’s reporting, St. Helena and Calistoga provided partial counts in incompatible categories while the City of Napa did not respond, and the district attorney argued that rising reports can reflect survivors gaining better access to help rather than more crime, pointing to the county’s Monarch child and family advocacy center. Napa Valley Features has again requested 2025 figures from all three cities."),
+      h("The Bottom Line"),
+      t("What the two reports cannot settle on their own is whether Napa County grew more dangerous in 2025 or simply counted differently. Assaults are clearly up, in both the areas deputies patrol and the city they police under contract. Homicides held near last year’s elevated level. And the category that anchored last year’s headline — rape in the unincorporated county — is the one the office revised, in a table where it has never defined what the term covers, the same year it stopped publishing how many deputies it employs. The sharper question for the year ahead may be less whether crime is rising than whether the county’s own numbers can be read the same way from one annual report to the next."),
+    ],
+    captions: [
+      {
+        number: 1,
+        title: "Violence Up, Property Down",
+        description: "Unincorporated Napa County reported offenses, each indexed to its 2023 level; assaults climbed above the 2023 baseline while burglary, larceny and stolen-vehicle reports fell below it.",
+        sources: [
+          { label: "Napa County Sheriff’s Office 2025 Annual Report", url: "https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151" },
+        ],
+      },
+      {
+        number: 2,
+        title: "Where Crime Rose and Fell, 2022–2025",
+        description: "Reported offenses in the unincorporated county and American Canyon, shaded green to red within each category.",
+        sources: [
+          { label: "Napa County Sheriff’s Office 2024 Annual Report", url: "https://www.napacounty.gov/Archive.aspx?ADID=1096" },
+          { label: "2025 Annual Report", url: "https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151" },
+        ],
+      },
+      {
+        number: 3,
+        title: "A Restated Count",
+        description: "The 2024 report listed unincorporated rape as 13 (2023) and 24 (2024); the 2025 report lists those years as 1 and 9.",
+        sources: [
+          { label: "Napa County Sheriff’s Office 2024 Annual Report", url: "https://www.napacounty.gov/Archive.aspx?ADID=1096" },
+          { label: "2025 Annual Report", url: "https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151" },
+        ],
+      },
+      {
+        number: 4,
+        title: "What Rose and What Fell, 2024 to 2025",
+        description: "Year-over-year change in reported offenses by category; darker bars are American Canyon, lighter bars unincorporated.",
+        sources: [
+          { label: "Napa County Sheriff’s Office 2025 Annual Report", url: "https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151" },
+        ],
+      },
+      {
+        number: 5,
+        title: "Crime Trends in Napa County, 2023–2025",
+        description: "Reported offenses, drug and firearm seizures by category and jurisdiction.",
+        sources: [
+          { label: "Napa County Sheriff’s Office 2024 Annual Report", url: "https://www.napacounty.gov/Archive.aspx?ADID=1096" },
+          { label: "2025 Annual Report", url: "https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151" },
+        ],
+      },
+    ],
+    relatedCoverage: [
+      { title: "Rising Violence, Lingering Questions in Napa’s 2024 Crime Report", publication: "Napa Valley Features", date: "Sept. 20, 2025", url: "https://napavalleyfocus.substack.com/p/under-the-hood-rising-violence-lingering" },
+    ],
+    substackPolls: [
+      { question: "Which of this year’s findings stands out most to you?", options: ["The revised rape figures", "Rising assaults", "American Canyon as the hotspot", "The dropped staffing page", "Homicides staying elevated"] },
+      { question: "The Sheriff’s Office should explain why it revised its rape figures and define what the “rape” category includes.", options: ["Strongly agree", "Agree", "Neutral / unsure", "Disagree", "Strongly disagree"] },
+      { question: "Annual reports should keep the same categories and definitions year to year so the public can compare.", options: ["Strongly agree", "Agree", "Neutral / unsure", "Disagree", "Strongly disagree"] },
+      { question: "How clear a picture do this year’s numbers give you of crime where you live?", options: ["Very clear", "Somewhat clear", "Neutral / unsure", "Not very clear", "Not at all clear"] },
+    ],
+    sources: [
+      "[Napa County Sheriff’s Office 2025 Annual Report](https://www.napacounty.gov/ArchiveCenter/ViewFile/Item/1151)",
+      "[Napa County Sheriff’s Office 2024 Annual Report](https://www.napacounty.gov/Archive.aspx?ADID=1096)",
+      "Napa County civil grand jury, “Fear of ICE in the Valley?”, and the Board of Supervisors’ June 2, 2026 response (public URL pending)",
+      "Prior analysis: [Rising Violence, Lingering Questions in Napa’s 2024 Crime Report](https://napavalleyfocus.substack.com/p/under-the-hood-rising-violence-lingering), Napa Valley Features (Sept. 20, 2025)",
+    ],
+    links: [
+      { label: "Read interactive version", url: "https://napaserve.org/under-the-hood/uth-napa-2025-crime-report" },
+    ],
+  },
   "smoke-taint-2026": {
     headline: "Smoke-Taint Science Sharpens as Napa Braces for Another Fire Season",
     publication: "Napa Valley Features",

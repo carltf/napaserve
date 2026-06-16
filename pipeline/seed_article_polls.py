@@ -521,6 +521,55 @@ POLLS = [
             "Faster lab turnaround",
         ],
     },
+    # ── Napa County 2025 Crime Report ───────────────────────────────
+    {
+        "article_slug": "uth-napa-2025-crime-report",
+        "sort_order": 1,
+        "question": "Which of this year's findings stands out most to you?",
+        "options": [
+            "The revised rape figures",
+            "Rising assaults",
+            "American Canyon as the hotspot",
+            "The dropped staffing page",
+            "Homicides staying elevated",
+        ],
+    },
+    {
+        "article_slug": "uth-napa-2025-crime-report",
+        "sort_order": 2,
+        "question": "The Sheriff's Office should explain why it revised its rape figures and define what the “rape” category includes.",
+        "options": [
+            "Strongly agree",
+            "Agree",
+            "Neutral / unsure",
+            "Disagree",
+            "Strongly disagree",
+        ],
+    },
+    {
+        "article_slug": "uth-napa-2025-crime-report",
+        "sort_order": 3,
+        "question": "Annual reports should keep the same categories and definitions year to year so the public can compare.",
+        "options": [
+            "Strongly agree",
+            "Agree",
+            "Neutral / unsure",
+            "Disagree",
+            "Strongly disagree",
+        ],
+    },
+    {
+        "article_slug": "uth-napa-2025-crime-report",
+        "sort_order": 4,
+        "question": "How clear a picture do this year's numbers give you of crime where you live?",
+        "options": [
+            "Very clear",
+            "Somewhat clear",
+            "Neutral / unsure",
+            "Not very clear",
+            "Not at all clear",
+        ],
+    },
 ]
 
 
