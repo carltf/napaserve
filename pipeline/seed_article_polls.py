@@ -606,6 +606,42 @@ POLLS = [
             "Not concerned at all",
         ],
     },
+    {
+        "article_slug": "napa-auction-2026",
+        "sort_order": 1,
+        "question": "What does the $6M total signal to you?",
+        "options": [
+            "A temporary wobble",
+            "The start of a real decline",
+            "Demand strong, pricing weak",
+            "Healthy correction from peak",
+            "Too soon to read into it",
+        ],
+    },
+    {
+        "article_slug": "napa-auction-2026",
+        "sort_order": 2,
+        "question": "A sold-out weekend raised less than 2025. Why?",
+        "options": [
+            "Donor fatigue, smaller checks",
+            "Broader wine-economy slump",
+            "More competing auctions",
+            "Fewer ultra-high-end lots",
+            "Normal year-to-year noise",
+        ],
+    },
+    {
+        "article_slug": "napa-auction-2026",
+        "sort_order": 3,
+        "question": "Should auction proceeds be governed independently?",
+        "options": [
+            "Yes, create a community fund",
+            "Yes, add outside oversight",
+            "Keep it with the Vintners",
+            "Unsure, need more detail",
+            "No, current model works",
+        ],
+    },
 ]
 
 
