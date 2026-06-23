@@ -25,6 +25,12 @@ const mono = "monospace";
 
 const ARTICLES = [
   {
+    slug: "napa-tax-base-2026",
+    headline: "Under the Hood: Napa County's Tax Base Holds as Its Largest Employers Shed Jobs",
+    publication: "Napa Valley Features",
+    date: "June 23, 2026",
+  },
+  {
     slug: "uth-napa-2025-crime-report",
     headline: "Rising Assaults, Revised Numbers in Napa County's 2025 Crime Report",
     publication: "Napa Valley Features",
@@ -136,6 +142,85 @@ const h = (text) => ({ type: "header", text });
 const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
+  "napa-tax-base-2026": {
+    headline: "Napa County's Tax Base Holds as Its Largest Employers Shed Jobs",
+    publication: "Napa Valley Features",
+    deck: "The county's 2024 winegrape crop fell 14.4% and its 10 largest employers shed a net 1,775 jobs since 2016, yet the assessed-value tax roll climbed to $55.77 billion.",
+    summary: "Napa County's assessed-value tax roll keeps climbing even as winegrape value and major-employer payrolls contract — a fiscal base increasingly anchored to real estate rather than the local wage economy.",
+    slug: "napa-tax-base-2026",
+    dateline: "NAPA VALLEY, Calif. — June 23, 2026",
+    body: [
+      t("NAPA VALLEY, Calif. — The value of Napa County’s 2024 winegrape crop fell to $1.0 billion, a 14.4% drop from the record $1.2 billion of the prior year, according to the county Agricultural Commissioner’s 2024 Annual Crop Report. Total tonnage declined 13.8%, and the average price per ton slipped to $7,005 — still nearly seven times the statewide average of $1,021. Winegrapes accounted for 99.6% of the value of all agricultural production in the county."),
+      t("Over the same period, the county’s total taxable assessed value climbed to $55.77 billion and property tax revenue rose 5.6% to $191.26 million, according to Napa County’s fiscal 2024-25 Annual Comprehensive Financial Report. [SOURCE NEEDED: public URL for the FY 2024-25 Napa County ACFR.] The space between a shrinking crop and a growing tax roll is the question this column first raised in 2024: how much of the county’s stability rests on a single industry, and what is happening beneath the surface as that industry’s numbers move."),
+      c(1),
+      h("A Concentrated Tax Base"),
+      t("The county’s largest taxpayers remain heavily clustered in wine, wine-related real estate and hospitality. Of the 10 largest property taxpayers in 2024-25, only Pacific Gas & Electric Company — the top payer at $725.99 million in assessed value, or 1.30% of the county total — sits clearly outside that group."),
+      t("The remaining nine read as a roster of the wine economy and its property: Global Ag Properties/SPP Napa Vineyards, Robert Mondavi Properties under Constellation, Boardwalk Investments Yountville, E. & J. Gallo Winery, Heitz Wine Cellars, SRGA, Meritage Resort, Realty Income Properties 2 under Diageo and Treasury Wine Estates Americas. [VERIFY: SRGA — identify the entity and its sector; the ACFR lists the name without description.]"),
+      t("Together the top 10 represent 6.40% of the county’s total taxable assessed value, up from 6.15% nine years earlier. The base beneath them has grown substantially — total assessed value of $55.77 billion is up from $32.87 billion in 2015-16, an increase of roughly 70% over nine years built largely on rising real estate values rather than on the local wage economy."),
+      c(2),
+      h("The Jobs Are Thinning"),
+      t("The county’s tax roll has climbed, but its largest employers have been shedding jobs. Napa County’s 10 largest employers accounted for 9,946 jobs in 2024-25, down from 11,721 nine years earlier — a net loss of 1,775 positions among the county’s biggest workplaces, even as total countywide employment edged up to 75,500."),
+      t("The wine industry’s footprint among those employers narrowed the most. Treasury Wine Estates reported 1,119 employees in 2015-16; its 2024-25 figure of 425 is well under half that. [VERIFY: confirm whether Treasury’s decline reflects local headcount reductions, restructuring or a change in reporting method.] Health-care employers contracted as well: Adventist Health St. Helena fell from 1,391 to 610, and the Veterans’ Home of California from 1,000 to 735."),
+      t("The list is still led by government and health care — Napa State Hospital, the County of Napa, the Napa Valley Unified School District and Providence Queen of the Valley — not by wineries. The 10 largest employers’ share of total county employment fell from 15.96% to 13.17% over the nine years."),
+      c(3),
+      t("The contraction has continued into 2026. The county’s civilian labor force fell roughly 4.1% year over year, from about 75,100 in January 2025 to 72,000 in January 2026, as documented in [Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered](https://napaserve.org/under-the-hood/napa-population-2025) (May 14, 2026). That piece also recorded the elimination of 135 manufacturing jobs at American Canyon’s Coca-Cola bottling plant in the same fiscal year the ACFR covers."),
+      h("The Tourism Signal Stays Soft"),
+      t("Transient occupancy tax — the lodging levy that serves as the county’s clearest read on visitor spending — was essentially flat. The county collected $13.10 million in TOT in fiscal 2024-25, down 0.5% from the prior year. That continues the pattern flagged in the June 2024 installment, when TOT had fallen 7.8% the year before. Two years on, the revenue has not rebounded; it has leveled off below its earlier peak. For a county whose hospitality sector is built around wine tourism, a flat lodging levy alongside a 14.4% drop in crop value and a contracting employer base is a pairing worth watching."),
+      h("A Balance Sheet That Holds"),
+      t("For all the movement in wine, jobs and tourism, the county’s finances stayed sound. Napa County’s total net position rose $27.4 million, or 4.0%, to $714.73 million in fiscal 2024-25. Governmental funds reported combined balances of $550.5 million, an increase of $2.5 million over the prior year."),
+      t("Beneath that aggregate, the picture is more mixed. The General Fund’s total balance fell $18.2 million, or 8.2%, to $204.7 million, and its unrestricted balance of $53.4 million equals 23.6% of General Fund expenditures — sound, the report notes, but below the five-year average of 41.2%. The General Reserve stood at $64.6 million, and General Fund debt service fell to effectively zero, the lowest in more than two decades."),
+      t("The county’s books balance. They have for years. The harder question is what an assessed-value tax roll rests on when the crop beneath it is shrinking, the industry that anchors the tax base is cutting payroll and the county’s largest employers are collectively smaller than they were a decade ago. A tax base that keeps climbing on real estate while the local wage economy contracts is not the same thing as an economy that is growing — and the distance between those two numbers is where the next several years will be decided."),
+    ],
+    captions: [
+      {
+        number: 1,
+        title: "Napa County’s Tax Roll Climbs as Its Winegrape Crop Cools",
+        description: "Total taxable assessed value rose every year from 2016 to 2025, reaching $55.77 billion, while the 2024 winegrape crop fell 14.4% to $1.0 billion.",
+        sources: [
+          { label: "Napa County FY 2024-25 ACFR", url: "" },
+          { label: "Napa County Agricultural Commissioner 2024 Crop Report", url: "" },
+        ],
+      },
+      {
+        number: 2,
+        title: "Napa County’s 10 Largest Property Taxpayers, 2024-25",
+        description: "Nine of the 10 largest taxpayers sit in wine, vineyard real estate or hospitality; only PG&E falls outside that cluster.",
+        sources: [
+          { label: "Napa County FY 2024-25 ACFR, Auditor-Controller’s Office", url: "" },
+        ],
+      },
+      {
+        number: 3,
+        title: "Napa County’s Largest Employers, 2016 vs. 2024-25",
+        description: "The 10 largest employers shed a net 1,775 jobs since 2016, from 11,721 to 9,946, with the wine industry’s footprint contracting sharply — Treasury Wine Estates fell from 1,119 to 425.",
+        sources: [
+          { label: "Napa County FY 2024-25 ACFR, Principal Employers schedule", url: "" },
+        ],
+      },
+    ],
+    relatedCoverage: [
+      { title: "Under the Hood: Napa Valley’s Growing Reliance on the Wine Industry", publication: "Napa Valley Features", date: "June 1, 2024", url: "https://napavalleyfocus.substack.com/p/under-the-hood-napa-valleys-growing" },
+      { title: "Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered", publication: "Napa Valley Features", date: "May 14, 2026", url: "https://napaserve.org/under-the-hood/napa-population-2025" },
+      { title: "Under the Hood: More Rooms Has Equaled Fewer Jobs in Napa County", publication: "Napa Valley Features", date: "August 23, 2025", url: "https://napavalleyfocus.substack.com/p/under-the-hood-more-rooms-has-equaled" },
+      { title: "Under the Hood: Jobs Lag as Napa’s Wine and Tourism Economy Falters", publication: "Napa Valley Features", date: "December 13, 2025", url: "https://napavalleyfocus.substack.com/p/under-the-hood-jobs-lag-as-napas" },
+      { title: "Under the Hood: Napa Valley’s Economy Looks Bigger Than It Is", publication: "Napa Valley Features", date: "March 2026", url: "https://napavalleyfocus.substack.com/p/under-the-hood-napa-valleys-economy" },
+    ],
+    substackPolls: [
+      { question: "Napa County’s 10 largest employers shed a net 1,775 jobs since 2016. What best explains it?", options: ["Wine restructuring/consolidation", "Health-care mergers, downsizing", "Automation and efficiency gains", "Regional economic contraction", "Other (comment below)"] },
+      { question: "A tax base that keeps climbing on real estate while wine jobs and crop value fall is a sign of growing fragility, not strength.", options: ["Strongly agree", "Agree", "Neutral / Unsure", "Disagree", "Strongly disagree"] },
+      { question: "How concerned are you about Napa County’s reliance on wine and luxury hospitality?", options: ["Very concerned", "Somewhat concerned", "Neutral / Unsure", "Not very concerned", "Not concerned at all"] },
+    ],
+    sources: [
+      "Napa County FY 2024-25 Annual Comprehensive Financial Report [SOURCE NEEDED: public ACFR URL]",
+      "Napa County Agricultural Commissioner 2024 Annual Crop Report",
+      "Napa County Auditor-Controller’s Office (10 Largest Taxpayers schedule)",
+      "Napa County FY 2024-25 ACFR, Principal Employers schedule",
+      "California EDD / DOF labor-force estimates (Jan. 2025–Jan. 2026)",
+    ],
+    links: [
+      { label: "Read interactive version", url: "https://napaserve.org/under-the-hood/napa-tax-base-2026" },
+    ],
+  },
   "uth-napa-2025-crime-report": {
     headline: "Rising Assaults, Revised Numbers in Napa County's 2025 Crime Report",
     publication: "Napa Valley Features",
