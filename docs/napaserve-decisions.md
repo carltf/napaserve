@@ -132,3 +132,14 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Rationale.** "Civic" generalizes better than "Media" — it absorbs future non-wine contraction without spawning single-use categories. Distinct from the platform's "community intelligence" descriptor (Brand Rules forbid "civic intelligence"); "Civic" here is only a tracker category value.
 
 **Consequences.** `napa_transition_tracker_category_check` permanently includes Civic. Any further category requires an ALTER plus the UI touch-points (Lesson EE). The Napa Lowdown scout ignores category, so no external-consumer cutover.
+
+---
+
+## ADR-005 — Pre-Handoff Export Gate for UTH Builds
+**Date:** 2026-06-24 · **Status:** Accepted
+
+**Context.** napa-auction-2026 shipped to a rendered draft with an empty deck, a dead [Chart 1] marker, an unverified Related Coverage block and a Sunday publish date. 20-step sequence steps 13 (EXPORT_DATA population) and 15 (Word-export end-to-end test) had been claimed done but were never verified against a rendered export — "done" was declared off a clean build hash. This is an Anti-Drift Gate #3 failure: trusting code/build state over rendered output.
+
+**Decision.** Add a mandatory Pre-Handoff Export Gate to the UTH protocol — a new section immediately before Anti-Drift Gates, with a pointer at step 15 of the 20-step sequence. No UTH export is handed to Tim until the gate passes: EXPORT_DATA completeness (optional fields populated or marked N/A), chart placement (no dead [Chart N] in any output), Related Coverage verified against `napaserve_articles` / `nvf_posts`, Saturday date sanity, and a Word-export end-to-end read noting any PD-2026-05-24-04 template artifacts.
+
+**Countermeasure.** The gate is reported in every HOLD message; "done" is not declared until all gate items are reported. Ties to Anti-Drift Gate #3 — acceptance requires looking at rendered output, not code.

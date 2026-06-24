@@ -36,7 +36,7 @@ The UTH Protocol is a living document, but live deployed pages are the source of
 12. Poll seeding live
 13. EXPORT_DATA population (headline/publication/slug/dateline/body/optional)
 14. Chart filenames inventory
-15. Word export end-to-end test from admin
+15. Word export end-to-end test from admin (see Pre-Handoff Export Gate — mandatory)
 16. Build local (`npm run build`)
 17. Commit + push (Vercel auto-deploy)
 18. Browser verification at desktop + 375px mobile
@@ -267,6 +267,19 @@ V4 additions:
 - (p) Multi-line charts have no horizontal or vertical collisions at chart edges
 
 V5 principle: Section 16 items are HUMAN-EYES gates, not measurement gates (Lesson V). A JavaScript probe is diagnostic only; acceptance requires the assistant or Tim to look at the rendered output.
+
+---
+
+## Pre-Handoff Export Gate (mandatory)
+
+No UTH export is handed to Tim until this gate passes and is reported in the HOLD message. Enforces 20-step sequence steps 13 (EXPORT_DATA population) and 15 (Word-export end-to-end test), which can be claimed-done without being verified-done. Added 2026-06-24 after napa-auction-2026 reached a rendered draft with an empty deck, a dead [Chart 1] marker, an unverified Related Coverage block and a Sunday publish date — "done" had been declared off a clean build hash (Anti-Drift Gate #3 failure).
+
+1. **EXPORT_DATA completeness** — required fields present; standard-optional fields populated or explicitly marked N/A in the HOLD report: deck/summary, captions, relatedCoverage, sources, substackPolls, pullQuote.
+2. **Chart placement** — every [Chart N] marker resolves to a real chart in the rendered article AND to its caption + PNG reference in the export. No dead placeholders in any output.
+3. **Related Coverage verified** — every title, date and URL confirmed against napaserve_articles / nvf_posts in Section 0. Nothing trusted from memory; no fabricated /p/ slugs.
+4. **Date sanity** — published date is a Saturday (series cadence).
+5. **Word-export end-to-end test** — generate the export from admin and READ it; note any PD-2026-05-24-04 template artifacts explicitly.
+6. **Report the gate in the HOLD message** — "done" is not declared until items 1-5 are reported. Ties to Anti-Drift Gate #3 (looking at rendered output, not code).
 
 ---
 
