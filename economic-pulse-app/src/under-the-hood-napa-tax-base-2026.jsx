@@ -4,8 +4,8 @@
 // Publication: Napa Valley Features
 // Built by parity from napaserve-under-the-hood-population.jsx.
 // CHARTS: static PNG <img> this round (NOT ChartOne/Two/Three canvas) — the
-// underlying series are incomplete (Chart 1 crop line two points only; SRGA
-// sector unconfirmed). Canvas/interactive versions deferred to a later build.
+// underlying series are incomplete (Chart 1 crop line two points only).
+// Canvas/interactive versions deferred to a later build.
 // -----------------------------------------------------------------
 
 import { useEffect, useState } from "react";
@@ -269,7 +269,7 @@ export default function UnderTheHoodNapaTaxBase2026() {
         </p>
 
         <p style={P_STYLE}>
-          Over the same period, the county’s total taxable assessed value climbed to $55.77 billion and property tax revenue rose 5.6% to $191.26 million, according to Napa County’s fiscal 2024-25 Annual Comprehensive Financial Report. [SOURCE NEEDED: public URL for the FY 2024-25 Napa County ACFR.] The space between a shrinking crop and a growing tax roll is the question this column first raised in 2024: how much of the county’s stability rests on a single industry, and what is happening beneath the surface as that industry’s numbers move.
+          Over the same period, the county’s total taxable assessed value climbed to $55.77 billion and property tax revenue rose 5.6% to $191.26 million, according to Napa County’s fiscal 2024-25 <a href="https://www.countyofnapa.org/1353/Annual-Comprehensive-Financial-Reports" target="_blank" rel="noopener noreferrer" style={LINK}>Annual Comprehensive Financial Report</a>. The space between a shrinking crop and a growing tax roll is the question this column first raised in 2024: how much of the county’s stability rests on a single industry, and what is happening beneath the surface as that industry’s numbers move.
         </p>
 
         <StaticChart
@@ -296,7 +296,7 @@ export default function UnderTheHoodNapaTaxBase2026() {
         </p>
 
         <p style={P_STYLE}>
-          The remaining nine read as a roster of the wine economy and its property: Global Ag Properties/SPP Napa Vineyards, Robert Mondavi Properties under Constellation, Boardwalk Investments Yountville, E. &amp; J. Gallo Winery, Heitz Wine Cellars, SRGA, Meritage Resort, Realty Income Properties 2 under Diageo and Treasury Wine Estates Americas. [VERIFY: SRGA {"—"} identify the entity and its sector; the ACFR lists the name without description.]
+          The remaining nine read as a roster of the wine economy and its property: Global Ag Properties/SPP Napa Vineyards, Robert Mondavi Properties under Constellation, Boardwalk Investments Yountville, E. &amp; J. Gallo Winery, Heitz Wine Cellars, SRGA LP {"—"} the entity behind the Stanly Ranch resort in Carneros {"—"} Meritage Resort, Realty Income Properties 2 under Diageo and Treasury Wine Estates Americas. One of those 10, the Stanly Ranch resort, went into foreclosure in March 2026 {"—"} its hotel sold for $195 million {"—"} a reminder that even the hospitality names anchoring the tax roll aren’t immune to the reset.
         </p>
 
         <p style={P_STYLE}>
@@ -326,7 +326,7 @@ export default function UnderTheHoodNapaTaxBase2026() {
         </p>
 
         <p style={P_STYLE}>
-          The wine industry’s footprint among those employers narrowed the most. Treasury Wine Estates reported 1,119 employees in 2015-16; its 2024-25 figure of 425 is well under half that. [VERIFY: confirm whether Treasury’s decline reflects local headcount reductions, restructuring or a change in reporting method.] Health-care employers contracted as well: Adventist Health St. Helena fell from 1,391 to 610, and the Veterans’ Home of California from 1,000 to 735.
+          The wine industry’s footprint among those employers narrowed the most. Treasury Wine Estates reported 1,119 employees in 2015-16; its 2024-25 figure of 425 is well under half that {"—"} a decline that tracks the company’s years-long restructuring of its U.S. business: divesting commercial brands, selling Central Coast wineries and consolidating luxury production at its St. Helena facility. Health-care employers contracted as well: Adventist Health St. Helena fell from 1,391 to 610, and the Veterans’ Home of California from 1,000 to 735.
         </p>
 
         <p style={P_STYLE}>
@@ -442,7 +442,7 @@ export default function UnderTheHoodNapaTaxBase2026() {
         <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 40 }}>
           <h3 style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, margin: "0 0 10px" }}>Methodology</h3>
           <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.7, fontStyle: "italic" }}>
-            Crop figures are calendar-year 2024 (Napa County Agricultural Commissioner); fiscal figures are FY 2024-25 (Napa County ACFR). Chart 1’s crop line shows 2023-24 only pending the full Agricultural-Commissioner series. SRGA’s sector is unconfirmed and shown grouped with wine and hospitality provisionally.
+            Crop figures are calendar-year 2024 (Napa County Agricultural Commissioner); fiscal figures are FY 2024-25 (Napa County ACFR). Chart 1’s crop line shows 2023-24 only pending the full Agricultural-Commissioner series. SRGA LP is the ownership entity for the Stanly Ranch resort (hospitality). Principal-employer counts are as reported by each company in the county’s ACFR schedule; year-to-year changes can reflect reporting differences as well as actual headcount.
           </p>
         </div>
 
@@ -450,11 +450,13 @@ export default function UnderTheHoodNapaTaxBase2026() {
         <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 40, paddingTop: 24 }}>
           <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
-            <li style={{ marginBottom: 8 }}>Napa County FY 2024-25 Annual Comprehensive Financial Report [SOURCE NEEDED: public ACFR URL].</li>
+            <li style={{ marginBottom: 8 }}><a href="https://www.countyofnapa.org/1353/Annual-Comprehensive-Financial-Reports" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa County FY 2024-25 Annual Comprehensive Financial Report (countyofnapa.org)</a>.</li>
             <li style={{ marginBottom: 8 }}>Napa County Agricultural Commissioner 2024 Annual Crop Report.</li>
             <li style={{ marginBottom: 8 }}>Napa County Auditor-Controller’s Office (10 Largest Taxpayers schedule).</li>
             <li style={{ marginBottom: 8 }}>Napa County FY 2024-25 ACFR, Principal Employers schedule.</li>
             <li style={{ marginBottom: 8 }}>California EDD / DOF labor-force estimates (Jan. 2025{"–"}Jan. 2026).</li>
+            <li style={{ marginBottom: 8 }}><a href="https://napavalleyregister.com/news/napa-hotel-foreclosure-stanly-ranch-auberge-group/article_af89ef60-2410-4a75-9338-20c9baaf707e.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Napa Valley Register, Stanly Ranch foreclosure (SRGA LP)</a>.</li>
+            <li style={{ marginBottom: 8 }}><a href="https://www.thedrinksbusiness.com/2026/06/treasury-cuts-brands-in-bid-to-revive-growth/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>The Drinks Business, Treasury Wine Estates U.S. restructuring (June 2026)</a>.</li>
           </ol>
         </div>
 
