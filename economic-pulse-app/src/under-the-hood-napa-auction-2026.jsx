@@ -298,48 +298,6 @@ function ChartOne() {
   );
 }
 
-// ── AUCTION TOTALS TABLE ───────────────────────────────────────────
-const AUCTION_TABLE = [
-  ["2012", "$8.0M"],
-  ["2013", "$16.9M"],
-  ["2014", "$18.7M (peak)"],
-  ["2015", "$15.8M"],
-  ["2016", "$14.3M"],
-  ["2017", "$15.7M"],
-  ["2018", "$13.6M"],
-  ["2019", "$12.0M"],
-  ["2020", "cancelled"],
-  ["2021", "cancelled"],
-  ["2022", "$1.5M (online only)"],
-  ["2023", "$3.8M"],
-  ["2024", "$4.8M"],
-  ["2025", "$6.5M"],
-  ["2026", "$6.0M"],
-];
-
-function AuctionTable() {
-  return (
-    <div style={{ overflowX: "auto", marginBottom: 24 }}>
-      <table style={{ borderCollapse: "collapse", fontFamily: font, fontSize: 15, color: T.ink, minWidth: 280 }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: "left", padding: "6px 24px 6px 0", borderBottom: `2px solid ${T.border}`, fontWeight: 700 }}>Year</th>
-            <th style={{ textAlign: "left", padding: "6px 0", borderBottom: `2px solid ${T.border}`, fontWeight: 700 }}>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {AUCTION_TABLE.map(([year, total]) => (
-            <tr key={year}>
-              <td style={{ padding: "5px 24px 5px 0", borderBottom: `1px solid ${T.rule}` }}>{year}</td>
-              <td style={{ padding: "5px 0", borderBottom: `1px solid ${T.rule}` }}>{total}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 // ── LIVE POLL ──────────────────────────────────────────────────────
 function LivePoll({ poll }) {
   const [voted, setVoted] = useState(null);
@@ -491,6 +449,10 @@ export default function AuctionNapaValley2026() {
         </p>
 
         <p style={P_STYLE}>
+          A year ago <a href="https://napavalleyfocus.substack.com/p/under-the-hood-auction-napa-valleys" target="_blank" rel="noopener noreferrer" style={LINK}>in this space</a>, we wrote that the auction’s prestige and price-setting influence could no longer be assumed — that it would have to be re-earned each year. The 2026 weekend is the first real test of that, and it split the difference: the enthusiasm was re-earned, the dollars were not.
+        </p>
+
+        <p style={P_STYLE}>
           That single data point is worth holding up against everything else moving through the valley this spring.
         </p>
 
@@ -505,8 +467,6 @@ export default function AuctionNapaValley2026() {
 
         <ChartOne />
 
-        <AuctionTable />
-
         <p style={P_STYLE}>
           By Napa Valley Features’ inflation-adjusted analysis, using a 2014 base and U.S. Bureau of Labor Statistics CPI, this year’s $6 million translates to approximately $4.2 million in 2014 dollars, or about 23% of the inflation-adjusted peak. Last year’s $6.5 million came to approximately $4.84 million in 2014 dollars, or 26% of that peak. In real terms, then, 2026 didn’t just stall — it gave back a share of the ground 2025 had recovered.
         </p>
@@ -517,7 +477,7 @@ export default function AuctionNapaValley2026() {
         <h2 style={SECTION_H2}>A Sold-Out Crowd, a Smaller Total</h2>
 
         <p style={P_STYLE}>
-          The interesting tension is that demand for the experience held while the dollars did not. {"“"}If there is a slump in interest in wine, we aren’t seeing it here,{"”"} Napa Valley Vintners’ Teresa Wall <a href="https://www.pressdemocrat.com/2026/06/11/auction-napa-valley-2026-raises-6-million-to-support-local-youth/" target="_blank" rel="noopener noreferrer" style={LINK}>told guests at Friday’s barrel auction</a>, and the attendance figures back her up. The weekend honored founder Robin Lail with a lifetime achievement award, drew Francis Ford Coppola to his Inglenook estate, and featured top live lots built around shared experiences — an evening with Sebastian Maniscalco from Gargiulo Vineyards, B Cellars and Silver Oak, and a tribute dinner to the late winemaker Michel Rolland organized by Staglin Family Vineyards, Accendo Estate, Dalla Valle Vineyards, Darioush and Screaming Eagle.
+          The interesting tension is that demand for the experience held while the dollars did not. {"“"}If there is a slump in interest in wine, we aren’t seeing it here,{"”"} Napa Valley Vintners’ Teresa Wall told guests at Friday’s barrel auction, and the attendance figures back her up. The weekend honored founder Robin Lail with a lifetime achievement award, drew Francis Ford Coppola to his Inglenook estate, and featured top live lots built around shared experiences — an evening with Sebastian Maniscalco from Gargiulo Vineyards, B Cellars and Silver Oak, and a tribute dinner to the late winemaker Michel Rolland organized by Staglin Family Vineyards, Accendo Estate, Dalla Valle Vineyards, Darioush and Screaming Eagle.
         </p>
 
         <p style={P_STYLE}>
@@ -543,7 +503,7 @@ export default function AuctionNapaValley2026() {
         </p>
 
         <p style={P_STYLE}>
-          Silicon Valley Bank’s <a href="https://napavalleyregister.com/news/svb-june-wine-report-napa-valley/article_ce5913c9-a53f-475a-9e5f-58e277db92a0.html" target="_blank" rel="noopener noreferrer" style={LINK}>June Direct-to-Consumer report</a> found Napa tasting-room reservations down on a trailing-12-month basis and club membership off 4% in 2025, with author Rob McMillan describing the moment as {"“"}stabilization, not recovery.{"”"} At a North Bay Business Journal-covered conference in May, M&amp;A specialist Mario Zepponi and land appraiser Tony Correia described an industry in <a href="/under-the-hood/napa-structural-reset-2026" style={LINK}>{"“"}a painful structural reset rather than a short-term slump,{"”"}</a> with a recovery horizon Zepponi put near 2028. Around them, <a href="/under-the-hood/calculators#tracker" style={LINK}>the distress has been concrete and named</a>: the Alila Napa Valley resort’s $94.2 million default, the Calistoga Motor Lodge’s $40 million default, Stanly Ranch’s $195 million foreclosure sale, Benessere Vineyards forced to auction after failing to sell at $35 million and Alpha Omega’s Mount Veeder vineyard pushed toward foreclosure.
+          Silicon Valley Bank’s <a href="https://www.svb.com/trends-insights/reports/wine-report/" target="_blank" rel="noopener noreferrer" style={LINK}>June Direct-to-Consumer report</a> found Napa tasting-room reservations down on a trailing-12-month basis and club membership off 4% in 2025, with author Rob McMillan describing the moment as {"“"}stabilization, not recovery.{"”"} At a North Bay Business Journal-covered conference in May, M&amp;A specialist Mario Zepponi and land appraiser Tony Correia described an industry in <a href="/under-the-hood/napa-structural-reset-2026" style={LINK}>{"“"}a painful structural reset rather than a short-term slump,{"”"}</a> with a recovery horizon Zepponi put near 2028. Around them, <a href="/under-the-hood/calculators#tracker" style={LINK}>the distress has been concrete and named</a>: the Alila Napa Valley resort’s $94.2 million default, the Calistoga Motor Lodge’s $40 million default, Stanly Ranch’s $195 million foreclosure sale, Benessere Vineyards forced to auction after failing to sell at $35 million and Alpha Omega’s Mount Veeder vineyard pushed toward foreclosure.
         </p>
 
         <p style={P_STYLE}>
@@ -560,7 +520,7 @@ export default function AuctionNapaValley2026() {
         </p>
 
         <p style={P_STYLE}>
-          But the funding still flows largely as one-time grants, allocated by a committee whose full composition and independent community oversight remain unclear from public materials. When the same industry that depends on these services also controls the philanthropic dollars that sustain them, the tension between public benefit and private interest is structural, not incidental — and it grows more pointed in a year when the pool of dollars shrinks. The previously floated idea of an independently governed Napa Valley Community Fund, able to receive auction proceeds while broadening who participates in funding decisions, is worth revisiting precisely now.
+          But the funding still flows largely as one-time grants, allocated by a committee whose full composition and independent community oversight remain unclear from public materials. When the same industry that depends on these services also controls the philanthropic dollars that sustain them, the tension between public benefit and private interest is structural, not incidental — and it grows more pointed in a year when the pool of dollars shrinks. The idea we raised here last year — an independently governed Napa Valley Community Fund, able to receive auction proceeds while broadening who participates in funding decisions — is worth revisiting precisely now.
         </p>
 
         {/* ═════════════════════════════════════════════════════════════ */}
@@ -647,12 +607,10 @@ export default function AuctionNapaValley2026() {
           <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: 22, color: T.ink, marginBottom: 16 }}>Sources</h2>
           <ol style={{ fontFamily: font, fontSize: 14, color: T.ink, lineHeight: 1.75, paddingLeft: 20 }}>
             <li style={{ marginBottom: 8 }}>Napa Valley Vintners / Collective Napa Valley release, {"“"}Enthusiasm for Wine Turns Into Impact at Auction Napa Valley{"”"} (June 7, 2026).</li>
-            <li style={{ marginBottom: 8 }}>Napa Valley Register, <a href="https://napavalleyregister.com/wine/auction-napa-valley-2026/article_7d39e2de-9353-4204-b586-2f5fb649100e.html" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Auction Napa Valley 2026</a>.</li>
-            <li style={{ marginBottom: 8 }}>The Press Democrat, <a href="https://www.pressdemocrat.com/2026/06/11/auction-napa-valley-2026-raises-6-million-to-support-local-youth/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Auction Napa Valley 2026 raises $6 million to support local youth</a> (Teresa Wall quote; attendance).</li>
             <li style={{ marginBottom: 8 }}>Wine Spectator, <a href="https://www.winespectator.com/articles/auction-napa-valley-pours-it-forward" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Auction Napa Valley Pours It Forward</a>.</li>
             <li style={{ marginBottom: 8 }}>Forbes / Liz Thach, <a href="https://www.winebusiness.com/news/link/319021" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>A Glass Half Full at Auction Napa Valley</a> (Tom Eddy quote).</li>
             <li style={{ marginBottom: 8 }}>Collective Napa Valley, <a href="https://www.collectivenapavalley.org/events/2026-complete-auction-weekend/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>2026 Auction Weekend ticketing</a> ($5,000 per guest).</li>
-            <li style={{ marginBottom: 8 }}>Silicon Valley Bank, <a href="https://www.svb.com/dtc-report/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>June 2026 Direct-to-Consumer Wine Report</a>.</li>
+            <li style={{ marginBottom: 8 }}>Silicon Valley Bank, <a href="https://www.svb.com/trends-insights/reports/wine-report/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>June 2026 Direct-to-Consumer Wine Report</a>.</li>
             <li style={{ marginBottom: 8 }}>North Bay Business Journal, May 2026 conference (Zepponi, Correia); see <a href="/under-the-hood/napa-structural-reset-2026" style={{ color: T.accent }}>The Reset Spreads</a>.</li>
             <li style={{ marginBottom: 8 }}>U.S. Bureau of Labor Statistics, <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>CPI-U</a> (2014 base; May 2026 = 335.123).</li>
           </ol>
