@@ -34,7 +34,7 @@ const ARTICLES = [
     slug: "napa-auction-2026",
     headline: "Under the Hood: Auction Napa Valley's $6 Million Question",
     publication: "Napa Valley Features",
-    date: "June 21, 2026",
+    date: "June 24, 2026",
   },
   {
     slug: "uth-napa-2025-crime-report",
@@ -230,8 +230,10 @@ const EXPORT_DATA = {
   "napa-auction-2026": {
     headline: "Auction Napa Valley's $6 Million Question",
     publication: "Napa Valley Features",
+    deck: "A sold-out Auction Napa Valley raised $6 million for youth wellness in 2026 — down from $6.5 million in 2025 and, adjusted for inflation, about 23% of its 2014 peak. Demand for the experience held; the dollars it generates did not.",
+    summary: "Auction Napa Valley sold out its June 4-6 weekend and drew a record crowd of more than 2,000 people from 29 states, yet raised $6 million for the Napa Valley Vintners’ Youth Wellness Initiative — down from $6.5 million in 2025 and the first year-over-year decline since the live format returned in 2024. Adjusted for inflation against a 2014 base, that total is roughly $4.2 million in 2014 dollars, about 23% of the auction’s inflation-adjusted peak. The weekend’s tension is that demand for the experience held while the dollars it generates did not: a packed, generous room raised less than a smaller field had a year earlier. The result reads against a wider wine-economy reset — softening direct-to-consumer reservations, club membership down 4% in 2025 and a string of named resort and vineyard defaults across the valley — and it sharpens long-standing questions about how auction proceeds are governed when the same industry that depends on the funded services also controls the dollars. A sold-out weekend that raised less than a smaller one says demand is healthy and yield is not; the 2027 auction becomes the real test of whether this is a one-year wobble or a trend.",
     slug: "napa-auction-2026",
-    dateline: "NAPA VALLEY, Calif. — June 21, 2026",
+    dateline: "NAPA VALLEY, Calif. — June 24, 2026",
     body: [
       t("NAPA VALLEY, Calif. — Auction Napa Valley raised $6 million over its June 4-6 weekend, Napa Valley Vintners reported, with proceeds directed to the trade association's Youth Wellness Initiative. By most measures the weekend was a success: tickets sold out, the barrel auction at the newly reopened Robert Mondavi Winery brought out more than 1,700 guests, vintners and volunteers, and the Saturday dinner at Inglenook, the capstone of a $5,000-a-guest weekend package, was limited to 400. Overall, the Vintners reported a record weekend crowd of more than 2,000 people from 29 states."),
       t("And yet the headline number went the other way. The $6 million total is down from $6.5 million in 2025 — the first year-over-year decline since the live, in-person format returned in 2024. After three years of climbing out of the pandemic trough, the recovery line flattened and then dipped."),
@@ -258,6 +260,7 @@ const EXPORT_DATA = {
       t("One year is a wobble; two would be a trend. The 2027 auction, set for June 3-5 with the Continuum family as honorary chairs, becomes the real test. A second consecutive decline would make it hard to keep calling this a recovery."),
       t("Shrinking dollars raise the stakes on how they're spent. When proceeds were climbing, governance questions could wait. They can't as easily now. The fewer the dollars, the more it matters who decides where they go — and who bears the risk when a program's initial funding ends."),
     ],
+    pullQuote: "Optimism and a declining total are not contradictions here.",
     captions: [
       {
         number: 1,
@@ -271,7 +274,7 @@ const EXPORT_DATA = {
     ],
     relatedCoverage: [
       { title: "Under the Hood: Auction Napa Valley's $6.5 Million Moment — and What Follows", publication: "Napa Valley Features", date: "June 14, 2025", url: "https://napavalleyfocus.substack.com/p/under-the-hood-auction-napa-valleys" },
-      { title: "Under the Hood: The Reset Spreads", publication: "Napa Valley Features", date: "April 4, 2026", url: "https://napaserve.org/under-the-hood/napa-structural-reset-2026" },
+      { title: "The Reset Spreads", publication: "Napa Valley Features", date: "April 4, 2026", url: "https://napaserve.org/under-the-hood/napa-structural-reset-2026" },
       { title: "Under the Hood: When the Price Gives Way", publication: "Napa Valley Features", date: "April 12, 2026", url: "https://napaserve.org/under-the-hood/napa-price-discovery-2026" },
     ],
     substackPolls: [

@@ -24,7 +24,8 @@ const WORKER = "https://misty-bush-fc93.tfcarl.workers.dev";
 const ARTICLE_SLUG = "napa-auction-2026";
 const ARTICLE_TITLE = "Under the Hood: Auction Napa Valley's $6 Million Question";
 const ARTICLE_PUBLICATION = "Napa Valley Features";
-const ARTICLE_DATE = "June 21, 2026";
+const ARTICLE_DATE = "June 24, 2026";
+const ARTICLE_DECK = "A sold-out Auction Napa Valley raised $6 million for youth wellness in 2026 — down from $6.5 million in 2025 and, adjusted for inflation, about 23% of its 2014 peak. Demand for the experience held; the dollars it generates did not.";
 const EYEBROW = "Under the Hood";
 
 // ── COUNTY + PUBLICATION (template-compat downstream constants) ────
@@ -150,6 +151,25 @@ function Caption({ title, description, sources = [] }) {
     </p>
   );
 }
+
+// ── PULL QUOTE ─────────────────────────────────────────────────────
+const PullQuote = ({ leadText, bodyChildren }) => (
+  <div style={{
+    margin: "28px 0",
+    padding: "20px 24px",
+    background: T.surface,
+    borderLeft: `4px solid ${T.accent}`,
+    fontFamily: font,
+    fontSize: 17,
+    lineHeight: 1.55,
+    color: T.ink,
+  }}>
+    <div style={{ fontWeight: 700, fontSize: 19, marginBottom: 12, color: T.ink }}>
+      {leadText}
+    </div>
+    {bodyChildren}
+  </div>
+);
 
 // ── CHART ONE — Auction totals, nominal vs inflation-adjusted ──────
 const AUCTION_TITLE = "Auction Napa Valley Totals: Nominal vs. Inflation-Adjusted, 2012-2026";
@@ -429,6 +449,11 @@ export default function AuctionNapaValley2026() {
           By Tim Carl {"·"} {ARTICLE_DATE}
         </p>
 
+        {/* ── DECK ──────────────────────────────────────────────────── */}
+        <p style={{ fontFamily: serif, fontSize: 18, color: T.muted, lineHeight: 1.6, marginBottom: 24, fontStyle: "italic" }}>
+          {ARTICLE_DECK}
+        </p>
+
         {/* ── SUBSTACK LINK ─────────────────────────────────────────── */}
         <p style={{ fontFamily: font, fontSize: 13, color: T.muted, marginBottom: 32, borderBottom: `1px solid ${T.border}`, paddingBottom: 20 }}>
           Read on{" "}
@@ -483,6 +508,8 @@ export default function AuctionNapaValley2026() {
         <p style={P_STYLE}>
           What softened was not the room’s enthusiasm but its checkbook. A packed, generous crowd raised less than a smaller field did a year earlier. That is the signal worth sitting with: the auction is increasingly good at filling seats and less able to translate those seats into the totals it once commanded. Forbes captured the prevailing mood among vintners as <a href="https://www.winebusiness.com/news/link/319021" target="_blank" rel="noopener noreferrer" style={LINK}>{"“"}glass half full,{"”"}</a> and Tom Eddy, who has made wine in the valley since 1974, called it {"“"}the fifth major downturn{"”"} of his career while voicing confidence in the long run. Optimism and a declining total are not contradictions here. They are the same story told from two ends.
         </p>
+
+        <PullQuote leadText="Optimism and a declining total are not contradictions here." />
 
         {/* ═════════════════════════════════════════════════════════════ */}
         {/* SECTION — A CROWDED FIELD                                     */}
@@ -559,7 +586,7 @@ export default function AuctionNapaValley2026() {
               <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (June 14, 2025)</span>
             </li>
             <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
-              <a href="/under-the-hood/napa-structural-reset-2026" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: The Reset Spreads{"”"}</a>
+              <a href="/under-the-hood/napa-structural-reset-2026" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}The Reset Spreads{"”"}</a>
               <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (April 4, 2026)</span>
             </li>
             <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
