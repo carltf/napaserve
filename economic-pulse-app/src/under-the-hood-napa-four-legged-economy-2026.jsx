@@ -12,9 +12,10 @@
 //   The article CHROME (eyebrow, byline, summary, polls, sources) stays on the
 //   standard cream tokens (T); only the three figures use M.
 //
-// TWO EDITORIAL HOLDS remain IN the prose intentionally (do not strip):
-//   1. SRGA [VERIFY ...] flag — taxpayer #7 unidentified pending Assessor lookup.
-//   2. Benessere "pending sale at $10.15 million … closing about 30 days out".
+// ONE EDITORIAL HOLD remains IN the prose intentionally (do not strip):
+//   1. Benessere "pending sale at $10.15 million … closing about 30 days out".
+// RESOLVED: SRGA (taxpayer #7) identified as SRGA LP / Stanly Ranch (Blackstone
+//   foreclosure, March 2026), per Napa County records; [VERIFY] flag removed.
 // Publish only via the Admin page — never via a const flag here.
 // -----------------------------------------------------------------
 
@@ -391,7 +392,7 @@ function ChartTwo() {
       "Treasury Wine Estates Americas",
     ];
     const values = [726, 454, 370, 340, 308, 291, 288, 270, 262, 259];
-    const colors = labels.map((l, i) => (i === 0 ? M.primary : l === "SRGA" ? M.unidentified : M.crop));
+    const colors = labels.map((l, i) => (i === 0 ? M.primary : M.crop));
     const VAL_GRAY = "#6E747C";
 
     const valueLabels = {
@@ -435,18 +436,17 @@ function ChartTwo() {
     <div style={{ marginBottom: 48 }}>
       <h2 style={{ ...h2style, marginTop: 0, marginBottom: 16 }}>{CHART2_TITLE}</h2>
       <ChartShell innerRef={containerRef}>
-        <p style={CHART_SUBTITLE}>Eight of the 10 largest taxpayers are wine, vineyard real estate or hospitality</p>
+        <p style={CHART_SUBTITLE}>Nine of the 10 largest taxpayers are wine, vineyard real estate or hospitality</p>
         <ChartLegend
           items={[
             { color: M.primary, label: "Utility (PG&E)" },
             { color: M.crop, label: "Wine, vineyard real estate & hospitality" },
-            { color: M.unidentified, label: "Unidentified (SRGA)" },
           ]}
         />
         <div style={{ overflowX: "auto", width: "100%" }}>
           <div style={{ minWidth: "640px" }}>
             <div style={{ position: "relative", height: 440 }}>
-              <canvas ref={canvasRef} role="img" aria-label="Horizontal bar chart of Napa County's 10 largest property taxpayers in 2024-25, led by PG&E at $726 million, with eight wine, vineyard real estate or hospitality holdings and one unidentified taxpayer, SRGA, at $288 million." />
+              <canvas ref={canvasRef} role="img" aria-label="Horizontal bar chart of Napa County's 10 largest property taxpayers in 2024-25, led by PG&E at $726 million, with nine wine, vineyard real estate or hospitality holdings, including SRGA (SRGA LP, the Stanly Ranch ownership entity), at $288 million." />
             </div>
           </div>
         </div>
@@ -456,7 +456,7 @@ function ChartTwo() {
       </div>
       <Caption
         title={CHART2_TITLE}
-        description={"Eight of the 10 largest taxpayers are wine, vineyard real estate or hospitality holdings; only PG&E sits plainly outside, and one — SRGA — is unidentified."}
+        description={"Nine of the 10 largest taxpayers are wine, vineyard real estate or hospitality holdings; only PG&E sits plainly outside, and SRGA is SRGA LP, the Stanly Ranch ownership entity."}
         sources={[{ label: "Napa County FY 2024-25 ACFR, Auditor-Controller’s Office", url: ACFR_URL }]}
       />
     </div>
@@ -768,7 +768,7 @@ export default function UnderTheHoodFourLeggedEconomy2026() {
         </p>
 
         <p style={P_STYLE}>
-          Eight of the other nine are wine, vineyard real estate or hospitality holdings: Global Ag Properties/SPP Napa Vineyards, Robert Mondavi Properties under Constellation, Boardwalk Investments Yountville, E. &amp; J. Gallo Winery, Heitz Wine Cellars, Meritage Resort, Realty Income Properties 2 LLC/Diageo and Treasury Wine Estates Americas. The seventh-ranked taxpayer, listed in the report only as SRGA, could not be independently identified. <span style={VERIFY_FLAG}>[VERIFY: SRGA {"—"} parcel lookup via the Napa County Assessor (John Tuteur, 707-253-4459) to confirm owner and sector.]</span>
+          The other nine are all wine, vineyard real estate or hospitality holdings. Eight are named in the report: Global Ag Properties/SPP Napa Vineyards, Robert Mondavi Properties under Constellation, Boardwalk Investments Yountville, E. &amp; J. Gallo Winery, Heitz Wine Cellars, Meritage Resort, Realty Income Properties 2 LLC/Diageo and Treasury Wine Estates Americas. The seventh-ranked taxpayer, listed in the report only as SRGA, is SRGA LP {"—"} the ownership entity behind Stanly Ranch, the 700-acre Carneros resort that appears again below among the assets now repricing. Napa County records identify SRGA LP, originally Stanly Ranch Resort Napa LLC, as the borrower on the project{"’"}s $235 million construction loan, which had grown to $230 million in default by October 2025. Blackstone acquired the resort at a foreclosure auction in March 2026 {"—"} after the close of the fiscal year this tax roll reflects.
         </p>
 
         <p style={P_STYLE}>
@@ -910,7 +910,7 @@ export default function UnderTheHoodFourLeggedEconomy2026() {
         <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 40 }}>
           <h3 style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, margin: "0 0 10px" }}>Methodology</h3>
           <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.7, fontStyle: "italic" }}>
-            Fiscal figures are FY 2024-25 (Napa County ACFR); winegrape crop values are calendar-year (Napa County Agricultural Commissioner, 2021-2024), with the 2023 record at $1.20 billion and 2024 at $1.03 billion. Chart 1 plots assessed value by fiscal year and crop value by calendar year on a shared axis. 2025 figures cited in text are CDFA preliminary crush prices (per ton), a different series from the Agricultural Commissioner crop-value totals charted above, which run through 2024. SRGA, the seventh-largest taxpayer, is listed in the ACFR without an identifiable owner and is treated as unidentified pending an Assessor parcel lookup. Principal-employer counts are as reported by each employer in the county{"’"}s ACFR schedule; year-to-year changes can reflect reporting differences as well as actual headcount.
+            Fiscal figures are FY 2024-25 (Napa County ACFR); winegrape crop values are calendar-year (Napa County Agricultural Commissioner, 2021-2024), with the 2023 record at $1.20 billion and 2024 at $1.03 billion. Chart 1 plots assessed value by fiscal year and crop value by calendar year on a shared axis. 2025 figures cited in text are CDFA preliminary crush prices (per ton), a different series from the Agricultural Commissioner crop-value totals charted above, which run through 2024. SRGA, the seventh-largest taxpayer, is SRGA LP (originally Stanly Ranch Resort Napa LLC), the ownership entity of the Stanly Ranch resort, per Napa County records; the property entered foreclosure in October 2025 and was acquired by Blackstone in March 2026, after the close of the fiscal year this roll reflects. Principal-employer counts are as reported by each employer in the county{"’"}s ACFR schedule; year-to-year changes can reflect reporting differences as well as actual headcount.
           </p>
         </div>
 
@@ -925,6 +925,7 @@ export default function UnderTheHoodFourLeggedEconomy2026() {
             <li style={{ marginBottom: 8 }}>TWE St. Helena/Beringer luxury-hub history: <a href={WINES_VINES_TWE_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Wines &amp; Vines</a> (2016 Diageo-acquisition consolidation at the Beringer plant, Pratt Avenue).</li>
             <li style={{ marginBottom: 8 }}>Benessere Vineyards auction: <a href={BENESSERE_PD_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Press Democrat</a> / North Bay Business Journal (June 25, 2026); <a href={BENESSERE_RELEASE_URL} target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>Concierge Auctions release</a> (June 26, 2026).</li>
             <li style={{ marginBottom: 8 }}>Stanly Ranch / Blackstone and Calistoga Motor Lodge default: see <a href="/under-the-hood/napa-population-2025" style={{ color: T.accent }}>Napa County Shrunk as Calistoga Grew and the Base Faltered</a> (May 14, 2026) and <a href="https://napavalleyfocus.substack.com/p/under-the-hood-the-accelerants-reshaping" target="_blank" rel="noopener noreferrer" style={{ color: T.accent }}>How Accelerants Are Reshaping Wine Demand</a> (Jan. 22, 2026).</li>
+            <li style={{ marginBottom: 8 }}>SRGA LP / Stanly Ranch ownership and foreclosure: Press Democrat (Oct. 28, 2025); Napa Valley Register (Oct. 2025); county recorder filings.</li>
           </ol>
         </div>
 
