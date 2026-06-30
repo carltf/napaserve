@@ -749,7 +749,7 @@ export default function UnderTheHoodFourLeggedEconomy2026() {
         {/* LEDE (first body paragraph carries the dateline)             */}
         {/* ═════════════════════════════════════════════════════════════ */}
         <p style={{ ...P_STYLE, marginBottom: 18 }}>
-          <strong>NAPA VALLEY, Calif.</strong> {"—"} Napa County{"’"}s economy stands on four legs: wine, tourism, hospitality and the property-tax base that funds the public services around them. Three are slipping. The 2024 winegrape crop fell 14.4% to $1.03 billion. Lodging-tax receipts have flattened below their peak. The county{"’"}s 10 largest employers have shed a net 1,775 jobs since 2016. Through all of it, the fourth leg held {"—"} assessed property value climbed to $55.77 billion in fiscal 2024-25 and property tax revenue rose 5.6% to $191.26 million, according to the county{"’"}s <a href={ACFR_URL} target="_blank" rel="noopener noreferrer" style={LINK}>Annual Comprehensive Financial Report</a>. That leg has been carrying the other three. It is now starting to show stress at its base.
+          <strong>NAPA VALLEY, Calif.</strong> {"—"} Napa County{"’"}s economy stands on four legs: wine, tourism, hospitality and the property-tax base that funds the public services around them. Three are slipping. The 2024 winegrape crop fell 14.4% to $1.03 billion. The decline continued into 2025: the weighted average price of Napa County cabernet sauvignon slipped to $8,933 a ton, a second straight annual drop and the first back-to-back decline in the modern crush-report era, according to CDFA preliminary crush data. Lodging-tax receipts have flattened below their peak. The county{"’"}s 10 largest employers have shed a net 1,775 jobs since 2016. Through all of it, the fourth leg held {"—"} assessed property value climbed to $55.77 billion in fiscal 2024-25 and property tax revenue rose 5.6% to $191.26 million, according to the county{"’"}s <a href={ACFR_URL} target="_blank" rel="noopener noreferrer" style={LINK}>Annual Comprehensive Financial Report</a>. That leg has been carrying the other three. It is now starting to show stress at its base.
         </p>
 
         <p style={P_STYLE}>
@@ -859,6 +859,10 @@ export default function UnderTheHoodFourLeggedEconomy2026() {
               <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (June 1, 2024)</span>
             </li>
             <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
+              <a href="/under-the-hood/napa-price-discovery-2026" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: When the Price Gives Way{"”"}</a>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (April 12, 2026)</span>
+            </li>
+            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
               <a href="/under-the-hood/napa-population-2025" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: Napa County Shrunk as Calistoga Grew and the Base Faltered{"”"}</a>
               <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (May 14, 2026)</span>
             </li>
@@ -906,7 +910,7 @@ export default function UnderTheHoodFourLeggedEconomy2026() {
         <div style={{ borderTop: `2px solid ${T.border}`, paddingTop: 28, marginTop: 40 }}>
           <h3 style={{ fontFamily: serif, fontSize: 17, fontWeight: 700, color: T.ink, margin: "0 0 10px" }}>Methodology</h3>
           <p style={{ fontFamily: font, fontSize: 14, color: T.muted, lineHeight: 1.7, fontStyle: "italic" }}>
-            Fiscal figures are FY 2024-25 (Napa County ACFR); winegrape crop values are calendar-year (Napa County Agricultural Commissioner, 2021-2024), with the 2023 record at $1.20 billion and 2024 at $1.03 billion. Chart 1 plots assessed value by fiscal year and crop value by calendar year on a shared axis. SRGA, the seventh-largest taxpayer, is listed in the ACFR without an identifiable owner and is treated as unidentified pending an Assessor parcel lookup. Principal-employer counts are as reported by each employer in the county{"’"}s ACFR schedule; year-to-year changes can reflect reporting differences as well as actual headcount.
+            Fiscal figures are FY 2024-25 (Napa County ACFR); winegrape crop values are calendar-year (Napa County Agricultural Commissioner, 2021-2024), with the 2023 record at $1.20 billion and 2024 at $1.03 billion. Chart 1 plots assessed value by fiscal year and crop value by calendar year on a shared axis. 2025 figures cited in text are CDFA preliminary crush prices (per ton), a different series from the Agricultural Commissioner crop-value totals charted above, which run through 2024. SRGA, the seventh-largest taxpayer, is listed in the ACFR without an identifiable owner and is treated as unidentified pending an Assessor parcel lookup. Principal-employer counts are as reported by each employer in the county{"’"}s ACFR schedule; year-to-year changes can reflect reporting differences as well as actual headcount.
           </p>
         </div>
 
