@@ -28,7 +28,7 @@ import UnderTheHoodNapaFarmingGwss from "./napaserve-under-the-hood-napa-farming
 import UnderTheHoodGenZWine from "./under-the-hood-could-gen-z-save-the-wine-industry.jsx";
 import UnderTheHoodSmokeTaint2026 from "./under-the-hood-smoke-taint-2026.jsx";
 import UnderTheHoodNapa2025CrimeReport from "./under-the-hood-napa-2025-crime-report.jsx";
-import UnderTheHoodNapaTaxBase2026 from "./under-the-hood-napa-tax-base-2026.jsx";
+import FourLeggedEconomy2026 from "./under-the-hood-napa-four-legged-economy-2026.jsx";
 import AuctionNapaValley2026 from "./under-the-hood-napa-auction-2026.jsx";
 import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
@@ -72,7 +72,7 @@ export default function App() {
         <Route path="/under-the-hood/could-gen-z-save-the-wine-industry" element={<UnderTheHoodGenZWine />} />
         <Route path="/under-the-hood/smoke-taint-2026" element={<UnderTheHoodSmokeTaint2026 />} />
         <Route path="/under-the-hood/uth-napa-2025-crime-report" element={<UnderTheHoodNapa2025CrimeReport />} />
-        <Route path="/under-the-hood/napa-tax-base-2026" element={<UnderTheHoodNapaTaxBase2026 />} />
+        <Route path="/under-the-hood/napa-four-legged-economy-2026" element={<FourLeggedEconomy2026 />} />
         <Route path="/under-the-hood/napa-auction-2026" element={<AuctionNapaValley2026 />} />
         <Route path="/under-the-hood/template" element={<UnderTheHoodTemplate />} />
         <Route path="/under-the-hood/calculators" element={<CalculatorsPage />} />

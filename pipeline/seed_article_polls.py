@@ -571,21 +571,21 @@ POLLS = [
         ],
     },
     {
-        "article_slug": "napa-tax-base-2026",
+        "article_slug": "napa-four-legged-economy-2026",
         "sort_order": 1,
-        "question": "Napa County’s 10 largest employers shed a net 1,775 jobs since 2016. What best explains it?",
+        "question": "Three of Napa County’s four economic legs — wine, tourism and hospitality jobs — are slipping while property tax holds. What happens to the fourth leg next?",
         "options": [
-            "Wine restructuring/consolidation",
-            "Health-care mergers, downsizing",
-            "Automation and efficiency gains",
-            "Regional economic contraction",
+            "It holds — real estate values stay elevated",
+            "It softens as distressed sales reprice the roll",
+            "It drops sharply once reassessments catch up",
+            "Too uncertain to call",
             "Other (comment below)",
         ],
     },
     {
-        "article_slug": "napa-tax-base-2026",
+        "article_slug": "napa-four-legged-economy-2026",
         "sort_order": 2,
-        "question": "A tax base that keeps climbing on real estate while wine jobs and crop value fall is a sign of growing fragility, not strength.",
+        "question": "A tax base that keeps climbing on real estate while wine, tourism and jobs all weaken is a sign of growing fragility, not strength.",
         "options": [
             "Strongly agree",
             "Agree",
@@ -595,7 +595,7 @@ POLLS = [
         ],
     },
     {
-        "article_slug": "napa-tax-base-2026",
+        "article_slug": "napa-four-legged-economy-2026",
         "sort_order": 3,
         "question": "How concerned are you about Napa County’s reliance on wine and luxury hospitality?",
         "options": [
