@@ -342,8 +342,11 @@ Six-signal at-a-glance synthesis of Napa County's economy. URL: `napaserve.org/d
 | napa-population-2025 | 39/40/41 | PUBLISHED 2026-05-11 |
 | napa-schools-2026 | 42/43/44 | PUBLISHED 2026-05-17 |
 | napa-farming-2026-gwss | TBD | REPORTED PUBLISHED 2026-05-27 (NapaServe + Substack); 5 verify flags; DB confirmation pending (draft d67e8fb, PD-2026-05-30-04) |
+| napa-four-legged-economy-2026 | 64–66 | PUBLISHED 2026-07-01 |
 
-**Next available poll ID:** 45.
+**Retired:** napa-tax-base-2026 — superseded; JSX removed (4712644). DB row id 19 and polls 58–60 retained as `published=false` (not deleted).
+
+**Next available poll ID:** 67. *(was 45 — stale; IDs 45–63 assigned in prior sessions but not tracked here. Table above is also incomplete: ~7 published articles missing — reconcile in a future pass.)*
 
 **Status verification rule (Lesson Z, May 18, 2026):** EOS doc generation MUST run DB status query against every article slug mentioned. Never transcribe published-state from prior session docs.
 

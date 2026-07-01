@@ -122,6 +122,35 @@ See UTH Protocol "Anti-Drift Gates" for the canonical statement. In short: quote
 
 **II. Claude Code can't see Supabase SQL Editor actions.** Out-of-band DB writes (e.g. a SQL Editor DELETE) are invisible here — flagged a Tim-initiated delete as "external" 3× this session. Reconcile in chat.
 
+### Lessons (2026-06-30)
+
+**Recurrence of Lesson Z (not a new lesson) — code-shipped ≠ published.**
+napa-four-legged-economy-2026 was code-complete, committed and Vercel-deployed —
+and rendered publicly — while having NO `napaserve_articles` row and NO seeded
+polls. The public render was a false positive: `useDraftGate`'s not-found→published
+catch AND the admin card's `published: dbRow ? dbRow.published : true` fallback both
+default a missing row to "published," producing the contradictory admin state
+**"Live" + "DRAFT" + no Publish button** (Lesson K: the tags disagree → probe the DB
+row, not the UI). The handoff asserted "row inserted, polls seeded" — untrue; the
+seeder *script* contained the 3 poll defs but they were never run against the DB.
+Fixes:
+- **Publish-Readiness Ledger** — per-store completion with the actual
+  `SELECT`/`git`/Vercel output pasted as evidence. No pasted evidence = not done.
+- **Never transcribe DB status from memory or the seeder script.** Seeder containing
+  poll defs ≠ polls in the DB; a row intended ≠ a row inserted. Close every session
+  with the SELECT and paste the raw result.
+- **Separate "code-shipped" from "published" in EOS language.** A missing row renders
+  publicly via the fallback, so "visible on the site" is not evidence of publication.
+- **Infra (locked):** hosting is **Vercel**, not Cloudflare (only `/api/unsubscribe`
+  → CF Worker). Production hash is **CI-built**, ≠ a local `npm run build` hash —
+  verify deploys **by commit SHA via the Vercel API**, never by hash. Publish path:
+  worker `/api/publish-article` only **UPDATEs an existing row** (404 if none) → an
+  article needs a `published=false` row before the admin **Publish Article** button
+  works.
+- **Process meta-lesson:** DB-state and publish-readiness questions route to Claude
+  Code for a **SELECT** — never asserted from chat-thread memory.
+  Live > protocol > assistant memory.
+
 ---
 
 ## Snapshot PNG Geometry (V5 Canonical, NEW Surface)

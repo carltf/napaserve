@@ -460,3 +460,26 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Affected surfaces:** `poll_extraction.py` `parse_poll_response()`; `nvf_polls`
 - **Symptom:** id-only poll embeds (null/empty question, 0 votes) upserted as hollow rows; polluted published_at-desc ordering and fed null text to embedding.
 - **Resolution:** FIXED a7155f2 (parse skips null/empty question) + 9 existing rows cleaned (6 legacy March, 3 this run). Logged closed.
+
+---
+
+## 2026-06-30 Roll-Forward Entries
+
+#### PD-2026-06-30-01 — Studio Mac has no node/npm build toolchain
+- **Status:** OPEN
+- **Surfaced:** 2026-06-30
+- **Affected surfaces:** Build env; `economic-pulse-app` (Vite); Studio session-start
+- **Symptom:** `node`/`npm` absent on Tim's Mac Studio (this session's machine) — no local `npm run build`, no local bundle-hash verification. Builds/deploys must run on the Air or via Vercel CI on push.
+- **Root cause:** Toolchain installed only on the Air; two-machine split.
+- **Scope:** Install Node on the Studio, OR standardize one build machine, OR (preferred) relocate repo off iCloud Desktop to one non-synced dev path.
+- **Related entries:** PD-2026-06-11-08, PD-2026-06-30-02
+- **Notes:** Deploy verification this session used the Vercel API by commit SHA (no local build). Not blocking (CI builds), but removes local build/verify on the Studio.
+
+#### PD-2026-06-30-02 — Two-machine iCloud sync friction (Studio ↔ Air)
+- **Status:** OPEN
+- **Surfaced:** 2026-06-30
+- **Affected surfaces:** `~/Desktop/napaserve` on both machines; docs/ canon; `.env`
+- **Symptom:** Working across Studio and Air via iCloud-synced Desktop cost real time (which machine has the toolchain, which tree is current).
+- **Root cause:** Repo + docs under iCloud-managed Desktop shared across two machines; "which tree is current" is manual (git HEAD is canonical, iCloud copies can lag).
+- **Scope:** Consolidate to one machine, or relocate repo to a non-synced path and sync via git pull, not iCloud file-sync.
+- **Related entries:** PD-2026-06-11-08, PD-2026-06-30-01
