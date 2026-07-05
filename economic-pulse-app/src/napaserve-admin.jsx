@@ -25,6 +25,12 @@ const mono = "monospace";
 
 const ARTICLES = [
   {
+    slug: "napa-lodging-spring-2026",
+    headline: "Under the Hood: Napa's Spring Rebound Cooled in May as Price Kept Carrying the Load",
+    publication: "Napa Valley Features",
+    date: "July 5, 2026",
+  },
+  {
     slug: "napa-four-legged-economy-2026",
     headline: "Under the Hood: Napa County's Last Stable Leg Is Showing Cracks",
     publication: "Napa Valley Features",
@@ -148,6 +154,106 @@ const h = (text) => ({ type: "header", text });
 const c = (number) => ({ type: "chart", number });
 
 const EXPORT_DATA = {
+  "napa-lodging-spring-2026": {
+    headline: "Napa's Spring Rebound Cooled in May as Price Kept Carrying the Load",
+    publication: "Napa Valley Features",
+    deck: "Napa County's lodging market opened 2026 with a weak January, rebounded from February through April, then gave back its occupancy gains in May, when rooms sold fell 4.4% from a year earlier. Through five months, occupancy was essentially flat year over year while average daily rate rose 3.6%, leaving revenue gains driven again by price rather than volume. The pattern returns Napa to the price-led dynamic the column has tracked since the pandemic, with occupancy still well below its 2019 level. Neighboring Sonoma County, by contrast, kept adding rooms sold, its occupancy up 6.4% year to date.",
+    slug: "napa-lodging-spring-2026",
+    dateline: "NAPA VALLEY, Calif. — July 5, 2026",
+    body: [
+      t("NAPA VALLEY, Calif. — In March, this column read a warning into a single soft month, arguing in [When Room Price Can No Longer Carry the Load](https://napavalleyfocus.substack.com/p/when-room-price-can-no-longer-carry) (March 2026) that January’s simultaneous drop in occupancy and rate might signal the limits of Napa County’s price-led hotel model. February through April complicated that read: The market rebounded, and for the first time in months it did so on both volume and price. Then May arrived, and the volume half of that recovery gave way."),
+      t("Three measures anchor this beat. Occupancy is the share of available rooms sold. Average daily rate, or ADR, is the average price paid for the rooms that sold. RevPAR, revenue per available room, folds the two together. Watching which one leads — volume or price — is the difference between a market filling rooms and a market defending rate."),
+      h("The Shape of the Year So Far"),
+      t("Napa County’s occupancy fell 1.8% year over year in January, rose 6% in February, 1.2% in March and 2.3% in April, then fell 4.4% in May, according to STR competitive-set data compiled in Visit Napa Valley’s monthly industry reports. Average daily rate followed a steadier path: down 3.3% in January, then up every month after — 4.4%, 4.9%, 4.9% and 5.1% through May."),
+      c(1),
+      t("Through five months, the two lines net to a familiar shape. Year-to-date occupancy stood at 60.3%, up just 0.4% from the same period in 2025 — essentially flat. Average daily rate reached $409.15, up 3.6%. RevPAR rose 4% to $246.84. Nearly all of the topline gain came from price."),
+      h("May Put Price Back in Charge"),
+      t("May is normally one of Napa’s stronger months, and in absolute terms it was: occupancy of 71% and an average daily rate of $546.25. But measured against May 2025, occupancy fell 4.4% while rate rose 5.1%, leaving RevPAR essentially flat at plus-0.4%. Visit Napa Valley’s own summary noted that Napa “led with rate over occupancy” for the month."),
+      t("That is the price-led pattern in miniature: fewer rooms sold, each at a higher price, revenue holding roughly steady. It is the same dynamic the column flagged in March, reasserting itself after a three-month interruption."),
+      h("Two Counties, Two Different Recoveries"),
+      t("The contrast with Sonoma County, whose 2026 rebound this column examined in [Sonoma County’s Lodging Rebound Is Running on Volume, Not Rate]([CONFIRM-URL: Sonoma lodging article]), has only sharpened. Through May, Sonoma’s occupancy was up 6.4% year to date while its average daily rate rose just 0.9%. Napa’s occupancy was up 0.4% while its rate rose 3.6%."),
+      c(2),
+      t("The two counties are recovering along opposite axes: Sonoma is filling more rooms at prices it can barely lift, while Napa is holding — and modestly raising — the highest rates in the region without adding volume. Neither is unambiguously healthier. Sonoma’s growth shows demand returning but little pricing power; Napa’s shows pricing power intact but demand that is not expanding. Napa’s average daily rate of $409.15 remained the highest of any county in the competitive set, and its RevPAR of $246.84 was now the highest as well, moving ahead of a San Francisco market that had led earlier in the year on demand around Super Bowl LX, played Feb. 8 at Levi’s Stadium in Santa Clara."),
+      h("Still Below 2019"),
+      t("Year-over-year comparisons measure 2026 against a soft 2025, not against the market’s pre-pandemic peak. On that longer baseline, Napa’s hotels remain structurally short on volume."),
+      c(3),
+      t("Full-year 2025 occupancy was 64.6%, still 6.5 percentage points below 2019’s 71.1%, even as average daily rate rose 28.9% over the same period and RevPAR climbed 17.1%. The mechanism is the one prior reporting has described in [Price Continues to Carry Napa Hotel Market as Room-Night Demand Lags](https://napavalleyfocus.substack.com/p/under-the-hood-price-continues-to): supply grew about 5.2% above 2019 while room-night demand fell about 4.4%, leaving the county selling a smaller share of a larger inventory. The early-2026 data did little to close that gap. Through May, Napa sold about 482,000 room nights against roughly 799,000 available — some 317,000 unsold — essentially unchanged from the same period in 2025, when about 316,000 went unsold. The year-over-year demand gain was matched almost exactly by added supply."),
+      h("The Segments Still Split"),
+      t("The divergence by hotel type that emerged this spring held through May."),
+      c(4),
+      t("Year to date, luxury hotels posted the strongest gains of any service type — occupancy up 5.2%, average daily rate up 4.5% and RevPAR up 10%. Limited-service hotels, the value end, were the laggards, down on both occupancy and RevPAR. The reversal from January, when luxury was the softest tier, has persisted, though luxury’s 56.7% year-to-date occupancy remained the lowest of the three service types. Napa’s high end is commanding rate; its value end is not."),
+      h("Napa Against Its Neighbors"),
+      t("Placed against the full competitive set, Napa’s position is unmistakable and unchanged by five months of movement."),
+      c(5),
+      t("Napa carried the highest average daily rate in the set and, through May, the highest RevPAR — yet its 60.3% occupancy was the second-lowest, ahead of only Sonoma. Monterey, San Luis Obispo and Santa Barbara all ran higher occupancy at far lower rates; San Francisco, lifted earlier by the Super Bowl, led the set on occupancy. The fewest nights sold at the highest price is the durable shape of the Napa market."),
+      h("The Upvalley Split"),
+      t("Within the county, the jurisdictions again diverged along the same volume-versus-rate line. Calistoga sold slightly fewer rooms year to date, occupancy down 0.9%, but posted one of the largest rate gains of any jurisdiction, average daily rate up 8.3% to $558.18 — the clearest price-led result upvalley. St. Helena was flat, occupancy off 0.4% and rate unchanged. Yountville and the unincorporated county again led on volume, occupancy up 4% and 9.7% respectively, though from lower occupancy levels. American Canyon, the value gateway, ran the highest occupancy of any jurisdiction at 69.3% while carrying by far the lowest rate."),
+      h("What Still Hangs Over the Numbers"),
+      t("The five-month picture is unfolding against conditions prior reporting has documented: a supply pipeline that was still adding rooms to a market not expanding room-night demand, a wine economy working through soft demand and a hospitality-financing environment earlier reporting described as tightening, both examined in [Under the Hood: Napa County’s Last Stable Leg Is Showing Cracks](https://napaserve.org/under-the-hood/napa-four-legged-economy-2026)."),
+      h("Bottom Line"),
+      t("Napa County’s spring rebound was real but narrow. It reached rate, which held and grew, but its volume gains did not survive May, when occupancy fell back below year-earlier levels and price returned to carrying the topline on its own. Through five months, the county is selling about as many rooms as it did a year ago, at somewhat higher prices, and still well below the share of inventory it moved in 2019. The question the March column raised has not been answered so much as deferred: whether Napa can turn its pricing power into sustained room-night demand, or whether price will keep doing the work of a recovery that volume has not joined."),
+    ],
+    captions: [
+      {
+        number: 1,
+        title: "Napa County Lodging: Occupancy Wavered While Rate Kept Climbing",
+        description: "Occupancy fell year over year in January, rose from February through April, then dropped 4.4% in May, while average daily rate rose every month after January.",
+        sources: [
+          { label: "STR competitive set, Visit Napa Valley Monthly Industry Report", url: "https://www.visitnapavalley.com/industry/reports/vnv-monthly/#str-data" },
+        ],
+      },
+      {
+        number: 2,
+        title: "Two Recoveries: Napa Leaned on Rate, Sonoma on Volume",
+        description: "Year to date through May, Napa's gains came almost entirely from rate while its occupancy held flat; Sonoma's came almost entirely from occupancy.",
+        sources: [
+          { label: "STR competitive set, Visit Napa Valley Monthly Industry Report", url: "https://www.visitnapavalley.com/industry/reports/vnv-monthly/#str-data" },
+        ],
+      },
+      {
+        number: 3,
+        title: "Napa's Price Climbed While Room Demand Stayed Below 2019",
+        description: "Indexed to 2019, full-year occupancy remained below its pre-pandemic level through 2025 even as average daily rate rose well above it.",
+        sources: [
+          { label: "STR, Visit Napa Valley Monthly Industry Report", url: "https://www.visitnapavalley.com/industry/reports/vnv-monthly/#str-data" },
+        ],
+      },
+      {
+        number: 4,
+        title: "The Segments Still Split: Luxury Led, Limited-Service Lagged",
+        description: "Year to date, luxury hotels posted the strongest year-over-year gains across occupancy, ADR and RevPAR, while limited-service properties were down on occupancy and RevPAR — a reversal from January, when luxury was the weak point.",
+        sources: [
+          { label: "STR competitive set, Visit Napa Valley Monthly Industry Report", url: "https://www.visitnapavalley.com/industry/reports/vnv-monthly/#str-data" },
+        ],
+      },
+      {
+        number: 5,
+        title: "Napa Sells the Fewest Nights at the Highest Price",
+        description: "Among competitive-set counties year to date, Napa carried the highest average daily rate and the highest RevPAR while running the second-lowest occupancy.",
+        sources: [
+          { label: "STR competitive set, Visit Napa Valley Monthly Industry Report", url: "https://www.visitnapavalley.com/industry/reports/vnv-monthly/#str-data" },
+        ],
+      },
+    ],
+    relatedCoverage: [
+      { title: "When Room Price Can No Longer Carry the Load", publication: "Napa Valley Features", date: "March 2026", url: "https://napavalleyfocus.substack.com/p/when-room-price-can-no-longer-carry" },
+      { title: "Price Continues to Carry Napa Hotel Market as Room-Night Demand Lags", publication: "Napa Valley Features", date: "January 9, 2026", url: "https://napavalleyfocus.substack.com/p/under-the-hood-price-continues-to" },
+      { title: "Sonoma County’s Lodging Rebound Is Running on Volume, Not Rate", publication: "Sonoma County Features", date: "2026", url: "[CONFIRM-URL: Sonoma lodging article]" },
+      { title: "Under the Hood: Napa County’s Last Stable Leg Is Showing Cracks", publication: "Napa Valley Features", date: "July 1, 2026", url: "https://napaserve.org/under-the-hood/napa-four-legged-economy-2026" },
+    ],
+    substackPolls: [
+      { question: "What best explains Napa's flat room demand?", options: ["Room rates are too high", "Fewer visitors overall", "Competition from Sonoma", "Too many new hotel rooms", "Normal post-pandemic reset"] },
+      { question: "Should Napa hotels cut rates to fill more rooms?", options: ["Yes, volume matters more", "No, protect the brand", "Only at the value end", "Only in the off-season", "Let the market decide"] },
+      { question: "Where does Napa lodging go from here?", options: ["Occupancy recovers to 2019", "Price keeps carrying revenue", "Both rate and volume slip", "Luxury pulls further ahead", "Too early to tell"] },
+    ],
+    sources: [
+      "STR (Smith Travel Research) data via [Visit Napa Valley Monthly Industry Report, May 2026](https://www.visitnapavalley.com/industry/reports/vnv-monthly/#str-data)",
+      "Prior Napa Valley Features reporting as linked in Related Coverage",
+    ],
+    links: [
+      { label: "Read interactive version", url: "https://napaserve.org/under-the-hood/napa-lodging-spring-2026" },
+    ],
+  },
   "napa-four-legged-economy-2026": {
     headline: "Napa County's Last Stable Leg Is Showing Cracks",
     publication: "Napa Valley Features",

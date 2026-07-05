@@ -30,6 +30,7 @@ import UnderTheHoodSmokeTaint2026 from "./under-the-hood-smoke-taint-2026.jsx";
 import UnderTheHoodNapa2025CrimeReport from "./under-the-hood-napa-2025-crime-report.jsx";
 import FourLeggedEconomy2026 from "./under-the-hood-napa-four-legged-economy-2026.jsx";
 import AuctionNapaValley2026 from "./under-the-hood-napa-auction-2026.jsx";
+import UnderTheHoodNapaLodgingSpring2026 from "./under-the-hood-napa-lodging-spring-2026.jsx";
 import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
@@ -74,6 +75,7 @@ export default function App() {
         <Route path="/under-the-hood/uth-napa-2025-crime-report" element={<UnderTheHoodNapa2025CrimeReport />} />
         <Route path="/under-the-hood/napa-four-legged-economy-2026" element={<FourLeggedEconomy2026 />} />
         <Route path="/under-the-hood/napa-auction-2026" element={<AuctionNapaValley2026 />} />
+        <Route path="/under-the-hood/napa-lodging-spring-2026" element={<UnderTheHoodNapaLodgingSpring2026 />} />
         <Route path="/under-the-hood/template" element={<UnderTheHoodTemplate />} />
         <Route path="/under-the-hood/calculators" element={<CalculatorsPage />} />
         <Route path="/events/digest" element={<DigestCuration />} />

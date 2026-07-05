@@ -642,6 +642,42 @@ POLLS = [
             "No, current model works",
         ],
     },
+    {
+        "article_slug": "napa-lodging-spring-2026",
+        "sort_order": 1,
+        "question": "What best explains Napa's flat room demand?",
+        "options": [
+            "Room rates are too high",
+            "Fewer visitors overall",
+            "Competition from Sonoma",
+            "Too many new hotel rooms",
+            "Normal post-pandemic reset",
+        ],
+    },
+    {
+        "article_slug": "napa-lodging-spring-2026",
+        "sort_order": 2,
+        "question": "Should Napa hotels cut rates to fill more rooms?",
+        "options": [
+            "Yes, volume matters more",
+            "No, protect the brand",
+            "Only at the value end",
+            "Only in the off-season",
+            "Let the market decide",
+        ],
+    },
+    {
+        "article_slug": "napa-lodging-spring-2026",
+        "sort_order": 3,
+        "question": "Where does Napa lodging go from here?",
+        "options": [
+            "Occupancy recovers to 2019",
+            "Price keeps carrying revenue",
+            "Both rate and volume slip",
+            "Luxury pulls further ahead",
+            "Too early to tell",
+        ],
+    },
 ]
 
 
