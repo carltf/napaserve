@@ -40,7 +40,6 @@ const VNV_URL = "https://www.visitnapavalley.com/industry/reports/vnv-monthly/#s
 const LINK_MARCH_ROOM_PRICE = "https://napavalleyfocus.substack.com/p/when-room-price-can-no-longer-carry"; // Substack-only (March 12, 2026)
 const LINK_PRICE_CONTINUES = "https://napavalleyfocus.substack.com/p/under-the-hood-price-continues-to"; // Substack-only (Jan 9, 2026)
 const LINK_FOUR_LEGGED = "/under-the-hood/napa-four-legged-economy-2026"; // internal route
-const LINK_SONOMA_REBOUND = "[CONFIRM-URL: Sonoma lodging article]"; // 0h STOP: no verified URL — do not fabricate
 
 // ── THEME (cream design-system — standard NapaServe tokens) ────────
 const T = {
@@ -739,7 +738,7 @@ export default function UnderTheHoodNapaLodgingSpring2026() {
         {/* ── SECTION: Two Counties, Two Different Recoveries ─────── */}
         <h2 style={SECTION_H2}>Two Counties, Two Different Recoveries</h2>
         <p style={P_STYLE}>
-          The contrast with Sonoma County, whose 2026 rebound this column examined in <em><a href={LINK_SONOMA_REBOUND} target="_blank" rel="noopener noreferrer" style={LINK}>Sonoma County’s Lodging Rebound Is Running on Volume, Not Rate</a></em>, has only sharpened. Through May, Sonoma’s occupancy was up 6.4% year to date while its average daily rate rose just 0.9%. Napa’s occupancy was up 0.4% while its rate rose 3.6%.
+          The contrast with Sonoma County, whose 2026 lodging rebound has run on volume rather than rate, has only sharpened. Through May, Sonoma’s occupancy was up 6.4% year to date while its average daily rate rose just 0.9%. Napa’s occupancy was up 0.4% while its rate rose 3.6%.
         </p>
 
         <ChartTwo />
@@ -793,7 +792,7 @@ export default function UnderTheHoodNapaLodgingSpring2026() {
         {/* ── SECTION: What Still Hangs Over the Numbers ──────────── */}
         <h2 style={SECTION_H2}>What Still Hangs Over the Numbers</h2>
         <p style={P_STYLE}>
-          The five-month picture is unfolding against conditions prior reporting has documented: a supply pipeline that was still adding rooms to a market not expanding room-night demand, a wine economy working through soft demand and a hospitality-financing environment earlier reporting described as tightening, both examined in <em><a href={LINK_FOUR_LEGGED} style={LINK}>Under the Hood: Napa County’s Last Stable Leg Is Showing Cracks</a></em>.
+          The five-month picture is unfolding against conditions prior reporting has documented: a supply pipeline that was still adding rooms to a market not expanding room-night demand, a wine economy working through soft demand and a hospitality-financing environment earlier reporting described as tightening, conditions examined in <em><a href={LINK_FOUR_LEGGED} style={LINK}>Under the Hood: Napa County’s Last Stable Leg Is Showing Cracks</a></em>.
         </p>
 
         {/* ── SECTION: Bottom Line (closer) ────────────────────────── */}
@@ -822,14 +821,10 @@ export default function UnderTheHoodNapaLodgingSpring2026() {
             </li>
             <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
               <a href={LINK_PRICE_CONTINUES} target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Price Continues to Carry Napa Hotel Market as Room-Night Demand Lags{"”"}</a>
-              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (January 9, 2026)</span>
+              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (January 2026)</span>
             </li>
             <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
-              <a href={LINK_SONOMA_REBOUND} target="_blank" rel="noopener noreferrer" style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Sonoma County’s Lodging Rebound Is Running on Volume, Not Rate{"”"}</a>
-              <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Sonoma County Features (2026)</span>
-            </li>
-            <li style={{ marginBottom: 14, fontFamily: serif, fontSize: 18, lineHeight: 1.4 }}>
-              <a href={LINK_FOUR_LEGGED} style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Under the Hood: Napa County’s Last Stable Leg Is Showing Cracks{"”"}</a>
+              <a href={LINK_FOUR_LEGGED} style={{ color: T.ink, textDecoration: "none", fontWeight: 700 }}>{"“"}Napa County’s Last Stable Leg Is Showing Cracks{"”"}</a>
               <span style={{ fontFamily: font, fontSize: 14, color: T.muted, fontWeight: 400 }}> {"—"} Napa Valley Features (July 1, 2026)</span>
             </li>
           </ul>
