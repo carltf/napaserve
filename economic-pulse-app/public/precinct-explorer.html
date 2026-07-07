@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Precinct Explorer — Elected Seats Atlas v0.3</title>
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.4</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -37,7 +37,7 @@
 <div id="app">
   <header>
     <h1>Napa County Precinct Explorer</h1>
-    <div class="sub">Elected Seats Atlas v0.3 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">Elected Seats Atlas v0.4 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
     <div class="controls">
       <label for="colorBy">Color by</label>
       <select id="colorBy"><option value="__lead">Leading digit of precinct number (inferred supervisorial district)</option></select>
@@ -47,7 +47,7 @@
   <div id="main">
     <div id="map"></div>
     <div id="legend"><h2>Legend</h2><div id="lgItems"></div>
-      <div class="caveat"><strong>Caveat:</strong> the county's layer summary states that digits in each precinct number correspond to the administrative districts it belongs to. The leading-digit reading shown here is inferred, not confirmed &mdash; verify the full numbering key with the Napa County Elections Department before publication.</div>
+      <div class="caveat"><strong>Note:</strong> the county layer carries explicit per-precinct district fields (supervisorial, municipality, school district, NVUSD / BOE / NVC trustee areas, Napa city council district) &mdash; click any precinct to see its full district stack. One open item: the layer's service description carries an older revision note while the catalog shows a June 2026 data update, so confirm currency with the Napa County Elections Department before publication.</div>
     </div>
   </div>
   <div id="errbox"></div>
@@ -117,13 +117,29 @@
 
   // ---- Discovery strategies, tried in order ----
 
+  var KNOWN_LAYER = "https://gis.napacounty.gov/arcgis/rest/services/Hosted/Precincts_2022/FeatureServer/8";
+
   function fromOverride(){
     var m = location.search.match(/[?&]service=([^&]+)/);
     if(!m) return Promise.reject(new Error("no ?service= override provided"));
     var url = decodeURIComponent(m[1]).replace(/\/+$/,"");
     log("Strategy 0: ?service= override");
-    if(!/\/\d+$/.test(url)) url += "/0";
-    return Promise.resolve(url);
+    return /\/\d+$/.test(url) ? Promise.resolve(url) : resolveLayer(url);
+  }
+
+  function fromKnown(){
+    log("Strategy 1: known county layer (verified 2026-07-07)");
+    return Promise.resolve(KNOWN_LAYER);
+  }
+
+  function resolveLayer(svcUrl){
+    if(/\/\d+$/.test(svcUrl)) return Promise.resolve(svcUrl);
+    return getJSON(svcUrl + "?f=json").then(function(info){
+      var lyr = (info.layers && info.layers[0]) || null;
+      if(!lyr) throw new Error("service has no layers");
+      log("  -> layer id " + lyr.id + " (" + (lyr.name || "unnamed") + ")");
+      return svcUrl + "/" + lyr.id;
+    });
   }
 
   function pickItem(items){
@@ -135,11 +151,11 @@
       return ax - bx || at.length - bt.length;
     });
     log("  -> selected: \"" + (items[0].title || items[0].name) + "\"");
-    return items[0].url.replace(/\/+$/,"") + "/0";
+    return items[0].url.replace(/\/+$/,"");
   }
 
   function fromHubSearch(){
-    log("Strategy 1: Hub search API (gisdata.napacounty.gov)");
+    log("Strategy 2: Hub search API (gisdata.napacounty.gov)");
     var url = "https://gisdata.napacounty.gov/api/search/v1/collections/all/items?q=precincts&limit=25";
     return getJSON(url).then(function(res){
       var feats = res.features || [];
@@ -150,28 +166,35 @@
         return { title: p.title || f.id, url: svc || p.url };
       });
       return pickItem(items);
-    });
+    }).then(resolveLayer);
   }
 
   function fromOrgSearch(){
-    log("Strategy 2: ArcGIS Online org search (napacounty.maps.arcgis.com)");
+    log("Strategy 3: ArcGIS Online org search (napacounty.maps.arcgis.com)");
     var url = "https://napacounty.maps.arcgis.com/sharing/rest/search?f=json&num=25&q=" +
       encodeURIComponent('precincts type:"Feature Service"');
-    return getJSON(url).then(function(res){ return pickItem(res.results); });
+    return getJSON(url).then(function(res){ return pickItem(res.results); }).then(resolveLayer);
   }
 
   function fromGlobalSearch(){
-    log("Strategy 3: ArcGIS Online global search (www.arcgis.com)");
+    log("Strategy 4: ArcGIS Online global search (www.arcgis.com)");
     var url = "https://www.arcgis.com/sharing/rest/search?f=json&num=25&q=" +
       encodeURIComponent('title:precincts napa county type:"Feature Service"');
-    return getJSON(url).then(function(res){ return pickItem(res.results); });
+    return getJSON(url).then(function(res){ return pickItem(res.results); }).then(resolveLayer);
   }
 
-  function discover(){
-    return fromOverride()
-      .catch(function(){ return fromHubSearch(); })
-      .catch(function(){ return fromOrgSearch(); })
-      .catch(function(){ return fromGlobalSearch(); });
+  // Each route must survive BOTH discovery and the actual data query
+  // before we accept it — a dead layer URL falls through to the next.
+  function attempt(routes, i){
+    if(i >= routes.length) return Promise.reject(new Error("all data routes failed"));
+    return routes[i]().then(function(layerUrl){
+      log("Layer URL: " + layerUrl);
+      statusEl.textContent = "Loading boundaries…";
+      return loadAllFeatures(layerUrl);
+    }).catch(function(e){
+      log("Route failed: " + (e.message || e));
+      return attempt(routes, i + 1);
+    });
   }
 
   // ---- Load features ----
@@ -191,18 +214,14 @@
     return page(0);
   }
 
-  discover().then(function(layerUrl){
-    log("Layer URL: " + layerUrl);
-    statusEl.textContent = "Loading boundaries…";
-    return loadAllFeatures(layerUrl);
-  }).then(function(fc){
+  attempt([fromOverride, fromKnown, fromHubSearch, fromOrgSearch, fromGlobalSearch], 0).then(function(fc){
     features = fc.features || [];
     if(!features.length) throw new Error("service returned zero features");
     log("Loaded " + features.length + " features. Attribute fields: " +
         Object.keys(features[0].properties || {}).join(", "));
     statusEl.textContent = features.length + " precincts loaded (live from county server)";
-    setupFields();
-    render("__lead");
+    var initial = setupFields();
+    render(initial);
   }).catch(function(e){
     fail(e.message || String(e));
   });
@@ -233,6 +252,13 @@
       }
     });
     selectEl.onchange = function(){ render(selectEl.value); };
+
+    var preferred = keys.find(function(k){ return /supervisor/i.test(k); });
+    if(preferred){
+      selectEl.value = preferred;
+      return preferred;
+    }
+    return "__lead";
   }
 
   function valueFor(f, mode){
