@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Precinct Explorer — Elected Seats Atlas v0.1</title>
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.3</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -14,7 +14,7 @@
   header .sub { font-size:13px; color:#8B7355; margin-top:3px; }
   .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px; font-size:13px; }
   .controls label { color:#8B5E3C; font-weight:600; }
-  select { font-family:inherit; font-size:13px; padding:4px 8px; border:1px solid #C4A050; border-radius:4px; background:#F5F0E8; color:#2C1810; }
+  select { font-family:inherit; font-size:13px; padding:4px 8px; border:1px solid #C4A050; border-radius:4px; background:#F5F0E8; color:#2C1810; max-width:420px; }
   #status { font-size:12px; color:#8B7355; margin-left:auto; }
   #main { flex:1; display:flex; min-height:0; }
   #map { flex:1; }
@@ -27,18 +27,21 @@
   .leaflet-popup-content { font-family:'Source Sans 3',Helvetica,Arial,sans-serif; font-size:12.5px; }
   .pop-table td { padding:1px 6px 1px 0; vertical-align:top; }
   .pop-table td:first-child { color:#8B5E3C; font-weight:600; white-space:nowrap; }
-  #errbox { display:none; padding:20px; background:#EDE8DE; border:1px solid #8B5E3C; margin:20px; border-radius:6px; font-size:14px; line-height:1.5; }
+  #errbox { display:none; padding:16px 20px; background:#EDE8DE; border:1px solid #8B5E3C; margin:16px 20px; border-radius:6px; font-size:13.5px; line-height:1.5; }
+  #diag { display:none; margin:0 20px 16px; }
+  #diag pre { background:#2C1810; color:#F5F0E8; font-size:11px; line-height:1.5; padding:10px 12px; border-radius:6px; overflow-x:auto; white-space:pre-wrap; word-break:break-all; margin:0; }
+  #diag h3 { font-size:12px; color:#8B5E3C; margin:0 0 4px; }
 </style>
 </head>
 <body>
 <div id="app">
   <header>
     <h1>Napa County Precinct Explorer</h1>
-    <div class="sub">Elected Seats Atlas v0.1 demo &middot; Live boundaries from Napa County GIS (ArcGIS Online) &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">Elected Seats Atlas v0.3 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
     <div class="controls">
       <label for="colorBy">Color by</label>
       <select id="colorBy"><option value="__lead">Leading digit of precinct number (inferred supervisorial district)</option></select>
-      <span id="status">Locating county precinct service&hellip;</span>
+      <span id="status">Connecting to county data&hellip;</span>
     </div>
   </header>
   <div id="main">
@@ -48,18 +51,25 @@
     </div>
   </div>
   <div id="errbox"></div>
+  <div id="diag"><h3>Connection log</h3><pre id="diagLog"></pre></div>
   <footer>Data: Napa County Elections Department via Napa County GIS &middot; Basemap &copy; OpenStreetMap contributors &middot; Demo only, not for publication</footer>
 </div>
 
 <script>
 (function(){
-  var ORG = "https://napacounty.maps.arcgis.com";
   var statusEl = document.getElementById("status");
   var errbox = document.getElementById("errbox");
+  var diag = document.getElementById("diag");
+  var diagLog = document.getElementById("diagLog");
   var selectEl = document.getElementById("colorBy");
   var lgItems = document.getElementById("lgItems");
+  var logLines = [];
 
-  // Warm cream-compatible categorical palette
+  function log(msg){
+    logLines.push(new Date().toISOString().slice(11,19) + "  " + msg);
+    diagLog.textContent = logLines.join("\n");
+  }
+
   var PALETTE = ["#8B5E3C","#3F7E8C","#C4A050","#6B7F4F","#9C4A3C","#5C6B8A",
                  "#B07D4F","#4F8A6B","#8A5C7E","#7A6A45","#3C6E71","#A85751",
                  "#6E5C8A","#5F7A3C","#8C6D3F","#4A7B9C","#9C7A5C","#557A55",
@@ -76,74 +86,143 @@
   function fail(msg){
     statusEl.textContent = "Error";
     errbox.style.display = "block";
+    diag.style.display = "block";
     errbox.innerHTML = "<strong>Could not load county data.</strong><br>" + msg +
-      "<br><br>If this file is being previewed inside a sandboxed pane, cross-origin requests may be blocked &mdash; download the file and open it directly in Safari or Chrome.";
+      "<br><br>Every attempted route is listed in the connection log below. " +
+      "As a manual override, append <code>?service=</code> plus a FeatureServer layer URL to this page's address " +
+      "(find it via the dataset page's <em>I want to use this &rarr; View API Resources</em>).";
   }
 
-  function getJSON(url){
-    return fetch(url).then(function(r){
-      if(!r.ok) throw new Error("HTTP " + r.status + " from " + url.split("?")[0]);
+  function getJSON(url, timeoutMs){
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort(); }, timeoutMs || 15000);
+    log("GET " + url);
+    function handle(r){
+      clearTimeout(t);
+      log("  -> HTTP " + r.status);
+      if(!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
+    }
+    return fetch(url, { signal: ctrl.signal }).then(handle).catch(function(e){
+      clearTimeout(t);
+      // Sandboxed panes proxy fetch and cannot clone AbortSignal — retry plain
+      if(/clone/i.test(e.message || "")){
+        log("  -> signal not supported here, retrying without timeout");
+        return fetch(url).then(handle);
+      }
+      log("  -> FAILED: " + (e.name === "AbortError" ? "timeout" : e.message));
+      throw e;
     });
   }
 
-  // Step 1: discover the Precincts feature service via the org's public search API
-  var searchUrl = ORG + "/sharing/rest/search?f=json&num=25&q=" +
-    encodeURIComponent('precincts type:"Feature Service"');
+  // ---- Discovery strategies, tried in order ----
 
-  getJSON(searchUrl).then(function(res){
-    var items = (res.results || []).filter(function(it){ return it.url; });
-    if(!items.length) throw new Error("No public feature service matching 'precincts' found in the Napa County ArcGIS organization.");
-    // Prefer exact title match, then shortest title containing 'precinct'
+  function fromOverride(){
+    var m = location.search.match(/[?&]service=([^&]+)/);
+    if(!m) return Promise.reject(new Error("no ?service= override provided"));
+    var url = decodeURIComponent(m[1]).replace(/\/+$/,"");
+    log("Strategy 0: ?service= override");
+    if(!/\/\d+$/.test(url)) url += "/0";
+    return Promise.resolve(url);
+  }
+
+  function pickItem(items){
+    items = (items || []).filter(function(it){ return it && it.url; });
+    if(!items.length) throw new Error("no feature service in results");
     items.sort(function(a,b){
-      var ax = a.title.toLowerCase() === "precincts" ? 0 : 1;
-      var bx = b.title.toLowerCase() === "precincts" ? 0 : 1;
-      return ax - bx || a.title.length - b.title.length;
+      var at = (a.title||a.name||"").toLowerCase(), bt = (b.title||b.name||"").toLowerCase();
+      var ax = at === "precincts" ? 0 : 1, bx = bt === "precincts" ? 0 : 1;
+      return ax - bx || at.length - bt.length;
     });
-    var svc = items[0];
-    statusEl.textContent = "Found service: " + svc.title + " — loading boundaries…";
-    return loadAllFeatures(svc.url + "/0");
-  }).then(function(fc){
-    features = fc.features || [];
-    if(!features.length) throw new Error("Service returned zero features.");
-    statusEl.textContent = features.length + " precincts loaded (live from county server)";
-    setupFields();
-    render("__lead");
-  }).catch(function(e){ fail(e.message); });
+    log("  -> selected: \"" + (items[0].title || items[0].name) + "\"");
+    return items[0].url.replace(/\/+$/,"") + "/0";
+  }
 
-  // Step 2: page through the layer as GeoJSON (handles transfer limits)
+  function fromHubSearch(){
+    log("Strategy 1: Hub search API (gisdata.napacounty.gov)");
+    var url = "https://gisdata.napacounty.gov/api/search/v1/collections/all/items?q=precincts&limit=25";
+    return getJSON(url).then(function(res){
+      var feats = res.features || [];
+      var items = feats.map(function(f){
+        var p = f.properties || {};
+        var svc = (p.links || []).concat((f.links || [])).map(function(l){ return l.href; })
+          .find(function(h){ return h && /FeatureServer/i.test(h); });
+        return { title: p.title || f.id, url: svc || p.url };
+      });
+      return pickItem(items);
+    });
+  }
+
+  function fromOrgSearch(){
+    log("Strategy 2: ArcGIS Online org search (napacounty.maps.arcgis.com)");
+    var url = "https://napacounty.maps.arcgis.com/sharing/rest/search?f=json&num=25&q=" +
+      encodeURIComponent('precincts type:"Feature Service"');
+    return getJSON(url).then(function(res){ return pickItem(res.results); });
+  }
+
+  function fromGlobalSearch(){
+    log("Strategy 3: ArcGIS Online global search (www.arcgis.com)");
+    var url = "https://www.arcgis.com/sharing/rest/search?f=json&num=25&q=" +
+      encodeURIComponent('title:precincts napa county type:"Feature Service"');
+    return getJSON(url).then(function(res){ return pickItem(res.results); });
+  }
+
+  function discover(){
+    return fromOverride()
+      .catch(function(){ return fromHubSearch(); })
+      .catch(function(){ return fromOrgSearch(); })
+      .catch(function(){ return fromGlobalSearch(); });
+  }
+
+  // ---- Load features ----
+
   function loadAllFeatures(layerUrl){
     var all = [];
     function page(offset){
       var q = layerUrl + "/query?where=1%3D1&outFields=*&outSR=4326&f=geojson" +
               "&geometryPrecision=5&resultOffset=" + offset;
-      return getJSON(q).then(function(fc){
+      return getJSON(q, 30000).then(function(fc){
         all = all.concat(fc.features || []);
-        var more = fc.properties && fc.properties.exceededTransferLimit;
-        if(more || (fc.exceededTransferLimit)) return page(all.length);
+        var more = (fc.properties && fc.properties.exceededTransferLimit) || fc.exceededTransferLimit;
+        if(more) return page(all.length);
         return { type:"FeatureCollection", features: all };
       });
     }
     return page(0);
   }
 
-  // Identify the precinct-number field and populate the color-by dropdown
+  discover().then(function(layerUrl){
+    log("Layer URL: " + layerUrl);
+    statusEl.textContent = "Loading boundaries…";
+    return loadAllFeatures(layerUrl);
+  }).then(function(fc){
+    features = fc.features || [];
+    if(!features.length) throw new Error("service returned zero features");
+    log("Loaded " + features.length + " features. Attribute fields: " +
+        Object.keys(features[0].properties || {}).join(", "));
+    statusEl.textContent = features.length + " precincts loaded (live from county server)";
+    setupFields();
+    render("__lead");
+  }).catch(function(e){
+    fail(e.message || String(e));
+  });
+
+  // ---- UI ----
+
   function setupFields(){
     var props = features[0].properties || {};
     var keys = Object.keys(props);
-    // Guess the precinct number field: name contains 'prec', value looks like 6-8 digit number
     precinctField = keys.find(function(k){
       return /prec/i.test(k) && /^\d{5,8}$/.test(String(props[k]).trim());
     }) || keys.find(function(k){ return /prec/i.test(k); }) || keys[0];
+    log("Precinct-number field guess: " + precinctField);
 
     keys.forEach(function(k){
       var distinct = {};
-      var n = 0;
       for(var i=0;i<features.length;i++){
         var v = features[i].properties[k];
         if(v !== null && v !== undefined && v !== ""){ distinct[String(v)] = 1; }
         if(Object.keys(distinct).length > 40) break;
-        n++;
       }
       var count = Object.keys(distinct).length;
       if(count >= 2 && count <= 40){
