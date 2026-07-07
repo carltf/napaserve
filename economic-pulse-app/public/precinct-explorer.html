@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Precinct Explorer — Elected Seats Atlas v0.4</title>
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.5</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -18,9 +18,17 @@
   #status { font-size:12px; color:#8B7355; margin-left:auto; }
   #main { flex:1; display:flex; min-height:0; }
   #map { flex:1; }
-  #legend { width:230px; background:#EDE8DE; border-left:1px solid #C4A050; padding:12px 14px; overflow-y:auto; font-size:13px; }
+  #legend { width:258px; background:#EDE8DE; border-left:1px solid #C4A050; padding:12px 14px; overflow-y:auto; font-size:13px; }
   #legend h2 { font-family:'Libre Baskerville',Georgia,serif; font-size:14px; margin:0 0 8px; color:#8B5E3C; }
-  .lg-row { display:flex; align-items:center; gap:8px; margin:4px 0; }
+  #overview { font-size:12.5px; line-height:1.5; color:#2C1810; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid #C4A050; }
+  #overview .ov-num { font-family:'Libre Baskerville',Georgia,serif; font-size:22px; color:#8B5E3C; display:block; }
+  .lg-hint { font-size:11px; color:#8B7355; margin:6px 0 8px; font-style:italic; }
+  .lg-row { display:flex; align-items:center; gap:8px; margin:2px 0; padding:3px 5px; border-radius:4px; cursor:pointer; user-select:none; }
+  .lg-row:hover { background:#F5F0E8; }
+  .lg-row.active { background:#F5F0E8; box-shadow:inset 0 0 0 1px #C4A050; }
+  .lg-row.faded { opacity:0.42; }
+  .lg-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lg-count { font-size:11px; color:#8B7355; flex:none; }
   .lg-swatch { width:16px; height:16px; border-radius:3px; border:1px solid rgba(44,24,16,.3); flex:none; }
   .caveat { margin-top:12px; padding-top:10px; border-top:1px solid #C4A050; font-size:11.5px; color:#8B7355; line-height:1.45; }
   footer { background:#EDE8DE; border-top:1px solid #C4A050; padding:6px 20px; font-size:11px; color:#8B7355; }
@@ -37,16 +45,20 @@
 <div id="app">
   <header>
     <h1>Napa County Precinct Explorer</h1>
-    <div class="sub">Elected Seats Atlas v0.4 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">Elected Seats Atlas v0.5 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
     <div class="controls">
       <label for="colorBy">Color by</label>
-      <select id="colorBy"><option value="__lead">Leading digit of precinct number (inferred supervisorial district)</option></select>
+      <select id="colorBy"><option value="__lead">Leading Digit of Precinct Number (diagnostic)</option></select>
       <span id="status">Connecting to county data&hellip;</span>
     </div>
   </header>
   <div id="main">
     <div id="map"></div>
-    <div id="legend"><h2>Legend</h2><div id="lgItems"></div>
+    <div id="legend">
+      <div id="overview"></div>
+      <h2 id="lgTitle">Legend</h2>
+      <div class="lg-hint">Click a legend entry to spotlight it on the map. Click again to clear.</div>
+      <div id="lgItems"></div>
       <div class="caveat"><strong>Note:</strong> the county layer carries explicit per-precinct district fields (supervisorial, municipality, school district, NVUSD / BOE / NVC trustee areas, Napa city council district) &mdash; click any precinct to see its full district stack. One open item: the layer's service description carries an older revision note while the catalog shows a June 2026 data update, so confirm currency with the Napa County Elections Department before publication.</div>
     </div>
   </div>
@@ -63,6 +75,8 @@
   var diagLog = document.getElementById("diagLog");
   var selectEl = document.getElementById("colorBy");
   var lgItems = document.getElementById("lgItems");
+  var lgTitle = document.getElementById("lgTitle");
+  var overviewEl = document.getElementById("overview");
   var logLines = [];
 
   function log(msg){
@@ -70,8 +84,8 @@
     diagLog.textContent = logLines.join("\n");
   }
 
-  var PALETTE = ["#8B5E3C","#3F7E8C","#C4A050","#6B7F4F","#9C4A3C","#5C6B8A",
-                 "#B07D4F","#4F8A6B","#8A5C7E","#7A6A45","#3C6E71","#A85751",
+  var PALETTE = ["#8B5E3C","#3F7E8C","#C4A050","#6B7F4F","#7E5A8A","#A85751",
+                 "#4A7B9C","#557A55","#B07D4F","#5C6B8A","#3C6E71","#9C4A3C",
                  "#6E5C8A","#5F7A3C","#8C6D3F","#4A7B9C","#9C7A5C","#557A55",
                  "#7C5A4A","#4E6E5D"];
   var GREY = "#B8AE9C";
@@ -228,6 +242,38 @@
 
   // ---- UI ----
 
+  // Human-readable names for the county's field schema
+  var FIELD_LABELS = {
+    "__lead": "Leading Digit of Precinct Number",
+    "precinct": "Precinct Number",
+    "supervisor_district": "Supervisorial District",
+    "municipality": "Municipality",
+    "school_district": "School District",
+    "nvusd_area": "NVUSD Trustee Area",
+    "boe_trustee_area": "Board of Education Trustee Area",
+    "nvc_trustee_area": "Napa Valley College Trustee Area",
+    "napacitycouncildistrict": "Napa City Council District",
+    "park_ward": "Park and Open Space Ward",
+    "sfid": "School Facility Improvement District"
+  };
+  var SKIP_FIELDS = /^objectid|^globalid|^fid$|shape|st_area|st_length|link/i;
+
+  function fieldLabel(k){
+    if(FIELD_LABELS[k]) return FIELD_LABELS[k];
+    return k.replace(/_/g, " ").replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+  }
+
+  // Bare numbers read poorly in a legend — give them their noun
+  function valueLabel(mode, v){
+    if(v === "Unknown") return "Not specified";
+    if(/^\d{1,2}$/.test(v)){
+      if(/supervisor|council|__lead/i.test(mode)) return "District " + v;
+      if(/trustee|nvusd|boe|nvc/i.test(mode)) return "Area " + v;
+      if(/ward/i.test(mode)) return "Ward " + v;
+    }
+    return v;
+  }
+
   function setupFields(){
     var props = features[0].properties || {};
     var keys = Object.keys(props);
@@ -237,6 +283,7 @@
     log("Precinct-number field guess: " + precinctField);
 
     keys.forEach(function(k){
+      if(SKIP_FIELDS.test(k)) return;
       var distinct = {};
       for(var i=0;i<features.length;i++){
         var v = features[i].properties[k];
@@ -247,11 +294,11 @@
       if(count >= 2 && count <= 40){
         var opt = document.createElement("option");
         opt.value = k;
-        opt.textContent = "Field: " + k + " (" + count + " values)";
+        opt.textContent = fieldLabel(k) + " (" + count + ")";
         selectEl.appendChild(opt);
       }
     });
-    selectEl.onchange = function(){ render(selectEl.value); };
+    selectEl.onchange = function(){ spotlight = null; render(selectEl.value); };
 
     var preferred = keys.find(function(k){ return /supervisor/i.test(k); });
     if(preferred){
@@ -265,44 +312,91 @@
     if(mode === "__lead"){
       var raw = String((f.properties||{})[precinctField] || "").trim();
       var d = raw.charAt(0);
-      return /[0-9]/.test(d) ? "District " + d : "Unknown";
+      return /[0-9]/.test(d) ? d : "Unknown";
     }
     var v = (f.properties||{})[mode];
     return (v === null || v === undefined || v === "") ? "Unknown" : String(v);
   }
 
+  // Numeric-aware sort so 2 comes before 10, "Not specified" sinks last
+  function catSort(a, b){
+    if(a === "Unknown") return 1;
+    if(b === "Unknown") return -1;
+    var na = parseFloat(a), nb = parseFloat(b);
+    if(!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  }
+
+  var spotlight = null; // currently spotlighted category, or null
+
+  function styleFor(f, mode, colorOf){
+    var v = valueFor(f, mode);
+    var dim = spotlight !== null && v !== spotlight;
+    return {
+      color: dim ? "#EDE8DE" : "#F5F0E8",
+      weight: 1,
+      fillColor: colorOf[v],
+      fillOpacity: dim ? 0.12 : 0.55
+    };
+  }
+
   function render(mode){
-    var cats = [];
-    var colorOf = {};
+    var counts = {};
     features.forEach(function(f){
       var v = valueFor(f, mode);
-      if(!(v in colorOf)){
-        colorOf[v] = (v === "Unknown") ? GREY : PALETTE[cats.length % PALETTE.length];
-        cats.push(v);
-      }
+      counts[v] = (counts[v] || 0) + 1;
     });
-    cats.sort();
+    var cats = Object.keys(counts).sort(catSort);
+    var colorOf = {};
+    cats.forEach(function(c, i){
+      colorOf[c] = (c === "Unknown") ? GREY : PALETTE[i % PALETTE.length];
+    });
 
     if(geoLayer) map.removeLayer(geoLayer);
     geoLayer = L.geoJSON({type:"FeatureCollection",features:features}, {
-      style: function(f){
-        return { color:"#F5F0E8", weight:1, fillColor: colorOf[valueFor(f, mode)], fillOpacity:0.55 };
-      },
+      style: function(f){ return styleFor(f, mode, colorOf); },
       onEachFeature: function(f, layer){
         var p = f.properties || {};
-        var rows = Object.keys(p).map(function(k){
-          return "<tr><td>"+k+"</td><td>"+String(p[k])+"</td></tr>";
-        }).join("");
+        var rows = Object.keys(p).filter(function(k){ return !SKIP_FIELDS.test(k) || /link/i.test(k); })
+          .map(function(k){
+            var val = String(p[k] === null || p[k] === undefined ? "" : p[k]);
+            if(/link/i.test(k) && /^https?:\/\//.test(val)){
+              val = "<a href='"+val+"' target='_blank' rel='noopener'>precinct map (PDF)</a>";
+            }
+            return "<tr><td>"+fieldLabel(k)+"</td><td>"+val+"</td></tr>";
+          }).join("");
         layer.bindPopup("<table class='pop-table'>"+rows+"</table>", {maxHeight:260});
         layer.on("mouseover", function(){ layer.setStyle({weight:2.5, color:"#2C1810"}); });
-        layer.on("mouseout",  function(){ geoLayer.resetStyle(layer); });
+        layer.on("mouseout",  function(){ layer.setStyle(styleFor(f, mode, colorOf)); });
       }
     }).addTo(map);
-    try { map.fitBounds(geoLayer.getBounds(), {padding:[16,16]}); } catch(e){}
+    try { if(spotlight === null) map.fitBounds(geoLayer.getBounds(), {padding:[16,16]}); } catch(e){}
+
+    // Overview: one sentence that rewrites itself with the field choice
+    var catCount = cats.filter(function(c){ return c !== "Unknown"; }).length;
+    overviewEl.innerHTML =
+      "<span class='ov-num'>" + features.length + " precincts</span>" +
+      "drawn live from Napa County GIS, grouped into <strong>" + catCount +
+      "</strong> " + (catCount === 1 ? "category" : "categories") + " by <strong>" +
+      fieldLabel(mode).toLowerCase() + "</strong>. Click any precinct for its full district stack.";
+
+    lgTitle.textContent = fieldLabel(mode);
 
     lgItems.innerHTML = cats.map(function(c){
-      return "<div class='lg-row'><span class='lg-swatch' style='background:"+colorOf[c]+"'></span><span>"+c+"</span></div>";
+      var cls = "lg-row" + (spotlight === null ? "" : (c === spotlight ? " active" : " faded"));
+      return "<div class='" + cls + "' data-cat='" + c.replace(/'/g,"&#39;") + "'>" +
+        "<span class='lg-swatch' style='background:"+colorOf[c]+"'></span>" +
+        "<span class='lg-name'>" + valueLabel(mode, c) + "</span>" +
+        "<span class='lg-count'>" + counts[c] + "</span></div>";
     }).join("");
+
+    Array.prototype.forEach.call(lgItems.children, function(row){
+      row.onclick = function(){
+        var c = row.getAttribute("data-cat");
+        spotlight = (spotlight === c) ? null : c;
+        render(mode);
+      };
+    });
   }
 })();
 </script>
