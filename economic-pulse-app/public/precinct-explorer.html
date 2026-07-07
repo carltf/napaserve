@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#F5F0E8; }
+  #app { display:flex; flex-direction:column; height:100%; font-family:'Source Sans 3','Source Sans Pro',-apple-system,Helvetica,Arial,sans-serif; color:#2C1810; }
+  header { background:#EDE8DE; border-bottom:2px solid #C4A050; padding:14px 20px 12px; }
+  header h1 { margin:0; font-family:'Libre Baskerville',Georgia,serif; font-size:20px; color:#2C1810; }
+  header .sub { font-size:13px; color:#8B7355; margin-top:3px; }
+  .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px; font-size:13px; }
+  .controls label { color:#8B5E3C; font-weight:600; }
+  select { font-family:inherit; font-size:13px; padding:4px 8px; border:1px solid #C4A050; border-radius:4px; background:#F5F0E8; color:#2C1810; }
+  #status { font-size:12px; color:#8B7355; margin-left:auto; }
+  #main { flex:1; display:flex; min-height:0; }
+  #map { flex:1; }
+  #legend { width:230px; background:#EDE8DE; border-left:1px solid #C4A050; padding:12px 14px; overflow-y:auto; font-size:13px; }
+  #legend h2 { font-family:'Libre Baskerville',Georgia,serif; font-size:14px; margin:0 0 8px; color:#8B5E3C; }
+  .lg-row { display:flex; align-items:center; gap:8px; margin:4px 0; }
+  .lg-swatch { width:16px; height:16px; border-radius:3px; border:1px solid rgba(44,24,16,.3); flex:none; }
+  .caveat { margin-top:12px; padding-top:10px; border-top:1px solid #C4A050; font-size:11.5px; color:#8B7355; line-height:1.45; }
+  footer { background:#EDE8DE; border-top:1px solid #C4A050; padding:6px 20px; font-size:11px; color:#8B7355; }
+  .leaflet-popup-content { font-family:'Source Sans 3',Helvetica,Arial,sans-serif; font-size:12.5px; }
+  .pop-table td { padding:1px 6px 1px 0; vertical-align:top; }
+  .pop-table td:first-child { color:#8B5E3C; font-weight:600; white-space:nowrap; }
+  #errbox { display:none; padding:20px; background:#EDE8DE; border:1px solid #8B5E3C; margin:20px; border-radius:6px; font-size:14px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Napa County Precinct Explorer</h1>
+    <div class="sub">Elected Seats Atlas v0.1 demo &middot; Live boundaries from Napa County GIS (ArcGIS Online) &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="controls">
+      <label for="colorBy">Color by</label>
+      <select id="colorBy"><option value="__lead">Leading digit of precinct number (inferred supervisorial district)</option></select>
+      <span id="status">Locating county precinct service&hellip;</span>
+    </div>
+  </header>
+  <div id="main">
+    <div id="map"></div>
+    <div id="legend"><h2>Legend</h2><div id="lgItems"></div>
+      <div class="caveat"><strong>Caveat:</strong> the county's layer summary states that digits in each precinct number correspond to the administrative districts it belongs to. The leading-digit reading shown here is inferred, not confirmed &mdash; verify the full numbering key with the Napa County Elections Department before publication.</div>
+    </div>
+  </div>
+  <div id="errbox"></div>
+  <footer>Data: Napa County Elections Department via Napa County GIS &middot; Basemap &copy; OpenStreetMap contributors &middot; Demo only, not for publication</footer>
+</div>
+
+<script>
+(function(){
+  var ORG = "https://napacounty.maps.arcgis.com";
+  var statusEl = document.getElementById("status");
+  var errbox = document.getElementById("errbox");
+  var selectEl = document.getElementById("colorBy");
+  var lgItems = document.getElementById("lgItems");
+
+  // Warm cream-compatible categorical palette
+  var PALETTE = ["#8B5E3C","#3F7E8C","#C4A050","#6B7F4F","#9C4A3C","#5C6B8A",
+                 "#B07D4F","#4F8A6B","#8A5C7E","#7A6A45","#3C6E71","#A85751",
+                 "#6E5C8A","#5F7A3C","#8C6D3F","#4A7B9C","#9C7A5C","#557A55",
+                 "#7C5A4A","#4E6E5D"];
+  var GREY = "#B8AE9C";
+
+  var map = L.map("map", { zoomControl: true }).setView([38.42, -122.33], 10);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 17, attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
+
+  var geoLayer = null, features = null, precinctField = null;
+
+  function fail(msg){
+    statusEl.textContent = "Error";
+    errbox.style.display = "block";
+    errbox.innerHTML = "<strong>Could not load county data.</strong><br>" + msg +
+      "<br><br>If this file is being previewed inside a sandboxed pane, cross-origin requests may be blocked &mdash; download the file and open it directly in Safari or Chrome.";
+  }
+
+  function getJSON(url){
+    return fetch(url).then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status + " from " + url.split("?")[0]);
+      return r.json();
+    });
+  }
+
+  // Step 1: discover the Precincts feature service via the org's public search API
+  var searchUrl = ORG + "/sharing/rest/search?f=json&num=25&q=" +
+    encodeURIComponent('precincts type:"Feature Service"');
+
+  getJSON(searchUrl).then(function(res){
+    var items = (res.results || []).filter(function(it){ return it.url; });
+    if(!items.length) throw new Error("No public feature service matching 'precincts' found in the Napa County ArcGIS organization.");
+    // Prefer exact title match, then shortest title containing 'precinct'
+    items.sort(function(a,b){
+      var ax = a.title.toLowerCase() === "precincts" ? 0 : 1;
+      var bx = b.title.toLowerCase() === "precincts" ? 0 : 1;
+      return ax - bx || a.title.length - b.title.length;
+    });
+    var svc = items[0];
+    statusEl.textContent = "Found service: " + svc.title + " — loading boundaries…";
+    return loadAllFeatures(svc.url + "/0");
+  }).then(function(fc){
+    features = fc.features || [];
+    if(!features.length) throw new Error("Service returned zero features.");
+    statusEl.textContent = features.length + " precincts loaded (live from county server)";
+    setupFields();
+    render("__lead");
+  }).catch(function(e){ fail(e.message); });
+
+  // Step 2: page through the layer as GeoJSON (handles transfer limits)
+  function loadAllFeatures(layerUrl){
+    var all = [];
+    function page(offset){
+      var q = layerUrl + "/query?where=1%3D1&outFields=*&outSR=4326&f=geojson" +
+              "&geometryPrecision=5&resultOffset=" + offset;
+      return getJSON(q).then(function(fc){
+        all = all.concat(fc.features || []);
+        var more = fc.properties && fc.properties.exceededTransferLimit;
+        if(more || (fc.exceededTransferLimit)) return page(all.length);
+        return { type:"FeatureCollection", features: all };
+      });
+    }
+    return page(0);
+  }
+
+  // Identify the precinct-number field and populate the color-by dropdown
+  function setupFields(){
+    var props = features[0].properties || {};
+    var keys = Object.keys(props);
+    // Guess the precinct number field: name contains 'prec', value looks like 6-8 digit number
+    precinctField = keys.find(function(k){
+      return /prec/i.test(k) && /^\d{5,8}$/.test(String(props[k]).trim());
+    }) || keys.find(function(k){ return /prec/i.test(k); }) || keys[0];
+
+    keys.forEach(function(k){
+      var distinct = {};
+      var n = 0;
+      for(var i=0;i<features.length;i++){
+        var v = features[i].properties[k];
+        if(v !== null && v !== undefined && v !== ""){ distinct[String(v)] = 1; }
+        if(Object.keys(distinct).length > 40) break;
+        n++;
+      }
+      var count = Object.keys(distinct).length;
+      if(count >= 2 && count <= 40){
+        var opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = "Field: " + k + " (" + count + " values)";
+        selectEl.appendChild(opt);
+      }
+    });
+    selectEl.onchange = function(){ render(selectEl.value); };
+  }
+
+  function valueFor(f, mode){
+    if(mode === "__lead"){
+      var raw = String((f.properties||{})[precinctField] || "").trim();
+      var d = raw.charAt(0);
+      return /[0-9]/.test(d) ? "District " + d : "Unknown";
+    }
+    var v = (f.properties||{})[mode];
+    return (v === null || v === undefined || v === "") ? "Unknown" : String(v);
+  }
+
+  function render(mode){
+    var cats = [];
+    var colorOf = {};
+    features.forEach(function(f){
+      var v = valueFor(f, mode);
+      if(!(v in colorOf)){
+        colorOf[v] = (v === "Unknown") ? GREY : PALETTE[cats.length % PALETTE.length];
+        cats.push(v);
+      }
+    });
+    cats.sort();
+
+    if(geoLayer) map.removeLayer(geoLayer);
+    geoLayer = L.geoJSON({type:"FeatureCollection",features:features}, {
+      style: function(f){
+        return { color:"#F5F0E8", weight:1, fillColor: colorOf[valueFor(f, mode)], fillOpacity:0.55 };
+      },
+      onEachFeature: function(f, layer){
+        var p = f.properties || {};
+        var rows = Object.keys(p).map(function(k){
+          return "<tr><td>"+k+"</td><td>"+String(p[k])+"</td></tr>";
+        }).join("");
+        layer.bindPopup("<table class='pop-table'>"+rows+"</table>", {maxHeight:260});
+        layer.on("mouseover", function(){ layer.setStyle({weight:2.5, color:"#2C1810"}); });
+        layer.on("mouseout",  function(){ geoLayer.resetStyle(layer); });
+      }
+    }).addTo(map);
+    try { map.fitBounds(geoLayer.getBounds(), {padding:[16,16]}); } catch(e){}
+
+    lgItems.innerHTML = cats.map(function(c){
+      return "<div class='lg-row'><span class='lg-swatch' style='background:"+colorOf[c]+"'></span><span>"+c+"</span></div>";
+    }).join("");
+  }
+})();
+</script>
+</body>
+</html>
