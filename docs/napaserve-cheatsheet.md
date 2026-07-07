@@ -470,6 +470,28 @@ Body-anchor violations block commit.
 
 ---
 
+## Static Public Assets — `public/` Direct-Serve Deploy (2026-07-07)
+
+Files placed in `economic-pulse-app/public/` ship verbatim at the site root on Vercel push, bypassing the SPA entirely — no route, no menu link, no bundle change. `precinct-explorer.html` in `public/` serves at `https://napaserve.org/precinct-explorer.html`.
+
+- The **bundle-hash verification gate does NOT apply** to these assets — they serve or 404. There is no fingerprint to poll; verify by fetching the URL.
+- Enables **unlisted demo pages** — in the repo and live, but linked from no menu.
+- Standalone `public/` HTML pages are an accepted exception to the SPA inline-styles / mobile-CSS rules — they are not part of the React bundle (a standalone page may use its own `<style>`/CSS file). See decisions ADR-007.
+- Downloads-to-repo copy of these assets uses the explicit-filename + version-string gate (ADR-008): copy a named file, `grep` for the expected version string, abort if the count is 0. The version string in the file is the deploy gate, not the download filename (browser `-2`/`-3`/`_1` suffixing is unreliable).
+
+## County GIS Endpoints (Napa County, canonical reference)
+
+Surfaced during the Elected Seats Atlas build (2026-07-07).
+
+- **Precinct layer:** `https://gis.napacounty.gov/arcgis/rest/services/Hosted/Precincts_2022/FeatureServer/8`
+  - **Layer id is `8`, NOT `0`** — querying `/0` returns a 404 (caused a build failure 2026-07-07).
+  - 215 precincts; `geoJSON` supported; `maxRecordCount` 2000; counts by supervisor district 53/41/41/38/42.
+  - Fields: `precinct, pdflink, supervisor_district, municipality, school_district, park_ward, nvc_trustee_area, boe_trustee_area, nvusd_area, napacitycouncildistrict, sfid`.
+  - Precinct→district correspondence is published as explicit attributes — no Elections data request needed for the geography.
+- **Hub search API (CORS-open):** `https://gisdata.napacounty.gov/api/search/v1/collections/all/items?q=...`
+- The Hosted folder also serves Supervisor_Districts(_2022), Napa_City_Council_District, NVUSD/BOE/NVC trustee areas, School_Districts, Cities and the special districts (sanitation, RCD, Silverado CSD, cemetery, Berryessa, fire, water, CSAs) with spheres of influence — Phase 2 geography already published by the county.
+- **Publication caveat:** OSM tiles used in the demo are NOT production-licensed; Elections data currency is unconfirmed. Do not publish the explorer publicly until both clear. See ledger PD-2026-07-07-01 and PD-2026-07-07-02.
+
 ## EOS Routine
 
 Per ADR-001 (2026-05-24), EOS is markdown-canonical. See `napaserve-eos-checklist.md`.

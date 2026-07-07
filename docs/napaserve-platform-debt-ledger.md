@@ -483,3 +483,31 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Root cause:** Repo + docs under iCloud-managed Desktop shared across two machines; "which tree is current" is manual (git HEAD is canonical, iCloud copies can lag).
 - **Scope:** Consolidate to one machine, or relocate repo to a non-synced path and sync via git pull, not iCloud file-sync.
 - **Related entries:** PD-2026-06-11-08, PD-2026-06-30-01
+
+---
+
+## 2026-07-07 Roll-Forward Entries
+
+> **Theme:** Elected Seats Atlas launch (new project). Both entries below are publication blockers on the unlisted `precinct-explorer.html` demo — it may stay live as an unlisted demo but must NOT be publicly launched (menu link, announcement) until both clear.
+
+#### PD-2026-07-07-01 — OSM tiles not production-licensed for the precinct explorer
+- **Status:** OPEN
+- **Surfaced:** 2026-07-07
+- **Affected surfaces:** `economic-pulse-app/public/precinct-explorer.html` (Elected Seats Atlas demo); any future public map surface
+- **Symptom:** The demo renders OpenStreetMap tiles directly. Fine for an unlisted demo, but OSM's tile usage policy does not cover production/public traffic.
+- **Root cause:** Prototype used OSM tiles for speed; no licensed tile provider wired in.
+- **Scope:** Swap in a licensed tile provider (MapTiler / Stadia class) before any public launch.
+- **Related entries:** PD-2026-07-07-02 (co-blocker on publication)
+- **Audit obligations:** Confirm licensed provider + key in place; OSM direct-tile fetch removed; live render verified.
+- **Notes:** Publication blocker, not a demo blocker. See Cheatsheet "County GIS Endpoints" publication caveat.
+
+#### PD-2026-07-07-02 — Explorer publication blocked on Elections data currency confirmation
+- **Status:** OPEN
+- **Surfaced:** 2026-07-07
+- **Affected surfaces:** `precinct-explorer.html`; county Precincts_2022 FeatureServer layer 8; Elected Seats Atlas Phase 1
+- **Symptom:** The precinct layer's own description says June 2020, while the data catalog says the data was updated June 8, 2026 (six days post-primary — an actively-maintained signal). The two disagree; currency is unconfirmed.
+- **Root cause:** Conflicting vintage metadata on the county source; not yet reconciled with the source of record.
+- **Scope:** Confirm currency with John Tuteur (Registrar of Voters) before ANY public publication. Footer currently marks the demo demo-only pending this confirmation.
+- **Related entries:** PD-2026-07-07-01 (co-blocker); session `napaserve-session-2026-07-07.md`
+- **Audit obligations:** Tuteur confirms the layer reflects current precinct→district assignments; footer demo-only caveat removed only after confirmation.
+- **Notes:** Geography (precinct→district) is published as explicit attributes and needs no data request; this blocker is about vintage/currency, not access.

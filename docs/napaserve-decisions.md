@@ -143,3 +143,36 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Decision.** Add a mandatory Pre-Handoff Export Gate to the UTH protocol — a new section immediately before Anti-Drift Gates, with a pointer at step 15 of the 20-step sequence. No UTH export is handed to Tim until the gate passes: EXPORT_DATA completeness (optional fields populated or marked N/A), chart placement (no dead [Chart N] in any output), Related Coverage verified against `napaserve_articles` / `nvf_posts`, Saturday date sanity, and a Word-export end-to-end read noting any PD-2026-05-24-04 template artifacts.
 
 **Countermeasure.** The gate is reported in every HOLD message; "done" is not declared until all gate items are reported. Ties to Anti-Drift Gate #3 — acceptance requires looking at rendered output, not code.
+
+---
+
+## ADR-006 — Elected Seats Atlas Funding Routes Through NapaServe (not CommunityServe)
+**Date:** 2026-07-07 · **Status:** Accepted
+
+**Context.** The Elected Seats Atlas (new project launched 2026-07-07 off Supervisor Joelle Gallagher's ask) needs a funding/sponsorship framing. CommunityServe (the nonprofit routing option) is not set up.
+
+**Decision.** Sponsorship for the Elected Seats Atlas routes through NapaServe directly. Do not reference nonprofit/CommunityServe routing in any brief, email or external framing. Commercial comparable is $15K–40K.
+
+**Consequences.** Brief and outreach language use NapaServe funding framing (Elected_Seats_Atlas_Brief.docx v2 already reflects this). Tim's decision; revisit only if CommunityServe is later stood up.
+
+---
+
+## ADR-007 — Standalone `public/` HTML Pages May Use CSS Files (SPA Inline-Styles Rule Does Not Apply)
+**Date:** 2026-07-07 · **Status:** Accepted
+
+**Context.** The platform's mobile-CSS rule forbids `gridTemplateColumns` (and grid layout generally) in inline styles because inline styles override CSS class rules on mobile Safari regardless of `!important`. That rule exists to protect the React SPA bundle. `precinct-explorer.html` (the Elected Seats Atlas demo) ships as a standalone static file from `economic-pulse-app/public/`, served verbatim at the site root — it is not part of the React bundle.
+
+**Decision.** Standalone `public/` HTML pages are exempt from the SPA inline-styles / mobile-CSS discipline. They may use their own `<style>` block or CSS file, including media queries (the demo uses `@media (max-width: 760px)` for its stacked mobile layout).
+
+**Consequences.** The exemption is scoped strictly to files under `public/` that serve outside the SPA. Any code that becomes part of the React bundle re-inherits the inline-styles rule. See Cheatsheet "Static Public Assets" and ADR-008.
+
+---
+
+## ADR-008 — Explicit-Filename + Version-String Gate for Downloads-to-Repo Copies
+**Date:** 2026-07-07 · **Status:** Accepted
+
+**Context.** During the Elected Seats Atlas iteration, "copy the newest matching file from ~/Downloads" prompts broke twice: browser download suffixing (`-2`, `-3`, `_1`) meant "newest by mtime" once copied a stale v0.1 and once aborted a valid v0.6. Filename is not a reliable version signal.
+
+**Decision.** Downloads-to-repo copies use an explicit filename plus a `grep` version-string gate: name the file, confirm it contains the expected version string (and any other required marker), and abort if the count is 0 — showing what was checked. The version string inside the file is the deploy gate, not the download filename.
+
+**Consequences.** Standard for all copy-from-Downloads deploys (demo assets, exports). Cheap insurance against stale/duplicate downloads. See Cheatsheet "Static Public Assets — `public/` Direct-Serve Deploy."
