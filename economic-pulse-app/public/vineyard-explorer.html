@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!-- vineyard-explorer v0.1 — unlisted demo. Napa County vineyard field polygons
+     from DWR/Land IQ statewide crop mapping, 2020–2024. Snapshot viewer only
+     (no diff/change highlighting — that is v0.2). Static TopoJSON assets under
+     /data/vineyards-<year>.topo.json, decoded to GeoJSON in-browser via
+     topojson-client (arcs shared between adjacent fields keep each vintage
+     under ~1.3 MB). Not linked from any menu. OSM tiles per PD-2026-07-07-01
+     (demo, not publication). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Napa County Vineyard Explorer v0.1</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#F5F0E8; }
+  #app { display:flex; flex-direction:column; height:100%; font-family:'Source Sans 3',-apple-system,Helvetica,Arial,sans-serif; color:#2C1810; }
+  header { background:#EDE8DE; border-bottom:2px solid #C4A050; padding:14px 20px 12px; }
+  header h1 { margin:0; font-family:'Libre Baskerville',Georgia,serif; font-size:20px; color:#2C1810; }
+  header .sub { font-size:13px; color:#8B7355; margin-top:3px; }
+  .years { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:11px; }
+  .years .lbl { font-size:13px; color:#8B5E3C; font-weight:600; margin-right:2px; }
+  .yr-btn { font-family:inherit; font-size:14px; font-weight:600; padding:5px 15px; border:1px solid #C4A050;
+            border-radius:5px; background:#F5F0E8; color:#8B5E3C; cursor:pointer; transition:background .12s,color .12s; }
+  .yr-btn:hover { background:#E7DECB; }
+  .yr-btn.active { background:#2C1810; color:#F5F0E8; border-color:#2C1810; }
+  #status { font-size:12px; color:#8B7355; margin-left:auto; }
+  #main { flex:1; display:flex; min-height:0; }
+  #map { flex:1; background:#E7DECB; }
+  #info { width:264px; background:#EDE8DE; border-left:1px solid #C4A050; padding:14px 16px; overflow-y:auto; font-size:13px; }
+  #info h2 { font-family:'Libre Baskerville',Georgia,serif; font-size:14px; margin:0 0 6px; color:#8B5E3C; }
+  .official { padding:11px 13px; background:#F5F0E8; border:1px solid #C4A050; border-radius:6px; margin-bottom:12px; }
+  .official .cap { font-size:11.5px; color:#8B7355; line-height:1.4; }
+  .official .val { font-family:'Libre Baskerville',Georgia,serif; font-size:26px; color:#8B5E3C; display:block; margin-top:4px; line-height:1.1; }
+  .official .val small { font-size:13px; color:#8B7355; font-family:'Source Sans 3',sans-serif; }
+  .fieldcount { font-size:12.5px; color:#2C1810; line-height:1.5; margin-bottom:10px; }
+  .fieldcount b { font-family:'Libre Baskerville',Georgia,serif; color:#8B5E3C; }
+  .hint { font-size:11.5px; color:#8B7355; font-style:italic; line-height:1.45; margin-bottom:10px; }
+  .caveat { margin-top:12px; padding-top:10px; border-top:1px solid #C4A050; font-size:11.5px; color:#8B7355; line-height:1.5; }
+  footer { background:#EDE8DE; border-top:1px solid #C4A050; padding:7px 20px; font-size:11px; color:#8B7355; line-height:1.5; }
+  .leaflet-popup-content { font-family:'Source Sans 3',Helvetica,Arial,sans-serif; font-size:12.5px; color:#2C1810; }
+  .pop-title { font-family:'Libre Baskerville',Georgia,serif; font-size:13.5px; color:#8B5E3C; margin-bottom:3px; }
+  .pop-table td { padding:1px 8px 1px 0; vertical-align:top; }
+  .pop-table td:first-child { color:#8B5E3C; font-weight:600; white-space:nowrap; }
+  #errbox { display:none; padding:14px 18px; background:#EDE8DE; border:1px solid #8B5E3C; margin:16px 20px; border-radius:6px; font-size:13.5px; line-height:1.5; }
+
+  /* Mobile: stack map above the info panel and let the page scroll */
+  @media (max-width: 760px) {
+    html, body { height:auto; overflow:auto; }
+    #app { height:auto; min-height:100vh; }
+    #main { flex-direction:column; min-height:0; }
+    #map { flex:none; height:56vh; min-height:320px; width:100%; }
+    #info { width:auto; border-left:none; border-top:2px solid #C4A050; overflow:visible; }
+    .years { row-gap:6px; }
+    #status { margin-left:0; width:100%; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Napa County Vineyard Explorer</h1>
+    <div class="sub">v0.1 demo &middot; Vineyard field boundaries from DWR/Land IQ statewide crop mapping &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="years">
+      <span class="lbl">Vintage</span>
+      <button class="yr-btn" data-year="2020">2020</button>
+      <button class="yr-btn" data-year="2021">2021</button>
+      <button class="yr-btn" data-year="2022">2022</button>
+      <button class="yr-btn" data-year="2023">2023</button>
+      <button class="yr-btn" data-year="2024">2024</button>
+      <span id="status">Loading&hellip;</span>
+    </div>
+  </header>
+  <div id="main">
+    <div id="map"></div>
+    <div id="info">
+      <div class="official">
+        <span class="cap">Official Napa County wine-grape acreage (NASS/CDFA)</span>
+        <span class="val" id="officialVal">&mdash;</span>
+      </div>
+      <div class="fieldcount" id="fieldCount"></div>
+      <div class="hint">Click any field for its mapped area. Use the vintage buttons above to switch years &mdash; the map shows one vintage at a time.</div>
+      <h2>About this view</h2>
+      <div style="font-size:12.5px;line-height:1.5;color:#2C1810;">
+        Each shape is a single vineyard field as delineated by the state's satellite-and-imagery crop survey. This is a snapshot viewer; year-over-year change highlighting is a later version.
+      </div>
+      <div class="caveat"><strong>Note:</strong> the acreage figure above is the official NASS/CDFA county total, not a sum of the polygons on screen. Mapped field footprints and the official survey are produced by different methods and differ by a few percent.</div>
+    </div>
+  </div>
+  <div id="errbox"></div>
+  <footer>Field boundaries from DWR/Land IQ statewide crop mapping. Mapped footprints vary a few percent between vintages; county totals shown are the official NASS/CDFA figures. Demo &mdash; not for publication. &middot; Basemap &copy; OpenStreetMap contributors &middot; vineyard-explorer v0.1</footer>
+</div>
+
+<script>
+(function(){
+  var OFFICIAL = { 2020:45511, 2021:45460, 2022:45612, 2023:45483, 2024:45094 };
+  var YEARS = [2020,2021,2022,2023,2024];
+  var DEFAULT_YEAR = 2024;
+
+  var statusEl = document.getElementById("status");
+  var errbox   = document.getElementById("errbox");
+  var officialVal = document.getElementById("officialVal");
+  var fieldCount  = document.getElementById("fieldCount");
+  var buttons = {};
+  Array.prototype.forEach.call(document.querySelectorAll(".yr-btn"), function(b){
+    buttons[b.getAttribute("data-year")] = b;
+    b.onclick = function(){ selectYear(b.getAttribute("data-year")); };
+  });
+
+  var map = L.map("map", { zoomControl:true, preferCanvas:true }).setView([38.50,-122.35], 10);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
+  window.addEventListener("resize", function(){ map.invalidateSize(); });
+
+  var cache = {};          // year -> FeatureCollection (fetched once, kept)
+  var geoLayer = null;
+  var currentYear = null;
+  var didFit = false;
+
+  function fmt(n){ return n.toLocaleString("en-US"); }
+
+  // Sandbox-safe JSON fetch: proxied panes cannot clone an AbortSignal, so on a
+  // "clone" error we retry the plain fetch without the timeout signal.
+  function getJSON(url, timeoutMs){
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort(); }, timeoutMs || 20000);
+    function handle(r){
+      clearTimeout(t);
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }
+    return fetch(url, { signal: ctrl.signal }).then(handle).catch(function(e){
+      clearTimeout(t);
+      if(/clone/i.test(e.message || "")){
+        return fetch(url).then(handle);
+      }
+      throw (e.name === "AbortError" ? new Error("timeout") : e);
+    });
+  }
+
+  function baseStyle(){
+    return { color:"#8B5E3C", weight:0.5, fillColor:"#C4A050", fillOpacity:0.38 };
+  }
+  function hoverStyle(){
+    return { color:"#2C1810", weight:2, fillColor:"#8B5E3C", fillOpacity:0.6 };
+  }
+
+  function draw(year, fc){
+    if(geoLayer) map.removeLayer(geoLayer);
+    geoLayer = L.geoJSON(fc, {
+      style: baseStyle,
+      onEachFeature: function(f, layer){
+        var ac = (f.properties && f.properties.acres);
+        var acTxt = (ac === null || ac === undefined) ? "n/a" : fmt(Math.round(ac*100)/100) + " acres";
+        layer.bindPopup(
+          "<div class='pop-title'>Vineyard field</div>" +
+          "<table class='pop-table'>" +
+            "<tr><td>Mapped area</td><td>" + acTxt + "</td></tr>" +
+            "<tr><td>Vintage</td><td>" + year + " (Land IQ / DWR)</td></tr>" +
+          "</table>"
+        );
+        layer.on("mouseover", function(){ layer.setStyle(hoverStyle()); layer.bringToFront(); });
+        layer.on("mouseout",  function(){ layer.setStyle(baseStyle()); });
+      }
+    }).addTo(map);
+    if(!didFit){
+      try { map.fitBounds(geoLayer.getBounds(), { padding:[20,20] }); didFit = true; } catch(e){}
+    }
+  }
+
+  function updateInfo(year, fc){
+    officialVal.innerHTML = fmt(OFFICIAL[year]) + " <small>acres (" + year + ")</small>";
+    fieldCount.innerHTML = "<b>" + fmt(fc.features.length) + "</b> vineyard fields mapped in " + year + ".";
+  }
+
+  function setActiveBtn(year){
+    YEARS.forEach(function(y){
+      buttons[y].classList.toggle("active", String(y) === String(year));
+    });
+  }
+
+  function selectYear(year){
+    year = String(year);
+    if(year === currentYear) return;
+    setActiveBtn(year);
+    statusEl.textContent = cache[year] ? "Rendering " + year + "…" : "Loading " + year + "…";
+
+    function show(fc){
+      currentYear = year;
+      draw(year, fc);
+      updateInfo(year, fc);
+      statusEl.textContent = fmt(fc.features.length) + " fields · " + year;
+    }
+
+    if(cache[year]){ show(cache[year]); return; }
+    getJSON("data/vineyards-" + year + ".topo.json", 25000).then(function(topo){
+      // Decode TopoJSON -> GeoJSON in the browser (assets share arcs to stay small).
+      var obj = topo.objects.vineyards || topo.objects[Object.keys(topo.objects)[0]];
+      var fc = topojson.feature(topo, obj);
+      console.log(year + ": " + fc.features.length + " fields");
+      cache[year] = fc;
+      // If the user clicked another year while this was in flight, don't clobber it.
+      if(String(year) === getActive()) show(fc);
+      else statusEl.textContent = fmt((cache[getActive()]||{features:[]}).features.length) + " fields · " + getActive();
+    }).catch(function(e){
+      statusEl.textContent = "Error loading " + year;
+      errbox.style.display = "block";
+      errbox.innerHTML = "<strong>Could not load the " + year + " vineyard layer.</strong><br>" +
+        (e.message || String(e)) + "<br><br>The static asset <code>data/vineyards-" + year +
+        ".topo.json</code> should serve from the site root. Reload to retry.";
+    });
+  }
+
+  function getActive(){
+    var a = document.querySelector(".yr-btn.active");
+    return a ? a.getAttribute("data-year") : String(DEFAULT_YEAR);
+  }
+
+  selectYear(DEFAULT_YEAR);
+})();
+</script>
+</body>
+</html>
