@@ -493,13 +493,13 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 #### PD-2026-07-07-01 — OSM tiles not production-licensed for the precinct explorer
 - **Status:** OPEN
 - **Surfaced:** 2026-07-07
-- **Affected surfaces:** `economic-pulse-app/public/precinct-explorer.html` (Elected Seats Atlas demo); any future public map surface
+- **Affected surfaces:** `economic-pulse-app/public/precinct-explorer.html` (Elected Seats Atlas demo); `economic-pulse-app/public/vineyard-explorer.html` (Vineyard Explorer demo, 2026-07-07 evening — inherits this blocker); any future public map surface
 - **Symptom:** The demo renders OpenStreetMap tiles directly. Fine for an unlisted demo, but OSM's tile usage policy does not cover production/public traffic.
 - **Root cause:** Prototype used OSM tiles for speed; no licensed tile provider wired in.
-- **Scope:** Swap in a licensed tile provider (MapTiler / Stadia class) before any public launch.
-- **Related entries:** PD-2026-07-07-02 (co-blocker on publication)
-- **Audit obligations:** Confirm licensed provider + key in place; OSM direct-tile fetch removed; live render verified.
-- **Notes:** Publication blocker, not a demo blocker. See Cheatsheet "County GIS Endpoints" publication caveat.
+- **Scope:** Swap in a licensed tile provider (MapTiler / Stadia class) before any public launch. **Both** the precinct and vineyard explorers share the fix.
+- **Related entries:** PD-2026-07-07-02 (co-blocker on precinct publication); PD-2026-07-07-03 (vineyard `<title>` nit)
+- **Audit obligations:** Confirm licensed provider + key in place; OSM direct-tile fetch removed from both explorer pages; live render verified.
+- **Notes:** Publication blocker, not a demo blocker. `vineyard-explorer.html` explicitly cites `PD-2026-07-07-01` in its header comment as its publication gate. See Cheatsheet "County GIS Endpoints" and "Land IQ / DWR" publication caveats.
 
 #### PD-2026-07-07-02 — Explorer publication blocked on Elections data currency confirmation
 - **Status:** OPEN
@@ -511,3 +511,20 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Related entries:** PD-2026-07-07-01 (co-blocker); session `napaserve-session-2026-07-07.md`
 - **Audit obligations:** Tuteur confirms the layer reflects current precinct→district assignments; footer demo-only caveat removed only after confirmation.
 - **Notes:** Geography (precinct→district) is published as explicit attributes and needs no data request; this blocker is about vintage/currency, not access.
+
+---
+
+## 2026-07-07 (evening) Roll-Forward Entries — Vineyard Explorer
+
+> **Theme:** Vineyard Explorer demo (`vineyard-explorer.html`) shipped v0.1/v0.1.1 (commits `2ba621e`, `547f3a7`). It inherits **PD-2026-07-07-01** (OSM tile licensing) as its publication blocker — see that entry's updated affected-surfaces list. One new low-severity nit below.
+
+#### PD-2026-07-07-03 — `vineyard-explorer.html` `<title>` tag version-stale
+- **Status:** OPEN (low severity — nit)
+- **Surfaced:** 2026-07-07 (evening)
+- **Affected surfaces:** `economic-pulse-app/public/vineyard-explorer.html` — the `<title>` element
+- **Symptom:** The v0.1.1 version bump updated the HTML comment, header sub-line and footer, but **not the `<title>` tag**, which still reads "Napa County Vineyard Explorer v0.1". The browser tab / bookmark label is one version stale.
+- **Root cause:** `<title>` was not in the version-string edit set; it is not caught by the footer/comment grep the deploy check uses.
+- **Scope:** **Fold into v0.2** — bump `<title>` to match, and add `<title>` to the version-string touch set so future bumps catch all four locations (comment, `<title>`, header, footer).
+- **Related entries:** PD-2026-07-07-01 (same page; publication blocker)
+- **Audit obligations:** After v0.2, confirm all four version strings agree via `grep -o 'v0\.[0-9.]*' vineyard-explorer.html` (expect a single distinct version).
+- **Notes:** Cosmetic only; does not affect the deploy version gate (footer + comment both carry the correct string). Batched into the v0.2 diff-highlighting work.

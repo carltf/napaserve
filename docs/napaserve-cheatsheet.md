@@ -492,6 +492,43 @@ Surfaced during the Elected Seats Atlas build (2026-07-07).
 - The Hosted folder also serves Supervisor_Districts(_2022), Napa_City_Council_District, NVUSD/BOE/NVC trustee areas, School_Districts, Cities and the special districts (sanitation, RCD, Silverado CSD, cemetery, Berryessa, fire, water, CSAs) with spheres of influence — Phase 2 geography already published by the county.
 - **Publication caveat:** OSM tiles used in the demo are NOT production-licensed; Elections data currency is unconfirmed. Do not publish the explorer publicly until both clear. See ledger PD-2026-07-07-01 and PD-2026-07-07-02.
 
+## Apex Domain 307-Redirects to `www` (public/ asset checks)
+
+`napaserve.org` **307-redirects to `www.napaserve.org`**. A bare `curl -s https://napaserve.org/<path>` returns a 15-byte `Redirecting...` stub, not the asset — the version-string / size checks silently "fail." **Fetch-based checks on `public/` assets must use `curl -sL`** (follow redirects) or hit the `www` host directly. Surfaced 2026-07-07 verifying `vineyard-explorer.html`. The bundle-hash gate still doesn't apply to `public/` assets (they serve or 404, per "Static Public Assets"); this is only about the redirect.
+
+---
+
+## Land IQ / DWR Statewide Crop Mapping (Napa vineyard geometry)
+
+Canonical reference from the vineyard-explorer build (2026-07-07). **Official acreage of record is NASS/CDFA, not Land IQ — see ADR-009 and the Grape Acreage Report values below.** Land IQ is spatial-only.
+
+- **Catalog:** CKAN package `statewide-crop-mapping` on `data.cnra.ca.gov` (`/api/3/action/package_show?id=statewide-crop-mapping`). Vintages: 2014, 2016, 2018, 2019, 2020, 2021, 2022, 2023 (final), 2024 (provisional). Each ships a Shapefile ZIP (~107–179 MB) and a File-GDB ZIP (~76–100 MB).
+- **2020–2024 are queryable via ArcGIS MapServer REST** — do server-side `SUM(ACRES)` with `where=COUNTY='Napa' AND SYMB_CLASS='V'`, no geometry download. Resolve the layer URL from the AGO item id: `https://www.arcgis.com/sharing/rest/content/items/<id>?f=json` → `.url` → append `/0`. Item ids: 2020 `576e483b…c4570`, 2021 `5fe15fbb…1619d`, 2022 `8b0555ad…7228a`, 2023 `d94e891e…7837d`, 2024 `39b63601…5644e` (Provisional). Service path pattern: `.../Planning/i15_Crop_Mapping_<year>/MapServer/0`. `maxRecordCount` 2000 — **paginate on `resultOffset` / `exceededTransferLimit`; do not silently truncate.**
+- **2014 / 2016 / 2018 / 2019 have NO hosted service** — download-only. Read attributes with pyogrio `read_dataframe(..., read_geometry=False, where="County='Napa'")`.
+- **Crop-class field varies by vintage (inspect, don't assume):**
+  - 2020–2024: `SYMB_CLASS='V'` (== `MAIN_CROP 'V'`). `CLASS1` / `CROPTYP1` are `**` / `****` placeholders — a trap.
+  - 2014 shapefile: `DWR_Standa` startswith `'V'` (== `Crop2014 'Grapes'`). County field is `County` (capitalized), not `COUNTY`.
+- **CDL is disqualified** as an acreage series (ADR-009): CropScape `GetCDLStat` (FIPS 06055, cat 69) returns a `returnURL` to a cached CSV; the numbers are pre-2012 garbage and ±20–40% noisy. Fine only as a rough spatial cross-check, never a trend.
+
+## Official Napa Vineyard Acreage — NASS/CDFA Grape Acreage Report (number of record)
+
+Validated PDF parser: **`pipeline/spike_landiq_validation.py`**. Table titled "ALL WINE TYPE GRAPES: Acreage standing by county, by year planted" — **match on the title, not the number** (TABLE 10 in the 2020/2021 reports, TABLE 8 in 2022+). Report published in year N+1 reports crop year N; index at `nass.usda.gov/.../Grapes/Acreage/index.php` (the 2020-crop PDF lives at `.../Acreage/2021/2020 Grape Acreage Report.pdf`, not in the index links). Parse the Napa row's **last four numbers** = bearing, non-bearing, total, prior-year total — the **final number is a trap** (prior year). Self-validate bearing+non-bearing=total; each report's prior-year column equals the previous report's total.
+
+Napa County total standing acreage (bearing / non-bearing / total):
+
+| Crop year | Bearing | Non-bearing | **Total** |
+|---|---|---|---|
+| 2020 | 43,521 | 1,990 | **45,511** |
+| 2021 | 43,650 | 1,810 | **45,460** |
+| 2022 | 43,769 | 1,843 | **45,612** |
+| 2023 | 43,958 | 1,524 | **45,483** |
+| 2024 | 43,524 | 1,570 | **45,094** |
+| 2025 | — | — | **44,475** (anchor; no Land IQ vintage yet) |
+
+Land IQ mapped footprint totals for the same years (rough, NOT of record): 2020 44,730 · 2021 44,554 · 2022 45,903 · 2023 46,244 · 2024 46,749.
+
+---
+
 ## EOS Routine
 
 Per ADR-001 (2026-05-24), EOS is markdown-canonical. See `napaserve-eos-checklist.md`.

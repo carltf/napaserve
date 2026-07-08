@@ -176,3 +176,16 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Decision.** Downloads-to-repo copies use an explicit filename plus a `grep` version-string gate: name the file, confirm it contains the expected version string (and any other required marker), and abort if the count is 0 — showing what was checked. The version string inside the file is the deploy gate, not the download filename.
 
 **Consequences.** Standard for all copy-from-Downloads deploys (demo assets, exports). Cheap insurance against stale/duplicate downloads. See Cheatsheet "Static Public Assets — `public/` Direct-Serve Deploy."
+
+---
+
+## ADR-009 — Official NASS/CDFA Acreage Is the Number of Record; Land IQ Is Spatial-Only
+**Date:** 2026-07-07 · **Status:** Accepted
+
+**Context.** Two feasibility spikes tested whether satellite/GIS crop data can carry a Napa vineyard-acreage product (see `napaserve-session-2026-07-07-vineyard.md`). USDA CDL failed outright (pre-2012 garbage, ±20–40% year-over-year classification noise, removal signal pointing the wrong way — 2020→2025 **+39%** vs a flat-to-declining reality). Land IQ / DWR statewide crop mapping produced plausible *levels* (44–47k, realistic year-over-year moves) but an **unstable offset** vs official NASS/CDFA totals: the delta drifts monotonically −2.0% (2020) → +3.7% (2024), a 5.66-point spread. The two series scissor apart — official flat-to-declining (~45.5k → 45.1k), Land IQ rising +4.5% (44.7k → 46.7k). Validated against the NASS Grape Acreage Report "ALL WINE TYPE GRAPES … standing by county" table (parser at `pipeline/spike_landiq_validation.py`).
+
+**Decision.** **Official NASS/CDFA Grape Acreage Report figures are the number of record for all acreage totals and trends.** Land IQ / DWR crop mapping is used **spatially only** — to map *where* vineyards are (field polygons for a given vintage), never to drive an acreage trend line. Any surface that shows a Land IQ-derived total labels it a *mapped footprint* (rough), distinct from the official county total, and never presents Land IQ year-over-year change as real acreage change without the drift caveat.
+
+**Rationale.** The Land IQ trend bias (~+1.4 pts/yr drift) is larger than the real signal (~1–2%/yr), so a change-detection product built on Land IQ totals would manufacture growth that isn't there. Spatial footprint is what Land IQ is genuinely good at; acreage-of-record is what NASS/CDFA is authoritative for. `vineyard-explorer` v0.1/v0.1.1 already implements this split (official callout per year; mapped-footprint change in a caution treatment).
+
+**Consequences.** CDL is disqualified as a primary series (may still cross-check spatially). Any future vineyard/ag-acreage surface follows the same split. If a future NDVI/Sentinel-2 layer (v0.3) claims removals, it is validated against Tim's known-removals list before publication — same distrust-the-trend discipline. See Cheatsheet "Land IQ / DWR Crop Mapping" and the session record.
