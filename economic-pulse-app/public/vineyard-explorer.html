@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<!-- vineyard-explorer v0.1.1 — unlisted demo. Napa County vineyard field polygons
-     from DWR/Land IQ statewide crop mapping, 2020–2024. Snapshot viewer with a
-     sidebar year-comparison widget (no map diff/change highlighting — that is
-     v0.2). Static TopoJSON assets under
-     /data/vineyards-<year>.topo.json, decoded to GeoJSON in-browser via
-     topojson-client (arcs shared between adjacent fields keep each vintage
-     under ~1.3 MB). Not linked from any menu. OSM tiles per PD-2026-07-07-01
-     (demo, not publication). -->
+<!-- vineyard-explorer v0.2 — unlisted demo. Napa County vineyard field polygons
+     from DWR/Land IQ statewide crop mapping, 2020–2024. Snapshot viewer plus a
+     Compare mode that highlights per-field add/remove between vintages. Diffs
+     are precomputed offline (pipeline/build_vintage_diffs.py, IoU>=0.30 on the
+     pre-simplification source polygons) and shipped as /data/vineyard-diffs.json,
+     keyed to TopoJSON feature order — the browser never matches polygons. Static
+     TopoJSON assets under /data/vineyards-<year>.topo.json, decoded to GeoJSON
+     in-browser via topojson-client (arcs shared between adjacent fields keep each
+     vintage under ~1.3 MB). Not linked from any menu. OSM tiles per
+     PD-2026-07-07-01 (demo, not publication). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Vineyard Explorer v0.1</title>
+<title>Napa County Vineyard Explorer</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
@@ -30,6 +32,13 @@
             border-radius:5px; background:#F5F0E8; color:#8B5E3C; cursor:pointer; transition:background .12s,color .12s; }
   .yr-btn:hover { background:#E7DECB; }
   .yr-btn.active { background:#2C1810; color:#F5F0E8; border-color:#2C1810; }
+  .yr-btn.dimmed { opacity:.5; }
+  .cmp-toggle { font-family:inherit; font-size:13px; font-weight:600; padding:5px 14px; border:1px solid #8B5E3C;
+                border-radius:5px; background:#F5F0E8; color:#8B5E3C; cursor:pointer; transition:background .12s,color .12s; }
+  .cmp-toggle:hover { background:#E7DECB; }
+  .cmp-toggle.on { background:#8B5E3C; color:#F5F0E8; border-color:#8B5E3C; }
+  .cmp-toggle::before { content:"◧ "; }
+  .yr-sep { width:1px; align-self:stretch; background:#C4A050; margin:0 3px; }
   #status { font-size:12px; color:#8B7355; margin-left:auto; }
   #main { flex:1; display:flex; min-height:0; }
   #map { flex:1; background:#E7DECB; }
@@ -66,6 +75,30 @@
   .cmp-secondary .fc { font-size:11.5px; color:#2C1810; margin-top:4px; }
   .cmp-secondary .cav { font-size:10.5px; color:#8B7355; font-style:italic; line-height:1.45; margin-top:7px; }
 
+  /* Colour swatches (shared by both legends). On-palette, colourblind-safe:
+     brick red is DARK, sage green is LIGHT — the pair differs in lightness as
+     well as hue so it survives deuteranopia. */
+  .sw { width:15px; height:15px; border-radius:3px; flex:none; display:inline-block; vertical-align:middle; border:1px solid rgba(44,24,16,.35); }
+  .sw.base { background:#C4A050; }   /* gold — mapped field / both years */
+  .sw.rem  { background:#8B3A2C; }   /* muted brick — not alarm red */
+  .sw.add  { background:#93AE63; }   /* light sage/olive */
+
+  /* Compare-mode diff legend (shown only in compare mode) */
+  .difflegend { display:none; margin-bottom:12px; padding:11px 13px; background:#F5F0E8; border:1px solid #C4A050; border-radius:6px; }
+  body.compare .difflegend { display:block; }
+  .difflegend h2 { font-family:'Libre Baskerville',Georgia,serif; font-size:13.5px; margin:0 0 9px; color:#8B5E3C; }
+  .lrow { display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; }
+  .lrow .sw { margin-top:1px; }
+  .lrow .ll { display:block; font-size:12.5px; font-weight:600; color:#2C1810; line-height:1.25; }
+  .lrow .lm { display:block; font-size:11px; color:#8B7355; line-height:1.4; margin-top:1px; }
+  .difflegend .invalid { font-size:11.5px; color:#8B5E3C; font-weight:600; margin:4px 0 2px; }
+  /* Drift caveat — amber caution box, same treatment as the Compare widget */
+  .lcav { background:rgba(196,160,80,0.16); border:1px solid #C4A050; border-radius:6px; padding:8px 10px; margin-top:9px; font-size:10.5px; color:#8B7355; font-style:italic; line-height:1.5; }
+  /* Snapshot one-row mini-legend (shown only in snapshot mode) */
+  .minilegend { font-size:11.5px; color:#2C1810; line-height:1.4; margin-bottom:10px; }
+  .minilegend b { color:#8B5E3C; }
+  body.compare .snapshot-only { display:none; }
+
   /* Mobile: stack map above the info panel and let the page scroll */
   @media (max-width: 760px) {
     html, body { height:auto; overflow:auto; }
@@ -82,7 +115,7 @@
 <div id="app">
   <header>
     <h1>Napa County Vineyard Explorer</h1>
-    <div class="sub">v0.1.1 demo &middot; Vineyard field boundaries from DWR/Land IQ statewide crop mapping &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">v0.2 demo &middot; Vineyard field boundaries from DWR/Land IQ statewide crop mapping &middot; NapaServe / Valley Works Collaborative</div>
     <div class="years">
       <span class="lbl">Vintage</span>
       <button class="yr-btn" data-year="2020">2020</button>
@@ -90,6 +123,8 @@
       <button class="yr-btn" data-year="2022">2022</button>
       <button class="yr-btn" data-year="2023">2023</button>
       <button class="yr-btn" data-year="2024">2024</button>
+      <span class="yr-sep"></span>
+      <button id="cmpToggle" class="cmp-toggle" type="button" aria-pressed="false">Compare mode</button>
       <span id="status">Loading&hellip;</span>
     </div>
   </header>
@@ -100,8 +135,27 @@
         <span class="cap">Official Napa County wine-grape acreage (NASS/CDFA)</span>
         <span class="val" id="officialVal">&mdash;</span>
       </div>
+      <div class="difflegend" id="diffLegend">
+        <h2 id="diffTitle">Change highlighting</h2>
+        <div class="lrow"><span class="sw base"></span><div>
+          <span class="ll">Mapped in both years</span>
+          <span class="lm">Field appears in both vintages.</span>
+        </div></div>
+        <div class="lrow"><span class="sw rem"></span><div>
+          <span class="ll" id="legRemL">Not mapped in the later year</span>
+          <span class="lm" id="legRemM">Mapped earlier, absent from the later vintage &mdash; possible removal.</span>
+        </div></div>
+        <div class="lrow"><span class="sw add"></span><div>
+          <span class="ll" id="legAddL">Newly mapped in the later year</span>
+          <span class="lm" id="legAddM">Absent earlier, mapped in the later vintage &mdash; possible new planting.</span>
+        </div></div>
+        <div id="diffSummary" style="font-size:12px;color:#2C1810;margin-top:7px;"></div>
+        <div class="invalid" id="diffInvalid" style="display:none;">Adjacent years + full span (2020&rarr;2024) only &mdash; those are the precomputed pairs.</div>
+        <div class="lcav">Apparent change includes mapping-methodology drift between vintages &mdash; individual field appearances/disappearances near boundaries may be remapping, not planting or removal. Directional, not parcel-proof.</div>
+      </div>
+      <div class="minilegend snapshot-only"><span class="sw base"></span> <b>Vineyard field</b> &mdash; one shape = one mapped field. Click for acres.</div>
       <div class="fieldcount" id="fieldCount"></div>
-      <div class="hint">Click any field for its mapped area. Use the vintage buttons above to switch years &mdash; the map shows one vintage at a time.</div>
+      <div class="hint snapshot-only">Use the vintage buttons above to switch years &mdash; the map shows one vintage at a time. Turn on <strong>Compare mode</strong> to highlight fields added or removed between two vintages.</div>
       <h2>About this view</h2>
       <div style="font-size:12.5px;line-height:1.5;color:#2C1810;">
         Each shape is a single vineyard field as delineated by the state's satellite-and-imagery crop survey. This is a snapshot viewer; year-over-year change highlighting is a later version.
@@ -126,7 +180,7 @@
     </div>
   </div>
   <div id="errbox"></div>
-  <footer>Field boundaries from DWR/Land IQ statewide crop mapping. Mapped footprints vary a few percent between vintages; county totals shown are the official NASS/CDFA figures. Demo &mdash; not for publication. &middot; Basemap &copy; OpenStreetMap contributors &middot; vineyard-explorer v0.1.1</footer>
+  <footer>Field boundaries from DWR/Land IQ statewide crop mapping. Mapped footprints vary a few percent between vintages; county totals shown are the official NASS/CDFA figures. Demo &mdash; not for publication. &middot; Basemap &copy; OpenStreetMap contributors &middot; vineyard-explorer v0.2</footer>
 </div>
 
 <script>
@@ -156,9 +210,22 @@
   }).addTo(map);
   window.addEventListener("resize", function(){ map.invalidateSize(); });
 
+  var cmpToggle = document.getElementById("cmpToggle");
+  var diffLegend = document.getElementById("diffLegend");
+  var diffTitle = document.getElementById("diffTitle");
+  var diffSummary = document.getElementById("diffSummary");
+  var diffInvalid = document.getElementById("diffInvalid");
+  var legRemL = document.getElementById("legRemL");
+  var legRemM = document.getElementById("legRemM");
+  var legAddL = document.getElementById("legAddL");
+  var legAddM = document.getElementById("legAddM");
+
   var cache = {};          // year -> FeatureCollection (fetched once, kept)
-  var geoLayer = null;
+  var diffs = null;        // vineyard-diffs.json (fetched once)
+  var geoLayer = null;     // snapshot-mode layer
+  var overlays = [];       // compare-mode layers
   var currentYear = null;
+  var compareMode = false;
   var didFit = false;
 
   function fmt(n){ return n.toLocaleString("en-US"); }
@@ -182,24 +249,64 @@
     });
   }
 
-  function baseStyle(){
-    return { color:"#8B5E3C", weight:0.5, fillColor:"#C4A050", fillOpacity:0.38 };
+  // ---- styles ----
+  function baseStyle(){ return { color:"#8B5E3C", weight:0.5, fillColor:"#C4A050", fillOpacity:0.38 }; }
+  function hoverStyle(){ return { color:"#2C1810", weight:2, fillColor:"#8B5E3C", fillOpacity:0.6 }; }
+  // Compare-mode fills. Brick (dark) vs sage (light) differ in lightness, not
+  // just hue, so the removed/added distinction survives deuteranopia.
+  function neutralStyle(){ return { color:"#8B5E3C", weight:0.35, fillColor:"#C4A050", fillOpacity:0.26 }; }
+  function removedStyle(){ return { color:"#5E271D", weight:0.7, fillColor:"#8B3A2C", fillOpacity:0.58 }; }
+  function addedStyle(){ return { color:"#556B2F", weight:0.7, fillColor:"#93AE63", fillOpacity:0.62 }; }
+
+  // ---- layer management ----
+  function clearAll(){
+    if(geoLayer){ map.removeLayer(geoLayer); geoLayer = null; }
+    overlays.forEach(function(l){ map.removeLayer(l); });
+    overlays = [];
   }
-  function hoverStyle(){
-    return { color:"#2C1810", weight:2, fillColor:"#8B5E3C", fillOpacity:0.6 };
+  function fitOnce(layer){
+    if(didFit) return;
+    try { map.fitBounds(layer.getBounds(), { padding:[20,20] }); didFit = true; } catch(e){}
   }
 
-  function draw(year, fc){
-    if(geoLayer) map.removeLayer(geoLayer);
+  // ---- data loaders (return promises; cache once) ----
+  function loadYear(year){
+    year = String(year);
+    if(cache[year]) return Promise.resolve(cache[year]);
+    return getJSON("data/vineyards-" + year + ".topo.json", 25000).then(function(topo){
+      var obj = topo.objects.vineyards || topo.objects[Object.keys(topo.objects)[0]];
+      var fc = topojson.feature(topo, obj);
+      console.log(year + ": " + fc.features.length + " fields");
+      cache[year] = fc;
+      return fc;
+    });
+  }
+  function loadDiffs(){
+    if(diffs) return Promise.resolve(diffs);
+    return getJSON("data/vineyard-diffs.json", 20000).then(function(d){ diffs = d; return d; });
+  }
+
+  function acresTxt(f, dp){
+    var ac = f.properties && f.properties.acres;
+    if(ac === null || ac === undefined) return "n/a";
+    return (dp === 2 ? ac.toFixed(2) : fmt(Math.round(ac*100)/100)) + " acres";
+  }
+  function pick(fc, idxs){
+    var out = [], i, f;
+    for(i=0;i<idxs.length;i++){ f = fc.features[idxs[i]]; if(f) out.push(f); }
+    return out;
+  }
+
+  // ---- snapshot mode ----
+  function drawSnapshot(year, fc){
+    clearAll();
     geoLayer = L.geoJSON(fc, {
       style: baseStyle,
       onEachFeature: function(f, layer){
-        var ac = (f.properties && f.properties.acres);
-        var acTxt = (ac === null || ac === undefined) ? "n/a" : fmt(Math.round(ac*100)/100) + " acres";
         layer.bindPopup(
           "<div class='pop-title'>Vineyard field</div>" +
           "<table class='pop-table'>" +
-            "<tr><td>Mapped area</td><td>" + acTxt + "</td></tr>" +
+            "<tr><td>Mapped area</td><td>" + acresTxt(f) + "</td></tr>" +
             "<tr><td>Vintage</td><td>" + year + " (Land IQ / DWR)</td></tr>" +
           "</table>"
         );
@@ -207,96 +314,171 @@
         layer.on("mouseout",  function(){ layer.setStyle(baseStyle()); });
       }
     }).addTo(map);
-    if(!didFit){
-      try { map.fitBounds(geoLayer.getBounds(), { padding:[20,20] }); didFit = true; } catch(e){}
-    }
+    fitOnce(geoLayer);
   }
 
   function updateInfo(year, fc){
     officialVal.innerHTML = fmt(OFFICIAL[year]) + " <small>acres (" + year + ")</small>";
     fieldCount.innerHTML = "<b>" + fmt(fc.features.length) + "</b> vineyard fields mapped in " + year + ".";
   }
-
   function setActiveBtn(year){
-    YEARS.forEach(function(y){
-      buttons[y].classList.toggle("active", String(y) === String(year));
-    });
+    YEARS.forEach(function(y){ buttons[y].classList.toggle("active", String(y) === String(year)); });
   }
 
   function selectYear(year){
     year = String(year);
-    if(year === currentYear) return;
+    if(compareMode) exitCompare();     // clicking a vintage leaves compare mode
     setActiveBtn(year);
     statusEl.textContent = cache[year] ? "Rendering " + year + "…" : "Loading " + year + "…";
-
-    function show(fc){
+    loadYear(year).then(function(fc){
+      if(compareMode) return;          // user re-entered compare while loading
       currentYear = year;
-      draw(year, fc);
+      setActiveBtn(year);
+      drawSnapshot(year, fc);
       updateInfo(year, fc);
       statusEl.textContent = fmt(fc.features.length) + " fields · " + year;
+    }).catch(function(e){ showError("the " + year + " vineyard layer", e); });
+  }
+
+  function showError(what, e){
+    statusEl.textContent = "Error loading " + what;
+    errbox.style.display = "block";
+    errbox.innerHTML = "<strong>Could not load " + what + ".</strong><br>" +
+      (e && e.message || String(e)) + "<br><br>Reload to retry.";
+  }
+
+  // ---- compare mode ----
+  var cmpFrom = document.getElementById("cmpFrom");
+  var cmpTo   = document.getElementById("cmpTo");
+  var cmpOut  = document.getElementById("cmpOut");
+  cmpFrom.value = "2020"; cmpTo.value = "2024";
+  var renderToken = 0;               // guards against out-of-order async renders
+
+  function pairKey(a, b){ return Math.min(a,b) + "-" + Math.max(a,b); }
+
+  function renderComparePair(){
+    if(!compareMode) return;
+    var a = +cmpFrom.value, b = +cmpTo.value;
+    var earlier = Math.min(a, b), later = Math.max(a, b);
+    diffTitle.textContent = "Change " + earlier + " → " + later;
+    // Update legend wording with the live year placeholders (mapped/not mapped
+    // language only — never a flat "removed"/"planted" claim).
+    legRemL.textContent = "Not mapped in " + later;
+    legRemM.textContent = "Mapped in " + earlier + ", absent from " + later + " — possible removal.";
+    legAddL.textContent = "Newly mapped in " + later;
+    legAddM.textContent = "Absent from " + earlier + ", mapped in " + later + " — possible new planting.";
+
+    var pair = (a !== b && diffs) ? diffs.pairs[pairKey(a, b)] : null;
+    if(!pair){
+      clearAll();
+      diffInvalid.style.display = (a === b) ? "none" : "block";
+      diffSummary.innerHTML = (a === b) ? "Select two different vintages." : "";
+      statusEl.textContent = (a === b) ? "Pick two different vintages"
+                                       : "Compare: adjacent years + full span only";
+      return;
     }
+    diffInvalid.style.display = "none";
+    statusEl.textContent = "Loading " + earlier + "→" + later + "…";
+    var token = ++renderToken;
+    Promise.all([loadYear(earlier), loadYear(later)]).then(function(res){
+      if(!compareMode || token !== renderToken) return;   // superseded
+      var eFC = res[0], lFC = res[1];
+      clearAll();
+      // Neutral base = later fields present in BOTH years (later minus added).
+      var addedSet = {}; pair.added.forEach(function(i){ addedSet[i] = 1; });
+      var bothFeats = [];
+      for(var i=0;i<lFC.features.length;i++){ if(!addedSet[i]) bothFeats.push(lFC.features[i]); }
+      var base = L.geoJSON({ type:"FeatureCollection", features:bothFeats }, {
+        style: neutralStyle,
+        onEachFeature: function(f, layer){
+          layer.bindPopup("<div class='pop-title'>Mapped in both years</div>" +
+            "<div style='font-size:12.5px'>In " + earlier + " and " + later + " — " + acresTxt(f, 2) + "</div>");
+        }
+      }).addTo(map);
+      overlays.push(base);
+      // Removed (from earlier) — red
+      var rem = L.geoJSON({ type:"FeatureCollection", features:pick(eFC, pair.removed) }, {
+        style: removedStyle,
+        onEachFeature: function(f, layer){
+          layer.bindPopup("<div class='pop-title'>Not mapped in " + later + "</div>" +
+            "<div style='font-size:12.5px'>Mapped in " + earlier + ", not mapped in " + later +
+            " — " + acresTxt(f, 2) + "</div>");
+          layer.on("mouseover", function(){ layer.bringToFront(); });
+        }
+      }).addTo(map);
+      overlays.push(rem);
+      // Added (from later) — green
+      var add = L.geoJSON({ type:"FeatureCollection", features:pick(lFC, pair.added) }, {
+        style: addedStyle,
+        onEachFeature: function(f, layer){
+          layer.bindPopup("<div class='pop-title'>Newly mapped in " + later + "</div>" +
+            "<div style='font-size:12.5px'>Mapped in " + later + ", not mapped in " + earlier +
+            " — " + acresTxt(f, 2) + "</div>");
+          layer.on("mouseover", function(){ layer.bringToFront(); });
+        }
+      }).addTo(map);
+      overlays.push(add);
 
-    if(cache[year]){ show(cache[year]); return; }
-    getJSON("data/vineyards-" + year + ".topo.json", 25000).then(function(topo){
-      // Decode TopoJSON -> GeoJSON in the browser (assets share arcs to stay small).
-      var obj = topo.objects.vineyards || topo.objects[Object.keys(topo.objects)[0]];
-      var fc = topojson.feature(topo, obj);
-      console.log(year + ": " + fc.features.length + " fields");
-      cache[year] = fc;
-      // If the user clicked another year while this was in flight, don't clobber it.
-      if(String(year) === getActive()) show(fc);
-      else statusEl.textContent = fmt((cache[getActive()]||{features:[]}).features.length) + " fields · " + getActive();
-    }).catch(function(e){
-      statusEl.textContent = "Error loading " + year;
-      errbox.style.display = "block";
-      errbox.innerHTML = "<strong>Could not load the " + year + " vineyard layer.</strong><br>" +
-        (e.message || String(e)) + "<br><br>The static asset <code>data/vineyards-" + year +
-        ".topo.json</code> should serve from the site root. Reload to retry.";
-    });
+      diffSummary.innerHTML = "<b>" + fmt(pair.removed_count) + "</b> not mapped in " + later +
+        " &middot; <b>" + fmt(pair.added_count) + "</b> newly mapped";
+      fitOnce(base);
+      // Per-pair verification log for rendered-verification.
+      console.log(earlier + "→" + later + ": " + pair.removed_count + " removed, " + pair.added_count + " added");
+      statusEl.textContent = earlier + "→" + later + " · " + fmt(pair.removed_count) +
+        " removed / " + fmt(pair.added_count) + " added";
+    }).catch(function(e){ showError(earlier + "→" + later + " diff", e); });
   }
 
-  function getActive(){
-    var a = document.querySelector(".yr-btn.active");
-    return a ? a.getAttribute("data-year") : String(DEFAULT_YEAR);
+  function enterCompare(){
+    compareMode = true;
+    document.body.classList.add("compare");
+    cmpToggle.classList.add("on");
+    cmpToggle.setAttribute("aria-pressed", "true");
+    YEARS.forEach(function(y){ buttons[y].classList.add("dimmed"); buttons[y].classList.remove("active"); });
+    loadDiffs().then(function(){ renderComparePair(); }).catch(function(e){ showError("change data", e); });
   }
+  function exitCompare(){
+    compareMode = false;
+    document.body.classList.remove("compare");
+    cmpToggle.classList.remove("on");
+    cmpToggle.setAttribute("aria-pressed", "false");
+    YEARS.forEach(function(y){ buttons[y].classList.remove("dimmed"); });
+  }
+  cmpToggle.onclick = function(){
+    if(compareMode){ exitCompare(); selectYear(currentYear || DEFAULT_YEAR); }
+    else { enterCompare(); }
+  };
 
   selectYear(DEFAULT_YEAR);
 
-  // ---- Compare Years widget ----
-  // Pure client-side math on the hardcoded validated values above; independent
-  // of which vintage the map is currently showing (no fetches).
-  (function setupCompare(){
-    var cmpFrom = document.getElementById("cmpFrom");
-    var cmpTo   = document.getElementById("cmpTo");
-    var cmpOut  = document.getElementById("cmpOut");
-    cmpFrom.value = "2020"; cmpTo.value = "2024";
-
-    function signed(n){ n = Math.round(n); return (n >= 0 ? "+" : "−") + fmt(Math.abs(n)); }
-    function signedPct(from, to){ var p = (to - from) / from * 100; return (p >= 0 ? "+" : "−") + Math.abs(p).toFixed(1) + "%"; }
-
-    function renderCompare(){
-      var from = +cmpFrom.value, to = +cmpTo.value;
-      if(from === to){ cmpOut.innerHTML = "<div class='cmp-same'>Select two different years.</div>"; return; }
-      cmpOut.innerHTML =
-        "<div class='cmp-primary'>" +
-          "<span class='lbl'>Official change (NASS/CDFA), " + from + "→" + to + "</span>" +
-          "<span class='val'>" + signed(OFFICIAL[to]-OFFICIAL[from]) + " acres &middot; " +
-            signedPct(OFFICIAL[from], OFFICIAL[to]) + "</span>" +
-        "</div>" +
-        "<div class='cmp-secondary'>" +
-          "<span class='lbl'>Mapped footprint change (rough), " + from + "→" + to + "</span>" +
-          "<span class='val'>" + signed(MAPPED[to]-MAPPED[from]) + " acres &middot; " +
-            signedPct(MAPPED[from], MAPPED[to]) + "</span>" +
-          "<div class='fc'>" + signed(FIELDS[to]-FIELDS[from]) + " fields mapped</div>" +
-          "<div class='cav'>Footprint totals reflect mapping-methodology drift between vintages " +
-            "as well as real change — directional at best. The official figure above is the " +
-            "number of record.</div>" +
-        "</div>";
-    }
-    cmpFrom.onchange = renderCompare;
-    cmpTo.onchange = renderCompare;
-    renderCompare();
-  })();
+  // ---- Compare Years widget (sidebar numbers) ----
+  // Pure client-side math on the hardcoded validated values above; the numbers
+  // stay the record. From/To also drive the map when Compare mode is on.
+  function signed(n){ n = Math.round(n); return (n >= 0 ? "+" : "−") + fmt(Math.abs(n)); }
+  function signedPct(from, to){ var p = (to - from) / from * 100; return (p >= 0 ? "+" : "−") + Math.abs(p).toFixed(1) + "%"; }
+  function renderCompareNumbers(){
+    var from = +cmpFrom.value, to = +cmpTo.value;
+    if(from === to){ cmpOut.innerHTML = "<div class='cmp-same'>Select two different years.</div>"; return; }
+    cmpOut.innerHTML =
+      "<div class='cmp-primary'>" +
+        "<span class='lbl'>Official change (NASS/CDFA), " + from + "→" + to + "</span>" +
+        "<span class='val'>" + signed(OFFICIAL[to]-OFFICIAL[from]) + " acres &middot; " +
+          signedPct(OFFICIAL[from], OFFICIAL[to]) + "</span>" +
+      "</div>" +
+      "<div class='cmp-secondary'>" +
+        "<span class='lbl'>Mapped footprint change (rough), " + from + "→" + to + "</span>" +
+        "<span class='val'>" + signed(MAPPED[to]-MAPPED[from]) + " acres &middot; " +
+          signedPct(MAPPED[from], MAPPED[to]) + "</span>" +
+        "<div class='fc'>" + signed(FIELDS[to]-FIELDS[from]) + " fields mapped</div>" +
+        "<div class='cav'>Footprint totals reflect mapping-methodology drift between vintages " +
+          "as well as real change — directional at best. The official figure above is the " +
+          "number of record.</div>" +
+      "</div>";
+  }
+  function onPairChange(){ renderCompareNumbers(); renderComparePair(); }
+  cmpFrom.onchange = onPairChange;
+  cmpTo.onchange = onPairChange;
+  renderCompareNumbers();
 })();
 </script>
 </body>
