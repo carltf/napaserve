@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Precinct Explorer — Elected Seats Atlas v0.7</title>
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.8</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -50,17 +50,31 @@
   #diag { display:none; margin:0 20px 16px; }
   #diag pre { background:#2C1810; color:#F5F0E8; font-size:11px; line-height:1.5; padding:10px 12px; border-radius:6px; overflow-x:auto; white-space:pre-wrap; word-break:break-all; margin:0; }
   #diag h3 { font-size:12px; color:#8B5E3C; margin:0 0 4px; }
+  .searchrow { display:flex; gap:8px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+  .searchrow label { color:#8B5E3C; font-weight:600; font-size:13px; }
+  #addrInput { flex:1; min-width:220px; max-width:460px; font-family:inherit; font-size:13px; padding:6px 10px; border:1px solid #C4A050; border-radius:4px; background:#F5F0E8; color:#2C1810; }
+  #addrBtn { font-family:inherit; font-size:13px; font-weight:600; padding:6px 14px; border:none; border-radius:4px; background:#8B5E3C; color:#F5F0E8; cursor:pointer; }
+  #addrBtn:hover { background:#7A4F30; }
+  #addrBtn:disabled { opacity:0.5; cursor:default; }
+  #addrStatus { font-size:12px; color:#8B7355; }
+  #addrStatus.err { color:#9C4A3C; }
 </style>
 </head>
 <body>
 <div id="app">
   <header>
     <h1>Napa County Precinct Explorer</h1>
-    <div class="sub">Elected Seats Atlas v0.7 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">Elected Seats Atlas v0.8 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
     <div class="controls">
       <label for="colorBy">Color by</label>
       <select id="colorBy"><option value="__lead">Leading Digit of Precinct Number (diagnostic)</option></select>
       <span id="status">Connecting to county data&hellip;</span>
+    </div>
+    <div class="searchrow">
+      <label for="addrInput">Find an address</label>
+      <input id="addrInput" type="text" placeholder="e.g. 1234 Main St, Napa, CA" autocomplete="street-address" disabled>
+      <button id="addrBtn" disabled>Search</button>
+      <span id="addrStatus"></span>
     </div>
   </header>
   <div id="main">
@@ -249,6 +263,7 @@
     statusEl.textContent = features.length + " precincts loaded (live from county server)";
     var initial = setupFields();
     render(initial);
+    enableSearch();
   }).catch(function(e){
     fail(e.message || String(e));
   });
@@ -411,6 +426,99 @@
       };
     });
   }
+
+  // ---- Address search (v0.8): Census geocoder + client-side point-in-precinct ----
+
+  var addrInput = document.getElementById("addrInput");
+  var addrBtn = document.getElementById("addrBtn");
+  var addrStatus = document.getElementById("addrStatus");
+  var addrMarker = null;
+
+  function setAddrStatus(msg, isErr){
+    addrStatus.textContent = msg;
+    addrStatus.className = isErr ? "err" : "";
+  }
+
+  function enableSearch(){
+    addrInput.disabled = false;
+    addrBtn.disabled = false;
+    setAddrStatus("");
+  }
+
+  // Ray casting. GeoJSON coords are [lng, lat].
+  function pointInRing(x, y, ring){
+    var inside = false;
+    for(var i = 0, j = ring.length - 1; i < ring.length; j = i++){
+      var xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+      if(((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+    }
+    return inside;
+  }
+  function pointInPolygon(x, y, poly){
+    if(!poly.length || !pointInRing(x, y, poly[0])) return false;
+    for(var h = 1; h < poly.length; h++){ if(pointInRing(x, y, poly[h])) return false; }
+    return true;
+  }
+  function findPrecinct(lng, lat){
+    for(var i = 0; i < features.length; i++){
+      var g = features[i].geometry;
+      if(!g) continue;
+      if(g.type === "Polygon" && pointInPolygon(lng, lat, g.coordinates)) return features[i];
+      if(g.type === "MultiPolygon"){
+        for(var p = 0; p < g.coordinates.length; p++){
+          if(pointInPolygon(lng, lat, g.coordinates[p])) return features[i];
+        }
+      }
+    }
+    return null;
+  }
+
+  function layerForFeature(feat){
+    var hit = null;
+    geoLayer.eachLayer(function(l){ if(l.feature === feat) hit = l; });
+    return hit;
+  }
+
+  function searchAddress(){
+    var raw = addrInput.value.trim();
+    if(!raw) return;
+    if(!/\bCA\b|california/i.test(raw)) raw += ", CA";
+    addrBtn.disabled = true;
+    setAddrStatus("Searching\u2026");
+    var url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=json&address=" +
+      encodeURIComponent(raw);
+    getJSON(url, 20000).then(function(res){
+      addrBtn.disabled = false;
+      var matches = (res.result && res.result.addressMatches) || [];
+      if(!matches.length){
+        setAddrStatus("No match \u2014 try a full street address with city (landmarks and business names won't work).", true);
+        return;
+      }
+      var m = matches[0];
+      var lng = m.coordinates.x, lat = m.coordinates.y;
+      if(addrMarker) map.removeLayer(addrMarker);
+      addrMarker = L.marker([lat, lng]).addTo(map);
+      var feat = findPrecinct(lng, lat);
+      if(!feat){
+        setAddrStatus("Found the address, but it's outside Napa County's precincts.", true);
+        map.setView([lat, lng], 13);
+        return;
+      }
+      var pnum = String((feat.properties || {})[precinctField] || "?");
+      setAddrStatus("Precinct " + pnum + " \u2014 " + m.matchedAddress);
+      var lyr = layerForFeature(feat);
+      if(lyr){
+        try { map.fitBounds(lyr.getBounds(), {padding:[30,30], maxZoom:15}); } catch(e){}
+        lyr.openPopup([lat, lng]);
+      }
+    }).catch(function(){
+      addrBtn.disabled = false;
+      setAddrStatus("Geocoder didn't respond \u2014 the Census service can be slow; try again in a moment.", true);
+    });
+  }
+
+  addrBtn.onclick = searchAddress;
+  addrInput.addEventListener("keydown", function(e){ if(e.key === "Enter") searchAddress(); });
 })();
 </script>
 </body>
