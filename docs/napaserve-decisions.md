@@ -206,3 +206,29 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Rationale.** An unverified, person-named dataset must not go public accidentally (hence RLS-with-no-policies as the default-deny posture, not a forgotten TODO). The privacy rule is a hard commitment made to the Registrar (Tuteur) in writing. The corrections rule keeps the roster auditable — each change traceable to who reported it and when.
 
 **Consequences.** Any surface reading `napa_elected_seats` before the anon `SELECT` policy exists must use the service role. The 76 flagged rows are an open verification obligation — see ledger PD-2026-07-08-01. See Cheatsheet "`napa_elected_seats` Table" and the session record `napaserve-session-2026-07-07-elected-seats.md`.
+
+---
+
+## ADR-011 — Three-Bin Display Standard for Derived (Modeled) Map Layers
+**Date:** 2026-07-08 · **Status:** Accepted
+
+**Context.** The vineyard-explorer v0.2 diff layer, and any future NDVI/Sentinel-2 layer, are **derived** — they infer field-level change from imagery or geometry rather than reporting a measured fact. The Sentinel-2 spike (this session) showed the failure mode directly: a "removed vs active" two-bin framing would have forced genuinely ambiguous fields (censored removals, mixed 10 m pixels, simplification artifacts) into one confident bucket, manufacturing certainty the data does not support. This generalizes the ADR-009 distrust-the-trend discipline from totals to individual features.
+
+**Decision.** Every derived map layer uses an **explicit three-bin display**: **active** / **signal-lost** / **uncertain**. Uncertainty is **shown, marked, and never forced into active or signal-lost.** Each bin gets a legend row plus a one-line plain-English meaning. Wording is **"mapped / not mapped … possible X"** — never a flat "removed" / "planted" claim. Colors carry a lightness difference, not hue alone (deuteranopia), and a verbatim methodology-drift caveat sits under the legend.
+
+**Rationale.** The honest product surfaces its own ambiguity. v0.2 already implements the pattern (neutral = mapped both years; brick = not mapped later / *possible* removal; sage = newly mapped / *possible* new planting; "Directional, not parcel-proof"). The three-bin rule makes that the standard for anything modeled, so a future Part C removal layer can't silently collapse "we don't know yet" into "removed."
+
+**Consequences.** Any new derived layer (NDVI current-year, change-detection, classification) ships three-bin or does not ship. See Cheatsheet and `napaserve-session-2026-07-08.md`. Ties to ADR-012 (the provisional layer's ship gate).
+
+---
+
+## ADR-012 — 2026 Provisional NDVI Layer Deferred to ~September 2026 (Not Killed)
+**Date:** 2026-07-08 · **Status:** Accepted
+
+**Context.** Spike #3 Part B (this session) returned **MUSH** for a single-field, single-scene NDVI-delta removal detector: group means separate (controls +0.042 vs removals −0.112) but per-field control σ ~0.13 swamps a threshold, and only 3/9 removals cleared the control 10th percentile. The result is robust (a DOY-matched rerun stayed MUSH). Two of the nine ground-truth points (R3, R9) resolved off the clean list as staged/earlier removals; three of the remaining failures are **censored** — pulled after the 2026 imagery window closed on Jul 7.
+
+**Decision.** The 2026 provisional/current-year NDVI layer (the roadmap "v0.3 amber toggle") is **DEFERRED to ~September 2026, not killed.** The **gate to ship it: a Part C rerun must return SEPARATES** (≥7/9 clean removals clearly outside the control distribution). Until then, no amber "provisional current-year" toggle ships on vineyard-explorer.
+
+**Rationale.** The signal genuinely exists for **completed** removals (R1/R4/R8 separated perfectly), so the approach is not dead — it is under-powered given single-scene noise and a mid-season, pre-cutoff 2026 window. September gets full-season 2026 imagery (removes censoring) and lets Part C add the noise-beating machinery (see Cheatsheet Part C spec). Shipping a MUSH layer would violate ADR-011 and ADR-009.
+
+**Consequences.** Tracked as ledger `PD-2026-07-08-03`. Part C spec (multi-date composites, bare-soil/tillage index, per-removal dates, 7-point clean ground truth) lives in the Cheatsheet. Revisit only after Part C clears the SEPARATES gate.

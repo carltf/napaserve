@@ -552,3 +552,30 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Related entries:** PD-2026-07-07-01 (OSM tile licensing — co-blocker on any public map launch); PD-2026-07-07-02 (Elections boundary-currency confirmation from Tuteur, still pending); decisions ADR-010
 - **Audit obligations:** Every flagged row resolved or re-confirmed via a named second source, each correction applied by service-role `UPDATE` and logged with its source (never from memory, ADR-010); validation triple re-checked (109 total / 56 on 2026 ballot / flagged count driven toward 0) before the anon `SELECT` policy is added.
 - **Notes:** Corrections already in flight — Gallagher reported the Alessio council seat stale (pre-flagged) and queried the Olsen NVUSD/NVC-board seat (clarification email pending). Tuteur says an updated Incumbent List posts after the November election, which will reconcile several flags at once.
+
+---
+
+## 2026-07-08 Roll-Forward Entries — Vineyard Explorer v0.2 + Sentinel-2 Spike
+
+> **Theme:** `vineyard-explorer` shipped **v0.2** (commit `238bb37`) — compare-mode per-field diff highlighting off a precomputed `vineyard-diffs.json`. The v0.2 bump also **resolved PD-2026-07-07-03** (stale `<title>` — dropped the version entirely; all four version strings now agree). Two new entries below. **Numbering note:** these are **-02 / -03** because `PD-2026-07-08-01` was already claimed by the elected-seats verification debt earlier the same day (append-only ledger; numbers are never reused).
+
+#### PD-2026-07-08-02 — Frozen shipped TopoJSON vs. live DWR/Land IQ REST drift
+- **Status:** OPEN (low severity — guarded)
+- **Surfaced:** 2026-07-08 (building v0.2 diffs)
+- **Affected surfaces:** `economic-pulse-app/public/data/vineyards-<year>.topo.json` (frozen assets) vs. the live DWR/Land IQ MapServer REST layers; `pipeline/build_vintage_diffs.py`; any future pipeline that index-keys to the shipped TopoJSON.
+- **Symptom:** The live 2021 REST layer now returns **9,793** polygons vs. the shipped TopoJSON's **9,792** — the service gained one **0.0-acre sliver** after the assets were frozen (Jul 7). Positional index alignment can no longer be assumed. Other four vintages still match natively.
+- **Root cause:** The TopoJSON is a point-in-time snapshot; the REST layer is a moving target (DWR edits/republishes). The diff must key to the frozen asset the browser actually ships.
+- **Scope / mitigation in place:** `build_vintage_diffs.py` does **not** assume positional identity — a self-verifying greedy **acres-walk** maps each TopoJSON feature to its source polygon and **aborts loudly** if it must drop a non-trivial-acreage poly ("real field discarded as drift") or if a TopoJSON feature has no source match (a source deletion). Today it cleanly skipped the one 0.0-ac sliver; all five vintages then aligned with exact acreage matches.
+- **Fix path:** Fold **layer-count / feature-drift watching into the planned new-vintage detector** (the CI watcher on the `poll_pipeline.yml` pattern) so v0.2's diffs don't silently go stale — **one watcher, two jobs** (new vintage published + existing vintage drifted). On meaningful drift (a real field, not a 0-ac sliver), rebuild the TopoJSON from current source rather than index-keying to a stale asset.
+- **Related entries:** PD-2026-07-07-01 (same page family; OSM publication blocker); decisions ADR-009.
+- **Notes:** The guard makes this safe today (halts rather than mispainting). It is debt because detection is manual until the watcher exists.
+
+#### PD-2026-07-08-03 — 2026 provisional NDVI ("amber toggle") deferred to ~Sept Part C
+- **Status:** DEFERRED (scheduled ~Sept 2026, gated)
+- **Surfaced:** 2026-07-08 (Spike #3 Part B verdict)
+- **Affected surfaces:** the roadmap v0.3 "provisional current-year / amber toggle" on `vineyard-explorer`; the Sentinel-2 NDVI layer generally.
+- **Symptom:** Spike #3 Part B returned **MUSH** for a single-field, single-scene NDVI-delta removal detector — group means separate (controls +0.042 vs removals −0.112) but per-field control σ ~0.13 swamps a threshold; only 3/9 clean removals cleared the control 10th percentile. Robust to a DOY-matched rerun.
+- **Root cause:** Single-scene 10 m NDVI noise (mixed pixels, cover crop, irrigation timing) + **censoring** (three removals pulled after the Jul 7 imagery cutoff still show canopy) + two ground-truth points (R3, R9) that were staged/earlier removals.
+- **Scope / gate:** **Do not ship the amber toggle until a Part C rerun returns SEPARATES** (≥7/9 clean removals outside the control distribution) — see decisions ADR-012. Part C spec (multi-date composites, full-season 2026 imagery, bare-soil/tillage index, per-removal dates, 7-point clean ground truth) lives in the Cheatsheet.
+- **Related entries:** decisions ADR-011 (three-bin standard the layer must use) and ADR-012 (the deferral + gate); ADR-009 (distrust the trend).
+- **Notes:** Not killed — the signal is real for **completed** removals (R1/R4/R8 separate perfectly). Standing habit: log the DATE whenever a vineyard pull is learned of (per-removal dates are the key missing input).

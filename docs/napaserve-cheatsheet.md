@@ -544,6 +544,31 @@ Land IQ mapped footprint totals for the same years (rough, NOT of record): 2020 
 
 ---
 
+## Sentinel-2 NDVI — spike plumbing + Earth Search STAC (reusable, 2026-07-08)
+
+From Spike #3 (Sentinel-2 vineyard-signal feasibility). Plumbing is validated and reusable; the **removal-detection verdict was MUSH** — see the Part C spec below before trusting any single-field NDVI removal signal.
+
+- **Imagery, no auth:** Earth Search STAC v1 `https://earth-search.aws.element84.com/v1`, collection `sentinel-2-l2a` over AWS open data. Search by bbox + `datetime` range + `query={"eo:cloud_cover":{"lt":20}}`. Napa is UTM zone 10N (EPSG:32610); assets are named `red` (B04) / `nir` (B08), 10 m COGs. Napa coverage is abundant (dozens of <20% scenes per summer month).
+- **NDVI SCALING TRAP (locked):** compute NDVI from **raw DN** — `(nir − red)/(nir + red)` — masking DN==0 nodata. The item-level `raster:bands` metadata declares `offset: -0.1`, but **applying it corrupts the result** (red DN ~600–900 goes negative, NDVI blows past +2); the collection default declares `offset: 0`, so the metadata is self-contradictory and the pixels win. The scale factor cancels in the ratio; raw-DN NDVI is inherently bounded to [−1, 1]. Guard: flag any |NDVI| > 1 as a scaling bug, not truth.
+- **Per-field read:** `rasterio` windowed read of the red/NIR COGs clipped to the polygon (reproject polygon to scene CRS), mean over the mask. ~250 ms/field/window → ~93 min single-threaded for all 10,990 fields × 2 windows; parallelize by scene. Active mid-summer vineyard NDVI lands ~0.4–0.8 (controls median ~0.42).
+- **Scripts:** `pipeline/spike_s2_ndvi.py` (Part A plumbing), `pipeline/spike_s2_ndvi_partB.py` (ground-truth separation; imports Part A). Data: `pipeline/data/s2_groundtruth.UNVALIDATED.csv` (34 rows).
+
+## Sentinel-2 Part C rerun spec (target ~Sept 2026)
+
+The Part B verdict was MUSH and robust (DOY-matching didn't fix it). Do **not** rerun the same single-scene threshold and expect a different answer. A Part C that could clear the ADR-012 SEPARATES gate needs, all together:
+
+- **Multi-date temporal composites** — median NDVI over **5–10 scenes per window**, not one scene, to beat per-field 10 m noise (the thing that made controls σ ~0.13).
+- **Full-season 2026 imagery** — wait for the whole 2026 growing season so removals pulled after the Jul 7 cutoff are no longer censored (three of the nine failed on censoring alone).
+- **Bare-soil / tillage index alongside NDVI** — a fresh-disking signal catches removals that an NDVI drop alone misses/confuses with cover crop.
+- **Per-removal DATES required** — the single biggest missing input; without them the censoring problem is unresolvable. **Standing habit: log the DATE whenever a vineyard pull is learned of.**
+- **Ground truth:** the **7-point clean removal list** (R1, R2, R4, R5, R6, R7, R8) is carried in `s2_groundtruth.UNVALIDATED.csv`; R3 + R9 resolved off as staged/earlier removals. R1/R4/R8 already separate perfectly (completed removals) — proof the signal exists when the removal is complete and pre-window.
+
+## Shipped TopoJSON is NOT authoritative for point-level queries
+
+The `public/data/vineyards-<year>.topo.json` assets are **mapshaper-simplified (10% retention)**. Simplification can shift a boundary far enough to put a point **outside** a polygon it truly contains — this produced R3's spurious 2023 "gap" (bare in the simplified 2023 layer but mapped in source). **For any point-in-polygon or point-level query, use the source DWR/Land IQ REST data, not the shipped TopoJSON.** The v0.2 diff pipeline (`build_vintage_diffs.py`) does this correctly — it matches on source polygons and only *keys* the result to TopoJSON feature order. The TopoJSON is a display artifact, not a query surface.
+
+---
+
 ## EOS Routine
 
 Per ADR-001 (2026-05-24), EOS is markdown-canonical. See `napaserve-eos-checklist.md`.
