@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Precinct Explorer — Elected Seats Atlas v0.8</title>
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.9</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -64,7 +64,7 @@
 <div id="app">
   <header>
     <h1>Napa County Precinct Explorer</h1>
-    <div class="sub">Elected Seats Atlas v0.8 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">Elected Seats Atlas v0.9 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
     <div class="controls">
       <label for="colorBy">Color by</label>
       <select id="colorBy"><option value="__lead">Leading Digit of Precinct Number (diagnostic)</option></select>
@@ -479,23 +479,39 @@
     return hit;
   }
 
+  function geocodeCensus(raw){
+    var url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=json&address=" +
+      encodeURIComponent(raw);
+    return getJSON(url, 15000).then(function(res){
+      var matches = (res.result && res.result.addressMatches) || [];
+      if(!matches.length) throw new Error("no match (Census)");
+      var m = matches[0];
+      return { lat: m.coordinates.y, lng: m.coordinates.x, label: m.matchedAddress, svc: "Census" };
+    });
+  }
+
+  function geocodeNominatim(raw){
+    var url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=" +
+      encodeURIComponent(raw);
+    return getJSON(url, 15000).then(function(res){
+      if(!res || !res.length) throw new Error("no match (Nominatim)");
+      return { lat: parseFloat(res[0].lat), lng: parseFloat(res[0].lon), label: res[0].display_name, svc: "OSM" };
+    });
+  }
+
   function searchAddress(){
     var raw = addrInput.value.trim();
     if(!raw) return;
     if(!/\bCA\b|california/i.test(raw)) raw += ", CA";
     addrBtn.disabled = true;
     setAddrStatus("Searching\u2026");
-    var url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=json&address=" +
-      encodeURIComponent(raw);
-    getJSON(url, 20000).then(function(res){
+    geocodeCensus(raw).catch(function(e){
+      log("Census geocoder failed (" + (e.message || e) + "), falling back to Nominatim");
+      return geocodeNominatim(raw);
+    }).then(function(hit){
       addrBtn.disabled = false;
-      var matches = (res.result && res.result.addressMatches) || [];
-      if(!matches.length){
-        setAddrStatus("No match \u2014 try a full street address with city (landmarks and business names won't work).", true);
-        return;
-      }
-      var m = matches[0];
-      var lng = m.coordinates.x, lat = m.coordinates.y;
+      log("Geocoded via " + hit.svc + ": " + hit.label);
+      var lng = hit.lng, lat = hit.lat;
       if(addrMarker) map.removeLayer(addrMarker);
       addrMarker = L.marker([lat, lng]).addTo(map);
       var feat = findPrecinct(lng, lat);
@@ -505,7 +521,7 @@
         return;
       }
       var pnum = String((feat.properties || {})[precinctField] || "?");
-      setAddrStatus("Precinct " + pnum + " \u2014 " + m.matchedAddress);
+      setAddrStatus("Precinct " + pnum + " \u2014 " + hit.label);
       var lyr = layerForFeature(feat);
       if(lyr){
         try { map.fitBounds(lyr.getBounds(), {padding:[30,30], maxZoom:15}); } catch(e){}
@@ -513,7 +529,7 @@
       }
     }).catch(function(){
       addrBtn.disabled = false;
-      setAddrStatus("Geocoder didn't respond \u2014 the Census service can be slow; try again in a moment.", true);
+      setAddrStatus("No luck \u2014 either the address wasn't found (use a full street address with city; landmarks won't work) or both lookup services are briefly down. Try again in a moment.", true);
     });
   }
 
