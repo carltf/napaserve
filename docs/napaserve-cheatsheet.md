@@ -492,6 +492,21 @@ Surfaced during the Elected Seats Atlas build (2026-07-07).
 - The Hosted folder also serves Supervisor_Districts(_2022), Napa_City_Council_District, NVUSD/BOE/NVC trustee areas, School_Districts, Cities and the special districts (sanitation, RCD, Silverado CSD, cemetery, Berryessa, fire, water, CSAs) with spheres of influence — Phase 2 geography already published by the county.
 - **Publication caveat:** OSM tiles used in the demo are NOT production-licensed; Elections data currency is unconfirmed. Do not publish the explorer publicly until both clear. See ledger PD-2026-07-07-01 and PD-2026-07-07-02.
 
+## `napa_elected_seats` Table (Supabase, seeded 2026-07-08)
+
+Backing table for the Elected Seats Atlas Phase 1 roster (Napa County local elected bodies/districts). Seeded from the ROV Incumbent File (11/18/2025) via an extraction script with validation gates. See `napaserve-session-2026-07-07-elected-seats.md`.
+
+- **Validation triple (verified in Supabase at seed):** 109 total rows / 56 on the 2026 ballot / 76 flagged. Any post-seed count check reconciles against these three numbers.
+- **Headline stat:** 56 of 109 seats are on the November 2026 ballot.
+- **RLS posture:** RLS **ENABLED, no policies** — locked to the service role by design (unverified baseline + incumbent names). Public read opens later via a **single anon `SELECT` policy** after the verification pass, never before. See decisions ADR-010.
+- **Columns:** `office_id, seat_suffix, jurisdiction, body, office_title, incumbent, party_registration, term_length_listed, term_start, term_end, next_election_year, selection_method, vacated, remarks, gis_field, gis_value, flags, source`.
+  - `next_election_year` is **derived**: Dec term-end → same-year November; Jan term-end → prior-year November.
+  - `(office_id, seat_suffix)` is **NOT unique by design** — the county file has legitimate duplicates for multi-seat offices.
+- **GIS join keys** map to the precinct layer's attributes: `supervisor_district`, `boe/nvc/nvusd` trustee areas, `napacitycouncildistrict`, `park_ward`. `municipality` / `school_district` values are **unverified** vs the layer strings; water districts are a `join_todo`.
+- **PRIVACY RULE (LOCKED):** home addresses, emails and phones in the ROV file are **NEVER extracted, never displayed**. Display surface = name, seat, term, election date only. See decisions ADR-010.
+- **Corrections workflow:** a reporter (Gallagher/others) → logged with source → **service-role `UPDATE`**. Never applied from memory. See decisions ADR-010.
+- **Key flags in the seeded rows:** `vacated` (Judge Lind; Damonte deceased), `unknown_start_date` (Howell Mtn ×2), `term_length_mismatch` (several), `selection_method_verify` (4 supervisors marked "Appointed to Vacancy" implausibly), `stale_record_verify` (Alessio dual-seat — Gallagher confirmed the council record is stale), `term_dates_verify` (state-legislature rows — the two odd-year outliers in the 2027/2029 buckets). The 76 flagged rows are an outstanding verification pass — see ledger PD-2026-07-08-01.
+
 ## Apex Domain 307-Redirects to `www` (public/ asset checks)
 
 `napaserve.org` **307-redirects to `www.napaserve.org`**. A bare `curl -s https://napaserve.org/<path>` returns a 15-byte `Redirecting...` stub, not the asset — the version-string / size checks silently "fail." **Fetch-based checks on `public/` assets must use `curl -sL`** (follow redirects) or hit the `www` host directly. Surfaced 2026-07-07 verifying `vineyard-explorer.html`. The bundle-hash gate still doesn't apply to `public/` assets (they serve or 404, per "Static Public Assets"); this is only about the redirect.

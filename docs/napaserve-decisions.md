@@ -189,3 +189,20 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Rationale.** The Land IQ trend bias (~+1.4 pts/yr drift) is larger than the real signal (~1–2%/yr), so a change-detection product built on Land IQ totals would manufacture growth that isn't there. Spatial footprint is what Land IQ is genuinely good at; acreage-of-record is what NASS/CDFA is authoritative for. `vineyard-explorer` v0.1/v0.1.1 already implements this split (official callout per year; mapped-footprint change in a caution treatment).
 
 **Consequences.** CDL is disqualified as a primary series (may still cross-check spatially). Any future vineyard/ag-acreage surface follows the same split. If a future NDVI/Sentinel-2 layer (v0.3) claims removals, it is validated against Tim's known-removals list before publication — same distrust-the-trend discipline. See Cheatsheet "Land IQ / DWR Crop Mapping" and the session record.
+
+---
+
+## ADR-010 — `napa_elected_seats` Data Governance: RLS-Locked Until Verified, Privacy-Redacted, Corrections-With-Source
+**Date:** 2026-07-08 · **Status:** Accepted
+
+**Context.** The Elected Seats Atlas Phase 1 roster was seeded into a new `napa_elected_seats` Supabase table (109 rows) from the ROV Incumbent File (11/18/2025). The data has two sensitivities: (1) it is an **unverified baseline** — 76 of 109 rows carry verification flags, and it names incumbents; (2) the source ROV file contains incumbents' **home addresses, emails and phone numbers**. It also inevitably contains errors that stakeholders (starting with Supervisor Gallagher) will report over time.
+
+**Decision.** Three linked governance rules for `napa_elected_seats`:
+
+1. **RLS-locked until verified.** The table ships with **RLS enabled and no policies** — access is service-role only. Public read is opened later, and only via a **single anon `SELECT` policy**, after the verification pass on the flagged rows clears. Never expose the table publicly before verification.
+2. **Privacy redaction (LOCKED).** Home addresses, emails and phone numbers in the ROV file are **never extracted into the table and never displayed**. The only public display fields are name, seat, term and election date.
+3. **Corrections logged with source, never applied from memory.** Every correction (from Gallagher or any other reporter) is **logged with its source**, then applied via a service-role `UPDATE`. Corrections are never applied from chat-thread memory or assistant recollection — same "live/source > memory" discipline as the rest of the platform.
+
+**Rationale.** An unverified, person-named dataset must not go public accidentally (hence RLS-with-no-policies as the default-deny posture, not a forgotten TODO). The privacy rule is a hard commitment made to the Registrar (Tuteur) in writing. The corrections rule keeps the roster auditable — each change traceable to who reported it and when.
+
+**Consequences.** Any surface reading `napa_elected_seats` before the anon `SELECT` policy exists must use the service role. The 76 flagged rows are an open verification obligation — see ledger PD-2026-07-08-01. See Cheatsheet "`napa_elected_seats` Table" and the session record `napaserve-session-2026-07-07-elected-seats.md`.

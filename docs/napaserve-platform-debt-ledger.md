@@ -528,3 +528,27 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Related entries:** PD-2026-07-07-01 (same page; publication blocker)
 - **Audit obligations:** After v0.2, confirm all four version strings agree via `grep -o 'v0\.[0-9.]*' vineyard-explorer.html` (expect a single distinct version).
 - **Notes:** Cosmetic only; does not affect the deploy version gate (footer + comment both carry the correct string). Batched into the v0.2 diff-highlighting work.
+
+---
+
+## 2026-07-08 Roll-Forward Entries — Elected Seats Atlas (seat database)
+
+> **Theme:** `napa_elected_seats` table seeded 2026-07-08 (109 rows) from the ROV Incumbent File. The table shipped RLS-locked (service-role only) by design — see decisions ADR-010. The publication blockers on the precinct-explorer demo remain PD-2026-07-07-01 (OSM tiles) and PD-2026-07-07-02 (Elections data currency). The entry below is the data-verification debt that gates opening the table for public read.
+
+#### PD-2026-07-08-01 — `napa_elected_seats` verification pass on 76 flagged rows
+- **Status:** OPEN
+- **Surfaced:** 2026-07-08
+- **Affected surfaces:** `napa_elected_seats` Supabase table; Elected Seats Atlas Phase 1 roster; the future anon `SELECT` policy (blocked on this pass); the 2026-ballot map view (joins `napa_elected_seats` to the precinct layer by `gis_field`/`gis_value`)
+- **Symptom:** 76 of 109 seeded rows carry verification flags. The table is an unverified baseline — RLS-locked to the service role until this clears (ADR-010). Public read cannot open until the flagged rows are resolved.
+- **Root cause:** Baseline seeded from a single source (ROV Incumbent File 11/18/2025) with automated validation gates; several fields could not be confirmed from that file alone and were flagged for human/second-source verification rather than guessed.
+- **Scope:** Verification mini-project (Oscar-shaped) — resolve each flag class against city clerks / district sources / Registrar:
+  - `vacated` (Judge Lind; Damonte deceased)
+  - `unknown_start_date` (Howell Mtn ×2)
+  - `term_length_mismatch` (several)
+  - `selection_method_verify` (4 supervisors marked "Appointed to Vacancy" implausibly)
+  - `stale_record_verify` (Alessio dual-seat — Gallagher confirmed the council record is stale)
+  - `term_dates_verify` (state-legislature rows — the two odd-year outliers in the 2027/2029 buckets)
+  - Also unverified: `municipality` / `school_district` join strings vs the precinct-layer values; water-district GIS join (`join_todo`).
+- **Related entries:** PD-2026-07-07-01 (OSM tile licensing — co-blocker on any public map launch); PD-2026-07-07-02 (Elections boundary-currency confirmation from Tuteur, still pending); decisions ADR-010
+- **Audit obligations:** Every flagged row resolved or re-confirmed via a named second source, each correction applied by service-role `UPDATE` and logged with its source (never from memory, ADR-010); validation triple re-checked (109 total / 56 on 2026 ballot / flagged count driven toward 0) before the anon `SELECT` policy is added.
+- **Notes:** Corrections already in flight — Gallagher reported the Alessio council seat stale (pre-flagged) and queried the Olsen NVUSD/NVC-board seat (clarification email pending). Tuteur says an updated Incumbent List posts after the November election, which will reconcile several flags at once.
