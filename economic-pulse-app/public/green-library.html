@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Green Library — Napa Valley Features</title>
+<meta name="description" content="Garden, nature and climate stories from Green Wednesday at Napa Valley Features — a growing community reference for Napa County.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/green-library.css">
+</head>
+<body>
+
+<header class="gl-header">
+  <div class="gl-wrap">
+    <h1>The Green Library</h1>
+    <p class="gl-standfirst">Garden, nature and climate stories from Green Wednesday at Napa Valley Features — a growing community reference for Napa County.</p>
+    <a class="gl-home-link" href="https://napaserve.org">&larr; Back to napaserve.org</a>
+  </div>
+</header>
+
+<main>
+  <!-- Browse UI (ribbon + search + grid). Hidden when a full article is open. -->
+  <div id="glBrowse" class="gl-wrap">
+
+    <!-- TAG RIBBON — pills + snapping slider stay in sync -->
+    <section class="gl-ribbon" id="glRibbon" hidden>
+      <div class="gl-pills" id="glPills"></div>
+      <div class="gl-slider-row">
+        <!-- min 0, max n_tags-1, step 1 -->
+        <input type="range" class="gl-slider" id="glSlider" min="0" max="0" step="1" value="0" aria-label="Browse tags">
+      </div>
+      <div class="gl-active-tag">
+        <span class="gl-active-icon" id="glActiveIcon"></span>
+        <span class="gl-active-label" id="glActiveLabel"></span>
+      </div>
+      <p class="gl-count-line" id="glCountLine"></p>
+      <!-- Each tag reserves a vignette slot. Art per tag to be dropped in later by Tim. -->
+      <div class="gl-tag-vignette" id="glVignette" data-tag=""></div>
+    </section>
+
+    <!-- Search + browse-all: the conventional fallback -->
+    <section class="gl-controls">
+      <input type="text" class="gl-search" id="glSearch" placeholder="Search by title, deck or author">
+      <button type="button" class="gl-browse-toggle" id="glBrowseToggle">Browse all</button>
+    </section>
+
+    <div class="gl-status" id="glStatus">Loading the Green Library&hellip;</div>
+    <div class="gl-grid" id="glGrid"></div>
+  </div>
+
+  <!-- Full article reading view -->
+  <article class="gl-article" id="glArticle">
+    <div class="gl-wrap">
+      <div class="gl-reading">
+        <button type="button" class="gl-back" id="glBack">&larr; The Green Library</button>
+        <div id="glArticleContent"></div>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer class="gl-footer">
+  <div class="gl-wrap">
+    <p><strong>Napa Valley Features</strong> — independent local journalism for Napa County. <a href="https://napaserve.org">napaserve.org</a></p>
+    <p class="gl-version">The Green Library &middot; GL-v1.0-2026-07-09</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // Standalone-page Supabase fetch pattern (mirrors src/napaserve-napa-valley-features.jsx).
+  // Anon (publishable) key + anon-read RLS on active = true. Do not use the service key here.
+  var SUPABASE_URL = "https://csenpchwxxepdvjebsrt.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_r-Ntp7zKRrH3JIVAjTKYmA_0szFdYGJ";
+  var SB_HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY };
+
+  // ---- DOM refs ----
+  var elRibbon      = document.getElementById("glRibbon");
+  var elPills       = document.getElementById("glPills");
+  var elSlider      = document.getElementById("glSlider");
+  var elActiveIcon  = document.getElementById("glActiveIcon");
+  var elActiveLabel = document.getElementById("glActiveLabel");
+  var elCountLine   = document.getElementById("glCountLine");
+  var elVignette    = document.getElementById("glVignette");
+  var elSearch      = document.getElementById("glSearch");
+  var elBrowseToggle= document.getElementById("glBrowseToggle");
+  var elStatus      = document.getElementById("glStatus");
+  var elGrid        = document.getElementById("glGrid");
+  var elBrowse      = document.getElementById("glBrowse");
+  var elArticle     = document.getElementById("glArticle");
+  var elArticleBody = document.getElementById("glArticleContent");
+  var elBack        = document.getElementById("glBack");
+
+  // ---- State ----
+  var tags = [];            // {slug,label,display_order,icon,active}
+  var articles = [];        // full green_library rows
+  var bySlug = {};          // slug -> article
+  var activeIndex = 0;      // active tag index (ribbon)
+  var browseAll = false;
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // The tags table stores icon-library names; map them to emoji glyphs so the page
+  // stays self-contained (no icon-font CDN — ADR-007). Unknown/emoji values pass through.
+  var ICON_MAP = {
+    flower: "🌸", umbrella: "⛱️", glass: "🍷", droplet: "💧",
+    paw: "🐾", trees: "🌲", recycle: "♻️", sun: "☀️"
+  };
+  function icon(name) { return name ? (ICON_MAP[name] || name) : ""; }
+
+  // ---- Data load ----
+  // Both tables are small, so we fetch everything at load. PostgREST caps a single
+  // response at 1000 rows; if the library ever grows past that, add pagination
+  // (Range headers or an .order()+.limit() cursor) — not needed yet.
+  function loadData() {
+    var tagsUrl = SUPABASE_URL + "/rest/v1/green_library_tags?select=slug,label,display_order,icon,active&active=eq.true&order=display_order";
+    var artUrl  = SUPABASE_URL + "/rest/v1/green_library?select=slug,title,author,author_note,deck,body_html,hero_image_url,photo_credit,tags,source,publish_date,active&active=eq.true&order=publish_date.desc";
+    return Promise.all([
+      fetch(tagsUrl, { headers: SB_HEADERS }).then(function (r) { if (!r.ok) throw new Error("tags HTTP " + r.status); return r.json(); }),
+      fetch(artUrl,  { headers: SB_HEADERS }).then(function (r) { if (!r.ok) throw new Error("articles HTTP " + r.status); return r.json(); })
+    ]);
+  }
+
+  // ---- Tag helpers ----
+  function tagIndex(slug) {
+    for (var i = 0; i < tags.length; i++) { if (tags[i].slug === slug) return i; }
+    return -1;
+  }
+  // Nearest tag distance (by display_order position) from an article to the active index.
+  function nearestDistance(article, idx) {
+    var best = Infinity;
+    (article.tags || []).forEach(function (slug) {
+      var ti = tagIndex(slug);
+      if (ti >= 0) best = Math.min(best, Math.abs(ti - idx));
+    });
+    return best;
+  }
+
+  // ---- Card markup ----
+  function cardHTML(a) {
+    var hero = a.hero_image_url
+      ? '<img class="gl-card-hero" src="' + esc(a.hero_image_url) + '" alt="' + esc(a.title) + '" loading="lazy">'
+      : '<div class="gl-card-hero gl-placeholder"></div>';
+    var chips = (a.tags || []).map(function (slug) {
+      var ti = tagIndex(slug);
+      var label = ti >= 0 ? tags[ti].label : slug;
+      return '<span class="gl-chip">' + esc(label) + '</span>';
+    }).join("");
+    return '<button class="gl-card" type="button" data-slug="' + esc(a.slug) + '">' +
+      hero +
+      '<div class="gl-card-body">' +
+        '<h3 class="gl-card-title">' + esc(a.title) + '</h3>' +
+        (a.deck ? '<p class="gl-card-deck">' + esc(a.deck) + '</p>' : "") +
+        (a.author ? '<p class="gl-card-author">By ' + esc(a.author) + '</p>' : "") +
+        '<div class="gl-chips">' + chips + '</div>' +
+      '</div>' +
+    '</button>';
+  }
+
+  function wireCards() {
+    Array.prototype.forEach.call(elGrid.querySelectorAll(".gl-card"), function (btn) {
+      btn.addEventListener("click", function () { openArticle(btn.getAttribute("data-slug"), true); });
+    });
+  }
+
+  // ---- Render modes ----
+  function render() {
+    var term = elSearch.value.trim().toLowerCase();
+
+    // Search ignores the ribbon while non-empty; browse-all also bypasses the ribbon.
+    var ribbonMode = !term && !browseAll;
+    elRibbon.hidden = !ribbonMode;
+
+    if (term) { renderSearch(term); return; }
+    if (browseAll) { renderBrowseAll(); return; }
+    renderRibbon();
+  }
+
+  function renderRibbon() {
+    var active = tags[activeIndex];
+    if (!active) { elGrid.innerHTML = ""; return; }
+    elActiveIcon.textContent = icon(active.icon);
+    elActiveLabel.textContent = active.label;
+    elVignette.setAttribute("data-tag", active.slug);
+
+    // Full opacity: distance 0. Faded (35%, 0.95): distance 1. Hidden: distance >= 2.
+    var full = 0;
+    var html = articles.map(function (a) {
+      var d = nearestDistance(a, activeIndex);
+      var cls = d === 0 ? "" : (d === 1 ? " gl-faded" : " gl-hidden");
+      if (d === 0) full++;
+      return cardHTML(a).replace('class="gl-card"', 'class="gl-card' + cls + '"');
+    }).join("");
+    elGrid.innerHTML = html;
+    // AP style UI copy — no Oxford comma; use % symbol if percentages ever appear.
+    elCountLine.textContent = full + (full === 1 ? " article here" : " articles here") + " — faded cards are one stop away";
+    wireCards();
+  }
+
+  function renderBrowseAll() {
+    // Full grid grouped by tag, in display_order.
+    var html = "";
+    tags.forEach(function (t) {
+      var inTag = articles.filter(function (a) { return (a.tags || []).indexOf(t.slug) >= 0; });
+      if (!inTag.length) return;
+      html += '<h2 class="gl-group-heading">' + (t.icon ? '<span>' + esc(icon(t.icon)) + '</span>' : "") + esc(t.label) + '</h2>';
+      html += inTag.map(cardHTML).join("");
+    });
+    elGrid.innerHTML = html || '<p class="gl-empty">No articles yet.</p>';
+    wireCards();
+  }
+
+  function renderSearch(term) {
+    var hits = articles.filter(function (a) {
+      return (a.title || "").toLowerCase().indexOf(term) >= 0 ||
+             (a.deck || "").toLowerCase().indexOf(term) >= 0 ||
+             (a.author || "").toLowerCase().indexOf(term) >= 0;
+    });
+    elGrid.innerHTML = hits.length
+      ? hits.map(cardHTML).join("")
+      : '<p class="gl-empty">No stories match “' + esc(term) + '.”</p>';
+    wireCards();
+  }
+
+  // ---- Ribbon build ----
+  function buildRibbon() {
+    elPills.innerHTML = tags.map(function (t, i) {
+      return '<button class="gl-pill" type="button" data-index="' + i + '">' +
+        (t.icon ? '<span class="gl-pill-icon">' + esc(icon(t.icon)) + '</span>' : "") +
+        '<span>' + esc(t.label) + '</span></button>';
+    }).join("");
+    Array.prototype.forEach.call(elPills.querySelectorAll(".gl-pill"), function (btn) {
+      btn.addEventListener("click", function () { setActiveIndex(parseInt(btn.getAttribute("data-index"), 10)); });
+    });
+    elSlider.max = String(Math.max(0, tags.length - 1));
+    elSlider.value = String(activeIndex);
+    elSlider.addEventListener("input", function () { setActiveIndex(parseInt(elSlider.value, 10)); });
+  }
+
+  function setActiveIndex(i) {
+    if (isNaN(i)) return;
+    activeIndex = Math.max(0, Math.min(tags.length - 1, i));
+    elSlider.value = String(activeIndex);           // pills + slider stay in sync
+    Array.prototype.forEach.call(elPills.querySelectorAll(".gl-pill"), function (btn) {
+      btn.classList.toggle("active", parseInt(btn.getAttribute("data-index"), 10) === activeIndex);
+    });
+    // Leaving search/browse-all back to the ribbon.
+    if (elSearch.value) elSearch.value = "";
+    if (browseAll) { browseAll = false; elBrowseToggle.classList.remove("active"); }
+    render();
+  }
+
+  // ---- Full article view ----
+  function articleHTML(a) {
+    var hero = "";
+    if (a.hero_image_url) {
+      hero = '<img class="gl-article-hero" src="' + esc(a.hero_image_url) + '" alt="' + esc(a.title) + '">';
+      if (a.photo_credit) hero += '<p class="gl-photo-credit">' + esc(a.photo_credit) + '</p>';
+    }
+    var chips = (a.tags || []).map(function (slug) {
+      var ti = tagIndex(slug);
+      return '<span class="gl-chip">' + esc(ti >= 0 ? tags[ti].label : slug) + '</span>';
+    }).join("");
+    // body_html is trusted first-party HTML from our own table — injected as-is.
+    var note = a.author_note ? '<p class="gl-author-note">' + esc(a.author_note) + '</p>' : "";
+    return hero +
+      '<h1 class="gl-article-title">' + esc(a.title) + '</h1>' +
+      (a.deck ? '<p class="gl-article-deck">' + esc(a.deck) + '</p>' : "") +
+      (a.author ? '<p class="gl-byline">By ' + esc(a.author) + '</p>' : "") +
+      '<div class="gl-chips gl-article-chips">' + chips + '</div>' +
+      '<div class="gl-body">' + (a.body_html || "") + '</div>' +
+      note;
+  }
+
+  function openArticle(slug, push) {
+    var a = bySlug[slug];
+    if (!a) { closeArticle(false); return; }
+    elArticleBody.innerHTML = articleHTML(a);
+    elBrowse.style.display = "none";
+    elArticle.classList.add("gl-open");
+    document.title = a.title + " — The Green Library";
+    if (push && location.hash !== "#" + slug) {
+      // Each article gets URL green-library.html#<slug> — the Substack deep-link targets.
+      history.pushState({ slug: slug }, "", "#" + slug);
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function closeArticle(push) {
+    elArticle.classList.remove("gl-open");
+    elBrowse.style.display = "";
+    document.title = "The Green Library — Napa Valley Features";
+    if (push && location.hash) history.pushState({}, "", location.pathname + location.search);
+    window.scrollTo(0, 0);
+  }
+
+  elBack.addEventListener("click", function () { closeArticle(true); });
+  window.addEventListener("popstate", function () { routeFromHash(); });
+
+  function routeFromHash() {
+    var slug = location.hash.replace(/^#/, "");
+    if (slug && bySlug[slug]) openArticle(slug, false);
+    else closeArticle(false);
+  }
+
+  // ---- Controls ----
+  elSearch.addEventListener("input", render);
+  elBrowseToggle.addEventListener("click", function () {
+    browseAll = !browseAll;
+    elBrowseToggle.classList.toggle("active", browseAll);
+    if (browseAll && elSearch.value) elSearch.value = "";
+    render();
+  });
+
+  // ---- Boot ----
+  loadData().then(function (res) {
+    tags = res[0] || [];
+    articles = res[1] || [];
+    articles.forEach(function (a) { bySlug[a.slug] = a; });
+    elStatus.style.display = "none";
+
+    if (tags.length) buildRibbon();
+    render();
+    // Cold-load deep link: open the hashed article directly on first paint.
+    routeFromHash();
+  }).catch(function (e) {
+    elStatus.textContent = "Could not load the Green Library right now. Please reload in a moment.";
+    if (window.console) console.error("Green Library load failed:", e);
+  });
+})();
+</script>
+
+<!-- Green Library standalone page — GL-v1.0-2026-07-09 -->
+</body>
+</html>
