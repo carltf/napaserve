@@ -1,6 +1,6 @@
 /* green-library.css — standalone page styles (ADR-007 exception: own CSS file).
    NapaServe Theme 02 Cream + green accent variant, this page only.
-   Paired with green-library.html. Version: GL-v2.0-2026-07-10 */
+   Paired with green-library.html. Version: GL-v2.1-2026-07-10 */
 
 /* Self-hosted Tabler outline icon webfont (no CDN — ADR-007). The .woff2 lives
    alongside this file in green-library/; the CSS's @font-face references it locally. */
@@ -83,14 +83,25 @@ a { color: var(--green); }
 .gl-active-tag .gl-active-label { font-family: var(--serif); font-weight: 700; font-size: 28px; color: var(--ink); }
 .gl-count-line { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
 
-/* Per-tag vignette slot — 120px tall, above the grid.
-   Art per tag to be dropped in later by Tim. */
+/* Vignette slot above the grid — currently holds the "how to browse" explainer;
+   per-tag art can replace it later. Grows with its content instead of a fixed 120px. */
 .gl-tag-vignette {
-  height: 120px; border-radius: 8px;
+  min-height: 120px; border-radius: 8px;
   background: var(--green-fill);
-  border: 1px dashed var(--hairline);
+  border: 1px solid var(--hairline);
   margin: 0 0 22px;
+  padding: 16px 20px;
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
 }
+.gl-vignette-title {
+  font-family: var(--serif); font-weight: 700; font-size: 14px;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--green);
+  margin: 0;
+}
+.gl-vignette-text {
+  margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink); max-width: 780px;
+}
+.gl-vignette-text strong { color: var(--green); }
 
 /* ---------- Search + browse-all ---------- */
 .gl-controls {

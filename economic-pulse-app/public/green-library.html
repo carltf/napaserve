@@ -36,8 +36,12 @@
         <span class="gl-active-label" id="glActiveLabel"></span>
       </div>
       <p class="gl-count-line" id="glCountLine"></p>
-      <!-- Each tag reserves a vignette slot. Art per tag to be dropped in later by Tim. -->
-      <div class="gl-tag-vignette" id="glVignette" data-tag=""></div>
+      <!-- Vignette slot: holds the "how to browse" explainer for now (shows only in ribbon mode);
+           per-tag art can replace this later. renderRibbon() only updates data-tag, not this content. -->
+      <div class="gl-tag-vignette" id="glVignette" data-tag="">
+        <p class="gl-vignette-title">How to browse</p>
+        <p class="gl-vignette-text">Drag the slider or tap a category above to move through the collection. Cards shown <em>faded</em> belong to the next category over &mdash; tap that category to bring them into focus. Prefer a full list? Use <strong>Search</strong> or <strong>Browse all</strong> to see every story at once.</p>
+      </div>
     </section>
 
     <!-- Search + browse-all: the conventional fallback -->
@@ -64,7 +68,7 @@
 <footer class="gl-footer">
   <div class="gl-wrap">
     <p><strong>Napa Valley Features</strong> — independent local journalism for Napa County. <a href="https://napaserve.org">napaserve.org</a></p>
-    <p class="gl-version">The Green Library &middot; GL-v2.0-2026-07-10</p>
+    <p class="gl-version">The Green Library &middot; GL-v2.1-2026-07-10</p>
   </div>
 </footer>
 
@@ -101,6 +105,7 @@
   var bySlug = {};          // slug -> article
   var activeIndex = 0;      // active tag index (ribbon)
   var browseAll = false;
+  var pushedArticle = false; // did opening the current article push a history entry?
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -319,7 +324,7 @@
     var a = bySlug[slug];
     // Only full-text rows have an in-page reader. Link-back rows live on Substack;
     // a stray #<link-back-slug> hash must not open an empty reader.
-    if (!a || isLinkback(a)) { closeArticle(false); return; }
+    if (!a || isLinkback(a)) { closeArticle(); return; }
     elArticleBody.innerHTML = articleHTML(a);
     elBrowse.style.display = "none";
     elArticle.classList.add("gl-open");
@@ -327,25 +332,38 @@
     if (push && location.hash !== "#" + slug) {
       // Each article gets URL green-library.html#<slug> — the Substack deep-link targets.
       history.pushState({ slug: slug }, "", "#" + slug);
+      pushedArticle = true;   // remember we added an entry, so Back can pop it
     }
     window.scrollTo(0, 0);
   }
 
-  function closeArticle(push) {
+  // closeArticle only touches the DOM — never writes history. The Back button and popstate
+  // own history so the browser Back button behaves normally (no forward-trap re-opening).
+  function closeArticle() {
     elArticle.classList.remove("gl-open");
     elBrowse.style.display = "";
     document.title = "The Green Library — Napa Valley Features";
-    if (push && location.hash) history.pushState({}, "", location.pathname + location.search);
     window.scrollTo(0, 0);
   }
 
-  elBack.addEventListener("click", function () { closeArticle(true); });
-  window.addEventListener("popstate", function () { routeFromHash(); });
+  elBack.addEventListener("click", function () {
+    if (pushedArticle) {
+      // We pushed a #slug entry to open this article — pop it so we return to exactly
+      // where the reader came from; popstate → routeFromHash then closes the reader.
+      pushedArticle = false;
+      history.back();
+    } else {
+      // Reached here by a cold-load deep link (no entry to pop) — clean the URL in place.
+      if (location.hash) history.replaceState({}, "", location.pathname + location.search);
+      closeArticle();
+    }
+  });
+  window.addEventListener("popstate", function () { pushedArticle = false; routeFromHash(); });
 
   function routeFromHash() {
     var slug = location.hash.replace(/^#/, "");
     if (slug && bySlug[slug] && !isLinkback(bySlug[slug])) openArticle(slug, false);
-    else closeArticle(false);
+    else closeArticle();
   }
 
   // ---- Controls ----
@@ -360,6 +378,9 @@
   // ---- Boot ----
   loadData().then(function (res) {
     tags = res[0] || [];
+    // Ribbon order is alphabetical by label (predictable for readers). The whole page keys off
+    // this array order — pills, slider index, and the fade distance all follow it consistently.
+    tags.sort(function (a, b) { return a.label.localeCompare(b.label); });
     articles = res[1] || [];
     articles.forEach(function (a) { bySlug[a.slug] = a; });
     elStatus.style.display = "none";
@@ -375,6 +396,6 @@
 })();
 </script>
 
-<!-- Green Library standalone page — GL-v2.0-2026-07-10 -->
+<!-- Green Library standalone page — GL-v2.1-2026-07-10 -->
 </body>
 </html>
