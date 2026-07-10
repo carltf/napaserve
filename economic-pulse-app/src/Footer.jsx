@@ -60,6 +60,7 @@ export default function Footer() {
               <Link to="/news" className="ns-footer-link" style={navLink}>Napa Valley Features</Link>
               <Link to="/archive" className="ns-footer-link" style={navLink}>NVF Archive Search</Link>
               <Link to="/under-the-hood" className="ns-footer-link" style={navLink}>Under the Hood</Link>
+              <a href="/green-library.html" className="ns-footer-link" style={navLink}>The Green Library</a>
               <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="ns-footer-link" style={navLink} aria-label="Sonoma Co. Features, opens in new tab">Sonoma Co. Features ↗</a>
               <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer" className="ns-footer-link" style={navLink} aria-label="Lake Co. Features, opens in new tab">Lake Co. Features ↗</a>
             </div>

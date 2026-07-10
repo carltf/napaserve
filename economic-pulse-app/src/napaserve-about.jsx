@@ -91,6 +91,7 @@ export default function AboutNapaServe() {
             <Tool name="AI Policy Agent" route="/agent.html" isExternal desc="A research assistant grounded in the NVF archive and live web search. Ask hard questions about local policy, economy, or development. It cites its sources." />
             <Tool name="Event Finder" route="/events" desc="Community events across Napa County. Discover what's happening, filter by category and submit your own event." />
             <Tool name="Napa Valley Features" route="/news" desc="The flagship publication — original reporting on Napa County economy, agriculture, land use, civic affairs and community life." />
+            <Tool name="The Green Library" route="/green-library.html" isExternal desc="A browsable collection of Green Wednesday's garden, nature and climate stories from Napa Valley Features — organized by topic with search. Most cards link through to the full piece." />
             <Tool name="Valley Works Collaborative" route="/valley-works" desc="The regional partnership network working to diversify Napa County's economy. Training pipelines, emerging industries and the VWC mission." />
           </div>
 
@@ -135,7 +136,8 @@ export default function AboutNapaServe() {
             <em style={{ color: T.ink2 }}>What's happening with winery licenses?</em> → Community Pulse, Winery Licenses tab.<br />
             <em style={{ color: T.ink2 }}>What have we reported on Stanley Ranch?</em> → NVF Archive Search.<br />
             <em style={{ color: T.ink2 }}>What would a 75-room resort mean for St. Helena?</em> → Project Evaluator.<br />
-            <em style={{ color: T.ink2 }}>What's the water situation in Napa County?</em> → AI Policy Agent.
+            <em style={{ color: T.ink2 }}>What's the water situation in Napa County?</em> → AI Policy Agent.<br />
+            <em style={{ color: T.ink2 }}>Want to browse gardening, nature and climate stories?</em> → The Green Library.
           </P>
 
           <H>The Project Evaluator is a discussion document</H>

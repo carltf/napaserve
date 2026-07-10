@@ -118,6 +118,16 @@ export default function NapaServeHub() {
             <div className="hub-c-desc">Data-driven deep dives into Napa County industries. Charts, polls and original analysis on the numbers behind the headlines.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
+          <a href="/green-library.html" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><path d="M20 12C16 9 10 9 6 10v22c4-1 10-1 14 2 4-3 10-3 14-2V10c-4-1-10-1-14 2z" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><line x1="20" y1="12" x2="20" y2="34" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round" opacity=".45"/><path d="M28 16c-3 0-5 1.6-5 4 2.6 0 5-1.6 5-4z" fill="#8B5E3C" opacity=".55"/></svg>
+            </div>
+            <div className="hub-c-cat" style={{ color: "#8B7355" }}>Collection · Green Wednesday</div>
+            <div className="hub-c-name">The Green Library</div>
+            <div className="hub-c-desc">A browsable shelf of Green Wednesday's garden, nature and climate stories. Organized by topic with search — most cards link through to the full piece.</div>
+            <div className="hub-arrow">Open →</div>
+          </a>
         </div>
 
         {/* ── section divider ── */}
