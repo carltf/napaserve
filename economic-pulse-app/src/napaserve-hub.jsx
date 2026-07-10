@@ -25,6 +25,7 @@ export default function NapaServeHub() {
         .hub-tools-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
         .hub-tools-lbl{font-size:14px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);}
         .hub-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule);border-left:1px solid var(--rule);}
+        .hub-grid-journalism{grid-template-columns:repeat(4,1fr);}
         .hub-card{padding:22px 22px 16px;background:var(--bg);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);cursor:pointer;transition:background .15s;position:relative;text-decoration:none;display:block;color:inherit;}
         .hub-card:hover{background:var(--bg2);}
         .hub-card:hover .hub-arrow{color:var(--accent);}

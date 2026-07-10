@@ -1,6 +1,6 @@
 /* green-library.css — standalone page styles (ADR-007 exception: own CSS file).
    NapaServe Theme 02 Cream + green accent variant, this page only.
-   Paired with green-library.html. Version: GL-v2.2-2026-07-10 */
+   Paired with green-library.html. Version: GL-v2.3-2026-07-10 */
 
 /* Self-hosted Tabler outline icon webfont (no CDN — ADR-007). The .woff2 lives
    alongside this file in green-library/; the CSS's @font-face references it locally. */

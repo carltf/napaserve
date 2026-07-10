@@ -164,7 +164,7 @@
     </div>
     <div class="ns-fbottom">
       <span>© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</span>
-      <span class="ns-fver">The Green Library &middot; GL-v2.2-2026-07-10</span>
+      <span class="ns-fver">The Green Library &middot; GL-v2.3-2026-07-10</span>
     </div>
   </div>
 </footer>
@@ -518,6 +518,9 @@
     // Ribbon order is alphabetical by label (predictable for readers). The whole page keys off
     // this array order — pills, slider index, and the fade distance all follow it consistently.
     tags.sort(function (a, b) { return a.label.localeCompare(b.label); });
+    // Land on Garden by default (the library's front door), not the alphabetical first (Climate).
+    var giDefault = tags.findIndex(function (t) { return t.slug === "garden"; });
+    if (giDefault >= 0) activeIndex = giDefault;
     articles = res[1] || [];
     articles.forEach(function (a) { bySlug[a.slug] = a; });
     elStatus.style.display = "none";
@@ -533,6 +536,6 @@
 })();
 </script>
 
-<!-- Green Library standalone page — GL-v2.2-2026-07-10 -->
+<!-- Green Library standalone page — GL-v2.3-2026-07-10 -->
 </body>
 </html>
