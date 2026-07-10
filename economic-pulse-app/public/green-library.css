@@ -1,6 +1,6 @@
 /* green-library.css — standalone page styles (ADR-007 exception: own CSS file).
    NapaServe Theme 02 Cream + green accent variant, this page only.
-   Paired with green-library.html. Version: GL-v1.1-2026-07-09 */
+   Paired with green-library.html. Version: GL-v2.0-2026-07-10 */
 
 /* Self-hosted Tabler outline icon webfont (no CDN — ADR-007). The .woff2 lives
    alongside this file in green-library/; the CSS's @font-face references it locally. */
@@ -130,6 +130,7 @@ a { color: var(--green); }
   border-radius: 10px; overflow: hidden; cursor: pointer;
   display: flex; flex-direction: column; text-align: left;
   padding: 0; font: inherit; color: inherit; width: 100%;
+  text-decoration: none; /* link-back cards are <a> — no underline */
   transition: opacity .3s ease, transform .3s ease, border-color .2s ease;
 }
 .gl-card:hover { border-color: var(--green); }
@@ -143,7 +144,20 @@ a { color: var(--green); }
 .gl-card-title { font-family: var(--serif); font-weight: 700; font-size: 18px; line-height: 1.25; color: var(--ink); margin: 0; }
 .gl-card-deck { font-size: 14px; color: var(--muted); margin: 0; }
 .gl-card-author { font-size: 13px; font-weight: 600; color: var(--green); margin: 2px 0 0; }
+/* Short pull quote on a card — a restrained italic aside, not a blockquote. */
+.gl-card-quote {
+  font-family: var(--serif); font-style: italic; font-size: 13.5px; line-height: 1.4;
+  color: var(--ink); margin: 4px 0 0; padding-left: 10px;
+  border-left: 2px solid var(--green); opacity: 0.85;
+}
 .gl-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+/* Outbound cue on link-back cards — honest signal the click leaves for Substack. */
+.gl-card-substack {
+  font-size: 12px; font-weight: 600; color: var(--green);
+  margin: 10px 0 0; padding-top: 8px; border-top: 1px solid var(--hairline);
+  display: flex; align-items: center; gap: 4px;
+}
+.gl-card-substack span { font-size: 13px; }
 .gl-chip {
   font-size: 11px; font-weight: 600; color: var(--green);
   background: var(--green-fill); border-radius: 999px; padding: 3px 9px;

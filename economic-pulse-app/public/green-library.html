@@ -42,7 +42,7 @@
 
     <!-- Search + browse-all: the conventional fallback -->
     <section class="gl-controls">
-      <input type="text" class="gl-search" id="glSearch" placeholder="Search by title, deck or author">
+      <input type="text" class="gl-search" id="glSearch" placeholder="Search title, deck, author, quote or tag">
       <button type="button" class="gl-browse-toggle" id="glBrowseToggle">Browse all</button>
     </section>
 
@@ -64,7 +64,7 @@
 <footer class="gl-footer">
   <div class="gl-wrap">
     <p><strong>Napa Valley Features</strong> — independent local journalism for Napa County. <a href="https://napaserve.org">napaserve.org</a></p>
-    <p class="gl-version">The Green Library &middot; GL-v1.1-2026-07-09</p>
+    <p class="gl-version">The Green Library &middot; GL-v2.0-2026-07-10</p>
   </div>
 </footer>
 
@@ -113,7 +113,8 @@
   // decorative <i> (aria-hidden) that inherits the surrounding text color.
   var ICON_CLASS = {
     flower: "ti-flower", umbrella: "ti-umbrella", glass: "ti-glass-full", droplet: "ti-droplet",
-    paw: "ti-paw", trees: "ti-trees", recycle: "ti-recycle", sun: "ti-sun"
+    paw: "ti-paw", trees: "ti-trees", recycle: "ti-recycle", sun: "ti-sun",
+    clock: "ti-clock", mountain: "ti-mountain"
   };
   function iconHTML(name) {
     var cls = ICON_CLASS[name];
@@ -126,7 +127,7 @@
   // (Range headers or an .order()+.limit() cursor) — not needed yet.
   function loadData() {
     var tagsUrl = SUPABASE_URL + "/rest/v1/green_library_tags?select=slug,label,display_order,icon,active&active=eq.true&order=display_order";
-    var artUrl  = SUPABASE_URL + "/rest/v1/green_library?select=slug,title,author,author_note,deck,body_html,hero_image_url,photo_credit,tags,source,publish_date,active&active=eq.true&order=publish_date.desc";
+    var artUrl  = SUPABASE_URL + "/rest/v1/green_library?select=slug,title,author,author_note,deck,body_html,hero_image_url,photo_credit,pull_quote,substack_url,tags,source,publish_date,active&active=eq.true&order=publish_date.desc";
     return Promise.all([
       fetch(tagsUrl, { headers: SB_HEADERS }).then(function (r) { if (!r.ok) throw new Error("tags HTTP " + r.status); return r.json(); }),
       fetch(artUrl,  { headers: SB_HEADERS }).then(function (r) { if (!r.ok) throw new Error("articles HTTP " + r.status); return r.json(); })
@@ -149,7 +150,13 @@
   }
 
   // ---- Card markup ----
-  function cardHTML(a) {
+  // A card is one of two kinds:
+  //   full-text  (body_html present) -> in-page reader button, deep-linkable at #<slug>
+  //   link-back  (body_html null)    -> anchor to substack_url in a new tab, "Read on Substack ↗"
+  // isLinkback() is the single source of truth used by rendering AND click wiring.
+  function isLinkback(a) { return !a.body_html; }
+
+  function cardHTML(a, extraCls) {
     var hero = a.hero_image_url
       ? '<img class="gl-card-hero" src="' + esc(a.hero_image_url) + '" alt="' + esc(a.title) + '" loading="lazy">'
       : '<div class="gl-card-hero gl-placeholder"></div>';
@@ -158,19 +165,34 @@
       var label = ti >= 0 ? tags[ti].label : slug;
       return '<span class="gl-chip">' + esc(label) + '</span>';
     }).join("");
-    return '<button class="gl-card" type="button" data-slug="' + esc(a.slug) + '">' +
+    // Author label: clean name preferred, author_note as fallback (a few rows carry only a note).
+    var authorLabel = a.author || a.author_note;
+    var quote = a.pull_quote ? '<p class="gl-card-quote">&ldquo;' + esc(a.pull_quote) + '&rdquo;</p>' : "";
+    var linkback = isLinkback(a);
+    var footer = linkback
+      ? '<p class="gl-card-substack">Read on Substack <span aria-hidden="true">&#8599;</span></p>'
+      : "";
+    var body =
       hero +
       '<div class="gl-card-body">' +
         '<h3 class="gl-card-title">' + esc(a.title) + '</h3>' +
         (a.deck ? '<p class="gl-card-deck">' + esc(a.deck) + '</p>' : "") +
-        (a.author ? '<p class="gl-card-author">By ' + esc(a.author) + '</p>' : "") +
+        (authorLabel ? '<p class="gl-card-author">By ' + esc(authorLabel) + '</p>' : "") +
+        quote +
         '<div class="gl-chips">' + chips + '</div>' +
-      '</div>' +
-    '</button>';
+        footer +
+      '</div>';
+    var cls = "gl-card" + (linkback ? " gl-linkback" : "") + (extraCls ? " " + extraCls : "");
+    if (linkback && a.substack_url) {
+      return '<a class="' + cls + '" href="' + esc(a.substack_url) + '" target="_blank" rel="noopener" data-slug="' + esc(a.slug) + '">' +
+        body + '</a>';
+    }
+    return '<button class="' + cls + '" type="button" data-slug="' + esc(a.slug) + '">' + body + '</button>';
   }
 
+  // Only full-text cards are <button>s; link-back cards are native <a> and need no JS.
   function wireCards() {
-    Array.prototype.forEach.call(elGrid.querySelectorAll(".gl-card"), function (btn) {
+    Array.prototype.forEach.call(elGrid.querySelectorAll("button.gl-card"), function (btn) {
       btn.addEventListener("click", function () { openArticle(btn.getAttribute("data-slug"), true); });
     });
   }
@@ -199,9 +221,9 @@
     var full = 0;
     var html = articles.map(function (a) {
       var d = nearestDistance(a, activeIndex);
-      var cls = d === 0 ? "" : (d === 1 ? " gl-faded" : " gl-hidden");
+      var cls = d === 0 ? "" : (d === 1 ? "gl-faded" : "gl-hidden");
       if (d === 0) full++;
-      return cardHTML(a).replace('class="gl-card"', 'class="gl-card' + cls + '"');
+      return cardHTML(a, cls);
     }).join("");
     elGrid.innerHTML = html;
     // AP style UI copy — no Oxford comma; use % symbol if percentages ever appear.
@@ -223,10 +245,19 @@
   }
 
   function renderSearch(term) {
+    // Full-catalog search across every field, independent of ribbon position:
+    // title, deck, author (+note), pull_quote, and each tag's slug AND display label.
     var hits = articles.filter(function (a) {
-      return (a.title || "").toLowerCase().indexOf(term) >= 0 ||
-             (a.deck || "").toLowerCase().indexOf(term) >= 0 ||
-             (a.author || "").toLowerCase().indexOf(term) >= 0;
+      if ((a.title || "").toLowerCase().indexOf(term) >= 0) return true;
+      if ((a.deck || "").toLowerCase().indexOf(term) >= 0) return true;
+      if ((a.author || "").toLowerCase().indexOf(term) >= 0) return true;
+      if ((a.author_note || "").toLowerCase().indexOf(term) >= 0) return true;
+      if ((a.pull_quote || "").toLowerCase().indexOf(term) >= 0) return true;
+      return (a.tags || []).some(function (slug) {
+        var ti = tagIndex(slug);
+        var label = ti >= 0 ? tags[ti].label : slug;
+        return slug.toLowerCase().indexOf(term) >= 0 || label.toLowerCase().indexOf(term) >= 0;
+      });
     });
     elGrid.innerHTML = hits.length
       ? hits.map(cardHTML).join("")
@@ -286,7 +317,9 @@
 
   function openArticle(slug, push) {
     var a = bySlug[slug];
-    if (!a) { closeArticle(false); return; }
+    // Only full-text rows have an in-page reader. Link-back rows live on Substack;
+    // a stray #<link-back-slug> hash must not open an empty reader.
+    if (!a || isLinkback(a)) { closeArticle(false); return; }
     elArticleBody.innerHTML = articleHTML(a);
     elBrowse.style.display = "none";
     elArticle.classList.add("gl-open");
@@ -311,7 +344,7 @@
 
   function routeFromHash() {
     var slug = location.hash.replace(/^#/, "");
-    if (slug && bySlug[slug]) openArticle(slug, false);
+    if (slug && bySlug[slug] && !isLinkback(bySlug[slug])) openArticle(slug, false);
     else closeArticle(false);
   }
 
@@ -342,6 +375,6 @@
 })();
 </script>
 
-<!-- Green Library standalone page — GL-v1.1-2026-07-09 -->
+<!-- Green Library standalone page — GL-v2.0-2026-07-10 -->
 </body>
 </html>
