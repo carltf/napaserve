@@ -579,3 +579,13 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 - **Scope / gate:** **Do not ship the amber toggle until a Part C rerun returns SEPARATES** (≥7/9 clean removals outside the control distribution) — see decisions ADR-012. Part C spec (multi-date composites, full-season 2026 imagery, bare-soil/tillage index, per-removal dates, 7-point clean ground truth) lives in the Cheatsheet.
 - **Related entries:** decisions ADR-011 (three-bin standard the layer must use) and ADR-012 (the deferral + gate); ADR-009 (distrust the trend).
 - **Notes:** Not killed — the signal is real for **completed** removals (R1/R4/R8 separate perfectly). Standing habit: log the DATE whenever a vineyard pull is learned of (per-removal dates are the key missing input).
+
+---
+
+## Green Library — deferred items (2026-07-10)
+
+- **12-placeholder hero SQL not yet run.** `docs/04_placeholders_fill.sql` (12 UPDATEs) sets `hero_image_url` for the 12 og:image-filled placeholder cards. Images are deployed; the column stays null (green placeholder shows) until the user runs it in Supabase. **Status:** ACTION PENDING (user).
+- **56 "second-card" heroes still generic.** The article-accurate og:image pass upgraded only the **lead** card of each Green Wednesday post (og:image is the post lead). The ~56 non-lead cards keep their Wave-2 generic (subject-matched) images. Full fix = parse each post body for its per-sub-article images. **Status:** DEFERRED (lower priority; generics are on-subject).
+- **Git history image bloat.** The Wave-2 images were committed full-res (~299 MB in one commit `143821c`), then optimized in place (`63e5f96`) + swapped again by the og:image passes. The working/deployed tree is lean (~50 MB) but **git history retains every large blob**. A history rewrite (git-filter-repo / BFG) would reclaim it but is destructive to shared history — do only deliberately. **Status:** DEFERRED (cosmetic; repo/clone size only).
+- **Static site-chrome hand-sync.** `green-library.html` embeds a static replica of `NavBar.jsx` + `Footer.jsx`; it does not auto-update when the app nav changes. **Status:** DEFERRED — resolve by factoring shared chrome into an includable snippet when the Wine library lands.
+- **Wine Library Phases 2–6.** Content extracted (Phase 1, `docs/wine-library-wave1-review.md`, 73 cards). Remaining: architecture (generalize into shared template + `LIBRARIES` registry + unified `library_cards`/`library_tags`, vs clone), schema + seed (73 cards + 8 tags; author = Dan Berger for the 44 named titles, Tim Carl for the other 29), og:image heroes, nav wiring, fix 3 REVIEW tags. **Status:** QUEUED (next Library work block).

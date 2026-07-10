@@ -375,3 +375,11 @@ Per ADR-001 (2026-05-24), EOS is markdown-canonical. See `napaserve-eos-checklis
 - **zsh paste pitfall** when shell sequence contains comments. Paste one line at a time
 - **macOS file-descriptor limit** (256 default). Run `ulimit -n 2147483646`
 - **TextEdit trap:** never save .html or .md files from TextEdit — converts to RTF
+
+---
+
+## New surface — The Green Library + the Libraries collection (2026-07-10)
+
+**The Green Library** is live under **Journalism** — a browsable, self-contained collection of the *Green Wednesday* series (garden/nature/climate), at `https://www.napaserve.org/green-library.html` (static page, `public/green-library.html`; data in Supabase `green_library` + `green_library_tags`; not a React route). 133 cards (7 full-text + 126 link-back to Substack), a 10-stop tag ribbon with proximity-fade browsing, full search, and article-accurate hero photos pulled from each post's Substack `og:image`. Wired into the site nav/footer/hub/About; carries a static replica of the NapaServe chrome so it reads native.
+
+It is the **first of a planned collection of themed libraries** (a Library = "a curated shelf on a theme," distinct from Under the Hood's per-article analysis). **Wine** (from the `Wine Chronicles` series, 73 posts) is #2 — content extracted, build queued. The collection's clean architecture (a shared template + `LIBRARIES` registry + unified `library_cards`/`library_tags` model) is the payoff to build at library #2. See `napaserve-session-2026-07-10.md`.

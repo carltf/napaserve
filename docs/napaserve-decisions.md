@@ -232,3 +232,14 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 **Rationale.** The signal genuinely exists for **completed** removals (R1/R4/R8 separated perfectly), so the approach is not dead — it is under-powered given single-scene noise and a mid-season, pre-cutoff 2026 window. September gets full-season 2026 imagery (removes censoring) and lets Part C add the noise-beating machinery (see Cheatsheet Part C spec). Shipping a MUSH layer would violate ADR-011 and ADR-009.
 
 **Consequences.** Tracked as ledger `PD-2026-07-08-03`. Part C spec (multi-date composites, bare-soil/tillage index, per-removal dates, 7-point clean ground truth) lives in the Cheatsheet. Revisit only after Part C clears the SEPARATES gate.
+
+## ADR-013 — Themed Libraries Are Standalone Static Pages (Not React Routes); Green Is First of a Collection
+**Date:** 2026-07-10 · **Status:** Accepted
+
+**Context.** The Green Library needed a home on NapaServe. Two shapes existed: a React route (like Under the Hood's per-article pages) or a standalone static page (like the precinct/vineyard explorers). The content is a *browsable collection* that self-renders from Supabase, and the user envisions a growing set of themed shelves (Green, then Wine/Food, Civic, …).
+
+**Decision.** A **Library is a standalone static page** (`public/<x>-library.html` + CSS + asset dir) that fetches its own cards/tags from Supabase with the anon publishable key (anon-read RLS on `active=true`). No React route, no `App.jsx`/`vercel.json` change — Vercel serves the physical `dist/` file ahead of the SPA rewrite. Libraries are a **distinct product surface** from Under the Hood (UTH = per-article original analysis; a Library = a curated shelf of a series' evergreen pieces, mostly link-backs). They live under the **Journalism** nav group.
+
+**Rationale.** The collection model self-renders from data (one page, N cards) rather than N route-components; static keeps it decoupled from the SPA and cheap to stand up. Reuses the explorer-page serving precedent. Keeps UTH's analytical identity separate from the browse-a-shelf identity.
+
+**Consequences.** (1) Static pages can't import the React `NavBar`/`Footer` — each Library carries a **hand-maintained static replica** of the site chrome (keep-in-sync burden; ledger item). (2) App-nav links to a Library hard-navigate (`.html`), handled in `NavBar.jsx` `go()`. (3) At library #2 (Wine, queued), factor the shared chrome + card template into a reusable snippet and introduce a `LIBRARIES` registry + unified `library_cards`/`library_tags` model rather than cloning. See `napaserve-session-2026-07-10.md`.
