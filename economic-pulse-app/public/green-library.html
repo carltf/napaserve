@@ -64,7 +64,7 @@
 <footer class="gl-footer">
   <div class="gl-wrap">
     <p><strong>Napa Valley Features</strong> — independent local journalism for Napa County. <a href="https://napaserve.org">napaserve.org</a></p>
-    <p class="gl-version">The Green Library &middot; GL-v1.0-2026-07-09</p>
+    <p class="gl-version">The Green Library &middot; GL-v1.1-2026-07-09</p>
   </div>
 </footer>
 
@@ -108,13 +108,17 @@
     });
   }
 
-  // The tags table stores icon-library names; map them to emoji glyphs so the page
-  // stays self-contained (no icon-font CDN — ADR-007). Unknown/emoji values pass through.
-  var ICON_MAP = {
-    flower: "🌸", umbrella: "⛱️", glass: "🍷", droplet: "💧",
-    paw: "🐾", trees: "🌲", recycle: "♻️", sun: "☀️"
+  // The tags table stores bare icon names; map them to self-hosted Tabler outline
+  // icon classes (webfont in green-library/, no CDN — ADR-007). iconHTML() returns a
+  // decorative <i> (aria-hidden) that inherits the surrounding text color.
+  var ICON_CLASS = {
+    flower: "ti-flower", umbrella: "ti-umbrella", glass: "ti-glass-full", droplet: "ti-droplet",
+    paw: "ti-paw", trees: "ti-trees", recycle: "ti-recycle", sun: "ti-sun"
   };
-  function icon(name) { return name ? (ICON_MAP[name] || name) : ""; }
+  function iconHTML(name) {
+    var cls = ICON_CLASS[name];
+    return cls ? '<i class="ti ' + cls + '" aria-hidden="true"></i>' : "";
+  }
 
   // ---- Data load ----
   // Both tables are small, so we fetch everything at load. PostgREST caps a single
@@ -187,7 +191,7 @@
   function renderRibbon() {
     var active = tags[activeIndex];
     if (!active) { elGrid.innerHTML = ""; return; }
-    elActiveIcon.textContent = icon(active.icon);
+    elActiveIcon.innerHTML = iconHTML(active.icon);
     elActiveLabel.textContent = active.label;
     elVignette.setAttribute("data-tag", active.slug);
 
@@ -211,7 +215,7 @@
     tags.forEach(function (t) {
       var inTag = articles.filter(function (a) { return (a.tags || []).indexOf(t.slug) >= 0; });
       if (!inTag.length) return;
-      html += '<h2 class="gl-group-heading">' + (t.icon ? '<span>' + esc(icon(t.icon)) + '</span>' : "") + esc(t.label) + '</h2>';
+      html += '<h2 class="gl-group-heading">' + iconHTML(t.icon) + esc(t.label) + '</h2>';
       html += inTag.map(cardHTML).join("");
     });
     elGrid.innerHTML = html || '<p class="gl-empty">No articles yet.</p>';
@@ -234,7 +238,7 @@
   function buildRibbon() {
     elPills.innerHTML = tags.map(function (t, i) {
       return '<button class="gl-pill" type="button" data-index="' + i + '">' +
-        (t.icon ? '<span class="gl-pill-icon">' + esc(icon(t.icon)) + '</span>' : "") +
+        iconHTML(t.icon) +
         '<span>' + esc(t.label) + '</span></button>';
     }).join("");
     Array.prototype.forEach.call(elPills.querySelectorAll(".gl-pill"), function (btn) {
@@ -338,6 +342,6 @@
 })();
 </script>
 
-<!-- Green Library standalone page — GL-v1.0-2026-07-09 -->
+<!-- Green Library standalone page — GL-v1.1-2026-07-09 -->
 </body>
 </html>

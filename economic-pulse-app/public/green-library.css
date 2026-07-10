@@ -1,6 +1,10 @@
 /* green-library.css — standalone page styles (ADR-007 exception: own CSS file).
    NapaServe Theme 02 Cream + green accent variant, this page only.
-   Paired with green-library.html. Version: GL-v1.0-2026-07-09 */
+   Paired with green-library.html. Version: GL-v1.1-2026-07-09 */
+
+/* Self-hosted Tabler outline icon webfont (no CDN — ADR-007). The .woff2 lives
+   alongside this file in green-library/; the CSS's @font-face references it locally. */
+@import url("green-library/tabler-icons.css");
 
 :root {
   /* Theme 02 Cream base */
@@ -48,7 +52,8 @@ a { color: var(--green); }
 }
 .gl-pill:hover { background: var(--green-fill); }
 .gl-pill.active { background: var(--green); color: var(--bg); }
-.gl-pill .gl-pill-icon { font-size: 15px; line-height: 1; }
+/* Tabler outline icon inside a pill — inherits the pill's text color via currentColor. */
+.gl-pill .ti { font-size: 17px; line-height: 1; display: inline-block; }
 
 /* Snapping slider beneath the pills */
 .gl-slider-row { margin: 16px 0 4px; }
@@ -70,7 +75,11 @@ a { color: var(--green); }
 
 /* Active tag label (large, with icon) */
 .gl-active-tag { display: flex; align-items: center; gap: 12px; margin: 18px 0 4px; }
-.gl-active-tag .gl-active-icon { font-size: 34px; line-height: 1; }
+.gl-active-tag .gl-active-icon { font-size: 34px; line-height: 1; display: inline-flex; }
+/* Active-tag Tabler icon: sized to balance the 28px serif label beside it. */
+.gl-active-tag .gl-active-icon .ti { font-size: 30px; line-height: 1; }
+/* Browse-all group-heading Tabler icon. */
+.gl-group-heading .ti { font-size: 20px; line-height: 1; }
 .gl-active-tag .gl-active-label { font-family: var(--serif); font-weight: 700; font-size: 28px; color: var(--ink); }
 .gl-count-line { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
 
@@ -185,6 +194,7 @@ a { color: var(--green); }
   .gl-standfirst { font-size: 14px; }
   .gl-active-tag .gl-active-label { font-size: 23px; }
   .gl-active-tag .gl-active-icon { font-size: 28px; }
+  .gl-active-tag .gl-active-icon .ti { font-size: 25px; }
   .gl-slider { width: 100%; }             /* slider full width */
   .gl-grid { grid-template-columns: 1fr; } /* single column */
   .gl-controls { flex-direction: column; align-items: stretch; }
