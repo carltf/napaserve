@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Precinct Explorer — Elected Seats Atlas v0.9</title>
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.10</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -64,7 +64,7 @@
 <div id="app">
   <header>
     <h1>Napa County Precinct Explorer</h1>
-    <div class="sub">Elected Seats Atlas v0.9 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">Elected Seats Atlas v0.10 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
     <div class="controls">
       <label for="colorBy">Color by</label>
       <select id="colorBy"><option value="__lead">Leading Digit of Precinct Number (diagnostic)</option></select>
@@ -72,7 +72,7 @@
     </div>
     <div class="searchrow">
       <label for="addrInput">Find an address</label>
-      <input id="addrInput" type="text" placeholder="e.g. 1234 Main St, Napa, CA" autocomplete="street-address" disabled>
+      <input id="addrInput" type="text" placeholder="Street + city, e.g. 1234 Main St, Calistoga" autocomplete="street-address" disabled>
       <button id="addrBtn" disabled>Search</button>
       <span id="addrStatus"></span>
     </div>
@@ -490,25 +490,34 @@
     });
   }
 
-  function geocodeNominatim(raw){
+  function geocodeNominatim(raw, bounded){
+    // Napa County bounding box: west -122.65, south 38.15, east -122.06, north 38.86
     var url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=" +
-      encodeURIComponent(raw);
+      encodeURIComponent(raw) +
+      (bounded ? "&viewbox=-122.65,38.86,-122.06,38.15&bounded=1" : "");
     return getJSON(url, 15000).then(function(res){
-      if(!res || !res.length) throw new Error("no match (Nominatim)");
-      return { lat: parseFloat(res[0].lat), lng: parseFloat(res[0].lon), label: res[0].display_name, svc: "OSM" };
+      if(!res || !res.length) throw new Error("no match (Nominatim" + (bounded ? " bounded" : "") + ")");
+      return { lat: parseFloat(res[0].lat), lng: parseFloat(res[0].lon), label: res[0].display_name, svc: bounded ? "OSM/Napa" : "OSM" };
     });
   }
+
+  var LOCALITY_RX = /napa|calistoga|helena|yountville|american canyon|angwin|pope valley|deer park|oakville|rutherford|berryessa|\b94\d{3}\b/i;
 
   function searchAddress(){
     var raw = addrInput.value.trim();
     if(!raw) return;
+    var hasLocality = LOCALITY_RX.test(raw);
     if(!/\bCA\b|california/i.test(raw)) raw += ", CA";
     addrBtn.disabled = true;
     setAddrStatus("Searching\u2026");
-    geocodeCensus(raw).catch(function(e){
-      log("Census geocoder failed (" + (e.message || e) + "), falling back to Nominatim");
-      return geocodeNominatim(raw);
-    }).then(function(hit){
+
+    // No city given? Assume Napa County first — a bounded lookup can't wander the globe.
+    var chain = hasLocality
+      ? geocodeCensus(raw).catch(function(e){ log("Census failed (" + (e.message || e) + "), trying Nominatim"); return geocodeNominatim(raw, false); })
+      : geocodeNominatim(raw, true).catch(function(e){ log("Bounded lookup failed (" + (e.message || e) + "), trying Census"); return geocodeCensus(raw); })
+          .catch(function(e){ log("Census failed (" + (e.message || e) + "), trying Nominatim unbounded"); return geocodeNominatim(raw, false); });
+
+    chain.then(function(hit){
       addrBtn.disabled = false;
       log("Geocoded via " + hit.svc + ": " + hit.label);
       var lng = hit.lng, lat = hit.lat;
@@ -516,7 +525,7 @@
       addrMarker = L.marker([lat, lng]).addTo(map);
       var feat = findPrecinct(lng, lat);
       if(!feat){
-        setAddrStatus("Found the address, but it's outside Napa County's precincts.", true);
+        setAddrStatus("That matched an address outside Napa County \u2014 add the city (e.g. \u201c, Calistoga\u201d or \u201c, Napa\u201d) and try again.", true);
         map.setView([lat, lng], 13);
         return;
       }
@@ -529,7 +538,7 @@
       }
     }).catch(function(){
       addrBtn.disabled = false;
-      setAddrStatus("No luck \u2014 either the address wasn't found (use a full street address with city; landmarks won't work) or both lookup services are briefly down. Try again in a moment.", true);
+      setAddrStatus("No luck \u2014 use a full street address and include the city (Napa, Calistoga, St. Helena\u2026); landmarks won't work. If it keeps failing, the lookup services may be briefly down.", true);
     });
   }
 
