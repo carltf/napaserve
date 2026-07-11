@@ -233,13 +233,13 @@ Stage 1 (this ADR) delivers most of the value. Stage 2 is logged as `PD-2026-05-
 
 **Consequences.** Tracked as ledger `PD-2026-07-08-03`. Part C spec (multi-date composites, bare-soil/tillage index, per-removal dates, 7-point clean ground truth) lives in the Cheatsheet. Revisit only after Part C clears the SEPARATES gate.
 
-## ADR-013 — Themed Libraries Are Standalone Static Pages (Not React Routes); Green Is First of a Collection
+## ADR-013 — Generalized Library Architecture: Build the Library Collection on a Shared Template, Not Per-Library Clones
 **Date:** 2026-07-10 · **Status:** Accepted
 
-**Context.** The Green Library needed a home on NapaServe. Two shapes existed: a React route (like Under the Hood's per-article pages) or a standalone static page (like the precinct/vineyard explorers). The content is a *browsable collection* that self-renders from Supabase, and the user envisions a growing set of themed shelves (Green, then Wine/Food, Civic, …).
+**Context.** The Green Library (#1) shipped as a standalone `public/` page (the standalone-static-page pattern itself is governed by ADR-007). A Wine/Food Library (#2) is identified and more are planned (Makers, History) — a *collection* of near-identical browse/search pages.
 
-**Decision.** A **Library is a standalone static page** (`public/<x>-library.html` + CSS + asset dir) that fetches its own cards/tags from Supabase with the anon publishable key (anon-read RLS on `active=true`). No React route, no `App.jsx`/`vercel.json` change — Vercel serves the physical `dist/` file ahead of the SPA rewrite. Libraries are a **distinct product surface** from Under the Hood (UTH = per-article original analysis; a Library = a curated shelf of a series' evergreen pieces, mostly link-backs). They live under the **Journalism** nav group.
+**Decision.** Libraries **#2 and beyond use a shared library template + a libraries registry + a unified `library_cards` / `library_tags` data model** (a `library` discriminator column), **NOT** per-library clones of the page and per-library tables.
 
-**Rationale.** The collection model self-renders from data (one page, N cards) rather than N route-components; static keeps it decoupled from the SPA and cheap to stand up. Reuses the explorer-page serving precedent. Keeps UTH's analytical identity separate from the browse-a-shelf identity.
+**Rationale.** A collection of near-identical pages means N copies of the ribbon/search/chrome to hand-sync on every nav change (see the static-chrome hand-sync debt). Generalizing at instance #2 makes #3–N **data, not code**.
 
-**Consequences.** (1) Static pages can't import the React `NavBar`/`Footer` — each Library carries a **hand-maintained static replica** of the site chrome (keep-in-sync burden; ledger item). (2) App-nav links to a Library hard-navigate (`.html`), handled in `NavBar.jsx` `go()`. (3) At library #2 (Wine, queued), factor the shared chrome + card template into a reusable snippet and introduce a `LIBRARIES` registry + unified `library_cards`/`library_tags` model rather than cloning. See `napaserve-session-2026-07-10.md`.
+**Consequences.** Wine (#2) costs more than a clone would — once — to build the shared template + registry + unified model; every library after is nearly free (a registry row + a data seed). The existing Green Library page may be refactored onto the shared template when #2 is built. This ADR is about the **multi-library data model**; the standalone-static-page pattern itself is ADR-007. See `napaserve-session-2026-07-10.md`.

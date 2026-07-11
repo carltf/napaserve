@@ -582,10 +582,57 @@ Keep at SHIPPED-NEEDS-VERIFY with blocking note, or move back to OPEN if verific
 
 ---
 
-## Green Library — deferred items (2026-07-10)
+## EOS 2026-07-10 — Lesson DD roll-call + new debt
 
-- **12-placeholder hero SQL not yet run.** `docs/04_placeholders_fill.sql` (12 UPDATEs) sets `hero_image_url` for the 12 og:image-filled placeholder cards. Images are deployed; the column stays null (green placeholder shows) until the user runs it in Supabase. **Status:** ACTION PENDING (user).
-- **56 "second-card" heroes still generic.** The article-accurate og:image pass upgraded only the **lead** card of each Green Wednesday post (og:image is the post lead). The ~56 non-lead cards keep their Wave-2 generic (subject-matched) images. Full fix = parse each post body for its per-sub-article images. **Status:** DEFERRED (lower priority; generics are on-subject).
-- **Git history image bloat.** The Wave-2 images were committed full-res (~299 MB in one commit `143821c`), then optimized in place (`63e5f96`) + swapped again by the og:image passes. The working/deployed tree is lean (~50 MB) but **git history retains every large blob**. A history rewrite (git-filter-repo / BFG) would reclaim it but is destructive to shared history — do only deliberately. **Status:** DEFERRED (cosmetic; repo/clone size only).
-- **Static site-chrome hand-sync.** `green-library.html` embeds a static replica of `NavBar.jsx` + `Footer.jsx`; it does not auto-update when the app nav changes. **Status:** DEFERRED — resolve by factoring shared chrome into an includable snippet when the Wine library lands.
-- **Wine Library Phases 2–6.** Content extracted (Phase 1, `docs/wine-library-wave1-review.md`, 73 cards). Remaining: architecture (generalize into shared template + `LIBRARIES` registry + unified `library_cards`/`library_tags`, vs clone), schema + seed (73 cards + 8 tags; author = Dan Berger for the 44 named titles, Tim Carl for the other 29), og:image heroes, nav wiring, fix 3 REVIEW tags. **Status:** QUEUED (next Library work block).
+**Roll-call (Lesson DD):** (1) No SCHEDULED ledger item was this session's focus — the Green Library was net-new. (2) No SHIPPED-NEEDS-VERIFY item awaited verification. (3) New debt surfaced (below). (4) New subsystem (Green Library); no pre-existing ledger entries touched.
+
+### Green Library subsystem
+
+#### PD-2026-07-10-01 — Tabler woff2 not subset
+- **Status:** OPEN
+- **Surfaced:** 2026-07-10
+- **Affected surfaces:** `economic-pulse-app/public/green-library/` (Tabler outline woff2 + css)
+- **Symptom:** the full Tabler outline set (~784 KB woff2) ships for the ~10 glyphs actually used on green-library.
+- **Scope:** subset the woff2 to the used glyphs (glyphhanger / fonttools); repoint the `@font-face`.
+
+#### PD-2026-07-10-02 — 56 GW link-back cards on generic subject-matched images
+- **Status:** OPEN
+- **Surfaced:** 2026-07-10
+- **Affected surfaces:** `green_library` heroes — the SECOND card of two-article Green Wednesday posts
+- **Symptom:** the og:image article-accurate pass upgraded only the lead card per post; ~56 non-lead cards keep Wave-2 generic (on-subject) images.
+- **Scope:** article-accurate pass — extend the og:image approach with per-post-body image extraction, or back-fill `possible_article_topic` in the GW catalog.
+
+#### PD-2026-07-10-03 — ~5 no-match GW cards need manual images
+- **Status:** OPEN
+- **Surfaced:** 2026-07-10
+- **Affected surfaces:** `green_library` (thin climate/recycling catalog photo pools)
+- **Symptom:** ~5 cards had no acceptable catalog match and no og:image win.
+- **Scope:** hand-pick images.
+
+#### PD-2026-07-10-04 — Full NVF archive catalog remediation + Supabase image_library migration
+- **Status:** OPEN
+- **Surfaced:** 2026-07-10
+- **Affected surfaces:** full NVF archive image catalog (~3,729 files, built via Codex, under remediation); future UTH/Makers photo pulls
+- **Symptom:** archive-wide catalog is separate from the GW catalog and not yet a queryable table.
+- **Scope:** finish remediation; migrate to a Supabase `image_library` table (creator_name / source_organization / credit_line as separate fields — see Cheatsheet).
+
+#### PD-2026-07-10-05 — Green Library back-catalog migration: GW portion LIVE, pre-GW standalones pending
+- **Status:** OPEN (partial progress)
+- **Surfaced:** 2026-07-10
+- **Affected surfaces:** `green_library`
+- **Symptom / progress:** the **Green Wednesday portion is LIVE (126 cards)**; the pre-GW Master Gardener / nature standalones remain a **future wave** (semi-automatable via the existing Voyage-3 embeddings).
+- **Scope:** a later wave to extract + seed the pre-GW environmental back catalog.
+
+#### PD-2026-07-10-06 — Git history image bloat
+- **Status:** OPEN
+- **Surfaced:** 2026-07-10
+- **Affected surfaces:** repo history (`economic-pulse-app/public/green-library/`)
+- **Symptom:** Wave-2 heroes were committed full-res (~299 MB, `143821c`) then optimized/swapped; the working tree is lean (~50 MB) but git *history* retains every large blob.
+- **Scope:** deliberate history rewrite (git-filter-repo / BFG) only — destructive to shared history; cosmetic (clone size).
+
+#### PD-2026-07-10-07 — Static site-chrome hand-sync
+- **Status:** OPEN
+- **Surfaced:** 2026-07-10
+- **Affected surfaces:** `public/green-library.html` (static replica of `NavBar.jsx` + `Footer.jsx`)
+- **Symptom:** the page's nav/footer is a hand-copied replica; it does not auto-update when the app nav changes.
+- **Scope:** factor shared chrome into an includable snippet when the Wine library (ADR-013) is built.
