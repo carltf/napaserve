@@ -573,6 +573,8 @@ The `public/data/vineyards-<year>.topo.json` assets are **mapshaper-simplified (
 
 Per ADR-001 (2026-05-24), EOS is markdown-canonical. See `napaserve-eos-checklist.md`.
 
+**Doc sync (ADR-016, 2026-07-13):** in a Cowork session with Project access, the assistant writes canonical `.md` updates to BOTH the repo `docs/` and the Project directly — no manual drag-drop needed. The manual Project-Knowledge upload (ADR-001 step 4) is now the fallback, for edits made outside such a session. Repo (git HEAD) stays canonical; still `git commit` the docs. Net-new assistant-written Project docs land under `claude/` (fully searchable; cosmetic path difference only).
+
 ---
 
 ## Editorial Don'ts
@@ -598,3 +600,16 @@ Also locked this session:
 - **In-page reader back button:** **pop** the pushed entry (`history.back()`), never `pushState` a clean URL on close (that leaves a forward entry so Back re-opens the article). Track a `pushedArticle` flag.
 - **Image weight:** `sips -Z 1400 -s formatOptions 75` cut 118 heroes ~314 MB → ~50 MB. Re-committing images grows git *history* — see ledger.
 - **Ribbon slider `max` must be data-driven** (`tags.length - 1`), never hardcoded; sort tags client-side and set the default active index explicitly (flagship tag, not index 0).
+
+## Self-Hosted Protomaps Basemap (2026-07-13)
+
+Both map explorers (`precinct-explorer.html`, `vineyard-explorer.html`) render a **self-hosted Protomaps vector basemap**, not OSM community raster tiles — resolves PD-2026-07-07-01, see ADR-014.
+
+- **Layer:** `protomaps-leaflet@5` from unpkg → `protomapsL.leafletLayer({ url: "/data/napa-basemap.pmtiles", flavor: "light", lang: "en", attribution: "…OpenStreetMap · Protomaps" })`. Keeps the existing Leaflet stack (geoJSON overlays, popups, address search unchanged). `protomaps-leaflet` is v5 maintenance-mode but works; it over-zooms the z15 tiles to street level (both maps set `maxZoom: 19` on the `L.map`).
+- **LOCKED — `fadeAnimation: false` (or the basemap is invisible):** protomaps-leaflet's canvas vector tiles otherwise stay stuck at `opacity: 0` (Leaflet's tile fade-in never completes for them), so the basemap renders **fully but invisibly** — the `.pmtiles` fetches (HTTP 206), there is **zero console error**, the tile canvases are painted, yet the map shows only the overlay on a blank background. Fix: `fadeAnimation: false` on `L.map(...)`. Diagnosed live 2026-07-13 by reading tile-canvas pixel opacity in the console. **Symptom signature: overlay visible, basemap blank, no errors → it's the tile opacity, not the data.**
+- **Basemap file:** `economic-pulse-app/public/data/napa-basemap.pmtiles` — a Napa-County bbox extract of the Protomaps daily planet build. Generate with **`pipeline/build_napa_basemap.sh`** (`brew install pmtiles`; runs `pmtiles extract https://build.protomaps.com/YYYYMMDD.pmtiles … --bbox=-122.70,38.10,-122.00,38.90 --maxzoom=15`). **Must run on an open-network machine — the Cowork sandbox can't reach the Protomaps build servers.** No API key, no per-request billing; Vercel serves the file with range requests. (PD-2026-07-13-02 tracks generating it.)
+- **Reader-facing copy carries NO build/plumbing language** (Tim, 2026-07-13) — the `/maps` intro is decision-focused; OSM/Protomaps attribution lives only in each explorer footer + the `/maps` sources footnote ("Basemap © OpenStreetMap contributors, tiles by Protomaps").
+- **Version bumps:** vineyard-explorer → v0.3, precinct-explorer → v0.11.
+- **`/maps` page** is a React route (`napaserve-maps.jsx`) that reuses the shared `NavBar`/`Footer`. Card grid uses a CSS class (`.maps-grid`) with a mobile 1-col `@media`, per the inline-`gridTemplateColumns` mobile rule.
+- **Static-page chrome is now SHARED** (`public/ns-chrome.css` + `public/ns-chrome.js`) — the injector adds the standard nav + drawer + footer to standalone pages. Consumers: both explorers **and** the Green Library (migrated off its inline replica). Opt in with `<link href="/ns-chrome.css">` + `<script defer src="/ns-chrome.js">` + `<body data-ns-current="/path">`. Edit `NAV_GROUPS` / `FOOTER_COLS` in `ns-chrome.js` once → every static page updates. Resolves PD-2026-07-10-07; see ADR-015. Full-height map pages set `#app { height: calc(100vh - 52px) }` for the 52px nav; the injector dispatches a `resize` so Leaflet recomputes. **Two nav sources remain** (`NavBar.jsx` for React, `ns-chrome.js` for static) — hand-sync on nav changes.
+- **Both maps are LIVE.** The Elected Seats / precinct map went public 2026-07-13 (Tuteur confirmed currency → PD-2026-07-07-02 resolved); it reads live county GIS geography only, NOT the RLS-locked `napa_elected_seats` roster, so ADR-010 / PD-2026-07-08-01 don't gate it. Address search still uses OSM Nominatim (with a Census fallback) → PD-2026-07-13-01 is a live-site follow-up (flip to Census-first).
