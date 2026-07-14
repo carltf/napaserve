@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Hub from "./napaserve-hub";
+import Maps from "./napaserve-maps";
 import Dashboard from "./napa-economic-pulse-full-3";
 import Evaluator from "./napaserve-project-evaluator";
 import EventFinder from "./napaserve-event-finder";
@@ -48,6 +49,7 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Hub />} />
+        <Route path="/maps" element={<Maps />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/evaluator" element={<Evaluator />} />
         <Route path="/events" element={<EventFinder />} />

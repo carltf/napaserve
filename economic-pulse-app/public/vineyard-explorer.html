@@ -7,8 +7,9 @@
      keyed to TopoJSON feature order — the browser never matches polygons. Static
      TopoJSON assets under /data/vineyards-<year>.topo.json, decoded to GeoJSON
      in-browser via topojson-client (arcs shared between adjacent fields keep each
-     vintage under ~1.3 MB). Not linked from any menu. OSM tiles per
-     PD-2026-07-07-01 (demo, not publication). -->
+     vintage under ~1.3 MB). Basemap is a self-hosted Protomaps vector PMTiles
+     file at /data/napa-basemap.pmtiles (clears PD-2026-07-07-01; no OSM tile
+     server, no API key). Linked from /maps. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -16,10 +17,13 @@
 <title>Napa County Vineyard Explorer</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/protomaps-leaflet@5.0.0/dist/protomaps-leaflet.js"></script>
 <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/ns-chrome.css">
+<script defer src="/ns-chrome.js"></script>
 <style>
   html, body { margin:0; padding:0; height:100%; background:#F5F0E8; }
   #app { display:flex; flex-direction:column; height:100%; font-family:'Source Sans 3',-apple-system,Helvetica,Arial,sans-serif; color:#2C1810; }
@@ -109,13 +113,16 @@
     .years { row-gap:6px; }
     #status { margin-left:0; width:100%; }
   }
+  /* Room for the injected NapaServe nav (52px); site footer scrolls in below. */
+  #app { height: calc(100vh - 52px); }
+  @media (max-width: 760px) { #app { height: auto; min-height: calc(100vh - 52px); } }
 </style>
 </head>
-<body>
+<body data-ns-current="/maps">
 <div id="app">
   <header>
     <h1>Napa County Vineyard Explorer</h1>
-    <div class="sub">v0.2 demo &middot; Vineyard field boundaries from DWR/Land IQ statewide crop mapping &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">v0.3 &middot; Vineyard field boundaries from DWR/Land IQ statewide crop mapping &middot; NapaServe / Valley Works Collaborative</div>
     <div class="years">
       <span class="lbl">Vintage</span>
       <button class="yr-btn" data-year="2020">2020</button>
@@ -180,7 +187,7 @@
     </div>
   </div>
   <div id="errbox"></div>
-  <footer>Field boundaries from DWR/Land IQ statewide crop mapping. Mapped footprints vary a few percent between vintages; county totals shown are the official NASS/CDFA figures. Demo &mdash; not for publication. &middot; Basemap &copy; OpenStreetMap contributors &middot; vineyard-explorer v0.2</footer>
+  <footer>Field boundaries from DWR/Land IQ statewide crop mapping. Mapped footprints vary a few percent between vintages; county totals shown are the official NASS/CDFA figures. &middot; Basemap &copy; OpenStreetMap contributors, tiles by Protomaps &middot; vineyard-explorer v0.3</footer>
 </div>
 
 <script>
@@ -204,9 +211,21 @@
     b.onclick = function(){ selectYear(b.getAttribute("data-year")); };
   });
 
-  var map = L.map("map", { zoomControl:true, preferCanvas:true }).setView([38.50,-122.35], 10);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+  // fadeAnimation:false — protomaps-leaflet vector tiles otherwise stay stuck at
+  // opacity 0 (Leaflet's tile fade-in never completes for the canvas tiles), so
+  // the basemap renders fully but invisibly. Disabling the fade shows tiles at
+  // full opacity immediately. (Diagnosed live 2026-07-13.)
+  var map = L.map("map", { zoomControl:true, preferCanvas:true, maxZoom:19, fadeAnimation:false }).setView([38.50,-122.35], 10);
+  // Self-hosted Protomaps basemap (vector PMTiles). Replaces the OSM community
+  // raster tiles — clears PD-2026-07-07-01 (tile.openstreetmap.org is not for
+  // production use). One county-clipped file at /data/napa-basemap.pmtiles; no
+  // API key, no per-request billing. protomaps-leaflet over-zooms the z15 tiles
+  // to street level. Basemap data is still OSM, so attribution is preserved.
+  protomapsL.leafletLayer({
+    url: "/data/napa-basemap.pmtiles",
+    flavor: "light",
+    lang: "en",
+    attribution: "Basemap &copy; <a href=\"https://openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a> &middot; <a href=\"https://protomaps.com\" target=\"_blank\" rel=\"noopener\">Protomaps</a>"
   }).addTo(map);
   window.addEventListener("resize", function(){ map.invalidateSize(); });
 

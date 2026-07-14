@@ -3,9 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Napa County Precinct Explorer — Elected Seats Atlas v0.10</title>
+<title>Napa County Precinct Explorer — Elected Seats Atlas v0.11</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://unpkg.com/protomaps-leaflet@5.0.0/dist/protomaps-leaflet.js"></script>
+<link rel="stylesheet" href="/ns-chrome.css">
+<script defer src="/ns-chrome.js"></script>
 <style>
   html, body { margin:0; padding:0; height:100%; background:#F5F0E8; }
   #app { display:flex; flex-direction:column; height:100%; font-family:'Source Sans 3','Source Sans Pro',-apple-system,Helvetica,Arial,sans-serif; color:#2C1810; }
@@ -58,13 +61,16 @@
   #addrBtn:disabled { opacity:0.5; cursor:default; }
   #addrStatus { font-size:12px; color:#8B7355; }
   #addrStatus.err { color:#9C4A3C; }
+  /* Room for the injected NapaServe nav (52px); site footer scrolls in below. */
+  #app { height: calc(100vh - 52px); }
+  @media (max-width: 760px) { #app { height: auto; min-height: calc(100vh - 52px); } }
 </style>
 </head>
-<body>
+<body data-ns-current="/maps">
 <div id="app">
   <header>
     <h1>Napa County Precinct Explorer</h1>
-    <div class="sub">Elected Seats Atlas v0.10 demo &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
+    <div class="sub">Elected Seats Atlas v0.11 &middot; Live boundaries from Napa County GIS &middot; NapaServe / Valley Works Collaborative</div>
     <div class="controls">
       <label for="colorBy">Color by</label>
       <select id="colorBy"><option value="__lead">Leading Digit of Precinct Number (diagnostic)</option></select>
@@ -84,12 +90,12 @@
       <h2 id="lgTitle">Legend</h2>
       <div class="lg-hint">Click a legend entry to spotlight it on the map. Click again to clear.</div>
       <div id="lgItems"></div>
-      <div class="caveat"><strong>Note:</strong> the county layer carries explicit per-precinct district fields (supervisorial, municipality, school district, NVUSD / BOE / NVC trustee areas, Napa city council district) &mdash; click any precinct to see its full district stack. One open item: the layer's service description carries an older revision note while the catalog shows a June 2026 data update, so confirm currency with the Napa County Elections Department before publication.</div>
+      <div class="caveat"><strong>Note:</strong> the county layer carries explicit per-precinct district fields (supervisorial, municipality, school district, NVUSD / BOE / NVC trustee areas, Napa city council district) &mdash; click any precinct to see its full district stack. Precinct boundaries are drawn live from Napa County GIS and district assignments update as the county republishes.</div>
     </div>
   </div>
   <div id="errbox"></div>
   <div id="diag"><h3>Connection log</h3><pre id="diagLog"></pre></div>
-  <footer>Data: Napa County Elections Department via Napa County GIS &middot; Basemap &copy; OpenStreetMap contributors &middot; Demo only, not for publication</footer>
+  <footer>Data: Napa County Elections Department via Napa County GIS &middot; Basemap &copy; OpenStreetMap contributors, tiles by Protomaps</footer>
 </div>
 
 <script>
@@ -115,9 +121,20 @@
                  "#7C5A4A","#4E6E5D"];
   var GREY = "#B8AE9C";
 
-  var map = L.map("map", { zoomControl: true }).setView([38.42, -122.33], 10);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+  // fadeAnimation:false — protomaps-leaflet vector tiles otherwise stay stuck at
+  // opacity 0 (Leaflet's tile fade-in never completes for the canvas tiles), so
+  // the basemap renders fully but invisibly. (Diagnosed live 2026-07-13.)
+  var map = L.map("map", { zoomControl: true, maxZoom: 19, fadeAnimation: false }).setView([38.42, -122.33], 10);
+  // Self-hosted Protomaps vector basemap (PMTiles) — replaces the OSM community
+  // raster tiles, clearing the tile-licensing blocker PD-2026-07-07-01. One
+  // county-clipped file at /data/napa-basemap.pmtiles; no API key, no per-request
+  // billing. (Tuteur confirmed precinct→district currency 2026-07-13 →
+  // PD-2026-07-07-02 cleared; this map is public.)
+  protomapsL.leafletLayer({
+    url: "/data/napa-basemap.pmtiles",
+    flavor: "light",
+    lang: "en",
+    attribution: "Basemap &copy; <a href=\"https://openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a> &middot; <a href=\"https://protomaps.com\" target=\"_blank\" rel=\"noopener\">Protomaps</a>"
   }).addTo(map);
 
   window.addEventListener("resize", function(){ map.invalidateSize(); });

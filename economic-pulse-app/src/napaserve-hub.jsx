@@ -26,6 +26,7 @@ export default function NapaServeHub() {
         .hub-tools-lbl{font-size:14px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);}
         .hub-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule);border-left:1px solid var(--rule);}
         .hub-grid-journalism{grid-template-columns:repeat(4,1fr);}
+        .hub-grid-maps{grid-template-columns:repeat(2,1fr);}
         .hub-card{padding:22px 22px 16px;background:var(--bg);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);cursor:pointer;transition:background .15s;position:relative;text-decoration:none;display:block;color:inherit;}
         .hub-card:hover{background:var(--bg2);}
         .hub-card:hover .hub-arrow{color:var(--accent);}
@@ -48,7 +49,7 @@ export default function NapaServeHub() {
         .hub-chip{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule);padding:4px 9px;cursor:pointer;text-decoration:none;}
         .hub-chip.s{color:var(--accent);border-color:rgba(139,94,60,0.25);background:rgba(139,94,60,0.05);}
         @media(max-width:768px){
-          .hub-grid-journalism,.hub-grid-community,.hub-grid-intelligence{grid-template-columns:1fr!important;}
+          .hub-grid-journalism,.hub-grid-community,.hub-grid-intelligence,.hub-grid-maps{grid-template-columns:1fr!important;}
         }
         @media(max-width:700px){
           .hub-grid{grid-template-columns:1fr 1fr;}
@@ -201,6 +202,37 @@ export default function NapaServeHub() {
             <div className="hub-c-desc">Structural Compass — 11-axis scoring of any proposed project against the Jobs / People / Place framework. For civic leaders and stakeholders.</div>
             <div className="hub-arrow">Open →</div>
           </Link>
+        </div>
+
+        {/* ── section divider ── */}
+        <div style={{ borderTop: "1px solid rgba(44,24,16,0.06)", marginTop: 24 }} />
+
+        {/* ── MAPS ── */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "14px 0 10px", borderBottom: "1px solid rgba(44,24,16,0.08)" }}>
+          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".10em", textTransform: "uppercase", color: "#8B5E3C" }}>Maps</span>
+          <span style={{ fontSize: 14, color: "#8B7355" }}>Interactive maps of the county</span>
+        </div>
+        <div className="hub-grid hub-grid-maps">
+          <a href="/vineyard-explorer.html" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><path d="M6 30c4-2 6-6 6-11M14 32c3-2 4-6 4-11M22 32c3-2 4-6 4-11M30 30c3-2 5-6 5-11" stroke="#8B5E3C" strokeWidth="1.2" strokeLinecap="round"/><circle cx="8" cy="15" r="2.4" fill="#8B5E3C" opacity=".55"/><circle cx="16" cy="16" r="2.4" fill="#8B5E3C" opacity=".55"/><circle cx="24" cy="16" r="2.4" fill="#8B5E3C" opacity=".55"/><circle cx="32" cy="15" r="2.4" fill="#8B5E3C" opacity=".55"/><line x1="4" y1="35" x2="36" y2="35" stroke="#8B5E3C" strokeWidth="1" opacity=".4"/></svg>
+            </div>
+            <div className="hub-c-cat">Land &amp; Agriculture</div>
+            <div className="hub-c-name">Vineyard Explorer</div>
+            <div className="hub-c-desc">Every mapped vineyard field in Napa County, 2020–2024, with a Compare mode that shows where fields were added or dropped between vintages. Official acreage from NASS/CDFA.</div>
+            <div className="hub-arrow">Open →</div>
+          </a>
+          <a href="/precinct-explorer.html" className="hub-card">
+            <div className="hub-live"><span className="hub-ldot" />LIVE</div>
+            <div style={{ width: 40, height: 40, marginBottom: 14 }}>
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none"><path d="M20 4L4 12v16l16 8 16-8V12L20 4z" stroke="#8B5E3C" strokeWidth="1.2" fill="none"/><path d="M20 4v32M4 12l16 8 16-8" stroke="#8B5E3C" strokeWidth="1" opacity=".4"/><circle cx="20" cy="19" r="2.6" fill="#8B5E3C"/></svg>
+            </div>
+            <div className="hub-c-cat">Civic &amp; Elections</div>
+            <div className="hub-c-name">Elected Seats Atlas</div>
+            <div className="hub-c-desc">Every Napa County precinct mapped to its supervisorial, school, city-council and trustee districts. Search any address to find its precinct and full district stack.</div>
+            <div className="hub-arrow">Open →</div>
+          </a>
         </div>
       </div>
 

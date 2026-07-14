@@ -9,49 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/green-library.css">
+<link rel="stylesheet" href="/ns-chrome.css">
+<script defer src="/ns-chrome.js"></script>
 </head>
-<body>
-
-<!-- NapaServe site chrome — static replica of src/NavBar.jsx (keep links in sync). -->
-<nav class="ns-nav">
-  <div class="ns-nav-left">
-    <a href="/" class="ns-wordmark">NapaServe</a>
-    <span class="ns-tagline">Community Intelligence · Napa County</span>
-  </div>
-  <button class="ns-hamburger" id="nsHamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nsDrawer">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-<div class="ns-overlay" id="nsOverlay" hidden></div>
-<aside class="ns-drawer" id="nsDrawer" hidden aria-label="Site navigation">
-  <a href="/" class="ns-drawer-home">← NapaServe Home</a>
-  <div class="ns-group">
-    <div class="ns-group-label">Journalism</div><div class="ns-group-desc">Original reporting and searchable archives</div>
-    <a class="ns-link" href="/news">Napa Valley Features</a>
-    <a class="ns-link" href="/archive">NVF Archive Search</a>
-    <a class="ns-link" href="/under-the-hood">Under the Hood</a>
-    <a class="ns-link ns-current" href="/green-library.html" aria-current="page">The Green Library</a>
-  </div>
-  <div class="ns-group">
-    <div class="ns-group-label">Community</div><div class="ns-group-desc">Events, workforce and civic innovation</div>
-    <a class="ns-link" href="/events">Event Finder</a>
-    <a class="ns-link" href="/valley-works">Valley Works</a>
-    <a class="ns-link" href="/vw-labs">VW Labs</a>
-  </div>
-  <div class="ns-group">
-    <div class="ns-group-label">Intelligence</div><div class="ns-group-desc">Data, analysis and AI-assisted research</div>
-    <a class="ns-link" href="/dashboard">Community Pulse</a>
-    <a class="ns-link" href="/evaluator">Project Evaluator</a>
-    <a class="ns-link" href="/agent">Research Agent</a>
-    <a class="ns-link" href="/under-the-hood/calculators">Models &amp; Calculators</a>
-  </div>
-  <div class="ns-group">
-    <div class="ns-group-label">Platform</div><div class="ns-group-desc">About NapaServe and how to reach us</div>
-    <a class="ns-link" href="/about">About NapaServe</a>
-    <a class="ns-link" href="/about#contact">Contact</a>
-    <a class="ns-link" href="/admin">Admin</a>
-  </div>
-</aside>
+<body data-ns-current="/green-library.html">
 
 <header class="gl-header">
   <div class="gl-wrap">
@@ -106,108 +67,7 @@
   </article>
 </main>
 
-<!-- NapaServe site footer — static replica of src/Footer.jsx (keep links in sync). -->
-<footer class="ns-footer">
-  <div class="ns-footer-inner">
-    <div class="ns-fbrand">
-      <p class="ns-fbrand-n">NapaServe</p>
-      <p class="ns-fbrand-d">Community intelligence for Napa County · A Valley Works Collaborative · VW Labs project</p>
-    </div>
-    <div class="ns-fgrid">
-      <div class="ns-fcol">
-        <h4>Intelligence</h4>
-        <a href="/dashboard">Community Pulse</a>
-        <a href="/evaluator">Project Evaluator</a>
-        <a href="/agent">Research Agent</a>
-        <a href="/under-the-hood/calculators">Models &amp; Calculators</a>
-      </div>
-      <div class="ns-fcol">
-        <h4>Journalism</h4>
-        <a href="/news">Napa Valley Features</a>
-        <a href="/archive">NVF Archive Search</a>
-        <a href="/under-the-hood">Under the Hood</a>
-        <a href="/green-library.html">The Green Library</a>
-        <a href="https://sonomacountyfeatures.substack.com" target="_blank" rel="noopener noreferrer">Sonoma Co. Features ↗</a>
-        <a href="https://lakecountyfeatures.substack.com" target="_blank" rel="noopener noreferrer">Lake Co. Features ↗</a>
-      </div>
-      <div class="ns-fcol">
-        <h4>Community</h4>
-        <a href="/events">Event Finder</a>
-        <a href="/events#submit">Submit an event</a>
-        <a href="/valley-works">Valley Works</a>
-        <a href="/vw-labs">VW Labs</a>
-      </div>
-      <div class="ns-fcol">
-        <h4>Platform</h4>
-        <a href="/about">About NapaServe</a>
-        <a href="/about#how-to-use">How to use this site</a>
-        <a href="/about#disclaimer">Disclaimer</a>
-        <a href="mailto:info@napaserve.com">Contact us</a>
-      </div>
-    </div>
-    <div class="ns-fgrid ns-fgrid-news">
-      <div class="ns-fcol">
-        <h4>Follow</h4>
-        <a href="https://bsky.app/profile/valleyworkscollab.bsky.social" target="_blank" rel="noopener noreferrer">Bluesky ↗</a>
-        <a href="https://napavalleyfocus.substack.com/" target="_blank" rel="noopener noreferrer">Substack ↗</a>
-      </div>
-      <div class="ns-fcol ns-fnews">
-        <h4>Newsletter</h4>
-        <p class="ns-fnews-copy">Original reporting, economic updates and community intelligence from Napa Valley Features — delivered when it matters.</p>
-        <form id="nsSub" class="ns-sub-form">
-          <input id="nsSubName" class="ns-sub-in" type="text" placeholder="Your name" aria-label="Your name">
-          <input id="nsSubEmail" class="ns-sub-in" type="email" placeholder="Your email address" aria-label="Email address">
-          <button type="submit" class="ns-sub-btn" id="nsSubBtn">Subscribe</button>
-        </form>
-        <p id="nsSubMsg" class="ns-sub-msg" hidden></p>
-      </div>
-    </div>
-    <div class="ns-fbottom">
-      <span>© 2026 Valley Works Collaborative · Not affiliated with Napa County government.</span>
-      <span class="ns-fver">The Green Library &middot; GL-v2.3-2026-07-10</span>
-    </div>
-  </div>
-</footer>
 
-<script>
-(function () {
-  "use strict";
-  // Drawer toggle (mirrors NavBar.jsx)
-  var ham = document.getElementById("nsHamburger");
-  var drawer = document.getElementById("nsDrawer");
-  var overlay = document.getElementById("nsOverlay");
-  function setOpen(open) {
-    ham.setAttribute("aria-expanded", open ? "true" : "false");
-    drawer.hidden = !open; overlay.hidden = !open;
-  }
-  ham.addEventListener("click", function () { setOpen(drawer.hidden); });
-  overlay.addEventListener("click", function () { setOpen(false); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
-
-  // Newsletter signup (mirrors Footer.jsx — same worker endpoint)
-  var form = document.getElementById("nsSub");
-  var msg = document.getElementById("nsSubMsg");
-  var btn = document.getElementById("nsSubBtn");
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var name = document.getElementById("nsSubName").value.trim();
-    var email = document.getElementById("nsSubEmail").value.trim();
-    btn.disabled = true; btn.textContent = "Subscribing…";
-    fetch("https://misty-bush-fc93.tfcarl.workers.dev/api/subscribe", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name, email: email })
-    }).then(function (r) {
-      if (!r.ok) throw new Error("failed");
-      msg.hidden = false; msg.style.color = "#2E7D32";
-      msg.textContent = "Welcome to NapaServe. We'll be in touch.";
-      form.reset();
-    }).catch(function () {
-      msg.hidden = false; msg.style.color = "#C62828";
-      msg.textContent = "Something went wrong. Email us at info@napaserve.com";
-    }).then(function () { btn.disabled = false; btn.textContent = "Subscribe"; });
-  });
-})();
-</script>
 
 <script>
 (function () {
