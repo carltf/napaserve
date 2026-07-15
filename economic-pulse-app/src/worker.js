@@ -1,7 +1,9 @@
 /**
  * NapaServe Cloudflare Worker
  * Routes:
- *   GET  /substack/archive       — Substack proxy (original, untouched)
+ *   GET  /substack/archive       — Substack archive, served from KV (FEED_KV),
+ *                                  refreshed by the scheduled() cron; bare-array
+ *                                  body + X-Feed-Fetched-At / X-Feed-Stale headers
  *   GET  /api/health             — health check
  *   POST /api/rag-search         — embed query → nvf_search() → return chunks
  *   POST /api/rag-answer         — embed → retrieve → Claude answer + sources
@@ -1247,9 +1249,139 @@ async function handleRejectEvent(request, env) {
   return json({ success: true }, 200, request);
 }
 
+// ─── Substack feed cache (KV binding FEED_KV) ─────────────────────────────────
+//
+// The /substack/archive route feeds napaserve.org/news. It used to proxy Substack
+// on the request path and cache whatever came back — INCLUDING a 429 — for 30
+// minutes, so one upstream throttle blanked /news for half an hour. It now serves
+// from KV: the scheduled() cron owns the single upstream fetch and writes the last
+// KNOWN-GOOD archive to KV; readers only ever read KV. A failed or empty fetch
+// never overwrites the cache, so /news can no longer blank out on a transient 429.
+//
+// Backward-compatibility note: the /news frontend does `Array.isArray(items)` then
+// `items.map(...)` on the RAW response body (napaserve-napa-valley-features.jsx),
+// so the body MUST stay a bare JSON array of Substack post objects. The additive
+// fetched_at / stale signals are therefore carried as RESPONSE HEADERS
+// (X-Feed-Fetched-At / X-Feed-Stale), not body fields — the one necessary
+// deviation from the CC shape, dictated by this route's existing consumer.
+
+const SUBSTACK_ARCHIVE_URL = "https://napavalleyfocus.substack.com/api/v1/archive";
+const FEED_KV_KEY = "feed:latest";
+// The /news frontend requests limit=50; cache at least that so every paginated
+// request is satisfiable from KV without a request-path Substack fetch.
+const FEED_CACHE_LIMIT = 50;
+// A cached record older than this is served with X-Feed-Stale: true (still served
+// — a stale feed always beats a blank one). 20 minutes.
+const FEED_FRESH_MS = 20 * 60 * 1000;
+// Browser-like UA. The old "nvf-squarespace-proxy/1.0" UA is the kind Substack
+// 429s; both the cron refresh and the cold-start fallback present this instead.
+const FEED_BROWSER_UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+  "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
+
+// Fetch the NVF Substack archive (newest-first, FEED_CACHE_LIMIT posts) with a
+// browser-like UA and NO edge cache — a cached 429 would keep the cron failing
+// for the whole TTL, the exact amplification we are removing. Returns the parsed
+// array; throws on a non-2xx upstream (e.g. the 429) or a non-array body, so the
+// caller never caches a failure.
+async function fetchSubstackArchive() {
+  const target = new URL(SUBSTACK_ARCHIVE_URL);
+  target.searchParams.set("sort", "new");
+  target.searchParams.set("offset", "0");
+  target.searchParams.set("limit", String(FEED_CACHE_LIMIT));
+  const upstream = await fetch(target.toString(), {
+    cf: { cacheTtl: 0, cacheEverything: false },
+    headers: { accept: "application/json", "user-agent": FEED_BROWSER_UA },
+  });
+  if (!upstream.ok) throw new Error(`substack ${upstream.status}`);
+  const data = await upstream.json();
+  if (!Array.isArray(data)) throw new Error("substack non-array body");
+  return data;
+}
+
+// Refresh the KV cache from upstream. Writes { posts, fetched_at } to FEED_KV
+// ONLY when the fetch yields a non-empty array; a failed fetch throws (caller
+// catches) and an empty parse returns ok:false — either way the last known-good
+// record is left untouched, so the cache never regresses to empty.
+async function refreshFeedCache(env) {
+  if (!env || !env.FEED_KV) throw new Error("FEED_KV binding missing");
+  const posts = await fetchSubstackArchive();
+  if (!Array.isArray(posts) || posts.length === 0) {
+    return { ok: false, reason: "empty" };
+  }
+  const record = { posts, fetched_at: new Date().toISOString() };
+  await env.FEED_KV.put(FEED_KV_KEY, JSON.stringify(record));
+  return { ok: true, count: posts.length };
+}
+
+// Apply the request's offset/limit to a cached post array — the pagination
+// Substack used to do server-side, now applied to the KV copy per request. Posts
+// are cached newest-first (Substack sort=new), so sort=new (the only sort /news
+// uses) and a missing sort are identity; any other/unknown sort keeps the cached
+// newest-first order rather than triggering an upstream fetch.
+function paginateFeed(posts, url) {
+  const offsetRaw = parseInt(url.searchParams.get("offset"), 10);
+  const limitRaw = parseInt(url.searchParams.get("limit"), 10);
+  const offset = Number.isFinite(offsetRaw) && offsetRaw > 0 ? offsetRaw : 0;
+  const limit = Number.isFinite(limitRaw) && limitRaw > 0 ? limitRaw : posts.length;
+  return posts.slice(offset, offset + limit);
+}
+
+// Build the /substack/archive success response: a BARE JSON array body (backward
+// compatible with the /news frontend) plus additive X-Feed-* headers. fetched_at
+// / stale ride in headers because the body must remain a plain array.
+function feedArrayResponse(postsArray, fetchedAt, stale, request, cacheControl) {
+  const headers = new Headers({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": cacheControl,
+    "X-Feed-Fetched-At": fetchedAt || "",
+    "X-Feed-Stale": stale ? "true" : "false",
+  });
+  applyCors(headers, request);
+  headers.set("Access-Control-Expose-Headers", "X-Feed-Fetched-At, X-Feed-Stale, X-Feed-Error");
+  return new Response(JSON.stringify(postsArray), { status: 200, headers });
+}
+
+// Cold-start failure response: HTTP 200 (so the frontend's `!res.ok` guard does
+// not fire) with an explicit error flag and no-store — never let a transient
+// upstream failure sit in the edge cache. Body carries { error, posts: [] } as an
+// explicit flag; the frontend degrades to its "No stories returned." empty state.
+function feedErrorResponse(request) {
+  const headers = new Headers({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "X-Feed-Error": "upstream_unavailable",
+    "X-Feed-Stale": "true",
+  });
+  applyCors(headers, request);
+  headers.set("Access-Control-Expose-Headers", "X-Feed-Fetched-At, X-Feed-Stale, X-Feed-Error");
+  return new Response(JSON.stringify({ error: "upstream_unavailable", posts: [] }), { status: 200, headers });
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 
 export default {
+  // Cron refresh of the /substack/archive KV cache. Configure a trigger in the
+  // Cloudflare dashboard (Worker → Triggers → Cron Triggers), e.g. every 5
+  // minutes ("*/5 * * * *"), well under the 20-minute freshness window. Each run
+  // pulls Substack and writes KV ONLY on a non-empty result — a failed or empty
+  // fetch leaves the last known-good record in place, so the cache never
+  // regresses and a 429 never reaches /news.
+  async scheduled(event, env, ctx) {
+    try {
+      const result = await refreshFeedCache(env);
+      if (result.ok) {
+        console.log(`feed-cron-refresh ok count=${result.count}`);
+      } else {
+        console.warn(`feed-cron-refresh skipped reason=${result.reason}`);
+      }
+    } catch (e) {
+      // Upstream failed (e.g. 429). Swallow it: the last good KV record stays
+      // live and the next cron run retries. Never clear the cache on failure.
+      console.error(`feed-cron-error ${e && e.message ? e.message : String(e)}`);
+    }
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
@@ -1261,44 +1393,51 @@ export default {
       });
     }
 
-    // ── Original Substack proxy route (Cloudflare Cache API) ────────────────
+    // ── Substack archive — served from KV (binding FEED_KV), refreshed by the
+    // scheduled() cron. Readers ONLY read KV; the sole request-path Substack
+    // fetch is a one-time cold-namespace fill. This is what stops an upstream
+    // 429 from ever blanking napaserve.org/news. See the header block above for
+    // the diagnosis and the bare-array/backward-compat contract. ─────────────
     if (url.pathname === "/substack/archive") {
       if (request.method !== "GET" && request.method !== "HEAD") {
         return new Response("Method not allowed", { status: 405 });
       }
 
-      const cacheKey = new Request(request.url, { method: "GET" });
-      const cache = caches.default;
-      let cached = await cache.match(cacheKey);
-
-      if (!cached) {
-        const target = new URL("https://napavalleyfocus.substack.com/api/v1/archive");
-        url.searchParams.forEach((value, key) => {
-          target.searchParams.set(key, value);
-        });
-
-        const upstream = await fetch(target.toString(), {
-          headers: {
-            accept: "application/json",
-            "user-agent": "nvf-squarespace-proxy/1.0",
-          },
-        });
-
-        const body = await upstream.arrayBuffer();
-        cached = new Response(body, {
-          status: upstream.status,
-          headers: {
-            "content-type": "application/json; charset=utf-8",
-            "cache-control": "public, max-age=1800",
-          },
-        });
-        await cache.put(cacheKey, cached.clone());
+      let record = null;
+      try {
+        record = await env.FEED_KV.get(FEED_KV_KEY, { type: "json" });
+      } catch {
+        record = null;
       }
 
-      // Reconstruct with fresh CORS headers for every request
-      const freshHeaders = new Headers(cached.headers);
-      applyCors(freshHeaders, request);
-      return new Response(cached.body, { status: cached.status, headers: freshHeaders });
+      if (record && Array.isArray(record.posts) && record.posts.length > 0) {
+        const page = paginateFeed(record.posts, url);
+        const fetchedAt = record.fetched_at || null;
+        const age = fetchedAt ? Date.now() - new Date(fetchedAt).getTime() : Infinity;
+        const stale = !(Number.isFinite(age) && age < FEED_FRESH_MS);
+        return feedArrayResponse(page, fetchedAt, stale, request, "public, max-age=60");
+      }
+
+      // KV empty (first deploy / cold namespace): ONE synchronous fallback fetch
+      // to seed it. On success serve + write KV; on any failure return 200 with
+      // an explicit error flag and no-store (never hold a transient failure in
+      // the edge cache).
+      try {
+        const posts = await fetchSubstackArchive();
+        if (posts.length > 0) {
+          const fetched_at = new Date().toISOString();
+          try {
+            await env.FEED_KV.put(FEED_KV_KEY, JSON.stringify({ posts, fetched_at }));
+          } catch {
+            // A KV write failure must not block serving the posts we just got.
+          }
+          const page = paginateFeed(posts, url);
+          return feedArrayResponse(page, fetched_at, false, request, "public, max-age=60");
+        }
+        return feedErrorResponse(request);
+      } catch {
+        return feedErrorResponse(request);
+      }
     }
 
     // ── API routes ─────────────────────────────────────────────────────────
