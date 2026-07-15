@@ -678,6 +678,43 @@ POLLS = [
             "Too early to tell",
         ],
     },
+    # ── Napa County Budget 2027 ─────────────────────────────────────
+    {
+        "article_slug": "napa-county-budget-2027",
+        "sort_order": 1,
+        "question": "Napa County's budget sets property, sales and lodging taxes below last year. What is the biggest risk?",
+        "options": [
+            "Cuts to county services",
+            "Draining reserves over time",
+            "Less money for capital projects",
+            "Higher local taxes or fees",
+            "Too early to tell",
+        ],
+    },
+    {
+        "article_slug": "napa-county-budget-2027",
+        "sort_order": 2,
+        "question": "The county's tax base grew on real estate, not wages. How much does that concern you?",
+        "options": [
+            "A serious long-term risk",
+            "A concern worth watching",
+            "Manageable with strong reserves",
+            "Not a real problem",
+            "Unsure",
+        ],
+    },
+    {
+        "article_slug": "napa-county-budget-2027",
+        "sort_order": 3,
+        "question": "Where do you think Napa County's tax revenue heads over the next two years?",
+        "options": [
+            "Rebounds, this is the bottom",
+            "Stays about flat",
+            "Keeps softening slowly",
+            "Falls as assets reprice",
+            "Unsure",
+        ],
+    },
 ]
 
 
