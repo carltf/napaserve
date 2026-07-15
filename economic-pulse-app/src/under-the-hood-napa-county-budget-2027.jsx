@@ -344,8 +344,8 @@ function ChartTwo() {
           const bar = chart.getDatasetMeta(di).data[0];
           if (!bar) return;
           const w = Math.abs(bar.x - bar.base);
-          if (w < 34) return; // skip too-narrow segment (Licenses & permits)
-          c.font = "700 15px " + CV_SANS;
+          if (w < 26) return; // skip too-narrow segment (2.1% licenses stays legend-only)
+          c.font = "700 " + (w < 46 ? 12 : 15) + "px " + CV_SANS;
           c.fillStyle = s.light ? T.ink : "#FFFFFF";
           c.fillText(s.value.toFixed(1) + "%", (bar.x + bar.base) / 2, bar.y);
         });
@@ -620,8 +620,8 @@ function ChartFive() {
           const bar = chart.getDatasetMeta(di).data[0];
           if (!bar) return;
           const w = Math.abs(bar.x - bar.base);
-          if (w < 34) return; // skip too-narrow segment (Other & capital)
-          c.font = "700 15px " + CV_SANS;
+          if (w < 26) return; // skip too-narrow segment (3.3% other & capital stays legend-only)
+          c.font = "700 " + (w < 46 ? 12 : 15) + "px " + CV_SANS;
           c.fillStyle = s.light ? T.ink : "#FFFFFF";
           c.fillText(s.value.toFixed(1) + "%", (bar.x + bar.base) / 2, bar.y);
         });
