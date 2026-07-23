@@ -39,10 +39,16 @@ function renderBody(text) {
   return `<p style="margin:0 0 12px">${html}</p>`;
 }
 
-function fmtDate(iso) {
+// Lesson AA: effective_at / expires_at / review_by are editor-set calendar
+// dates stored at UTC midnight — format them in UTC so they don't render a
+// day early in Pacific. published_at is a real instant; leave it local.
+function fmtDate(iso, { utc = false } = {}) {
   if (!iso) return null;
   try {
-    return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+    return new Date(iso).toLocaleDateString("en-US", {
+      year: "numeric", month: "long", day: "numeric",
+      ...(utc ? { timeZone: "UTC" } : {}),
+    });
   } catch { return null; }
 }
 
@@ -147,9 +153,9 @@ export default function Notices() {
         {/* Notice cards */}
         {visible.map(n => {
           const s = SEVERITY[n.severity] || SEVERITY[1];
-          const effective = fmtDate(n.effective_at);
+          const effective = fmtDate(n.effective_at, { utc: true });
           const published = fmtDate(n.published_at);
-          const expires = fmtDate(n.expires_at);
+          const expires = fmtDate(n.expires_at, { utc: true });
           return (
             <article key={n.id} id={n.slug} style={{
               background: "#FFFFFF", border: "1px solid rgba(44,24,16,0.12)",
