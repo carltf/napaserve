@@ -37,6 +37,8 @@ import NapaServeAdmin from "./napaserve-admin";
 import CalculatorsPage from "./napaserve-calculators";
 import DigestCuration from "./DigestCuration";
 import AgentPage from './napaserve-agent';
+import NoticeBanner from "./components/NoticeBanner";
+import Notices from "./pages/Notices";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -48,6 +50,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <NoticeBanner />
       <Routes>
         <Route path="/" element={<Hub />} />
         <Route path="/maps" element={<Maps />} />
@@ -83,6 +86,7 @@ export default function App() {
         <Route path="/under-the-hood/template" element={<UnderTheHoodTemplate />} />
         <Route path="/under-the-hood/calculators" element={<CalculatorsPage />} />
         <Route path="/events/digest" element={<DigestCuration />} />
+        <Route path="/notices" element={<Notices />} />
         <Route path="/about" element={<About />} />
         <Route path="/admin" element={<NapaServeAdmin />} />
       <Route path="/agent" element={<AgentPage />} />
